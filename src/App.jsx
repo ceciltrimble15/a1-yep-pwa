@@ -1,1305 +1,945 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
-/* ─────────────────────────────────────────────────────────
-   SCROLL-REVEAL HOOK
-───────────────────────────────────────────────────────── */
-function useReveal(threshold = 0.12) {
-  const ref = useRef(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect(); } },
-      { threshold }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [threshold]);
-  return [ref, visible];
+/* ═══════════════════════════════════════════════════════════
+   A/1 SUPPLIERS — YOUNG ENTREPRENEURS PROCESS (YEP)
+   Phase 1 MVP — Avondale Pilot Cohort
+   ═══════════════════════════════════════════════════════════ */
+
+// ── Constants ────────────────────────────────────────────
+const FINISHER_LETTERS = [
+  { letter: 'F', word: 'Focus' },
+  { letter: 'I', word: 'Identity' },
+  { letter: 'N', word: 'Network' },
+  { letter: 'I', word: 'Innovation' },
+  { letter: 'S', word: 'Strategy' },
+  { letter: 'H', word: 'Hustle' },
+  { letter: 'E', word: 'Execution' },
+  { letter: 'R', word: 'Resilience' },
+];
+
+const WEEKS = [
+  {
+    num: 1,
+    title: 'Focus & Identity',
+    letters: [0, 1],
+    description: 'Who are you? What drives you? This week you define yourself before the world does.',
+    activities: [
+      { id: 'w1a1', title: 'Write your Power Name', desc: 'Choose a name that represents who you are becoming.' },
+      { id: 'w1a2', title: 'Define your "Why"', desc: 'What problem do you want to solve? Write it in one sentence.' },
+      { id: 'w1a3', title: 'Identity Map', desc: 'Draw your skills, interests, and values on one page.' },
+    ],
+    aiTip: 'Focus is not about doing more. It is about knowing what matters.',
+  },
+  {
+    num: 2,
+    title: 'Network & Innovation',
+    letters: [2, 3],
+    description: 'Ideas without people go nowhere. People without ideas go in circles.',
+    activities: [
+      { id: 'w2a1', title: 'Map your network', desc: 'List 5 people who could help your idea — and what you can offer them.' },
+      { id: 'w2a2', title: 'Problem-Solution fit', desc: 'Interview one real person about the problem you want to solve.' },
+      { id: 'w2a3', title: 'Prototype sketch', desc: 'Draw your solution on paper. It does not need to be perfect.' },
+    ],
+    aiTip: 'Your network is not who you know. It is who knows what you can do.',
+  },
+  {
+    num: 3,
+    title: 'Strategy & Hustle',
+    letters: [4, 5],
+    description: 'Strategy is the plan. Hustle is the proof you mean it.',
+    activities: [
+      { id: 'w3a1', title: 'Build your pitch', desc: 'Write a 60-second pitch for your idea. Practice it out loud.' },
+      { id: 'w3a2', title: 'Revenue brainstorm', desc: 'List 3 ways your idea could make money. Pick the most realistic one.' },
+      { id: 'w3a3', title: 'Hustle log', desc: 'Document every action you took this week toward your goal.' },
+    ],
+    aiTip: 'Strategy without hustle is a wish list. Hustle without strategy is just noise.',
+  },
+  {
+    num: 4,
+    title: 'Execution & Resilience',
+    letters: [6, 7],
+    description: 'Everyone has a plan until it gets hard. FINISHERS keep going.',
+    activities: [
+      { id: 'w4a1', title: 'Ship something', desc: 'Launch one version of your idea. Post it, share it, sell it.' },
+      { id: 'w4a2', title: 'Collect feedback', desc: 'Ask 3 people what they think. Write down what they said — not what you wanted to hear.' },
+      { id: 'w4a3', title: 'Reflection letter', desc: 'Write a letter to yourself about what you learned in 4 weeks.' },
+    ],
+    aiTip: 'Resilience is not avoiding failure. It is deciding that failure does not decide.',
+  },
+];
+
+const BADGE_DEFS = [
+  { id: 'first_step', name: 'First Step', desc: 'Completed the Assessment', icon: '🎯' },
+  { id: 'week_1', name: 'Week 1 Clear', desc: 'Finished all Week 1 activities', icon: '📘' },
+  { id: 'week_2', name: 'Week 2 Clear', desc: 'Finished all Week 2 activities', icon: '📗' },
+  { id: 'week_3', name: 'Week 3 Clear', desc: 'Finished all Week 3 activities', icon: '📙' },
+  { id: 'week_4', name: 'Week 4 Clear', desc: 'Finished all Week 4 activities', icon: '📕' },
+  { id: 'streak_3', name: '3-Day Streak', desc: 'Opened the app 3 days in a row', icon: '🔥' },
+  { id: 'full_finisher', name: 'FINISHER', desc: 'All 8 letters unlocked', icon: '🏆' },
+];
+
+const ASSESSMENT_QUESTIONS = [
+  { id: 'q1', text: 'I have an idea for something I want to build or sell.', options: ['Yes', 'Sort of', 'Not yet'] },
+  { id: 'q2', text: 'I know what I am good at.', options: ['Yes', 'I think so', 'Still figuring it out'] },
+  { id: 'q3', text: 'I can talk about my idea for 60 seconds.', options: ['Easily', 'With help', 'Not yet'] },
+  { id: 'q4', text: 'I have people I can go to for advice.', options: ['Yes', 'A few', 'Not really'] },
+  { id: 'q5', text: 'When something gets hard, I usually...', options: ['Push through', 'Take a break', 'Stop'] },
+];
+
+// ── Storage helpers ──────────────────────────────────────
+const STORAGE_KEY = 'a1_yep_data';
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return {
+    name: '',
+    powerName: '',
+    assessmentDone: false,
+    assessmentAnswers: {},
+    completedActivities: [],
+    unlockedLetters: [],
+    badges: [],
+    streak: 0,
+    lastOpenDate: null,
+    onboardingDone: false,
+    parentFormSubmitted: false,
+  };
 }
 
-function Reveal({ children, className = '', delay = 0 }) {
-  const [ref, visible] = useReveal();
+function saveData(data) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch {}
+}
+
+// ── Sync status ──────────────────────────────────────────
+function getSyncStatus() {
+  if (!navigator.onLine) return 'waiting';
+  return 'saved';
+}
+
+// ═══════════════════════════════════════════════════════════
+//  MAIN APP COMPONENT
+// ═══════════════════════════════════════════════════════════
+export default function App() {
+  const [screen, setScreen] = useState('splash');
+  const [data, setData] = useState(loadData);
+  const [syncStatus, setSyncStatus] = useState(getSyncStatus);
+  const [toast, setToast] = useState(null);
+  const [dismissedAi, setDismissedAi] = useState({});
+
+  // Persist on change
+  useEffect(() => { saveData(data); }, [data]);
+
+  // Online/offline listener
+  useEffect(() => {
+    const update = () => setSyncStatus(getSyncStatus());
+    window.addEventListener('online', update);
+    window.addEventListener('offline', update);
+    return () => {
+      window.removeEventListener('online', update);
+      window.removeEventListener('offline', update);
+    };
+  }, []);
+
+  // Streak tracking
+  useEffect(() => {
+    const today = new Date().toISOString().slice(0, 10);
+    if (data.lastOpenDate === today) return;
+    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+    const newStreak = data.lastOpenDate === yesterday ? data.streak + 1 : 1;
+    const updates = { lastOpenDate: today, streak: newStreak };
+    if (newStreak >= 3 && !data.badges.includes('streak_3')) {
+      updates.badges = [...data.badges, 'streak_3'];
+      setTimeout(() => showToast('3-Day Streak earned!'), 1000);
+    }
+    update(updates);
+  }, []);
+
+  // Splash auto-advance
+  useEffect(() => {
+    if (screen === 'splash') {
+      const t = setTimeout(() => {
+        setScreen(data.onboardingDone ? 'dashboard' : 'welcome');
+      }, 2200);
+      return () => clearTimeout(t);
+    }
+  }, [screen]);
+
+  const update = useCallback((changes) => {
+    setData((prev) => ({ ...prev, ...changes }));
+  }, []);
+
+  const showToast = useCallback((msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
+  }, []);
+
+  const completeActivity = useCallback((actId) => {
+    if (data.completedActivities.includes(actId)) return;
+    const newCompleted = [...data.completedActivities, actId];
+    const newLetters = [...data.unlockedLetters];
+    let newBadges = [...data.badges];
+
+    // Check week completions
+    WEEKS.forEach((week) => {
+      const allDone = week.activities.every((a) => newCompleted.includes(a.id));
+      if (allDone) {
+        week.letters.forEach((li) => {
+          if (!newLetters.includes(li)) newLetters.push(li);
+        });
+        const badgeId = `week_${week.num}`;
+        if (!newBadges.includes(badgeId)) {
+          newBadges.push(badgeId);
+          showToast(`Week ${week.num} Clear!`);
+        }
+      }
+    });
+
+    // Full FINISHER check
+    if (newLetters.length === 8 && !newBadges.includes('full_finisher')) {
+      newBadges.push('full_finisher');
+      setTimeout(() => showToast('FINISHER unlocked!'), 1500);
+    }
+
+    update({ completedActivities: newCompleted, unlockedLetters: newLetters, badges: newBadges });
+    setSyncStatus('saved');
+    setTimeout(() => setSyncStatus(getSyncStatus()), 1500);
+  }, [data, update, showToast]);
+
+  // ── Render ─────────────────────────────────────────────
   return (
-    <div
-      ref={ref}
-      className={className}
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(28px)',
-        transition: `opacity 0.7s cubic-bezier(0.22,1,0.36,1) ${delay}ms, transform 0.7s cubic-bezier(0.22,1,0.36,1) ${delay}ms`,
-      }}
+    <div className="relative min-h-screen bg-white flex flex-col">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-a1-blue text-white px-5 py-3 rounded-card shadow-card-hover animate-toast font-semibold text-sm tracking-wide max-w-[90%]">
+          {toast}
+        </div>
+      )}
+
+      {screen === 'splash' && <SplashScreen />}
+      {screen === 'welcome' && <WelcomeScreen setScreen={setScreen} data={data} update={update} />}
+      {screen === 'finisher-intro' && <FinisherIntroScreen setScreen={setScreen} data={data} />}
+      {screen === 'assessment' && <AssessmentScreen setScreen={setScreen} data={data} update={update} showToast={showToast} />}
+      {screen === 'dashboard' && <DashboardScreen setScreen={setScreen} data={data} syncStatus={syncStatus} dismissedAi={dismissedAi} setDismissedAi={setDismissedAi} />}
+      {screen === 'week1' && <WeekScreen week={WEEKS[0]} setScreen={setScreen} data={data} completeActivity={completeActivity} syncStatus={syncStatus} dismissedAi={dismissedAi} setDismissedAi={setDismissedAi} />}
+      {screen === 'week2' && <WeekScreen week={WEEKS[1]} setScreen={setScreen} data={data} completeActivity={completeActivity} syncStatus={syncStatus} dismissedAi={dismissedAi} setDismissedAi={setDismissedAi} />}
+      {screen === 'week3' && <WeekScreen week={WEEKS[2]} setScreen={setScreen} data={data} completeActivity={completeActivity} syncStatus={syncStatus} dismissedAi={dismissedAi} setDismissedAi={setDismissedAi} />}
+      {screen === 'week4' && <WeekScreen week={WEEKS[3]} setScreen={setScreen} data={data} completeActivity={completeActivity} syncStatus={syncStatus} dismissedAi={dismissedAi} setDismissedAi={setDismissedAi} />}
+      {screen === 'rewards' && <RewardsScreen setScreen={setScreen} data={data} syncStatus={syncStatus} />}
+      {screen === 'progress' && <ProgressScreen setScreen={setScreen} data={data} syncStatus={syncStatus} />}
+      {screen === 'parent' && <ParentInterestScreen setScreen={setScreen} data={data} update={update} showToast={showToast} />}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+//  SHARED COMPONENTS
+// ═══════════════════════════════════════════════════════════
+
+function Logo({ size = 'md' }) {
+  const s = size === 'lg' ? 'w-16 h-16 text-2xl' : size === 'sm' ? 'w-8 h-8 text-xs' : 'w-10 h-10 text-sm';
+  return (
+    <div className={`${s} bg-a1-blue rounded-[22%] flex items-center justify-center font-extrabold text-white tracking-tight flex-shrink-0`}>
+      A/1
+    </div>
+  );
+}
+
+function Header({ title, syncStatus, onBack, setScreen }) {
+  return (
+    <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-a1-silver-light safe-top">
+      <div className="flex items-center justify-between px-4 py-3">
+        <div className="flex items-center gap-3">
+          {onBack && (
+            <button onClick={onBack} className="text-a1-text-secondary p-1 -ml-1" aria-label="Back">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M13 4L7 10L13 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </button>
+          )}
+          <Logo size="sm" />
+          <span className="font-bold text-sm text-a1-text">{title}</span>
+        </div>
+        <SyncPill status={syncStatus} />
+      </div>
+    </div>
+  );
+}
+
+function SyncPill({ status }) {
+  if (status === 'waiting') {
+    return <span className="text-[11px] font-semibold text-a1-alert animate-pulse-amber px-2 py-1 rounded-full bg-orange-50">Waiting to sync</span>;
+  }
+  if (status === 'synced') {
+    return <span className="text-[11px] font-semibold text-a1-success px-2 py-1 rounded-full bg-green-50">Synced</span>;
+  }
+  return <span className="text-[11px] font-semibold text-a1-silver px-2 py-1 rounded-full bg-a1-surface">Saved on device</span>;
+}
+
+function FinisherBar({ unlockedLetters, onTap }) {
+  const allUnlocked = unlockedLetters.length === 8;
+  return (
+    <button
+      onClick={onTap}
+      className="w-full flex items-center justify-center gap-[6px] py-3 px-4 bg-a1-surface border-t border-a1-silver-light active:bg-a1-silver-light transition-colors"
+      aria-label="View FINISHER progress"
     >
+      {FINISHER_LETTERS.map((fl, i) => {
+        const unlocked = unlockedLetters.includes(i);
+        return (
+          <div key={i} className="flex items-center gap-[6px]">
+            <span
+              className={`text-sm font-extrabold tracking-wide transition-all duration-300 ${
+                allUnlocked ? 'text-a1-gold' : unlocked ? 'text-a1-blue' : 'text-a1-silver opacity-40'
+              }`}
+            >
+              {fl.letter}
+            </span>
+            {i < 7 && <span className="text-a1-silver-light text-[10px]">—</span>}
+          </div>
+        );
+      })}
+    </button>
+  );
+}
+
+function BottomNav({ screen, setScreen }) {
+  const items = [
+    { id: 'dashboard', label: 'Home', icon: <HomeIcon /> },
+    { id: 'progress', label: 'Progress', icon: <ChartIcon /> },
+    { id: 'rewards', label: 'Rewards', icon: <BadgeIcon /> },
+    { id: 'parent', label: 'Parent', icon: <UserIcon /> },
+  ];
+  return (
+    <div className="sticky bottom-0 z-30 bg-white border-t border-a1-silver-light safe-bottom">
+      <div className="flex justify-around py-2">
+        {items.map((item) => (
+          <button
+            key={item.id}
+            onClick={() => setScreen(item.id)}
+            className={`flex flex-col items-center gap-0.5 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest transition-colors ${
+              screen === item.id ? 'text-a1-blue' : 'text-a1-silver'
+            }`}
+          >
+            {item.icon}
+            {item.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function AiSuggestion({ tip, id, dismissedAi, setDismissedAi }) {
+  if (dismissedAi[id]) return null;
+  return (
+    <div className="mx-4 mt-3 mb-1 bg-blue-50 border border-a1-blue/10 rounded-xl px-4 py-3 flex items-start gap-3 animate-fade-in">
+      <span className="text-[10px] font-bold text-a1-blue bg-a1-blue/10 rounded-md px-1.5 py-0.5 flex-shrink-0 mt-0.5 uppercase tracking-widest">A.Ai</span>
+      <p className="text-[13px] text-a1-text-secondary leading-relaxed flex-1">{tip}</p>
+      <button onClick={() => setDismissedAi((p) => ({ ...p, [id]: true }))} className="text-a1-silver hover:text-a1-text-secondary flex-shrink-0 mt-0.5" aria-label="Dismiss">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 3L11 11M11 3L3 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+      </button>
+    </div>
+  );
+}
+
+function Card({ children, className = '', onClick }) {
+  return (
+    <div onClick={onClick} className={`bg-white rounded-card shadow-card p-5 ${onClick ? 'cursor-pointer active:shadow-card-hover active:scale-[0.99] transition-all' : ''} ${className}`}>
       {children}
     </div>
   );
 }
 
-/* ─────────────────────────────────────────────────────────
-   TBF LOGO IMAGE COMPONENT
-
-   The actual logo image (hat + TBF ENTERTAINMENT) is served
-   from /logo.png in the public directory.
-
-   size:    'nav'       → height 36px  (nav bar)
-            'xs'        → height 56px  (section dividers)
-            'sm'        → height 80px  (publishing anchor)
-            'md'        → height 110px (footer / CTA)
-            'lg'        → height 160px (larger feature placements)
-            'watermark' → height 45vw, max 520px (hero bg)
-
-   glow:    'none' | 'subtle' | 'medium' | 'strong'
-            Silver + blue drop-shadow system, dark bg only.
-
-   opacity: 0–1  (use low values for watermarks / textures)
-   blur:    true/false (adds CSS blur for watermark softness)
-   align:   'left' | 'center'
-───────────────────────────────────────────────────────── */
-const LOGO_HEIGHTS = {
-  nav:       '54px',   // +50% — full brand marker, not an icon
-  xs:        '96px',   // +71% — section logos read as presence
-  sm:        '128px',  // +60%
-  md:        '160px',  // +45%
-  lg:        '200px',
-  watermark: 'clamp(260px, 52vw, 610px)', // +15% hero presence
-};
-
-const LOGO_GLOWS = {
-  none:   '',
-  subtle: 'drop-shadow(0 0 8px rgba(30,144,255,0.22)) drop-shadow(0 0 4px rgba(192,192,192,0.12))',
-  medium: 'drop-shadow(0 0 18px rgba(30,144,255,0.38)) drop-shadow(0 0 8px rgba(192,192,192,0.18))',
-  strong: 'drop-shadow(0 0 36px rgba(30,144,255,0.58)) drop-shadow(0 0 18px rgba(192,192,192,0.30))',
-};
-
-function Logo({
-  size    = 'md',
-  glow    = 'none',
-  opacity = 1,
-  blur    = false,
-  align   = 'left',
-  onClick,
-  style   = {},
-  className = '',
-}) {
-  const h  = LOGO_HEIGHTS[size] || LOGO_HEIGHTS.md;
-  const gf = LOGO_GLOWS[glow] || '';
-  const bf = blur ? 'blur(1.2px)' : '';
-  const filterVal = [bf, gf].filter(Boolean).join(' ') || undefined;
-
-  return (
-    <div
-      onClick={onClick}
-      className={`flex ${align === 'center' ? 'justify-center' : 'justify-start'} ${onClick ? 'cursor-pointer select-none' : 'select-none'} ${className}`}
-      style={{ opacity, ...style }}
-    >
-      <img
-        src="/logo.png"
-        alt="TBF Entertainment"
-        draggable={false}
-        style={{
-          height: h,
-          width: 'auto',
-          objectFit: 'contain',
-          display: 'block',
-          filter: filterVal,
-          pointerEvents: onClick ? 'auto' : 'none',
-          transition: 'filter 0.3s, opacity 0.3s',
-        }}
-      />
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────
-   NAVIGATION
-───────────────────────────────────────────────────────── */
-function Nav({ page, setPage }) {
-  const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  const links = ['Home', 'Publishing', 'Artistry', 'Media', 'Connect'];
-
-  const go = (p) => {
-    setPage(p.toLowerCase());
-    setMenuOpen(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+function Btn({ children, variant = 'primary', onClick, className = '', disabled }) {
+  const base = 'w-full py-3.5 rounded-[10px] font-bold text-[14px] uppercase tracking-[1.5px] transition-all duration-200 min-h-[48px] flex items-center justify-center';
+  const styles = {
+    primary: `${base} bg-a1-blue text-white active:bg-a1-blue-light disabled:opacity-40`,
+    secondary: `${base} bg-white text-a1-blue border-2 border-a1-blue active:bg-a1-surface disabled:opacity-40`,
+    ghost: `${base} bg-transparent text-a1-text-secondary active:bg-a1-surface`,
   };
-
-  return (
-    <nav
-      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
-      style={{
-        background: scrolled ? 'rgba(10,10,10,0.96)' : 'rgba(10,10,10,0)',
-        borderBottom: scrolled ? '1px solid rgba(43,43,43,0.8)' : '1px solid transparent',
-        backdropFilter: scrolled ? 'blur(12px)' : 'none',
-      }}
-    >
-      <div className="max-w-7xl mx-auto px-6 lg:px-10 flex items-center justify-between h-16 lg:h-20">
-
-        {/* Nav Logo — 36px height, no glow (recognition through repetition) */}
-        <Logo
-          size="nav"
-          glow="none"
-          align="left"
-          onClick={() => go('home')}
-        />
-
-        {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-8">
-          {links.map((l) => (
-            <button
-              key={l}
-              onClick={() => go(l)}
-              className={`nav-link ${page === l.toLowerCase() ? 'active text-white' : ''}`}
-            >
-              {l}
-            </button>
-          ))}
-        </div>
-
-        {/* Desktop CTA */}
-        <div className="hidden md:block">
-          <button onClick={() => go('Connect')} className="btn-outline-blue text-xs px-6 py-3">
-            Get in Touch
-          </button>
-        </div>
-
-        {/* Mobile burger */}
-        <button
-          className="md:hidden flex flex-col gap-[5px] p-2"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Menu"
-        >
-          <span className="block w-6 h-px bg-white transition-all duration-300" style={{ transform: menuOpen ? 'translateY(6px) rotate(45deg)' : '' }} />
-          <span className="block w-6 h-px bg-white transition-all duration-300" style={{ opacity: menuOpen ? 0 : 1 }} />
-          <span className="block w-6 h-px bg-white transition-all duration-300" style={{ transform: menuOpen ? 'translateY(-6px) rotate(-45deg)' : '' }} />
-        </button>
-      </div>
-
-      {/* Mobile menu */}
-      <div
-        className="md:hidden overflow-hidden transition-all duration-300"
-        style={{
-          maxHeight: menuOpen ? '400px' : '0',
-          background: 'rgba(10,10,10,0.98)',
-          borderTop: menuOpen ? '1px solid #2B2B2B' : 'none',
-        }}
-      >
-        <div className="px-6 py-6 flex flex-col gap-5">
-          {links.map((l) => (
-            <button
-              key={l}
-              onClick={() => go(l)}
-              className={`nav-link text-left text-sm ${page === l.toLowerCase() ? 'text-white' : ''}`}
-            >
-              {l}
-            </button>
-          ))}
-          <button onClick={() => go('Connect')} className="btn-outline-blue text-xs mt-2">
-            Get in Touch
-          </button>
-        </div>
-      </div>
-    </nav>
-  );
+  return <button onClick={onClick} className={`${styles[variant]} ${className}`} disabled={disabled}>{children}</button>;
 }
 
-/* ─────────────────────────────────────────────────────────
-   FOOTER
-───────────────────────────────────────────────────────── */
-function Footer({ setPage }) {
-  const go = (p) => {
-    setPage(p);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  return (
-    <footer style={{ background: '#060606', borderTop: '1px solid #1A1A1A' }}>
-      <div className="max-w-7xl mx-auto px-6 lg:px-10 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-14">
-
-          {/* Brand column — full logo signature, no heavy glow */}
-          <div className="md:col-span-2">
-            <Logo size="md" glow="none" align="left" style={{ marginBottom: '14px' }} />
-            <p
-              className="font-body uppercase tracking-[0.16em] mb-5"
-              style={{ fontSize: '0.62rem', color: '#A9A9A9' }}
-            >
-              Built from reality. Nothing added. Everything earned.
-            </p>
-            <p className="font-body text-sm text-tbf-silver-dim leading-relaxed max-w-sm">
-              A culture-driven entertainment company building powerful stories, visual identity, and creative expansion through publishing, artistry, and media.
-            </p>
-            <div className="flex gap-3 mt-6">
-              {['IG', 'X', 'YT'].map((s) => (
-                <div
-                  key={s}
-                  className="w-9 h-9 border border-tbf-dark flex items-center justify-center text-xs text-tbf-silver-dim font-body font-semibold tracking-wider cursor-pointer transition-colors duration-200 hover:border-tbf-blue hover:text-tbf-blue"
-                >
-                  {s}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Navigate */}
-          <div>
-            <p className="eyebrow mb-5">Navigate</p>
-            <div className="flex flex-col gap-3">
-              {['Home', 'Publishing', 'Artistry', 'Media', 'Connect'].map((l) => (
-                <button
-                  key={l}
-                  onClick={() => go(l.toLowerCase())}
-                  className="font-body text-sm text-tbf-silver-dim hover:text-white transition-colors duration-200 text-left"
-                >
-                  {l}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Contact */}
-          <div>
-            <p className="eyebrow mb-5">Contact</p>
-            <div className="flex flex-col gap-3">
-              <a href="mailto:info@tbfentertainment.art" className="font-body text-sm text-tbf-silver-dim hover:text-tbf-blue transition-colors duration-200">
-                info@tbfentertainment.art
-              </a>
-              <p className="font-body text-sm text-tbf-silver-dim">Publishing Inquiries</p>
-              <p className="font-body text-sm text-tbf-silver-dim">Partnership Inquiries</p>
-              <button onClick={() => go('connect')} className="font-body text-sm text-tbf-blue hover:text-white transition-colors duration-200 text-left mt-1">
-                Submit Inquiry →
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="hr-dark pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="font-body text-xs text-tbf-silver-dim tracking-wider">
-            © {new Date().getFullYear()} TBF Entertainment. All rights reserved.
-          </p>
-          <p className="font-body text-xs text-tbf-silver-dim tracking-wider">
-            tbfentertainment.art
-          </p>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────
-   BOOK COVER — uses actual cover art
-───────────────────────────────────────────────────────── */
-function BookCover({ size = 'lg' }) {
-  // +40% dominance on the home/publishing anchor
-  const w = size === 'lg' ? '310px' : '220px';
-  const h = size === 'lg' ? '420px' : '300px';
-
-  return (
-    <div
-      className="relative flex-shrink-0 overflow-hidden"
-      style={{
-        width: w,
-        height: h,
-        boxShadow: '8px 16px 56px rgba(0,0,0,0.85), 0 0 40px rgba(30,144,255,0.15)',
-        border: '1px solid rgba(30,144,255,0.15)',
-      }}
-    >
-      <img
-        src="/book-cover.png"
-        alt="Young Gs vs Old Gs — TBF Entertainment"
-        draggable={false}
-        style={{
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          objectPosition: 'top center',
-          display: 'block',
-        }}
-      />
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────
-   SECTION LOGO DIVIDER
-   Small logo mark above section headlines.
-   size 'xs' (56px) for mid-scroll marks.
-───────────────────────────────────────────────────────── */
-function SectionLogo({ align = 'center', glow = 'subtle' }) {
-  return (
-    <div className={`flex ${align === 'center' ? 'justify-center' : 'justify-start'} mb-6`}>
-      <Logo size="xs" glow={glow} opacity={0.82} align={align} />
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────
-   PAGE HERO (reusable for inner pages)
-───────────────────────────────────────────────────────── */
-function PageHero({ eyebrow, title, titleAccent, subtitle }) {
-  return (
-    <section className="relative pt-36 pb-20 overflow-hidden" style={{ background: '#0A0A0A' }}>
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage: `linear-gradient(rgba(30,144,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(30,144,255,0.025) 1px, transparent 1px)`,
-          backgroundSize: '80px 80px',
-        }}
-      />
-      <div
-        className="absolute pointer-events-none"
-        style={{
-          width: '500px', height: '500px',
-          background: 'radial-gradient(circle, rgba(30,144,255,0.07) 0%, transparent 70%)',
-          top: '-100px', left: '50%', transform: 'translateX(-50%)',
-        }}
-      />
-      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10">
-        <div className="animate-fade-in-up">
-          <p className="eyebrow mb-5">{eyebrow}</p>
-        </div>
-        <h1
-          className="font-display font-black uppercase text-white leading-none animate-fade-in-up delay-100"
-          style={{ fontSize: 'clamp(3rem, 7vw, 6.5rem)', letterSpacing: '0.04em' }}
-        >
-          {title}
-          {titleAccent && <><br /><span style={{ color: '#1E90FF' }}>{titleAccent}</span></>}
-        </h1>
-        <div className="w-14 h-px mt-6 mb-6 animate-fade-in-up delay-200" style={{ background: '#1E90FF' }} />
-        {subtitle && (
-          <p className="font-body text-tbf-silver max-w-2xl leading-relaxed animate-fade-in-up delay-300" style={{ fontSize: '1rem' }}>
-            {subtitle}
-          </p>
-        )}
-      </div>
-      <div className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none" style={{ background: 'linear-gradient(to bottom, transparent, #0A0A0A)' }} />
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────
-   CONNECT FORM
-───────────────────────────────────────────────────────── */
-function ConnectForm({ compact = false }) {
-  const [email, setEmail]   = useState('');
-  const [name, setName]     = useState('');
-  const [type, setType]     = useState('General');
-  const [message, setMessage] = useState('');
-  const [submitted, setSubmitted] = useState(false);
-
-  const inputStyle = { border: '1px solid #2B2B2B', fontSize: '0.875rem', background: 'transparent' };
-  const onFocus = (e) => { e.target.style.borderColor = 'rgba(30,144,255,0.5)'; };
-  const onBlur  = (e) => { e.target.style.borderColor = '#2B2B2B'; };
-  const baseInput = 'w-full font-body text-sm px-5 py-4 text-white placeholder-tbf-silver-dim outline-none transition-all duration-200';
-
-  if (submitted) {
-    return (
-      <div className="p-8 text-center" style={{ background: 'rgba(30,144,255,0.06)', border: '1px solid rgba(30,144,255,0.25)' }}>
-        <div className="font-display font-bold uppercase text-tbf-blue text-xl mb-2">Received.</div>
-        <p className="font-body text-tbf-silver text-sm">We'll be in touch. Welcome to the TBF circle.</p>
-      </div>
-    );
-  }
-
-  if (compact) {
-    return (
-      <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }} className="flex flex-col sm:flex-row gap-0 max-w-lg mx-auto" style={{ border: '1px solid rgba(30,144,255,0.3)' }}>
-        <input
-          type="email" placeholder="Enter your email" value={email}
-          onChange={(e) => setEmail(e.target.value)} required
-          className="flex-1 font-body text-sm px-6 py-5 text-white placeholder-tbf-silver-dim outline-none transition-all duration-200 bg-transparent"
-          style={{ border: 'none', background: 'transparent' }}
-          onFocus={(e) => { e.target.parentElement.style.borderColor = 'rgba(30,144,255,0.6)'; }}
-          onBlur={(e) => { e.target.parentElement.style.borderColor = 'rgba(30,144,255,0.3)'; }}
-        />
-        <button type="submit" className="btn-blue whitespace-nowrap" style={{ borderRadius: 0, padding: '1.1rem 2rem', fontSize: '0.78rem' }}>Get Early Access</button>
-      </form>
-    );
-  }
-
-  return (
-    <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }} className="flex flex-col gap-5">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div>
-          <label className="eyebrow block mb-2">Name</label>
-          <input type="text" placeholder="Your name" value={name} onChange={(e) => setName(e.target.value)} required className={baseInput} style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
-        </div>
-        <div>
-          <label className="eyebrow block mb-2">Email</label>
-          <input type="email" placeholder="Your email" value={email} onChange={(e) => setEmail(e.target.value)} required className={baseInput} style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
-        </div>
-      </div>
-      <div>
-        <label className="eyebrow block mb-2">Inquiry Type</label>
-        <select
-          value={type} onChange={(e) => setType(e.target.value)}
-          className="w-full font-body text-sm px-5 py-4 text-white outline-none transition-all duration-200 cursor-pointer"
-          style={{ ...inputStyle, background: '#0A0A0A', appearance: 'none' }}
-          onFocus={onFocus} onBlur={onBlur}
-        >
-          <option value="General">General Inquiry</option>
-          <option value="Publishing">Publishing</option>
-          <option value="Artistry">Artistry / Artist Collaboration</option>
-          <option value="Media">Media / Content</option>
-          <option value="Partnership">Business Partnership</option>
-        </select>
-      </div>
-      <div>
-        <label className="eyebrow block mb-2">Message</label>
-        <textarea
-          placeholder="Tell us about your inquiry..." value={message} onChange={(e) => setMessage(e.target.value)} required rows={5}
-          className={`${baseInput} resize-none`} style={inputStyle} onFocus={onFocus} onBlur={onBlur}
-        />
-      </div>
-      <button type="submit" className="btn-blue w-full md:w-auto">Submit Inquiry</button>
-    </form>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────
-   HOME PAGE
-───────────────────────────────────────────────────────── */
-function HomePage({ setPage }) {
-  const go = (p) => {
-    setPage(p);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
+function ScreenShell({ title, syncStatus, setScreen, onBack, children, showFinisher = true, showNav = true, data }) {
   return (
     <>
-      {/* ═══════════════════════════════════════════════════
-          1. HERO
-          Watermark logo: centered, 45vw height, 32% opacity,
-          slight blur, strong blue glow behind it.
-          Headline text sits on top — do NOT remove.
-      ═══════════════════════════════════════════════════ */}
-      <section className="relative min-h-screen flex flex-col justify-center overflow-hidden grain" style={{ background: '#0A0A0A' }}>
-        {/* Cinematic grid */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: `linear-gradient(rgba(30,144,255,0.028) 1px, transparent 1px), linear-gradient(90deg, rgba(30,144,255,0.028) 1px, transparent 1px)`,
-            backgroundSize: '80px 80px',
-          }}
-        />
+      <Header title={title} syncStatus={syncStatus} onBack={onBack} setScreen={setScreen} />
+      <div className="flex-1 overflow-y-auto pb-4">
+        {children}
+      </div>
+      {showFinisher && data && <FinisherBar unlockedLetters={data.unlockedLetters} onTap={() => setScreen('finisher-intro')} />}
+      {showNav && <BottomNav screen={title === 'Dashboard' ? 'dashboard' : title === 'Progress' ? 'progress' : title === 'Rewards' ? 'rewards' : title === 'Parent' ? 'parent' : ''} setScreen={setScreen} />}
+    </>
+  );
+}
 
-        {/* Blue glow orb — shifted right to counterweight left-aligned headline */}
-        <div
-          className="absolute pointer-events-none"
-          style={{
-            inset: 0,
-            background: 'radial-gradient(ellipse 60% 55% at 72% 42%, rgba(30,144,255,0.11) 0%, transparent 70%)',
-          }}
-        />
+// ── Icons ────────────────────────────────────────────────
+function HomeIcon() { return <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 8L10 2L17 8V17H12V12H8V17H3V8Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg>; }
+function ChartIcon() { return <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="10" width="3" height="7" rx="1" stroke="currentColor" strokeWidth="1.5"/><rect x="8.5" y="6" width="3" height="11" rx="1" stroke="currentColor" strokeWidth="1.5"/><rect x="14" y="3" width="3" height="14" rx="1" stroke="currentColor" strokeWidth="1.5"/></svg>; }
+function BadgeIcon() { return <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="8" r="5" stroke="currentColor" strokeWidth="1.5"/><path d="M7 13L6 18L10 16L14 18L13 13" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg>; }
+function UserIcon() { return <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3.5" stroke="currentColor" strokeWidth="1.5"/><path d="M3 17C3 14 6 12 10 12C14 12 17 14 17 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>; }
+function CheckIcon({ size = 16 }) { return <svg width={size} height={size} viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>; }
 
-        {/* Watermark logo — right third on desktop, top-center on mobile, drifts over 18s */}
-        <div
-          className="absolute inset-0 pointer-events-none flex items-center justify-center md:justify-end md:pr-[6vw]"
-          style={{ zIndex: 1, transform: 'translateY(-14%)' }}
-        >
-          <div className="animate-hero-drift">
-            <Logo
-              size="watermark"
-              glow="strong"
-              opacity={0.29}
-              blur={true}
-              align="center"
+// ═══════════════════════════════════════════════════════════
+//  SCREEN: SPLASH
+// ═══════════════════════════════════════════════════════════
+function SplashScreen() {
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center bg-a1-blue min-h-screen">
+      <div className="animate-logo flex flex-col items-center gap-4">
+        <div className="w-20 h-20 bg-white rounded-[22%] flex items-center justify-center">
+          <span className="text-a1-blue font-extrabold text-3xl tracking-tight">A/1</span>
+        </div>
+        <div className="text-center">
+          <p className="text-white/90 text-[11px] font-semibold uppercase tracking-[3px]">Young Entrepreneurs Process</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+//  SCREEN: WELCOME
+// ═══════════════════════════════════════════════════════════
+function WelcomeScreen({ setScreen, data, update }) {
+  const [name, setName] = useState(data.name);
+  const canContinue = name.trim().length >= 2;
+
+  return (
+    <div className="flex-1 flex flex-col min-h-screen bg-white">
+      <div className="flex-1 flex flex-col justify-center px-6 py-12">
+        <div className="animate-slide-up">
+          <Logo size="lg" />
+          <h1 className="text-[28px] font-extrabold text-a1-text mt-6 leading-tight">
+            This is not a program.<br />It is a Process.
+          </h1>
+          <p className="text-a1-text-secondary mt-4 text-[15px] leading-relaxed">
+            Welcome to the Young Entrepreneurs Process. Over the next 4 weeks, you will build identity, discipline, and real skills.
+          </p>
+          <p className="text-a1-text-secondary mt-3 text-[15px] leading-relaxed">
+            You were not chosen because you are perfect. You were chosen because you are ready.
+          </p>
+
+          <div className="mt-8">
+            <label className="text-[12px] font-semibold uppercase tracking-[1.5px] text-a1-silver mb-2 block">Your First Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter your name"
+              className="w-full px-4 py-3.5 rounded-[10px] border-2 border-a1-silver-light text-a1-text font-semibold text-[16px] focus:border-a1-blue focus:outline-none transition-colors bg-white placeholder:text-a1-silver"
             />
           </div>
         </div>
+      </div>
 
-        {/* Hero content — z-index 2, above watermark */}
-        <div className="relative max-w-7xl mx-auto px-6 lg:px-10 pt-32 pb-24" style={{ zIndex: 2 }}>
-          <div className="animate-fade-in-up">
-            <p className="eyebrow mb-6">Est. Now. Built to Last.</p>
-          </div>
-          <h1
-            className="font-display font-black uppercase text-white leading-[0.95] animate-fade-in-up delay-100 max-w-5xl"
-            style={{ fontSize: 'clamp(2.4rem, 5.2vw, 5rem)', letterSpacing: '0.01em' }}
-          >
-            Built from reality.<br />
-            <span style={{ color: '#C0C0C0' }}>Nothing added.</span><br />
-            <span style={{ color: '#1E90FF' }}>Everything earned.</span>
-          </h1>
-          <div className="w-16 h-px mt-8 mb-8 animate-fade-in-up delay-200" style={{ background: '#1E90FF' }} />
-          <p className="font-body text-tbf-silver max-w-xl leading-relaxed animate-fade-in-up delay-300" style={{ fontSize: 'clamp(0.98rem, 1.6vw, 1.12rem)' }}>
-            A culture-driven entertainment company shaping story, sound, and visual identity through publishing, artistry, and media.
-          </p>
-          <div className="flex flex-wrap gap-4 mt-10 animate-fade-in-up delay-500">
-            <button onClick={() => go('publishing')} className="btn-blue">Explore Publishing</button>
-            <button onClick={() => go('home')} className="btn-ghost">View the Vision ↓</button>
-          </div>
-        </div>
-
-        <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none" style={{ background: 'linear-gradient(to bottom, transparent, #0A0A0A)' }} />
-      </section>
-
-      {/* ═══════════════════════════════════════════════════
-          2. BRAND POSITIONING
-      ═══════════════════════════════════════════════════ */}
-      <section className="py-24 lg:py-32" style={{ background: '#0A0A0A' }}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <Reveal>
-              <p className="eyebrow mb-4">The Foundation</p>
-              <h2 className="font-display font-black uppercase text-white leading-none" style={{ fontSize: 'clamp(2.5rem, 5vw, 4.5rem)' }}>
-                Built for More<br />Than One Lane
-              </h2>
-              <div className="blue-line" />
-              <p className="font-body text-tbf-silver leading-relaxed" style={{ fontSize: '1rem' }}>
-                TBF Entertainment is a multi-platform creative company rooted in storytelling, sound, and visual culture. We are building across publishing, artistry, and media with a focus on execution, originality, and long-term catalog value.
-              </p>
-            </Reveal>
-
-            <Reveal delay={150}>
-              <div className="grid grid-cols-3 gap-4">
-                {[
-                  { label: 'Publishing', active: true,  desc: 'Current launch lane. Active catalog. Proven execution.' },
-                  { label: 'Artistry',  active: false, desc: 'Independent collaborations. Culture-rooted sound development.' },
-                  { label: 'Media',     active: false, desc: 'Visual storytelling. Cinematic expression. Creative content.' },
-                ].map((item) => (
-                  <div
-                    key={item.label}
-                    className="p-5 flex flex-col gap-3"
-                    style={{
-                      background: item.active ? 'rgba(30,144,255,0.06)' : '#111111',
-                      border: item.active ? '1px solid rgba(30,144,255,0.35)' : '1px solid #2B2B2B',
-                    }}
-                  >
-                    {item.active && <div className="font-body font-semibold uppercase tracking-widest text-tbf-blue" style={{ fontSize: '0.55rem' }}>Active</div>}
-                    <p className="font-display font-bold uppercase text-white tracking-wider text-sm">{item.label}</p>
-                    <p className="font-body text-tbf-silver-dim" style={{ fontSize: '0.75rem', lineHeight: 1.6 }}>{item.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════
-          3. THREE PILLARS
-          Section logo divider above headline.
-          Faint logo pattern texture at 5–8% opacity.
-      ═══════════════════════════════════════════════════ */}
-      <section className="py-24 lg:py-32 relative overflow-hidden" style={{ background: '#060606' }}>
-        {/* Ultra-faint logo texture — single oversized, ~6% opacity */}
-        <div
-          className="absolute inset-0 flex items-center justify-center pointer-events-none"
-          style={{ zIndex: 0 }}
+      <div className="px-6 pb-8">
+        <Btn
+          disabled={!canContinue}
+          onClick={() => {
+            update({ name: name.trim() });
+            setScreen('finisher-intro');
+          }}
         >
-          <Logo
-            size="watermark"
-            glow="none"
-            opacity={0.06}
-            align="center"
-            style={{ transform: 'scale(2.4)', transformOrigin: 'center' }}
-          />
-        </div>
+          Continue
+        </Btn>
+      </div>
+    </div>
+  );
+}
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10">
-          <Reveal>
-            <div className="text-center mb-16">
-              {/* Section divider logo — 56px, subtle glow */}
-              <SectionLogo align="center" glow="subtle" />
-              <p className="eyebrow mb-4">The Architecture</p>
-              <h2 className="font-display font-black uppercase text-white leading-none" style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)' }}>
-                Three Lanes. One Direction.
-              </h2>
-              <div className="w-12 h-px bg-tbf-blue mx-auto mt-5" />
-            </div>
-          </Reveal>
+// ═══════════════════════════════════════════════════════════
+//  SCREEN: FINISHER INTRO
+// ═══════════════════════════════════════════════════════════
+function FinisherIntroScreen({ setScreen, data }) {
+  return (
+    <div className="flex-1 flex flex-col min-h-screen bg-white">
+      <Header title="FINISHER" onBack={() => setScreen(data.onboardingDone ? 'dashboard' : 'welcome')} />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              { label: 'Artistry',   icon: '♪', desc: 'Independent artist collaborations, music-driven storytelling, and culture-centered sound development.', page: 'artistry', active: false },
-              { label: 'Media',      icon: '◎', desc: 'Visual storytelling, interviews, creative content, and cinematic media expression.', page: 'media',    active: false },
-              { label: 'Publishing', icon: '▣', desc: 'Books, street-rooted narratives, original storytelling, and a growing written catalog.',              page: 'publishing', active: true },
-            ].map((item, i) => (
-              <Reveal key={item.label} delay={i * 120}>
+      <div className="flex-1 overflow-y-auto px-6 py-6">
+        <div className="animate-slide-up">
+          <h2 className="text-[24px] font-extrabold text-a1-text leading-tight">
+            Train your mind to become a FINISHER.
+          </h2>
+          <p className="text-a1-text-secondary mt-3 text-[14px] leading-relaxed">
+            FINISHER is not a title. It is a discipline. Each letter represents a skill you will build — and prove — during the Process.
+          </p>
+
+          <div className="mt-6 space-y-3">
+            {FINISHER_LETTERS.map((fl, i) => {
+              const unlocked = data.unlockedLetters.includes(i);
+              const allDone = data.unlockedLetters.length === 8;
+              return (
                 <div
-                  className="group relative p-8 lg:p-10 cursor-pointer transition-all duration-300 h-full flex flex-col"
-                  style={{
-                    background: item.active ? 'rgba(30,144,255,0.09)' : 'rgba(17,17,17,0.92)',
-                    border: item.active ? '1px solid rgba(30,144,255,0.55)' : '1px solid #2B2B2B',
-                    boxShadow: item.active ? '0 0 36px rgba(30,144,255,0.12), inset 0 1px 0 rgba(30,144,255,0.15)' : 'none',
-                  }}
-                  onClick={() => go(item.page)}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.border = '1px solid rgba(30,144,255,0.7)';
-                    e.currentTarget.style.boxShadow = '0 8px 48px rgba(0,0,0,0.6), 0 0 32px rgba(30,144,255,0.18)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.border = item.active ? '1px solid rgba(30,144,255,0.55)' : '1px solid #2B2B2B';
-                    e.currentTarget.style.boxShadow = item.active ? '0 0 36px rgba(30,144,255,0.12), inset 0 1px 0 rgba(30,144,255,0.15)' : 'none';
-                  }}
+                  key={i}
+                  className={`flex items-center gap-4 p-4 rounded-card border transition-all ${
+                    allDone ? 'border-a1-gold/30 bg-yellow-50/50' : unlocked ? 'border-a1-blue/20 bg-blue-50/50' : 'border-a1-silver-light bg-white'
+                  }`}
+                  style={{ animationDelay: `${i * 60}ms` }}
                 >
-                  {item.active && (
-                    <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, #1E90FF, transparent)' }} />
-                  )}
-                  <div className="font-display text-tbf-blue mb-4" style={{ fontSize: '2rem', lineHeight: 1 }}>{item.icon}</div>
-                  {item.active && (
-                    <div className="font-body text-tbf-blue uppercase tracking-[0.2em] mb-3" style={{ fontSize: '0.55rem', fontWeight: 700 }}>
-                      Current Lead Division
-                    </div>
-                  )}
-                  <h3 className="font-display font-black uppercase text-white mb-4 tracking-wide" style={{ fontSize: '1.8rem' }}>{item.label}</h3>
-                  <p className="font-body text-tbf-silver-dim leading-relaxed text-sm flex-1">{item.desc}</p>
-                  <div className="mt-6">
-                    <span className="font-body text-tbf-blue text-xs uppercase tracking-[0.15em] font-semibold">Explore →</span>
+                  <span className={`text-xl font-extrabold w-8 text-center ${allDone ? 'text-a1-gold' : unlocked ? 'text-a1-blue' : 'text-a1-silver opacity-40'}`}>
+                    {fl.letter}
+                  </span>
+                  <div>
+                    <p className={`font-bold text-[14px] ${unlocked || allDone ? 'text-a1-text' : 'text-a1-silver'}`}>{fl.word}</p>
                   </div>
+                  {unlocked && <span className="ml-auto text-a1-success"><CheckIcon /></span>}
                 </div>
-              </Reveal>
-            ))}
+              );
+            })}
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* ═══════════════════════════════════════════════════
-          4. PUBLISHING ANCHOR
-          Logo above "Featured Release" — 80px, subtle glow.
-          Credibility link: brand → product → proof.
-      ═══════════════════════════════════════════════════ */}
-      <section className="py-24 lg:py-36 relative overflow-hidden" style={{ background: '#0A0A0A' }}>
-        <div className="absolute right-0 top-0 bottom-0 w-px pointer-events-none" style={{ background: 'linear-gradient(to bottom, transparent, rgba(30,144,255,0.4), transparent)' }} />
-        <div className="absolute pointer-events-none" style={{ width: '800px', height: '800px', background: 'radial-gradient(circle, rgba(30,144,255,0.06) 0%, transparent 65%)', right: '-200px', top: '50%', transform: 'translateY(-50%)' }} />
-
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <Reveal>
-            {/* Publishing anchor logo — sm (80px), centered, subtle glow */}
-            <SectionLogo align="center" glow="subtle" />
-            <p className="eyebrow mb-4 text-center">The Main Event</p>
-            <h2 className="font-display font-black uppercase text-white leading-none mb-3 text-center" style={{ fontSize: 'clamp(2.2rem, 4.4vw, 3.8rem)' }}>
-              Publishing Leads<br />the First Chapter.
-            </h2>
-            <div className="w-14 h-px mx-auto mb-6" style={{ background: '#1E90FF' }} />
-            <p className="font-body text-tbf-silver max-w-xl mx-auto leading-relaxed mb-12 text-center" style={{ fontSize: '1rem' }}>
-              TBF Entertainment's current public launch begins through publishing — where the work is active, the catalog is real, and the first release is already in motion.
-            </p>
-          </Reveal>
-
-          <div
-            className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center p-10 lg:p-16"
-            style={{ background: '#0D0D0D', border: '1px solid rgba(30,144,255,0.28)', boxShadow: '0 0 120px rgba(30,144,255,0.10)' }}
-          >
-            <Reveal delay={100}>
-              <div className="flex flex-col items-center lg:items-start gap-10">
-                <div className="relative">
-                  <div className="absolute -inset-12 pointer-events-none" style={{ background: 'radial-gradient(ellipse, rgba(30,144,255,0.28) 0%, transparent 70%)' }} />
-                  <div className="relative" style={{ boxShadow: '0 30px 80px rgba(0,0,0,0.9), 0 0 60px rgba(30,144,255,0.25)' }}>
-                    <BookCover size="lg" />
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 px-5 py-3" style={{ background: 'rgba(30,144,255,0.08)', border: '1px solid rgba(30,144,255,0.25)' }}>
-                  <div className="w-2 h-2 rounded-full bg-tbf-blue animate-pulse" />
-                  <span className="font-body font-semibold uppercase tracking-[0.15em] text-tbf-blue" style={{ fontSize: '0.65rem' }}>Now Available</span>
-                </div>
-              </div>
-            </Reveal>
-
-            <Reveal delay={200}>
-              <div className="inline-block px-3 py-1.5 mb-4" style={{ background: 'rgba(30,144,255,0.12)', border: '1px solid rgba(30,144,255,0.4)' }}>
-                <span className="font-body font-bold uppercase tracking-[0.2em] text-tbf-blue" style={{ fontSize: '0.6rem' }}>Debut Release</span>
-              </div>
-              <h3 className="font-display font-black uppercase text-white leading-none mb-4" style={{ fontSize: 'clamp(2.2rem, 4vw, 3.5rem)' }}>
-                Young Gs<br />vs. Old Gs
-              </h3>
-              <div className="w-10 h-px mb-5" style={{ background: '#1E90FF' }} />
-              <p className="font-body text-tbf-silver leading-relaxed mb-3" style={{ fontSize: '0.95rem' }}>
-                The debut release under TBF Entertainment Publishing. A story rooted in real culture, generational tension, and authentic street narratives — told with discipline and intent.
-              </p>
-              <p className="font-body text-tbf-silver-dim leading-relaxed mb-8" style={{ fontSize: '0.9rem' }}>
-                This is the proof of concept. The first chapter of a growing catalog built on originality, voice, and long-term creative value.
-              </p>
-              <div className="flex flex-col gap-3 mb-8">
-                {[
-                  { label: 'Publisher', value: 'TBF Entertainment Publishing' },
-                  { label: 'Status',    value: 'Active Release' },
-                  { label: 'Category', value: 'Fiction / Culture / Narrative' },
-                ].map((item) => (
-                  <div key={item.label} className="flex items-center gap-3">
-                    <span className="font-body text-tbf-silver-dim uppercase tracking-[0.12em]" style={{ fontSize: '0.7rem', minWidth: '80px' }}>{item.label}</span>
-                    <div className="w-4 h-px flex-shrink-0" style={{ background: '#2B2B2B' }} />
-                    <span className="font-body text-tbf-silver text-sm">{item.value}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="flex flex-wrap gap-3">
-                <button onClick={() => go('publishing')} className="btn-blue">View Publishing</button>
-                <button onClick={() => go('connect')} className="btn-outline-blue">Get First Access</button>
-              </div>
-            </Reveal>
-          </div>
+      {!data.onboardingDone && (
+        <div className="px-6 pb-8">
+          <Btn onClick={() => setScreen('assessment')}>
+            Start Assessment
+          </Btn>
         </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════
-          5. VISION / EXPANSION
-      ═══════════════════════════════════════════════════ */}
-      <section className="py-24 lg:py-32" style={{ background: '#060606' }}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <Reveal>
-              <div className="relative p-10 lg:p-14" style={{ background: '#0D0D0D', border: '1px solid #1A1A1A' }}>
-                <div className="absolute top-0 left-0 w-10 h-10 pointer-events-none" style={{ borderTop: '2px solid #1E90FF', borderLeft: '2px solid #1E90FF' }} />
-                <div className="absolute bottom-0 right-0 w-10 h-10 pointer-events-none" style={{ borderBottom: '2px solid #1E90FF', borderRight: '2px solid #1E90FF' }} />
-                <div className="font-display font-black uppercase leading-none mb-6" style={{ fontSize: 'clamp(3rem, 6vw, 5rem)', color: 'rgba(255,255,255,0.06)' }}>TBF</div>
-                <div className="flex flex-col gap-5">
-                  {['Story', 'Sound', 'Screen'].map((item, i) => (
-                    <div key={item} className="flex items-center gap-4">
-                      <div className="font-display font-black uppercase text-tbf-blue" style={{ fontSize: '0.65rem', letterSpacing: '0.2em', minWidth: '60px' }}>0{i + 1}</div>
-                      <div className="flex-1 h-px" style={{ background: '#1A1A1A' }} />
-                      <div className="font-display font-black uppercase text-white tracking-widest" style={{ fontSize: '1.3rem' }}>{item}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </Reveal>
-
-            <Reveal delay={150}>
-              <p className="eyebrow mb-4">Long-Term Vision</p>
-              <h2 className="font-display font-black uppercase text-white leading-none mb-4" style={{ fontSize: 'clamp(2rem, 3.5vw, 3rem)' }}>
-                Built to Scale Across Story, Sound, and Screen
-              </h2>
-              <div className="blue-line" />
-              <p className="font-body text-tbf-silver leading-relaxed mb-5" style={{ fontSize: '0.95rem' }}>
-                Publishing is the first public lane, but TBF Entertainment is being structured as a long-term creative company with room for artist collaborations, visual media, future releases, and a broader cultural footprint.
-              </p>
-              <p className="font-body text-tbf-silver-dim leading-relaxed" style={{ fontSize: '0.9rem' }}>
-                This is not a single-project company. The architecture is built for expansion — across catalog depth, creative formats, and cultural reach.
-              </p>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════
-          6. ARTISTRY & MEDIA PREVIEW
-      ═══════════════════════════════════════════════════ */}
-      <section className="pt-32 pb-24 lg:pt-40 lg:pb-32" style={{ background: '#0A0A0A' }}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <Reveal>
-            <div className="text-center mb-20">
-              <p className="eyebrow mb-5">In Development</p>
-              <h2 className="font-display font-black uppercase text-white leading-[0.95]" style={{ fontSize: 'clamp(2.4rem, 5vw, 4.2rem)', letterSpacing: '0.01em' }}>
-                The Next Lanes
-              </h2>
-              <div className="w-14 h-px bg-tbf-blue mx-auto mt-6" />
-            </div>
-          </Reveal>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[
-              {
-                label: 'Artistry', icon: '♪', status: 'Developing',
-                desc: 'TBF Entertainment is building its artistry division around independent artist collaborations and culture-centered creative development. Featured artist releases and partnerships are in the pipeline.',
-                detail: 'Featured artist collaborations coming soon.',
-                page: 'artistry',
-              },
-              {
-                label: 'Media', icon: '◎', status: 'In Development',
-                desc: 'The media division covers original visual content, interviews, cinematic storytelling, and culture-based creative expression. Built to complement and expand the publishing and artistry lanes.',
-                detail: 'Visual storytelling and media content in development.',
-                page: 'media',
-              },
-            ].map((item, i) => (
-              <Reveal key={item.label} delay={i * 150}>
-                <div
-                  className="group p-8 lg:p-10 cursor-pointer transition-all duration-300 h-full flex flex-col"
-                  style={{ background: '#111111', border: '1px solid #2B2B2B' }}
-                  onClick={() => go(item.page)}
-                  onMouseEnter={(e) => { e.currentTarget.style.border = '1px solid rgba(30,144,255,0.35)'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.border = '1px solid #2B2B2B'; }}
-                >
-                  <div className="flex items-start justify-between mb-6">
-                    <div className="font-display text-tbf-blue" style={{ fontSize: '2rem', lineHeight: 1 }}>{item.icon}</div>
-                    <div className="font-body text-tbf-silver-dim uppercase tracking-[0.15em] px-3 py-1" style={{ fontSize: '0.55rem', fontWeight: 600, border: '1px solid #2B2B2B' }}>
-                      {item.status}
-                    </div>
-                  </div>
-                  <h3 className="font-display font-black uppercase text-white mb-4 tracking-wide" style={{ fontSize: '1.6rem' }}>{item.label}</h3>
-                  <p className="font-body text-tbf-silver leading-relaxed text-sm mb-4">{item.desc}</p>
-                  <div className="font-body text-tbf-silver-dim text-sm italic mb-6 flex-1" style={{ borderLeft: '2px solid #2B2B2B', paddingLeft: '12px' }}>
-                    {item.detail}
-                  </div>
-                  <span className="font-body text-tbf-blue text-xs uppercase tracking-[0.15em] font-semibold">Learn More →</span>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════
-          7. FINAL CTA — Memory lock / Exit stamp
-          Logo: md (110px), centered, medium glow.
-          "The first chapter is live."
-          CTAs: Enter Publishing | Connect
-      ═══════════════════════════════════════════════════ */}
-      <section className="py-24 lg:py-36 relative overflow-hidden" style={{ background: '#060606' }}>
-        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `linear-gradient(rgba(30,144,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(30,144,255,0.025) 1px, transparent 1px)`, backgroundSize: '60px 60px' }} />
-        {/* Blue glow orb */}
-        <div className="absolute pointer-events-none" style={{ width: '600px', height: '400px', background: 'radial-gradient(ellipse, rgba(30,144,255,0.11) 0%, transparent 70%)', top: '30%', left: '50%', transform: 'translateX(-50%)' }} />
-
-        <div className="relative z-10 max-w-3xl mx-auto px-6 lg:px-10 text-center">
-          <Reveal>
-            {/* Exit stamp logo — md (160px), centered, medium glow */}
-            <div className="flex justify-center mb-10">
-              <Logo size="md" glow="medium" opacity={0.94} align="center" />
-            </div>
-
-            <div className="w-14 h-px bg-tbf-blue mx-auto mb-10" />
-
-            <h2 className="font-display font-black uppercase text-white leading-[0.95] mb-6" style={{ fontSize: 'clamp(2.2rem, 5vw, 4.2rem)', letterSpacing: '0.01em' }}>
-              This Is Where It Started.<br /><span style={{ color: '#C0C0C0' }}>The Rest Is Being Built.</span>
-            </h2>
-            <p className="font-body text-tbf-silver leading-relaxed mb-12" style={{ fontSize: '1.05rem', maxWidth: '560px', margin: '0 auto 48px' }}>
-              Publishing is active. Artistry and media are in motion. Step in early and follow the build.
-            </p>
-
-            <div className="flex flex-wrap justify-center gap-4 mb-12">
-              <button onClick={() => go('publishing')} className="btn-blue">Enter Publishing</button>
-              <button onClick={() => go('connect')}    className="btn-outline-blue">Connect</button>
-            </div>
-
-            <div className="max-w-lg mx-auto">
-              <p className="eyebrow mb-4">Get Early Access</p>
-              <ConnectForm compact />
-            </div>
-          </Reveal>
-        </div>
-      </section>
-    </>
+      )}
+    </div>
   );
 }
 
-/* ─────────────────────────────────────────────────────────
-   PUBLISHING PAGE
-───────────────────────────────────────────────────────── */
-function PublishingPage({ setPage }) {
-  const go = (p) => { setPage(p); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+// ═══════════════════════════════════════════════════════════
+//  SCREEN: ASSESSMENT
+// ═══════════════════════════════════════════════════════════
+function AssessmentScreen({ setScreen, data, update, showToast }) {
+  const [current, setCurrent] = useState(0);
+  const [answers, setAnswers] = useState(data.assessmentAnswers || {});
+  const q = ASSESSMENT_QUESTIONS[current];
+  const progress = ((current + 1) / ASSESSMENT_QUESTIONS.length) * 100;
 
-  return (
-    <>
-      <PageHero
-        eyebrow="TBF Entertainment — Publishing Division"
-        title="The Written"
-        titleAccent="Catalog"
-        subtitle="Street-rooted narratives, original storytelling, and a growing written catalog built for cultural longevity. TBF Publishing is where the work is real and the first release is already in motion."
-      />
+  const selectAnswer = (option) => {
+    const newAnswers = { ...answers, [q.id]: option };
+    setAnswers(newAnswers);
 
-      <section className="py-20" style={{ background: '#0A0A0A' }}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              { icon: '▣', title: 'Original Stories',    desc: 'Every title in the TBF catalog is built on authentic voice, cultural truth, and storytelling with purpose.' },
-              { icon: '◈', title: 'Long-Term Catalog',   desc: 'We are building a library — not chasing a moment. Each release adds depth and range to the TBF Publishing catalog.' },
-              { icon: '◉', title: 'Culture-First Voice', desc: 'TBF Publishing is rooted in street culture, generational stories, and voices that the mainstream often sidelines.' },
-            ].map((item, i) => (
-              <Reveal key={item.title} delay={i * 120}>
-                <div className="p-7 h-full" style={{ background: '#111111', border: '1px solid #2B2B2B' }}>
-                  <div className="text-tbf-blue text-2xl mb-4 font-display">{item.icon}</div>
-                  <h3 className="font-display font-bold uppercase text-white tracking-wide text-lg mb-3">{item.title}</h3>
-                  <p className="font-body text-tbf-silver-dim text-sm leading-relaxed">{item.desc}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Featured title — full display */}
-      <section className="py-24 lg:py-36" style={{ background: '#060606' }}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <Reveal>
-            <p className="eyebrow mb-4">Debut Title — Now Available</p>
-          </Reveal>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start mt-6">
-            <Reveal delay={100}>
-              <div className="flex flex-col items-start gap-8">
-                <div className="relative">
-                  <div className="absolute -inset-8 pointer-events-none" style={{ background: 'radial-gradient(ellipse, rgba(30,144,255,0.18) 0%, transparent 70%)' }} />
-                  <BookCover size="lg" />
-                </div>
-                <div className="flex flex-col gap-3 w-full max-w-xs">
-                  <div className="flex items-center gap-3 px-4 py-3" style={{ background: 'rgba(30,144,255,0.08)', border: '1px solid rgba(30,144,255,0.25)' }}>
-                    <div className="w-2 h-2 rounded-full bg-tbf-blue animate-pulse" />
-                    <span className="font-body font-semibold uppercase tracking-[0.15em] text-tbf-blue" style={{ fontSize: '0.65rem' }}>Now Available</span>
-                  </div>
-                  <button className="btn-blue w-full">Get the Book</button>
-                  <button className="btn-outline-blue w-full" onClick={() => go('connect')}>Get First Access</button>
-                </div>
-              </div>
-            </Reveal>
-
-            <Reveal delay={200}>
-              <h2 className="font-display font-black uppercase text-white leading-none mb-4" style={{ fontSize: 'clamp(2.5rem, 5vw, 4.5rem)' }}>
-                Young Gs<br />vs. Old Gs
-              </h2>
-              <div className="blue-line" />
-              <p className="font-body text-tbf-silver leading-relaxed mb-5" style={{ fontSize: '1rem' }}>
-                The debut release from TBF Entertainment Publishing. A story rooted in generational tension, street culture, and authentic voice — told without compromise and built to last in the catalog.
-              </p>
-              <p className="font-body text-tbf-silver-dim leading-relaxed mb-8" style={{ fontSize: '0.9rem' }}>
-                Young Gs vs. Old Gs sits at the intersection of loyalty, legacy, and the cultural divide between generations raised in the same world but by different rules. This isn't nostalgia — it's a reckoning.
-              </p>
-              <div className="p-6 mb-8" style={{ background: '#0D0D0D', border: '1px solid #1A1A1A', borderLeft: '3px solid #1E90FF' }}>
-                <p className="font-body text-tbf-silver italic leading-relaxed" style={{ fontSize: '0.95rem' }}>
-                  "The first proof of what TBF Publishing is building — a catalog with voice, with grit, and with a clear point of view."
-                </p>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                  { label: 'Publisher', value: 'TBF Entertainment' },
-                  { label: 'Division',  value: 'Publishing' },
-                  { label: 'Category', value: 'Culture / Fiction' },
-                  { label: 'Status',   value: 'Active Release' },
-                ].map((item) => (
-                  <div key={item.label} className="flex flex-col gap-1">
-                    <span className="eyebrow" style={{ fontSize: '0.6rem' }}>{item.label}</span>
-                    <span className="font-body text-white text-sm">{item.value}</span>
-                  </div>
-                ))}
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* Vault */}
-      <section className="py-24" style={{ background: '#0A0A0A' }}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <Reveal>
-            <div className="text-center mb-14">
-              <p className="eyebrow mb-4">The Catalog Grows</p>
-              <h2 className="font-display font-black uppercase text-white leading-none" style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)' }}>
-                More Stories<br />In the Vault
-              </h2>
-              <div className="w-12 h-px bg-tbf-blue mx-auto mt-5" />
-            </div>
-          </Reveal>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            {[1, 2, 3].map((i) => (
-              <Reveal key={i} delay={i * 100}>
-                <div className="p-8 flex flex-col items-center gap-5" style={{ background: '#111111', border: '1px solid #1A1A1A', minHeight: '240px' }}>
-                  <div className="w-16 h-20 flex items-center justify-center" style={{ border: '1px solid #2B2B2B', background: '#0D0D0D' }}>
-                    <span className="text-2xl font-display font-black" style={{ color: '#2B2B2B' }}>?</span>
-                  </div>
-                  <div className="text-center">
-                    <div className="font-display font-bold uppercase tracking-widest text-sm mb-2" style={{ color: '#2B2B2B' }}>Untitled</div>
-                    <div className="font-body text-tbf-silver-dim uppercase tracking-[0.2em]" style={{ fontSize: '0.6rem' }}>Coming Soon</div>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-          <Reveal delay={200}>
-            <div className="p-8 text-center" style={{ background: 'rgba(30,144,255,0.04)', border: '1px solid rgba(30,144,255,0.15)' }}>
-              <p className="font-body text-tbf-silver-dim text-sm mb-4">
-                Additional titles are in development. The TBF Publishing catalog is being built with intention — one release at a time.
-              </p>
-              <button onClick={() => go('connect')} className="btn-outline-blue text-xs">Submit a Publishing Inquiry</button>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-    </>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────
-   ARTISTRY PAGE
-───────────────────────────────────────────────────────── */
-function ArtistryPage({ setPage }) {
-  const go = (p) => { setPage(p); window.scrollTo({ top: 0, behavior: 'smooth' }); };
-
-  return (
-    <>
-      <PageHero
-        eyebrow="TBF Entertainment — Artistry Division"
-        title="Sound."
-        titleAccent="Culture. Identity."
-        subtitle="Featured independent artist collaborations and future releases under the TBF Entertainment banner. The artistry division is being developed with the same discipline and vision that guides publishing."
-      />
-
-      <section className="py-20" style={{ background: '#0A0A0A' }}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <Reveal>
-              <p className="eyebrow mb-4">The Artistry Lane</p>
-              <h2 className="font-display font-black uppercase text-white leading-none mb-4" style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)' }}>
-                Built Around<br />Independent Artists
-              </h2>
-              <div className="blue-line" />
-              <p className="font-body text-tbf-silver leading-relaxed mb-5" style={{ fontSize: '0.95rem' }}>
-                TBF Entertainment's artistry division is structured for independent artist collaborations — not major label mimicry. We are building around creative originality, cultural authenticity, and strategic long-term catalog development.
-              </p>
-              <p className="font-body text-tbf-silver-dim leading-relaxed" style={{ fontSize: '0.9rem' }}>
-                This is a lane for artists who operate with discipline, have a clear point of view, and are building something with lasting value.
-              </p>
-            </Reveal>
-            <Reveal delay={150}>
-              <div className="flex flex-col gap-4">
-                {[
-                  { title: 'Artist Collaborations',  desc: 'Independent artist partnerships focused on creative development and release strategy.' },
-                  { title: 'Culture-Centered Sound', desc: 'Music and audio content rooted in authentic cultural voice, not trend-chasing.' },
-                  { title: 'Catalog Development',    desc: 'Building long-term catalog value through original releases and creative projects.' },
-                  { title: 'Creative Expansion',     desc: 'Where music and storytelling intersect with the broader TBF entertainment universe.' },
-                ].map((item, i) => (
-                  <div key={item.title} className="flex items-start gap-4 p-5" style={{ border: '1px solid #1A1A1A' }}>
-                    <div className="font-display font-black text-tbf-blue flex-shrink-0" style={{ fontSize: '0.7rem', letterSpacing: '0.2em', paddingTop: '2px' }}>0{i + 1}</div>
-                    <div>
-                      <h4 className="font-display font-bold uppercase text-white tracking-wide text-sm mb-1">{item.title}</h4>
-                      <p className="font-body text-tbf-silver-dim text-xs leading-relaxed">{item.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-24" style={{ background: '#060606' }}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <Reveal>
-            <div className="text-center mb-14">
-              <p className="eyebrow mb-4">Coming Soon</p>
-              <h2 className="font-display font-black uppercase text-white leading-none" style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)' }}>
-                Featured<br />Collaborations
-              </h2>
-              <div className="w-12 h-px bg-tbf-blue mx-auto mt-5 mb-5" />
-              <p className="font-body text-tbf-silver-dim text-sm max-w-md mx-auto">
-                Featured artist collaborations are in development. This space will showcase TBF's artistry lane as it becomes public.
-              </p>
-            </div>
-          </Reveal>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[1, 2, 3, 4].map((i) => (
-              <Reveal key={i} delay={i * 80}>
-                <div className="aspect-square flex flex-col items-center justify-center gap-3" style={{ background: '#111111', border: '1px solid #1A1A1A' }}>
-                  <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: '#1A1A1A', border: '1px solid #2B2B2B' }}>
-                    <span className="font-display font-black text-xl" style={{ color: '#2B2B2B' }}>?</span>
-                  </div>
-                  <span className="font-body uppercase tracking-widest" style={{ fontSize: '0.6rem', color: '#2B2B2B' }}>Coming Soon</span>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-24" style={{ background: '#0A0A0A' }}>
-        <div className="max-w-3xl mx-auto px-6 lg:px-10 text-center">
-          <Reveal>
-            <p className="eyebrow mb-4">Artist Inquiries</p>
-            <h2 className="font-display font-black uppercase text-white leading-none mb-4" style={{ fontSize: 'clamp(2rem, 4vw, 3rem)' }}>
-              If Your Work is Built<br />to Last, Connect.
-            </h2>
-            <div className="w-12 h-px bg-tbf-blue mx-auto mb-6" />
-            <p className="font-body text-tbf-silver-dim text-sm leading-relaxed mb-8 max-w-lg mx-auto">
-              TBF Entertainment is selectively building its artistry collaborations. If you are an independent artist with a clear vision and real work, submit an inquiry.
-            </p>
-            <button onClick={() => go('connect')} className="btn-blue">Submit Artist Inquiry</button>
-          </Reveal>
-        </div>
-      </section>
-    </>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────
-   MEDIA PAGE
-───────────────────────────────────────────────────────── */
-function MediaPage({ setPage }) {
-  const go = (p) => { setPage(p); window.scrollTo({ top: 0, behavior: 'smooth' }); };
-
-  return (
-    <>
-      <PageHero
-        eyebrow="TBF Entertainment — Media Division"
-        title="Visual."
-        titleAccent="Story. Screen."
-        subtitle="Original visual content, interviews, cinematic storytelling, and culture-based creative expression. The TBF Media division is an active creative lane — built to complement and amplify everything the brand produces."
-      />
-
-      <section className="py-20" style={{ background: '#0A0A0A' }}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              { icon: '◎', title: 'Visual Storytelling',        desc: 'Cinematic content that carries the TBF narrative beyond the page — documentary-style, editorial, and original formats.' },
-              { icon: '◈', title: 'Interviews & Conversations', desc: 'Real conversations with real voices. TBF Media will feature artists, creators, and culture-builders in long-form format.' },
-              { icon: '▦', title: 'Creative Media Expression',  desc: 'Short-form and long-form content rooted in culture, creativity, and the stories TBF is actively building across all lanes.' },
-            ].map((item, i) => (
-              <Reveal key={item.title} delay={i * 120}>
-                <div className="p-8 h-full flex flex-col" style={{ background: '#111111', border: '1px solid #2B2B2B' }}>
-                  <div className="text-tbf-blue text-2xl mb-5 font-display">{item.icon}</div>
-                  <h3 className="font-display font-bold uppercase text-white tracking-wide text-lg mb-3">{item.title}</h3>
-                  <p className="font-body text-tbf-silver-dim text-sm leading-relaxed flex-1">{item.desc}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-24" style={{ background: '#060606' }}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <Reveal>
-            <div className="text-center mb-14">
-              <p className="eyebrow mb-4">In Development</p>
-              <h2 className="font-display font-black uppercase text-white leading-none" style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)' }}>
-                Content<br />Coming Soon
-              </h2>
-              <div className="w-12 h-px bg-tbf-blue mx-auto mt-5 mb-5" />
-              <p className="font-body text-tbf-silver-dim text-sm max-w-md mx-auto">
-                Visual storytelling and media content are in active development. This space will showcase TBF's media work as it is released.
-              </p>
-            </div>
-          </Reveal>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {[
-              { label: 'Short Film',       ratio: '56.25%' },
-              { label: 'Interview Series', ratio: '56.25%' },
-              { label: 'Editorial',        ratio: '75%' },
-              { label: 'Visual Essay',     ratio: '75%' },
-              { label: 'Behind the Build', ratio: '100%' },
-              { label: 'Culture Drop',     ratio: '100%' },
-            ].map((item, i) => (
-              <Reveal key={item.label} delay={i * 70}>
-                <div className="relative w-full overflow-hidden" style={{ paddingTop: item.ratio, background: '#0D0D0D', border: '1px solid #1A1A1A' }}>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-                    <div className="w-10 h-10 flex items-center justify-center" style={{ border: '1px solid #2B2B2B' }}>
-                      <span className="font-display font-black" style={{ color: '#2B2B2B' }}>▷</span>
-                    </div>
-                    <span className="font-body uppercase tracking-[0.18em]" style={{ fontSize: '0.6rem', color: '#2B2B2B' }}>{item.label}</span>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-24" style={{ background: '#0A0A0A' }}>
-        <div className="max-w-3xl mx-auto px-6 lg:px-10 text-center">
-          <Reveal>
-            <p className="eyebrow mb-4">Media & Content</p>
-            <h2 className="font-display font-black uppercase text-white leading-none mb-4" style={{ fontSize: 'clamp(2rem, 4vw, 3rem)' }}>
-              Visual Collaboration<br />& Creative Inquiry
-            </h2>
-            <div className="w-12 h-px bg-tbf-blue mx-auto mb-6" />
-            <p className="font-body text-tbf-silver-dim text-sm leading-relaxed mb-8 max-w-md mx-auto">
-              If you are a filmmaker, editor, photographer, or visual content creator interested in working with TBF Entertainment, submit a media inquiry.
-            </p>
-            <button onClick={() => go('connect')} className="btn-blue">Submit Media Inquiry</button>
-          </Reveal>
-        </div>
-      </section>
-    </>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────
-   CONNECT PAGE
-───────────────────────────────────────────────────────── */
-function ConnectPage() {
-  return (
-    <>
-      <PageHero
-        eyebrow="TBF Entertainment — Connect"
-        title="Let's"
-        titleAccent="Talk."
-        subtitle="Business inquiries, artist collaborations, publishing submissions, media partnerships, and general contact. We read everything."
-      />
-
-      <section className="py-20 lg:py-28" style={{ background: '#0A0A0A' }}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            <div className="lg:col-span-2">
-              <Reveal>
-                <h2 className="font-display font-black uppercase text-white mb-4" style={{ fontSize: 'clamp(1.8rem, 3vw, 2.5rem)' }}>
-                  Submit an Inquiry
-                </h2>
-                <div className="blue-line" />
-              </Reveal>
-              <Reveal delay={100}><ConnectForm /></Reveal>
-            </div>
-
-            <div className="flex flex-col gap-5">
-              <Reveal delay={150}>
-                <div className="p-7" style={{ background: '#111111', border: '1px solid #2B2B2B' }}>
-                  <p className="eyebrow mb-4">Direct Contact</p>
-                  <div className="flex flex-col gap-4">
-                    <div>
-                      <div className="font-body text-tbf-silver-dim text-xs uppercase tracking-[0.12em] mb-1">Email</div>
-                      <a href="mailto:info@tbfentertainment.art" className="font-body text-white text-sm hover:text-tbf-blue transition-colors duration-200">
-                        info@tbfentertainment.art
-                      </a>
-                    </div>
-                    <div className="h-px" style={{ background: '#1A1A1A' }} />
-                    <div>
-                      <div className="font-body text-tbf-silver-dim text-xs uppercase tracking-[0.12em] mb-1">Domain</div>
-                      <span className="font-body text-white text-sm">tbfentertainment.art</span>
-                    </div>
-                  </div>
-                </div>
-              </Reveal>
-
-              {[
-                { title: 'Publishing', desc: 'Manuscript submissions, distribution inquiries, author collaborations, and catalog questions.' },
-                { title: 'Artistry',   desc: 'Artist collaboration inquiries, creative project submissions, and independent release discussions.' },
-                { title: 'Media',      desc: 'Visual content, film, photography, editorial, and creative media partnership inquiries.' },
-                { title: 'Business',   desc: 'Partnerships, licensing, distribution, and brand collaboration inquiries.' },
-              ].map((item, i) => (
-                <Reveal key={item.title} delay={200 + i * 80}>
-                  <div className="p-6" style={{ background: '#111111', border: '1px solid #1A1A1A' }}>
-                    <h4 className="font-display font-bold uppercase text-tbf-blue tracking-wide text-sm mb-2">{item.title}</h4>
-                    <p className="font-body text-tbf-silver-dim text-xs leading-relaxed">{item.desc}</p>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-    </>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────
-   APP ROOT
-───────────────────────────────────────────────────────── */
-export default function App() {
-  const [page, setPage] = useState('home');
-
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' });
-  }, [page]);
-
-  const renderPage = () => {
-    switch (page) {
-      case 'publishing': return <PublishingPage setPage={setPage} />;
-      case 'artistry':   return <ArtistryPage   setPage={setPage} />;
-      case 'media':      return <MediaPage       setPage={setPage} />;
-      case 'connect':    return <ConnectPage />;
-      default:           return <HomePage        setPage={setPage} />;
-    }
+    setTimeout(() => {
+      if (current < ASSESSMENT_QUESTIONS.length - 1) {
+        setCurrent(current + 1);
+      } else {
+        const newBadges = data.badges.includes('first_step') ? data.badges : [...data.badges, 'first_step'];
+        update({
+          assessmentDone: true,
+          assessmentAnswers: newAnswers,
+          onboardingDone: true,
+          badges: newBadges,
+        });
+        showToast('First Step badge earned!');
+        setScreen('dashboard');
+      }
+    }, 300);
   };
 
   return (
-    <div className="min-h-screen font-body" style={{ background: '#0A0A0A' }}>
-      <Nav page={page} setPage={setPage} />
-      <main>{renderPage()}</main>
-      <Footer setPage={setPage} />
+    <div className="flex-1 flex flex-col min-h-screen bg-white">
+      <Header title="Assessment" onBack={() => setScreen('finisher-intro')} />
+
+      {/* Progress bar */}
+      <div className="h-1 bg-a1-surface">
+        <div className="h-full bg-a1-blue transition-all duration-500 ease-out" style={{ width: `${progress}%` }} />
+      </div>
+
+      <div className="flex-1 flex flex-col justify-center px-6 py-8">
+        <div key={current} className="animate-fade-in">
+          <p className="text-[11px] font-semibold uppercase tracking-[2px] text-a1-silver mb-4">
+            Question {current + 1} of {ASSESSMENT_QUESTIONS.length}
+          </p>
+          <h2 className="text-[20px] font-bold text-a1-text leading-snug mb-8">
+            {q.text}
+          </h2>
+          <div className="space-y-3">
+            {q.options.map((opt) => (
+              <button
+                key={opt}
+                onClick={() => selectAnswer(opt)}
+                className={`w-full text-left px-5 py-4 rounded-card border-2 font-semibold text-[15px] transition-all ${
+                  answers[q.id] === opt
+                    ? 'border-a1-blue bg-a1-blue/5 text-a1-blue'
+                    : 'border-a1-silver-light text-a1-text hover:border-a1-blue/30'
+                }`}
+              >
+                {opt}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+//  SCREEN: DASHBOARD
+// ═══════════════════════════════════════════════════════════
+function DashboardScreen({ setScreen, data, syncStatus, dismissedAi, setDismissedAi }) {
+  const completedCount = data.completedActivities.length;
+  const totalActivities = WEEKS.reduce((sum, w) => sum + w.activities.length, 0);
+  const progressPct = totalActivities ? Math.round((completedCount / totalActivities) * 100) : 0;
+
+  return (
+    <ScreenShell title="Dashboard" syncStatus={syncStatus} setScreen={setScreen} data={data}>
+      {/* Greeting */}
+      <div className="px-4 pt-5 pb-2">
+        <p className="text-[12px] font-semibold uppercase tracking-[2px] text-a1-silver">Welcome back</p>
+        <h1 className="text-[24px] font-extrabold text-a1-text mt-1">{data.name || 'Yepper'}</h1>
+      </div>
+
+      <AiSuggestion
+        tip={completedCount === 0
+          ? 'Start with Week 1. Every FINISHER begins with Focus.'
+          : progressPct === 100
+            ? 'You finished everything. That is rare. That is discipline.'
+            : 'Consistency beats intensity. Keep showing up.'
+        }
+        id="dashboard"
+        dismissedAi={dismissedAi}
+        setDismissedAi={setDismissedAi}
+      />
+
+      {/* Progress overview */}
+      <div className="px-4 mt-4">
+        <Card>
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[12px] font-semibold uppercase tracking-[1.5px] text-a1-silver">Overall Progress</span>
+            <span className="text-[20px] font-extrabold text-a1-blue">{progressPct}%</span>
+          </div>
+          <div className="h-2 bg-a1-surface rounded-full overflow-hidden">
+            <div className="h-full bg-a1-blue rounded-full transition-all duration-700 ease-out" style={{ width: `${progressPct}%` }} />
+          </div>
+          <div className="flex justify-between mt-2">
+            <span className="text-[11px] text-a1-silver">{completedCount} of {totalActivities} activities</span>
+            <span className="text-[11px] text-a1-silver">{data.unlockedLetters.length}/8 letters</span>
+          </div>
+        </Card>
+      </div>
+
+      {/* Week cards */}
+      <div className="px-4 mt-5 space-y-3">
+        <p className="text-[12px] font-semibold uppercase tracking-[1.5px] text-a1-silver mb-1">Your Weeks</p>
+        {WEEKS.map((week) => {
+          const done = week.activities.filter((a) => data.completedActivities.includes(a.id)).length;
+          const total = week.activities.length;
+          const complete = done === total;
+          return (
+            <Card key={week.num} onClick={() => setScreen(`week${week.num}`)}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-[2px] text-a1-silver">Week {week.num}</p>
+                  <p className="font-bold text-[16px] text-a1-text mt-0.5">{week.title}</p>
+                  <p className="text-[13px] text-a1-text-secondary mt-1">{done}/{total} activities</p>
+                </div>
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${complete ? 'bg-a1-success/10 text-a1-success' : 'bg-a1-surface text-a1-silver'}`}>
+                  {complete ? <CheckIcon size={20} /> : <span className="text-[13px] font-bold">{done}/{total}</span>}
+                </div>
+              </div>
+            </Card>
+          );
+        })}
+      </div>
+
+      {/* Quick links */}
+      <div className="px-4 mt-5 mb-4 flex gap-3">
+        <button onClick={() => setScreen('rewards')} className="flex-1 bg-a1-surface rounded-card py-3 text-center text-[12px] font-semibold uppercase tracking-[1.5px] text-a1-text-secondary active:bg-a1-silver-light transition-colors">
+          Rewards
+        </button>
+        <button onClick={() => setScreen('parent')} className="flex-1 bg-a1-surface rounded-card py-3 text-center text-[12px] font-semibold uppercase tracking-[1.5px] text-a1-text-secondary active:bg-a1-silver-light transition-colors">
+          For Parents
+        </button>
+      </div>
+    </ScreenShell>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+//  SCREEN: WEEK (Reusable for Weeks 1–4)
+// ═══════════════════════════════════════════════════════════
+function WeekScreen({ week, setScreen, data, completeActivity, syncStatus, dismissedAi, setDismissedAi }) {
+  return (
+    <ScreenShell
+      title={`Week ${week.num}`}
+      syncStatus={syncStatus}
+      setScreen={setScreen}
+      onBack={() => setScreen('dashboard')}
+      data={data}
+    >
+      <div className="px-4 pt-5">
+        <p className="text-[11px] font-semibold uppercase tracking-[2px] text-a1-silver">Week {week.num}</p>
+        <h2 className="text-[22px] font-extrabold text-a1-text mt-1 leading-tight">{week.title}</h2>
+        <p className="text-[14px] text-a1-text-secondary mt-2 leading-relaxed">{week.description}</p>
+      </div>
+
+      <AiSuggestion tip={week.aiTip} id={`week${week.num}`} dismissedAi={dismissedAi} setDismissedAi={setDismissedAi} />
+
+      {/* FINISHER letters for this week */}
+      <div className="px-4 mt-4">
+        <div className="flex gap-2">
+          {week.letters.map((li) => {
+            const unlocked = data.unlockedLetters.includes(li);
+            return (
+              <div key={li} className={`flex items-center gap-2 px-3 py-2 rounded-lg border ${unlocked ? 'border-a1-blue/20 bg-blue-50' : 'border-a1-silver-light bg-white'}`}>
+                <span className={`font-extrabold text-sm ${unlocked ? 'text-a1-blue' : 'text-a1-silver opacity-40'}`}>{FINISHER_LETTERS[li].letter}</span>
+                <span className={`text-[12px] font-semibold ${unlocked ? 'text-a1-text' : 'text-a1-silver'}`}>{FINISHER_LETTERS[li].word}</span>
+                {unlocked && <span className="text-a1-success ml-auto"><CheckIcon size={14} /></span>}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Activities */}
+      <div className="px-4 mt-5 space-y-3 pb-2">
+        <p className="text-[12px] font-semibold uppercase tracking-[1.5px] text-a1-silver mb-1">Activities</p>
+        {week.activities.map((act) => {
+          const done = data.completedActivities.includes(act.id);
+          return (
+            <Card key={act.id}>
+              <div className="flex items-start gap-3">
+                <button
+                  onClick={() => !done && completeActivity(act.id)}
+                  className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all ${
+                    done ? 'bg-a1-success border-a1-success text-white' : 'border-a1-silver-light text-transparent hover:border-a1-blue'
+                  }`}
+                  aria-label={done ? 'Completed' : 'Mark complete'}
+                >
+                  {done && <CheckIcon size={12} />}
+                </button>
+                <div className="flex-1">
+                  <p className={`font-bold text-[15px] ${done ? 'text-a1-text-secondary line-through' : 'text-a1-text'}`}>{act.title}</p>
+                  <p className="text-[13px] text-a1-text-secondary mt-1 leading-relaxed">{act.desc}</p>
+                </div>
+              </div>
+            </Card>
+          );
+        })}
+      </div>
+    </ScreenShell>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+//  SCREEN: REWARDS
+// ═══════════════════════════════════════════════════════════
+function RewardsScreen({ setScreen, data, syncStatus }) {
+  return (
+    <ScreenShell title="Rewards" syncStatus={syncStatus} setScreen={setScreen} data={data}>
+      <div className="px-4 pt-5">
+        <h2 className="text-[22px] font-extrabold text-a1-text">Your Badges</h2>
+        <p className="text-[14px] text-a1-text-secondary mt-1">Earned through action. Not given.</p>
+      </div>
+
+      <div className="px-4 mt-5 space-y-3">
+        {BADGE_DEFS.map((badge) => {
+          const earned = data.badges.includes(badge.id);
+          return (
+            <Card key={badge.id} className={earned ? '' : 'opacity-50'}>
+              <div className="flex items-center gap-4">
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl ${
+                  earned
+                    ? badge.id === 'full_finisher' ? 'bg-a1-gold/10' : 'bg-a1-blue/10'
+                    : 'bg-a1-surface'
+                }`}>
+                  {earned ? badge.icon : '🔒'}
+                </div>
+                <div className="flex-1">
+                  <p className={`font-bold text-[15px] ${earned ? 'text-a1-text' : 'text-a1-silver'}`}>{badge.name}</p>
+                  <p className="text-[13px] text-a1-text-secondary">{badge.desc}</p>
+                </div>
+                {earned && <span className="text-a1-success"><CheckIcon size={18} /></span>}
+              </div>
+            </Card>
+          );
+        })}
+      </div>
+
+      <div className="px-4 mt-6 mb-4">
+        <div className="bg-a1-surface rounded-card p-4 text-center">
+          <p className="text-[13px] text-a1-text-secondary">
+            <span className="font-bold text-a1-text">{data.badges.length}</span> of {BADGE_DEFS.length} badges earned
+          </p>
+        </div>
+      </div>
+    </ScreenShell>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+//  SCREEN: PROGRESS STATUS
+// ═══════════════════════════════════════════════════════════
+function ProgressScreen({ setScreen, data, syncStatus }) {
+  const totalActivities = WEEKS.reduce((sum, w) => sum + w.activities.length, 0);
+  const completedCount = data.completedActivities.length;
+
+  return (
+    <ScreenShell title="Progress" syncStatus={syncStatus} setScreen={setScreen} data={data}>
+      <div className="px-4 pt-5">
+        <h2 className="text-[22px] font-extrabold text-a1-text">Your Progress</h2>
+        <p className="text-[14px] text-a1-text-secondary mt-1">Everything you have done. Nothing invented.</p>
+      </div>
+
+      {/* Big progress ring (simplified as bar) */}
+      <div className="px-4 mt-5">
+        <Card>
+          <div className="text-center py-4">
+            <p className="text-[48px] font-extrabold text-a1-blue leading-none">
+              {totalActivities ? Math.round((completedCount / totalActivities) * 100) : 0}%
+            </p>
+            <p className="text-[12px] font-semibold uppercase tracking-[2px] text-a1-silver mt-2">Overall Complete</p>
+          </div>
+        </Card>
+      </div>
+
+      {/* Per-week breakdown */}
+      <div className="px-4 mt-5 space-y-3">
+        {WEEKS.map((week) => {
+          const done = week.activities.filter((a) => data.completedActivities.includes(a.id)).length;
+          const total = week.activities.length;
+          const pct = total ? Math.round((done / total) * 100) : 0;
+          return (
+            <Card key={week.num} onClick={() => setScreen(`week${week.num}`)}>
+              <div className="flex items-center justify-between mb-2">
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-[2px] text-a1-silver">Week {week.num}</p>
+                  <p className="font-bold text-[15px] text-a1-text">{week.title}</p>
+                </div>
+                <span className="text-[18px] font-extrabold text-a1-blue">{pct}%</span>
+              </div>
+              <div className="h-1.5 bg-a1-surface rounded-full overflow-hidden">
+                <div className="h-full bg-a1-blue rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
+              </div>
+            </Card>
+          );
+        })}
+      </div>
+
+      {/* FINISHER status */}
+      <div className="px-4 mt-5 mb-4">
+        <Card>
+          <p className="text-[12px] font-semibold uppercase tracking-[2px] text-a1-silver mb-3">FINISHER Letters</p>
+          <div className="flex justify-between">
+            {FINISHER_LETTERS.map((fl, i) => {
+              const unlocked = data.unlockedLetters.includes(i);
+              const allDone = data.unlockedLetters.length === 8;
+              return (
+                <div key={i} className="flex flex-col items-center gap-1">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center font-extrabold text-sm ${
+                    allDone ? 'bg-a1-gold/10 text-a1-gold' : unlocked ? 'bg-a1-blue/10 text-a1-blue' : 'bg-a1-surface text-a1-silver opacity-40'
+                  }`}>
+                    {fl.letter}
+                  </div>
+                  <span className={`text-[9px] font-semibold ${unlocked || allDone ? 'text-a1-text-secondary' : 'text-a1-silver opacity-40'}`}>
+                    {fl.word.slice(0, 3)}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+      </div>
+
+      {/* Streak */}
+      <div className="px-4 mb-4">
+        <Card>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-[12px] font-semibold uppercase tracking-[2px] text-a1-silver">Current Streak</p>
+              <p className="text-[28px] font-extrabold text-a1-text mt-1">{data.streak} day{data.streak !== 1 ? 's' : ''}</p>
+            </div>
+            <span className="text-3xl">{data.streak >= 3 ? '🔥' : '📅'}</span>
+          </div>
+        </Card>
+      </div>
+    </ScreenShell>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+//  SCREEN: PARENT INTEREST
+// ═══════════════════════════════════════════════════════════
+function ParentInterestScreen({ setScreen, data, update, showToast }) {
+  const [parentName, setParentName] = useState('');
+  const [parentEmail, setParentEmail] = useState('');
+  const [parentPhone, setParentPhone] = useState('');
+
+  if (data.parentFormSubmitted) {
+    return (
+      <ScreenShell title="Parent" syncStatus="saved" setScreen={setScreen} data={data}>
+        <div className="px-4 pt-12 text-center">
+          <div className="w-16 h-16 bg-a1-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-a1-success"><CheckIcon size={32} /></span>
+          </div>
+          <h2 className="text-[22px] font-extrabold text-a1-text">Thank you.</h2>
+          <p className="text-[14px] text-a1-text-secondary mt-2 leading-relaxed px-4">
+            Your interest has been recorded. A/1 Suppliers will reach out with more information about the Young Entrepreneurs Process.
+          </p>
+        </div>
+      </ScreenShell>
+    );
+  }
+
+  const canSubmit = parentName.trim().length >= 2 && (parentEmail.trim().length > 0 || parentPhone.trim().length > 0);
+
+  return (
+    <ScreenShell title="Parent" syncStatus="saved" setScreen={setScreen} data={data}>
+      <div className="px-4 pt-5">
+        <h2 className="text-[22px] font-extrabold text-a1-text">For Parents & Guardians</h2>
+        <p className="text-[14px] text-a1-text-secondary mt-2 leading-relaxed">
+          Your child is building identity, discipline, and real skills through the A/1 Young Entrepreneurs Process. If you want to learn more or stay connected, fill out this form.
+        </p>
+      </div>
+
+      <div className="px-4 mt-6 space-y-4">
+        <div>
+          <label className="text-[12px] font-semibold uppercase tracking-[1.5px] text-a1-silver mb-2 block">Your Name</label>
+          <input
+            type="text"
+            value={parentName}
+            onChange={(e) => setParentName(e.target.value)}
+            placeholder="Full name"
+            className="w-full px-4 py-3.5 rounded-[10px] border-2 border-a1-silver-light text-a1-text font-semibold text-[16px] focus:border-a1-blue focus:outline-none transition-colors bg-white placeholder:text-a1-silver"
+          />
+        </div>
+        <div>
+          <label className="text-[12px] font-semibold uppercase tracking-[1.5px] text-a1-silver mb-2 block">Email</label>
+          <input
+            type="email"
+            value={parentEmail}
+            onChange={(e) => setParentEmail(e.target.value)}
+            placeholder="email@example.com"
+            className="w-full px-4 py-3.5 rounded-[10px] border-2 border-a1-silver-light text-a1-text font-semibold text-[16px] focus:border-a1-blue focus:outline-none transition-colors bg-white placeholder:text-a1-silver"
+          />
+        </div>
+        <div>
+          <label className="text-[12px] font-semibold uppercase tracking-[1.5px] text-a1-silver mb-2 block">Phone (optional)</label>
+          <input
+            type="tel"
+            value={parentPhone}
+            onChange={(e) => setParentPhone(e.target.value)}
+            placeholder="(513) 555-0000"
+            className="w-full px-4 py-3.5 rounded-[10px] border-2 border-a1-silver-light text-a1-text font-semibold text-[16px] focus:border-a1-blue focus:outline-none transition-colors bg-white placeholder:text-a1-silver"
+          />
+        </div>
+      </div>
+
+      <div className="px-4 mt-8 mb-4">
+        <Btn disabled={!canSubmit} onClick={() => {
+          update({ parentFormSubmitted: true });
+          showToast('Interest form submitted.');
+        }}>
+          Submit Interest
+        </Btn>
+      </div>
+
+      <div className="px-4 mb-8">
+        <p className="text-[12px] text-a1-text-secondary text-center leading-relaxed">
+          A/1 Suppliers is a 501(c)(3) nonprofit based in Avondale, Cincinnati.<br />
+          info@a1suppliers.org
+        </p>
+      </div>
+    </ScreenShell>
   );
 }

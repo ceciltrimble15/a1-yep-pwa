@@ -1,34 +1,34 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
+  content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
     extend: {
       fontFamily: {
-        display: ['Barlow Condensed', 'system-ui', 'sans-serif'],
-        body:    ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Outfit', 'system-ui', 'sans-serif'],
+        body: ['Outfit', 'system-ui', 'sans-serif'],
       },
       colors: {
-        tbf: {
-          black:   '#0A0A0A',
-          blue:    '#1E90FF',
-          'blue-dim': '#1570CC',
-          'blue-glow': 'rgba(30,144,255,0.25)',
-          silver:  '#C0C0C0',
-          'silver-dim': '#A9A9A9',
-          dark:    '#2B2B2B',
-          'dark-2': '#111111',
-          'dark-3': '#1A1A1A',
+        a1: {
+          blue: '#1A3A8F',
+          'blue-light': '#2A4EAF',
+          'blue-dark': '#0F2460',
+          white: '#FFFFFF',
+          surface: '#F0F2F7',
+          silver: '#B0B8C8',
+          'silver-light': '#D4DAE6',
+          text: '#1A1A2E',
+          'text-secondary': '#4A5068',
+          success: '#1B7A3D',
+          alert: '#C4421A',
+          gold: '#D4A017',
         },
       },
       boxShadow: {
-        'blue-glow':  '0 0 24px rgba(30,144,255,0.35), 0 0 8px rgba(30,144,255,0.2)',
-        'blue-glow-lg': '0 0 48px rgba(30,144,255,0.4), 0 0 16px rgba(30,144,255,0.25)',
-        'card-dark':  '0 4px 32px rgba(0,0,0,0.6)',
-        'card-hover': '0 8px 48px rgba(0,0,0,0.8), 0 0 24px rgba(30,144,255,0.15)',
+        card: '0 4px 24px rgba(26, 58, 143, 0.08), 0 1px 3px rgba(0,0,0,0.04)',
+        'card-hover': '0 8px 32px rgba(26, 58, 143, 0.12), 0 2px 6px rgba(0,0,0,0.06)',
       },
-      letterSpacing: {
-        widest2: '0.2em',
-        widest3: '0.3em',
+      borderRadius: {
+        card: '16px',
       },
     },
   },
