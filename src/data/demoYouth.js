@@ -8,7 +8,7 @@ export const demoYouth = [
     id: 'marcus',
     name: 'Marcus',
     track: 'Build & Sell',
-    anchor: 'Leadership',
+    anchor: 'Financial Awareness',
     edge: 'Discipline',
     style: 'Hands-On',
     xp: 150,

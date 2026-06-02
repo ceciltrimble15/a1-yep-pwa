@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { DIMENSIONS, mirrorQuestions } from '../data/mirrorQuestions';
 import { dimensionToStyle } from '../data/mirrorProfiles';
 import { getMission } from '../data/missions';
@@ -28,6 +28,21 @@ const SCREENS = [
   'progress',
   'dashboard',
 ];
+
+// ── Persistence ────────────────────────────────────────────
+// All session state is mirrored to localStorage so a refresh or PWA
+// cold-start restores the youth exactly where they left off.
+const STORAGE_KEY = 'yep_session_v1';
+
+function loadSession() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch {
+    /* ignore corrupt/blocked storage — fall back to defaults */
+  }
+  return {};
+}
 
 /**
  * Score the Mirror.
@@ -59,20 +74,60 @@ function scoreMirror(answers) {
 }
 
 export function YEPProvider({ children }) {
-  const [screen, setScreen] = useState('track');
-  const [track, setTrack] = useState(null);
-  const [youthName, setYouthName] = useState('');
+  // Read persisted session once on mount (lazy initializer).
+  const [saved] = useState(loadSession);
 
-  const [mirrorScores, setMirrorScores] = useState(null);
-  const [mirrorResult, setMirrorResult] = useState(null);
-  const [currentMission, setCurrentMission] = useState(null);
+  const [screen, setScreen] = useState(saved.screen ?? 'track');
+  const [track, setTrack] = useState(saved.track ?? null);
+  const [youthName, setYouthName] = useState(saved.youthName ?? '');
 
-  const [missionComplete, setMissionComplete] = useState(false);
-  const [reflection, setReflection] = useState('');
-  const [reflectionSubmitted, setReflectionSubmitted] = useState(false);
-  const [finisherLetter, setFinisherLetter] = useState('');
+  const [mirrorScores, setMirrorScores] = useState(saved.mirrorScores ?? null);
+  const [mirrorResult, setMirrorResult] = useState(saved.mirrorResult ?? null);
+  const [currentMission, setCurrentMission] = useState(saved.currentMission ?? null);
 
-  const [xp, setXp] = useState(0);
+  const [missionComplete, setMissionComplete] = useState(saved.missionComplete ?? false);
+  const [reflection, setReflection] = useState(saved.reflection ?? '');
+  const [reflectionSubmitted, setReflectionSubmitted] = useState(saved.reflectionSubmitted ?? false);
+  const [finisherLetter, setFinisherLetter] = useState(saved.finisherLetter ?? '');
+
+  const [xp, setXp] = useState(saved.xp ?? 0);
+
+  // Mirror ALL session state to localStorage on every change. The active
+  // youth is fully derived from these fields, so persisting them restores it.
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({
+          screen,
+          track,
+          youthName,
+          mirrorScores,
+          mirrorResult,
+          currentMission,
+          missionComplete,
+          reflection,
+          reflectionSubmitted,
+          finisherLetter,
+          xp,
+        })
+      );
+    } catch {
+      /* storage full or blocked — session simply won't persist */
+    }
+  }, [
+    screen,
+    track,
+    youthName,
+    mirrorScores,
+    mirrorResult,
+    currentMission,
+    missionComplete,
+    reflection,
+    reflectionSubmitted,
+    finisherLetter,
+    xp,
+  ]);
 
   // ── Actions ──────────────────────────────────────────────
 
@@ -126,6 +181,11 @@ export function YEPProvider({ children }) {
   }
 
   function resetSession() {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      /* ignore */
+    }
     setScreen('track');
     setTrack(null);
     setYouthName('');
