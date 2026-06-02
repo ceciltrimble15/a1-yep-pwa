@@ -1,0 +1,38 @@
+/* ═══════════════════════════════════════════════════════════
+   A/1 YEP — DESIGN TOKENS
+   Bold. Futuristic. Premium. Not childish.
+   ═══════════════════════════════════════════════════════════ */
+:root {
+  /* Brand colors */
+  --navy: #0A0E1A;
+  --blue: #1A3A8F;
+  --electric: #2979FF;
+  --gold: #D4A017; /* completion moments ONLY */
+  --white: #FFFFFF;
+  --silver: #8899BB;
+
+  /* Derived surfaces */
+  --navy-2: #0E1424;
+  --panel: #121A30;
+  --panel-2: #18203A;
+  --line: rgba(136, 153, 187, 0.18);
+  --line-strong: rgba(136, 153, 187, 0.32);
+
+  /* Text */
+  --text: #EAF0FF;
+  --text-dim: #8899BB;
+  --text-faint: #5C6A8C;
+
+  /* Glows */
+  --electric-glow: 0 0 0 1px rgba(41, 121, 255, 0.5), 0 8px 30px rgba(41, 121, 255, 0.28);
+  --gold-glow: 0 0 0 1px rgba(212, 160, 23, 0.6), 0 10px 40px rgba(212, 160, 23, 0.30);
+
+  /* Type */
+  --font-display: 'Barlow Condensed', system-ui, sans-serif;
+  --font-body: 'Barlow', system-ui, sans-serif;
+
+  /* Geometry */
+  --radius: 14px;
+  --radius-lg: 20px;
+  --maxw: 460px;
+}

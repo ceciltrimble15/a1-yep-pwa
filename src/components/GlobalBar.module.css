@@ -1,0 +1,58 @@
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 18px 12px;
+  padding: 9px 12px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.track {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.trackLabel {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.icon { color: var(--electric); flex-shrink: 0; }
+
+.spacer { flex: 1; }
+
+.xp {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  background: rgba(41, 121, 255, 0.12);
+  border: 1px solid rgba(41, 121, 255, 0.35);
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.xpVal {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--electric);
+  letter-spacing: 0.02em;
+}
+
+.xpLabel {
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--silver);
+}

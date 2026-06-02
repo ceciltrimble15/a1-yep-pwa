@@ -1,0 +1,76 @@
+@import './tokens.css';
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--navy);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+}
+
+#root {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  background: radial-gradient(120% 80% at 50% 0%, #101a33 0%, var(--navy) 55%);
+  min-height: 100dvh;
+  position: relative;
+  overflow: hidden;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+p { margin: 0; line-height: 1.5; }
+
+button {
+  font-family: var(--font-display);
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+input, textarea {
+  font-family: var(--font-body);
+}
+
+::-webkit-scrollbar { width: 0; height: 0; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes popIn {
+  0% { opacity: 0; transform: scale(0.7); }
+  60% { opacity: 1; transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+@keyframes goldPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(212, 160, 23, 0.45); }
+  50% { box-shadow: 0 0 0 16px rgba(212, 160, 23, 0); }
+}
+@keyframes barGrow {
+  from { width: 0; }
+}
+@keyframes ringSpin {
+  to { transform: rotate(360deg); }
+}

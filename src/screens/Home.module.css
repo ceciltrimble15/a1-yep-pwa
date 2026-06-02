@@ -1,0 +1,69 @@
+.hero {
+  margin: 6px 0 18px;
+}
+.eyebrow {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--electric);
+  margin-bottom: 6px;
+}
+.welcome {
+  font-size: 30px;
+  line-height: 1;
+  color: var(--white);
+  margin-bottom: 8px;
+}
+.welcome em { color: var(--electric); font-style: normal; }
+.lede { color: var(--silver); font-size: 14px; max-width: 32ch; }
+
+.flagHead {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  margin: 22px 0 12px;
+}
+.flagWord {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: 0.14em;
+  color: var(--white);
+}
+.flagSub {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--silver);
+}
+
+.next {
+  margin-top: 22px;
+}
+.nextCard {
+  background: linear-gradient(135deg, var(--panel-2), var(--panel));
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  margin-bottom: 14px;
+}
+.nextLabel {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--electric);
+  margin-bottom: 6px;
+}
+.nextTitle {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 23px;
+  color: var(--white);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+.nextDesc { color: var(--silver); font-size: 13.5px; }

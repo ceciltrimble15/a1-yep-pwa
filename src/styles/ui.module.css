@@ -1,0 +1,81 @@
+/* Reusable building blocks shared across screens (CSS Modules). */
+
+.btnPrimary {
+  width: 100%;
+  padding: 16px;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--electric), var(--blue));
+  color: var(--white);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  box-shadow: var(--electric-glow);
+  transition: transform 0.12s ease, opacity 0.2s ease;
+}
+.btnPrimary:active { transform: scale(0.98); }
+.btnPrimary:disabled { opacity: 0.4; box-shadow: none; }
+
+.btnGhost {
+  width: 100%;
+  padding: 14px;
+  border-radius: var(--radius);
+  background: var(--panel);
+  border: 1px solid var(--line-strong);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.btnGhost:active { transform: scale(0.98); }
+
+.btnGold {
+  width: 100%;
+  padding: 16px;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, #E9B62B, var(--gold));
+  color: #1A1304;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  box-shadow: var(--gold-glow);
+}
+.btnGold:active { transform: scale(0.98); }
+
+.eyebrow {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--electric);
+}
+
+.h1 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 34px;
+  line-height: 0.98;
+  color: var(--white);
+  text-transform: uppercase;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+}

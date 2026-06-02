@@ -1,0 +1,85 @@
+.xpFlash {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(41, 121, 255, 0.14);
+  border: 1px solid rgba(41, 121, 255, 0.4);
+  color: var(--electric);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  margin: 6px 0 14px;
+  animation: popIn 0.5s ease-out both;
+}
+
+.title { font-size: 32px; color: var(--white); margin-bottom: 18px; }
+.title em { color: var(--electric); font-style: normal; }
+
+.cards { display: flex; flex-direction: column; gap: 12px; }
+
+.resCard {
+  border-radius: var(--radius);
+  padding: 16px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+}
+.anchor { border-color: rgba(41, 121, 255, 0.5); background: var(--panel-2); }
+
+.rLabel {
+  display: flex; align-items: center; gap: 7px;
+  font-family: var(--font-display);
+  font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--silver); margin-bottom: 6px;
+}
+.rValue {
+  font-family: var(--font-display);
+  font-weight: 800; font-size: 22px; color: var(--white);
+  text-transform: uppercase; margin-bottom: 5px;
+}
+.rLine { font-size: 13px; color: var(--silver); line-height: 1.4; }
+
+.scores { margin: 22px 0 6px; }
+.scoresLabel {
+  font-family: var(--font-display);
+  font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--silver); margin-bottom: 12px;
+}
+.row { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
+.rowName {
+  flex: 0 0 128px;
+  font-family: var(--font-display);
+  font-size: 12.5px; font-weight: 600; letter-spacing: 0.03em;
+  color: var(--text); text-transform: uppercase;
+}
+.track { flex: 1; height: 8px; border-radius: 999px; background: var(--panel); overflow: hidden; }
+.meter {
+  height: 100%; border-radius: 999px;
+  background: linear-gradient(90deg, var(--blue), var(--electric));
+  animation: barGrow 0.7s ease-out both;
+}
+.meterHigh { background: linear-gradient(90deg, var(--electric), #6FA8FF); }
+.meterLow { background: var(--silver); opacity: 0.55; }
+
+.missionCard {
+  margin-top: 22px;
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  background: linear-gradient(135deg, var(--blue), #0F2A66);
+  border: 1px solid rgba(41, 121, 255, 0.5);
+}
+.mLabel {
+  font-family: var(--font-display);
+  font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: #BFD4FF; margin-bottom: 6px;
+}
+.mTitle {
+  font-family: var(--font-display);
+  font-weight: 800; font-size: 24px; color: var(--white);
+  text-transform: uppercase; margin-bottom: 6px;
+}
+.mObjective { font-size: 13.5px; color: #DCE7FF; }
+
+.cta { margin-top: 16px; }

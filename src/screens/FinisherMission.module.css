@@ -1,0 +1,77 @@
+.eyebrow {
+  font-family: var(--font-display);
+  font-size: 12px; font-weight: 700; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--electric); margin: 6px 0;
+}
+.title { font-size: 31px; color: var(--white); margin-bottom: 8px; }
+.objective { color: var(--silver); font-size: 14px; margin-bottom: 18px; }
+
+.letterTag {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 12px; border-radius: 999px;
+  background: var(--panel); border: 1px solid var(--line-strong);
+  margin-bottom: 18px;
+}
+.letterBadge {
+  width: 22px; height: 22px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--blue), var(--electric));
+  font-family: var(--font-display); font-weight: 800; font-size: 13px; color: var(--white);
+}
+.letterText {
+  font-family: var(--font-display); font-size: 12px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--text);
+}
+
+.approach {
+  border-radius: var(--radius); padding: 14px;
+  background: rgba(41, 121, 255, 0.1);
+  border: 1px solid rgba(41, 121, 255, 0.3);
+  margin-bottom: 20px;
+}
+.approachLabel {
+  font-family: var(--font-display); font-size: 11px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--electric); margin-bottom: 5px;
+}
+.approachText { font-size: 13.5px; color: #DCE7FF; line-height: 1.4; }
+
+.stepsLabel {
+  font-family: var(--font-display); font-size: 11px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--silver); margin-bottom: 11px;
+}
+.steps { display: flex; flex-direction: column; gap: 10px; }
+.step {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 15px; border-radius: var(--radius);
+  background: var(--panel); border: 1px solid var(--line);
+  text-align: left; transition: all 0.14s ease;
+}
+.stepDone { border-color: var(--electric); background: var(--panel-2); }
+.check {
+  width: 24px; height: 24px; flex-shrink: 0; margin-top: 1px;
+  border-radius: 7px; border: 2px solid var(--line-strong);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--white); transition: all 0.14s ease;
+}
+.checkDone { background: var(--electric); border-color: var(--electric); }
+.stepText {
+  font-size: 14.5px; color: var(--text); line-height: 1.35;
+  font-family: var(--font-body); font-weight: 500;
+}
+.stepDone .stepText { color: var(--silver); text-decoration: line-through; }
+
+.focus {
+  margin: 20px 0; padding: 14px 16px;
+  border-left: 3px solid var(--electric);
+  background: var(--panel); border-radius: 0 var(--radius) var(--radius) 0;
+}
+.focusLabel {
+  font-family: var(--font-display); font-size: 10px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--electric); margin-bottom: 4px;
+}
+.focusText {
+  font-family: var(--font-display); font-weight: 700; font-size: 16px;
+  color: var(--white); line-height: 1.25; font-style: italic;
+}
+
+.cta { margin-top: 14px; }
