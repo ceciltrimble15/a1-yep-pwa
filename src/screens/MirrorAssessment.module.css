@@ -1,3 +1,26 @@
+/* Momentum interstitial */
+.cue {
+  min-height: 56vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 12px;
+  animation: fadeUp 0.4s ease-out both;
+}
+.cueMark {
+  font-family: var(--font-display);
+  font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--electric);
+}
+.cueTitle {
+  font-family: var(--font-display);
+  font-weight: 800; font-size: 34px; line-height: 1; color: var(--white);
+}
+.cueText { color: var(--silver); font-size: 16px; margin-bottom: 16px; }
+.cue button { max-width: 260px; }
+
 .progressWrap { margin: 6px 0 22px; }
 .progressTop {
   display: flex;

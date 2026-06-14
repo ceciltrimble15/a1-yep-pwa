@@ -1,3 +1,68 @@
+/* ── Reveal sequence (steps 1–3) ── */
+.reveal {
+  min-height: 62vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 12px;
+  animation: fadeUp 0.4s ease-out both;
+}
+.revealEyebrow {
+  font-family: var(--font-display);
+  font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--silver);
+}
+.revealKicker {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--font-display);
+  font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--electric);
+}
+.revealValue {
+  font-family: var(--font-display);
+  font-weight: 800; font-size: 52px; line-height: 0.95; color: var(--white);
+  text-transform: uppercase;
+  animation: popIn 0.5s ease-out both;
+}
+.revealQuote {
+  color: var(--text); font-size: 16px; line-height: 1.45;
+  max-width: 28ch; margin-bottom: 12px;
+}
+.reveal button { max-width: 280px; }
+
+.letterBadge {
+  width: 92px; height: 92px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 22px;
+  background: linear-gradient(135deg, var(--blue), var(--electric));
+  font-family: var(--font-display); font-weight: 800; font-size: 52px; color: var(--white);
+  box-shadow: var(--electric-glow);
+  animation: popIn 0.5s ease-out both;
+}
+.letterWord {
+  font-family: var(--font-display);
+  font-weight: 800; font-size: 30px; color: var(--white);
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.unlockLabel {
+  font-family: var(--font-display);
+  font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--electric); margin-top: 6px;
+}
+.unlockTitle {
+  font-family: var(--font-display);
+  font-weight: 800; font-size: 24px; color: var(--white);
+  text-transform: uppercase; margin-bottom: 8px;
+}
+.dots { display: flex; gap: 8px; margin-top: 4px; }
+.dot {
+  width: 8px; height: 8px; border-radius: 999px;
+  background: var(--line-strong);
+}
+.dotOn { background: var(--electric); width: 22px; }
+
 .xpFlash {
   display: inline-flex;
   align-items: center;

@@ -8,7 +8,7 @@ export const DIMENSIONS = [
   'Identity',
   'Discipline',
   'Confidence',
-  'Financial Awareness',
+  'Money Awareness',
   'Adaptability',
   'Community',
 ];
@@ -32,8 +32,8 @@ export const mirrorQuestions = [
   { id: 'co1', dimension: 'Confidence', text: 'I speak up for my ideas in a room full of people.' },
   { id: 'co2', dimension: 'Confidence', text: 'I bet on myself when no one else does yet.' },
 
-  { id: 'fa1', dimension: 'Financial Awareness', text: 'I understand how money moves in and out of a hustle.' },
-  { id: 'fa2', dimension: 'Financial Awareness', text: 'I can price something so it actually makes a profit.' },
+  { id: 'fa1', dimension: 'Money Awareness', text: 'I understand how money moves in and out of a hustle.' },
+  { id: 'fa2', dimension: 'Money Awareness', text: 'I can price something so it actually makes a profit.' },
 
   { id: 'ad1', dimension: 'Adaptability', text: 'When the plan breaks, I find another way fast.' },
   { id: 'ad2', dimension: 'Adaptability', text: 'I treat feedback as fuel, not an attack.' },

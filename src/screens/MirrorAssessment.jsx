@@ -6,10 +6,18 @@ import Shell from '../components/Shell';
 import styles from './MirrorAssessment.module.css';
 import ui from '../styles/ui.module.css';
 
+// Momentum cues keyed by the step just answered (0-indexed):
+// after Q4 (step 3) and after Q8 (step 7). Confident, minimal — not gamified.
+const CUES = {
+  3: { title: "You're Getting Closer", text: 'Keep going.' },
+  7: { title: 'Halfway Was Behind You', text: 'Finish strong.' },
+};
+
 export default function MirrorAssessment() {
   const { submitMirror } = useYEP();
   const [answers, setAnswers] = useState({});
   const [step, setStep] = useState(0);
+  const [cue, setCue] = useState(null); // momentum interstitial between questions
 
   const q = mirrorQuestions[step];
   const total = mirrorQuestions.length;
@@ -24,9 +32,31 @@ export default function MirrorAssessment() {
     if (!current) return;
     if (isLast) {
       submitMirror(answers);
+    } else if (CUES[step]) {
+      setCue(CUES[step]); // pause for encouragement before the next question
     } else {
       setStep((s) => s + 1);
     }
+  }
+
+  function continueFromCue() {
+    setCue(null);
+    setStep((s) => s + 1);
+  }
+
+  if (cue) {
+    return (
+      <Shell>
+        <div className={styles.cue}>
+          <div className={styles.cueMark}>{step + 1} / {total}</div>
+          <h2 className={styles.cueTitle}>{cue.title}</h2>
+          <p className={styles.cueText}>{cue.text}</p>
+          <button className={ui.btnPrimary} onClick={continueFromCue}>
+            Keep Going <ArrowRight size={20} />
+          </button>
+        </div>
+      </Shell>
+    );
   }
 
   return (

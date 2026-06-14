@@ -35,7 +35,7 @@ export default function Home() {
             then hands you a mission built for you.
           </p>
         </div>
-        <button className={ui.btnPrimary} onClick={() => navigate('mirror')}>
+        <button className={ui.btnPrimary} onClick={() => navigate('mirrorIntro')}>
           <ScanFace size={20} /> Face The Mirror <ArrowRight size={20} />
         </button>
       </div>

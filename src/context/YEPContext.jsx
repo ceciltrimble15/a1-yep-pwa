@@ -21,6 +21,7 @@ export const XP = {
 const SCREENS = [
   'track',
   'home',
+  'mirrorIntro',
   'mirror',
   'results',
   'mission',

@@ -19,8 +19,8 @@ export const anchorProfiles = {
     title: 'Confidence',
     line: 'You bet on yourself out loud. That self-belief opens doors for the whole room.',
   },
-  'Financial Awareness': {
-    title: 'Financial Awareness',
+  'Money Awareness': {
+    title: 'Money Awareness',
     line: 'You think in numbers. You see the money move where others only see the idea.',
   },
   Adaptability: {
@@ -46,8 +46,8 @@ export const edgeProfiles = {
     title: 'Confidence',
     line: 'Take up more space. Your ideas deserve a louder voice than you are giving them.',
   },
-  'Financial Awareness': {
-    title: 'Financial Awareness',
+  'Money Awareness': {
+    title: 'Money Awareness',
     line: 'Learn the money. A great hustle with no numbers is a hobby that costs you.',
   },
   Adaptability: {
@@ -78,7 +78,7 @@ export const styleProfiles = {
 // The Anchor (highest) dimension determines the learning style.
 export const dimensionToStyle = {
   Discipline: 'Hands-On',
-  'Financial Awareness': 'Hands-On',
+  'Money Awareness': 'Hands-On',
   Identity: 'Deep Thinker',
   Confidence: 'Deep Thinker',
   Community: 'Connected Learner',

@@ -66,7 +66,7 @@ export const missions = {
   },
   m_financial: {
     id: 'm_financial',
-    edge: 'Financial Awareness',
+    edge: 'Money Awareness',
     finisherLetter: 'Strategy',
     title: 'Price It To Profit',
     objective: 'Take one product or service and prove it can actually make money.',
@@ -125,7 +125,7 @@ const EDGE_TO_MISSION = {
   Identity: 'm_identity',
   Discipline: 'm_discipline',
   Confidence: 'm_confidence',
-  'Financial Awareness': 'm_financial',
+  'Money Awareness': 'm_financial',
   Adaptability: 'm_adaptability',
   Community: 'm_community',
 };

@@ -1,6 +1,7 @@
 import { YEPProvider, useYEP } from './context/YEPContext';
 import TrackSelector from './screens/TrackSelector';
 import Home from './screens/Home';
+import MirrorIntro from './screens/MirrorIntro';
 import MirrorAssessment from './screens/MirrorAssessment';
 import MirrorResults from './screens/MirrorResults';
 import FinisherMission from './screens/FinisherMission';
@@ -9,10 +10,11 @@ import Progress from './screens/Progress';
 import FacilitatorDashboard from './screens/FacilitatorDashboard';
 
 /* `screen` from context drives all navigation — the behavior loop:
-   track -> home -> mirror -> results -> mission -> reflection -> progress -> dashboard */
+   track -> home -> mirrorIntro -> mirror -> results -> mission -> reflection -> progress -> dashboard */
 const SCREENS = {
   track: TrackSelector,
   home: Home,
+  mirrorIntro: MirrorIntro,
   mirror: MirrorAssessment,
   results: MirrorResults,
   mission: FinisherMission,
