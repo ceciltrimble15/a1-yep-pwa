@@ -27,8 +27,28 @@
   background: var(--panel); border: 1px solid var(--line-strong);
 }
 
-.rules { display: flex; flex-direction: column; gap: 11px; margin-bottom: 26px; }
+.rules { display: flex; flex-direction: column; gap: 11px; margin-bottom: 22px; }
 .rule { display: flex; align-items: flex-start; gap: 11px; }
 .rIcon { color: var(--electric); flex-shrink: 0; margin-top: 1px; }
 .rText { font-size: 14px; color: var(--text); line-height: 1.4; }
 .rText b { color: var(--white); font-weight: 700; }
+
+.closing {
+  text-align: center;
+  margin: 6px 0 20px;
+}
+.ready {
+  font-family: var(--font-display);
+  font-weight: 700; font-size: 16px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--silver); margin-bottom: 8px;
+}
+.lockin {
+  font-family: var(--font-display);
+  font-weight: 800; font-size: 26px; color: var(--white);
+  text-transform: uppercase; line-height: 1;
+}
+.motto {
+  font-family: var(--font-display);
+  font-weight: 700; font-size: 13px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--electric); margin-top: 6px;
+}

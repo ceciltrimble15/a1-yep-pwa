@@ -5,8 +5,7 @@ import Shell from '../components/Shell';
 import styles from './MirrorIntro.module.css';
 import ui from '../styles/ui.module.css';
 
-/* Mirror Intro — builds trust and frames the assessment before Q1.
-   NOTE: copy is on-brand placeholder pending final sign-off. */
+/* Mirror Intro — builds trust and frames the assessment before Q1. */
 export default function MirrorIntro() {
   const { navigate } = useYEP();
 
@@ -18,15 +17,17 @@ export default function MirrorIntro() {
           The <em>Mirror.</em>
         </h1>
 
-        <p className={styles.lede}>
-          The Mirror isn't a test. It's a read on who you already are.
-        </p>
+        <p className={styles.lede}>Before you start, you have to look in the Mirror.</p>
         <p className={styles.sub}>
-          Twelve honest questions across six dimensions. It finds your strongest edge and the place
-          your work begins — then hands you a mission built for you. There are no right answers. Only true ones.
+          Not to judge yourself.
+          <br />
+          Not to compare yourself to anyone else.
+        </p>
+        <p className={styles.lede}>
+          The Mirror shows you where you are right now — so the Process can meet you there.
         </p>
 
-        <div className={styles.dimsLabel}>The Six Dimensions</div>
+        <div className={styles.dimsLabel}>Six Areas · Honest Answers Only</div>
         <div className={styles.dims}>
           {DIMENSIONS.map((d) => (
             <span key={d} className={styles.chip}>
@@ -35,17 +36,22 @@ export default function MirrorIntro() {
           ))}
         </div>
 
+        <p className={styles.sub}>
+          There are no wrong answers. There are only real ones. The more honest you are, the more the
+          Process works for you.
+        </p>
+
         <div className={styles.rules}>
           <div className={styles.rule}>
             <Clock className={styles.rIcon} size={18} />
             <span className={styles.rText}>
-              <b>About two minutes.</b> One question at a time. No going backward you can't undo.
+              <b>About two minutes.</b> One question at a time.
             </span>
           </div>
           <div className={styles.rule}>
             <ShieldCheck className={styles.rIcon} size={18} />
             <span className={styles.rText}>
-              <b>Be honest.</b> This is for you, not a grade. The more real you are, the better your mission fits.
+              <b>Be honest.</b> This is for you, not a grade.
             </span>
           </div>
           <div className={styles.rule}>
@@ -56,8 +62,14 @@ export default function MirrorIntro() {
           </div>
         </div>
 
+        <div className={styles.closing}>
+          <div className={styles.ready}>Ready?</div>
+          <div className={styles.lockin}>Lock in.</div>
+          <div className={styles.motto}>Always Forward. Never Back.</div>
+        </div>
+
         <button className={ui.btnPrimary} onClick={() => navigate('mirror')}>
-          <ScanFace size={20} /> Begin The Mirror <ArrowRight size={20} />
+          <ScanFace size={20} /> Take The Mirror <ArrowRight size={20} />
         </button>
       </div>
     </Shell>
