@@ -209,6 +209,11 @@ const leader = {
     edgeKicker: 'Your Next Level',
   },
 
+  mission: {
+    focusLabel: 'The Principle',
+    completeCta: 'Complete The Mission',
+  },
+
   reflection: {
     sub: 'The work means nothing until you name what it taught you. That is how a leader turns reps into wisdom.',
   },
@@ -246,6 +251,16 @@ const yaep = {
     ad1: 'When the plan breaks, I adapt and find another path quickly.',
     ad2: 'I treat feedback as data, not a personal attack.',
     cm2: 'The people in my network are better for working with me.',
+  },
+
+  results: {
+    anchorKicker: 'Your Strongest Asset',
+    edgeKicker: 'Your Growth Priority',
+  },
+
+  mission: {
+    focusLabel: 'The Rationale',
+    completeCta: 'Mark Mission Complete',
   },
 
   reflection: {
