@@ -6,18 +6,19 @@ import styles from './Home.module.css';
 import ui from '../styles/ui.module.css';
 
 export default function Home() {
-  const { youthName, navigate } = useYEP();
+  const { youthName, navigate, copy } = useYEP();
+  const c = copy.welcome;
 
   return (
     <Shell>
       <section className={styles.hero}>
-        <div className={styles.eyebrow}>Your Process Starts Here</div>
+        <div className={styles.eyebrow}>{c.eyebrow}</div>
         <h1 className={styles.welcome}>
-          {youthName ? <>What's good, <em>{youthName}.</em></> : <>Welcome, <em>Future Founder.</em></>}
+          {youthName
+            ? <>{c.greetingKnownPrefix}<em>{youthName}.</em></>
+            : <>{c.greetingNewPrefix}<em>{c.greetingNewName}</em></>}
         </h1>
-        <p className={styles.lede}>
-          Lock in. Let's finish. Run the four pillars every day — then face the Mirror.
-        </p>
+        <p className={styles.lede}>{c.lede}</p>
       </section>
 
       <div className={styles.flagHead}>
@@ -28,15 +29,12 @@ export default function Home() {
 
       <div className={styles.next}>
         <div className={styles.nextCard}>
-          <div className={styles.nextLabel}>Next Step</div>
-          <div className={styles.nextTitle}>The Mirror</div>
-          <p className={styles.nextDesc}>
-            Six dimensions. Honest answers. It finds your Anchor Strength and your Growth Edge —
-            then hands you a mission built for you.
-          </p>
+          <div className={styles.nextLabel}>{c.nextLabel}</div>
+          <div className={styles.nextTitle}>{c.nextTitle}</div>
+          <p className={styles.nextDesc}>{c.nextDesc}</p>
         </div>
         <button className={ui.btnPrimary} onClick={() => navigate('mirrorIntro')}>
-          <ScanFace size={20} /> Face The Mirror <ArrowRight size={20} />
+          <ScanFace size={20} /> {c.cta} <ArrowRight size={20} />
         </button>
       </div>
     </Shell>

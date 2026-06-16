@@ -7,27 +7,26 @@ import ui from '../styles/ui.module.css';
 
 /* Mirror Intro — builds trust and frames the assessment before Q1. */
 export default function MirrorIntro() {
-  const { navigate } = useYEP();
+  const { navigate, copy } = useYEP();
+  const c = copy.mirrorIntro;
 
   return (
     <Shell>
       <div className={styles.wrap}>
-        <div className={styles.eyebrow}>Before You Start</div>
+        <div className={styles.eyebrow}>{c.eyebrow}</div>
         <h1 className={styles.title}>
-          The <em>Mirror.</em>
+          The <em>{c.titleEm}</em>
         </h1>
 
-        <p className={styles.lede}>Before you start, you have to look in the Mirror.</p>
+        <p className={styles.lede}>{c.lede1}</p>
         <p className={styles.sub}>
-          Not to judge yourself.
+          {c.sub1a}
           <br />
-          Not to compare yourself to anyone else.
+          {c.sub1b}
         </p>
-        <p className={styles.lede}>
-          The Mirror shows you where you are right now — so the Process can meet you there.
-        </p>
+        <p className={styles.lede}>{c.lede2}</p>
 
-        <div className={styles.dimsLabel}>Six Areas · Honest Answers Only</div>
+        <div className={styles.dimsLabel}>{c.dimsLabel}</div>
         <div className={styles.dims}>
           {DIMENSIONS.map((d) => (
             <span key={d} className={styles.chip}>
@@ -36,40 +35,37 @@ export default function MirrorIntro() {
           ))}
         </div>
 
-        <p className={styles.sub}>
-          There are no wrong answers. There are only real ones. The more honest you are, the more the
-          Process works for you.
-        </p>
+        <p className={styles.sub}>{c.sub2}</p>
 
         <div className={styles.rules}>
           <div className={styles.rule}>
             <Clock className={styles.rIcon} size={18} />
             <span className={styles.rText}>
-              <b>About two minutes.</b> One question at a time.
+              <b>{c.rule1.b}</b> {c.rule1.text}
             </span>
           </div>
           <div className={styles.rule}>
             <ShieldCheck className={styles.rIcon} size={18} />
             <span className={styles.rText}>
-              <b>Be honest.</b> This is for you, not a grade.
+              <b>{c.rule2.b}</b> {c.rule2.text}
             </span>
           </div>
           <div className={styles.rule}>
             <Compass className={styles.rIcon} size={18} />
             <span className={styles.rText}>
-              <b>Trust the read.</b> Every answer points you toward your next move.
+              <b>{c.rule3.b}</b> {c.rule3.text}
             </span>
           </div>
         </div>
 
         <div className={styles.closing}>
-          <div className={styles.ready}>Ready?</div>
-          <div className={styles.lockin}>Lock in.</div>
-          <div className={styles.motto}>Always Forward. Never Back.</div>
+          <div className={styles.ready}>{c.ready}</div>
+          <div className={styles.lockin}>{c.lockin}</div>
+          <div className={styles.motto}>{c.motto}</div>
         </div>
 
         <button className={ui.btnPrimary} onClick={() => navigate('mirror')}>
-          <ScanFace size={20} /> Take The Mirror <ArrowRight size={20} />
+          <ScanFace size={20} /> {c.cta} <ArrowRight size={20} />
         </button>
       </div>
     </Shell>
