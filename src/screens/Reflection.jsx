@@ -8,35 +8,32 @@ import ui from '../styles/ui.module.css';
 const MIN = 12;
 
 export default function Reflection() {
-  const { currentMission, submitReflection } = useYEP();
+  const { currentMission, submitReflection, copy } = useYEP();
+  const c = copy.reflection;
   const [text, setText] = useState('');
   const ready = text.trim().length >= MIN;
 
   return (
     <Shell>
-      <div className={styles.eyebrow}>Reflection</div>
+      <div className={styles.eyebrow}>{c.eyebrow}</div>
       <h1 className={styles.title}>
-        Lock It <em>In.</em>
+        Lock It <em>{c.titleEm}</em>
       </h1>
-      <p className={styles.sub}>
-        The work means nothing until you name what it taught you. This is how it sticks.
-      </p>
+      <p className={styles.sub}>{c.sub}</p>
 
       <div className={styles.prompt}>
-        {currentMission
-          ? `What did "${currentMission.title}" teach you about yourself?`
-          : 'What did this mission teach you about yourself?'}
+        {currentMission ? c.promptKnown(currentMission.title) : c.promptNew}
       </div>
 
       <textarea
         className={styles.area}
-        placeholder="Be honest. No one is grading this — you are."
+        placeholder={c.placeholder}
         value={text}
         onChange={(e) => setText(e.target.value)}
       />
       <div className={styles.meta}>
         <span className={styles.count}>{text.trim().length} chars</span>
-        {!ready && <span className={styles.hint}>Write at least a sentence.</span>}
+        {!ready && <span className={styles.hint}>{c.hint}</span>}
       </div>
 
       <button
@@ -44,7 +41,7 @@ export default function Reflection() {
         onClick={() => submitReflection(text.trim())}
         disabled={!ready}
       >
-        <Send size={18} /> Submit Reflection · +{XP.REFLECTION} XP
+        <Send size={18} /> {c.submitCta} · +{XP.REFLECTION} XP
       </button>
     </Shell>
   );

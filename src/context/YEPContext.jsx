@@ -4,6 +4,7 @@ import { dimensionToStyle } from '../data/mirrorProfiles';
 import { getMission } from '../data/missions';
 import { demoYouth as baseDemoYouth } from '../data/demoYouth';
 import { DEFAULT_MODE, isValidMode } from '../data/modes';
+import { getModeCopy } from '../data/modeCopy';
 
 /* ═══════════════════════════════════════════════════════════
    YEP GLOBAL STATE
@@ -108,6 +109,9 @@ export function YEPProvider({ children }) {
 
   // Age-mode foundation. Default = builder (current live experience).
   const [mode, setModeState] = useState(() => resolveInitialMode(saved.mode));
+
+  // Age-mode copy layer. Pure wording — never affects scoring/XP/flow.
+  const copy = useMemo(() => getModeCopy(mode), [mode]);
 
   // Mirror ALL session state to localStorage on every change. The active
   // youth is fully derived from these fields, so persisting them restores it.
@@ -262,6 +266,7 @@ export function YEPProvider({ children }) {
     finisherLetter,
     xp,
     mode,
+    copy,
     demoYouth,
     activeYouth,
     // actions
