@@ -3,13 +3,13 @@
   font-size: 12px; font-weight: 700; letter-spacing: 0.2em;
   text-transform: uppercase; color: var(--electric); margin: 6px 0;
 }
-.title { font-size: 31px; color: var(--white); margin-bottom: 8px; }
+.title { font-size: 31px; color: var(--text); margin-bottom: 8px; }
 .title em { color: var(--electric); font-style: normal; }
 .sub { color: var(--silver); font-size: 14px; margin-bottom: 18px; }
 
 .prompt {
   font-family: var(--font-display);
-  font-weight: 700; font-size: 16px; color: var(--white);
+  font-weight: 700; font-size: 16px; color: var(--text);
   margin-bottom: 11px; line-height: 1.3;
 }
 

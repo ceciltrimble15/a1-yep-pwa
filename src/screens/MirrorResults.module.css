@@ -22,7 +22,7 @@
 }
 .revealValue {
   font-family: var(--font-display);
-  font-weight: 800; font-size: 52px; line-height: 0.95; color: var(--white);
+  font-weight: 800; font-size: 52px; line-height: 0.95; color: var(--blue);
   text-transform: uppercase;
   animation: popIn 0.5s ease-out both;
 }
@@ -43,7 +43,7 @@
 }
 .letterWord {
   font-family: var(--font-display);
-  font-weight: 800; font-size: 30px; color: var(--white);
+  font-weight: 800; font-size: 30px; color: var(--text);
   text-transform: uppercase; letter-spacing: 0.04em;
 }
 .unlockLabel {
@@ -53,7 +53,7 @@
 }
 .unlockTitle {
   font-family: var(--font-display);
-  font-weight: 800; font-size: 24px; color: var(--white);
+  font-weight: 800; font-size: 24px; color: var(--text);
   text-transform: uppercase; margin-bottom: 8px;
 }
 .dots { display: flex; gap: 8px; margin-top: 4px; }
@@ -80,7 +80,7 @@
   animation: popIn 0.5s ease-out both;
 }
 
-.title { font-size: 32px; color: var(--white); margin-bottom: 18px; }
+.title { font-size: 32px; color: var(--text); margin-bottom: 18px; }
 .title em { color: var(--electric); font-style: normal; }
 
 .cards { display: flex; flex-direction: column; gap: 12px; }
@@ -101,7 +101,7 @@
 }
 .rValue {
   font-family: var(--font-display);
-  font-weight: 800; font-size: 22px; color: var(--white);
+  font-weight: 800; font-size: 22px; color: var(--text);
   text-transform: uppercase; margin-bottom: 5px;
 }
 .rLine { font-size: 13px; color: var(--silver); line-height: 1.4; }

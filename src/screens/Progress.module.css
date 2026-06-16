@@ -30,7 +30,7 @@
   font-weight: 800; font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase;
   color: var(--gold); margin-bottom: 8px;
 }
-.title { font-size: 33px; color: var(--white); margin-bottom: 8px; }
+.title { font-size: 33px; color: var(--text); margin-bottom: 8px; }
 .title em { color: var(--gold); font-style: normal; }
 .sub { color: var(--silver); font-size: 14px; margin: 0 auto 22px; max-width: 30ch; }
 

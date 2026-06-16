@@ -13,7 +13,7 @@
 .welcome {
   font-size: 30px;
   line-height: 1;
-  color: var(--white);
+  color: var(--text);
   margin-bottom: 8px;
 }
 .welcome em { color: var(--electric); font-style: normal; }
@@ -30,7 +30,7 @@
   font-weight: 800;
   font-size: 22px;
   letter-spacing: 0.14em;
-  color: var(--white);
+  color: var(--text);
 }
 .flagSub {
   font-family: var(--font-display);
@@ -62,7 +62,7 @@
   font-family: var(--font-display);
   font-weight: 800;
   font-size: 23px;
-  color: var(--white);
+  color: var(--text);
   margin-bottom: 6px;
   text-transform: uppercase;
 }

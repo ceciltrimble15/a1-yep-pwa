@@ -25,6 +25,7 @@ export default function TrackSelector() {
   return (
     <div className={styles.wrap}>
       <img className={styles.logo} src="/logo.png" alt="A/1 Suppliers" />
+      <div className={styles.brandLine}>Young Entrepreneurs Process · Ages 7–17</div>
       <h1 className={styles.title}>
         Start Your <em>Process.</em>
       </h1>

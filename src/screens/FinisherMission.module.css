@@ -3,7 +3,7 @@
   font-size: 12px; font-weight: 700; letter-spacing: 0.2em;
   text-transform: uppercase; color: var(--electric); margin: 6px 0;
 }
-.title { font-size: 31px; color: var(--white); margin-bottom: 8px; }
+.title { font-size: 31px; color: var(--text); margin-bottom: 8px; }
 .objective { color: var(--silver); font-size: 14px; margin-bottom: 18px; }
 
 .letterTag {
@@ -33,7 +33,7 @@
   font-family: var(--font-display); font-size: 11px; letter-spacing: 0.16em;
   text-transform: uppercase; color: var(--electric); margin-bottom: 5px;
 }
-.approachText { font-size: 13.5px; color: #DCE7FF; line-height: 1.4; }
+.approachText { font-size: 13.5px; color: var(--text); line-height: 1.4; }
 
 .stepsLabel {
   font-family: var(--font-display); font-size: 11px; letter-spacing: 0.18em;
@@ -71,7 +71,7 @@
 }
 .focusText {
   font-family: var(--font-display); font-weight: 700; font-size: 16px;
-  color: var(--white); line-height: 1.25; font-style: italic;
+  color: var(--text); line-height: 1.25; font-style: italic;
 }
 
 .cta { margin-top: 14px; }

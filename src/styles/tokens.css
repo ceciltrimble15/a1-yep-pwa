@@ -1,35 +1,36 @@
 /* ═══════════════════════════════════════════════════════════
-   A/1 YEP — DESIGN TOKENS
-   Bold. Futuristic. Premium. Not childish.
+   A/1 SUPPLIERS · YEP — OFFICIAL BRAND TOKENS
+   Royal Blue. White. Silver. Outfit. Clean. Premium. Youth-strong.
    ═══════════════════════════════════════════════════════════ */
 :root {
   /* Brand colors */
-  --navy: #0A0E1A;
+  --royal: #1A3A8F;        /* official Royal Blue — primary */
   --blue: #1A3A8F;
-  --electric: #2979FF;
-  --gold: #D4A017; /* completion moments ONLY */
+  --electric: #2E5BD0;     /* brighter royal accent */
+  --gold: #D4A017;         /* completion moments ONLY */
   --white: #FFFFFF;
-  --silver: #8899BB;
+  --navy: #0E1A3A;         /* deep ink, used sparingly */
+  --silver: #5E6B85;       /* readable secondary text */
 
-  /* Derived surfaces */
-  --navy-2: #0E1424;
-  --panel: #121A30;
-  --panel-2: #18203A;
-  --line: rgba(136, 153, 187, 0.18);
-  --line-strong: rgba(136, 153, 187, 0.32);
+  /* Surfaces — white-first with light silver cards */
+  --navy-2: #0E1A3A;
+  --panel: #F4F6FB;        /* card fill */
+  --panel-2: #E8EEF8;      /* raised / selected */
+  --line: rgba(26, 58, 143, 0.12);     /* silver/royal divider */
+  --line-strong: rgba(26, 58, 143, 0.20);
 
-  /* Text */
-  --text: #EAF0FF;
-  --text-dim: #8899BB;
-  --text-faint: #5C6A8C;
+  /* Text — dark ink on white */
+  --text: #14213D;
+  --text-dim: #5E6B85;
+  --text-faint: #98A2B8;
 
-  /* Glows */
-  --electric-glow: 0 0 0 1px rgba(41, 121, 255, 0.5), 0 8px 30px rgba(41, 121, 255, 0.28);
-  --gold-glow: 0 0 0 1px rgba(212, 160, 23, 0.6), 0 10px 40px rgba(212, 160, 23, 0.30);
+  /* Soft shadows (no neon glow on a light theme) */
+  --electric-glow: 0 0 0 1px rgba(26, 58, 143, 0.22), 0 10px 26px rgba(26, 58, 143, 0.16);
+  --gold-glow: 0 0 0 1px rgba(212, 160, 23, 0.45), 0 10px 28px rgba(212, 160, 23, 0.22);
 
-  /* Type */
-  --font-display: 'Barlow Condensed', system-ui, sans-serif;
-  --font-body: 'Barlow', system-ui, sans-serif;
+  /* Type — official Outfit */
+  --font-display: 'Outfit', system-ui, sans-serif;
+  --font-body: 'Outfit', system-ui, sans-serif;
 
   /* Geometry */
   --radius: 14px;

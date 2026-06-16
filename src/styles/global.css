@@ -15,7 +15,7 @@ body,
 
 body {
   font-family: var(--font-body);
-  background: var(--navy);
+  background: #EEF1F7;
   color: var(--text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -25,10 +25,11 @@ body {
 #root {
   max-width: var(--maxw);
   margin: 0 auto;
-  background: radial-gradient(120% 80% at 50% 0%, #101a33 0%, var(--navy) 55%);
+  background: #FFFFFF;
   min-height: 100dvh;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 0 0 1px var(--line);
 }
 
 h1, h2, h3, h4 {

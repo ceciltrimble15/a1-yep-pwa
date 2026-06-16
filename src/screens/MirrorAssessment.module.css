@@ -16,7 +16,7 @@
 }
 .cueTitle {
   font-family: var(--font-display);
-  font-weight: 800; font-size: 34px; line-height: 1; color: var(--white);
+  font-weight: 800; font-size: 34px; line-height: 1; color: var(--text);
 }
 .cueText { color: var(--silver); font-size: 16px; margin-bottom: 16px; }
 .cue button { max-width: 260px; }
@@ -60,7 +60,7 @@
   font-weight: 800;
   font-size: 27px;
   line-height: 1.06;
-  color: var(--white);
+  color: var(--text);
   margin: 18px 0 26px;
   text-transform: none;
   animation: fadeUp 0.3s ease-out both;
