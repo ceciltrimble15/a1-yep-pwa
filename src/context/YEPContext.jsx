@@ -3,6 +3,7 @@ import { DIMENSIONS, mirrorQuestions } from '../data/mirrorQuestions';
 import { dimensionToStyle } from '../data/mirrorProfiles';
 import { getMission } from '../data/missions';
 import { demoYouth as baseDemoYouth } from '../data/demoYouth';
+import { DEFAULT_MODE, isValidMode } from '../data/modes';
 
 /* ═══════════════════════════════════════════════════════════
    YEP GLOBAL STATE
@@ -43,6 +44,18 @@ function loadSession() {
     /* ignore corrupt/blocked storage — fall back to defaults */
   }
   return {};
+}
+
+// Resolve the starting mode: ?mode=<id> (safe test/gating hook) > persisted
+// > default (builder). No UI is required to set a mode.
+function resolveInitialMode(savedMode) {
+  try {
+    const fromUrl = new URLSearchParams(window.location.search).get('mode');
+    if (fromUrl && isValidMode(fromUrl)) return fromUrl;
+  } catch {
+    /* ignore */
+  }
+  return isValidMode(savedMode) ? savedMode : DEFAULT_MODE;
 }
 
 /**
@@ -93,6 +106,9 @@ export function YEPProvider({ children }) {
 
   const [xp, setXp] = useState(saved.xp ?? 0);
 
+  // Age-mode foundation. Default = builder (current live experience).
+  const [mode, setModeState] = useState(() => resolveInitialMode(saved.mode));
+
   // Mirror ALL session state to localStorage on every change. The active
   // youth is fully derived from these fields, so persisting them restores it.
   useEffect(() => {
@@ -111,6 +127,7 @@ export function YEPProvider({ children }) {
           reflectionSubmitted,
           finisherLetter,
           xp,
+          mode,
         })
       );
     } catch {
@@ -128,6 +145,7 @@ export function YEPProvider({ children }) {
     reflectionSubmitted,
     finisherLetter,
     xp,
+    mode,
   ]);
 
   // ── Actions ──────────────────────────────────────────────
@@ -181,6 +199,12 @@ export function YEPProvider({ children }) {
     if (SCREENS.includes(next)) setScreen(next);
   }
 
+  // Set the age-mode (validated). No flow/copy/XP changes attached yet —
+  // this is the foundation future Explorer audio will gate on.
+  function setMode(next) {
+    if (isValidMode(next)) setModeState(next);
+  }
+
   function resetSession() {
     try {
       localStorage.removeItem(STORAGE_KEY);
@@ -198,6 +222,7 @@ export function YEPProvider({ children }) {
     setReflectionSubmitted(false);
     setFinisherLetter('');
     setXp(0);
+    setModeState(DEFAULT_MODE);
   }
 
   // ── Derived: the live/active youth record ─────────────────
@@ -236,6 +261,7 @@ export function YEPProvider({ children }) {
     reflectionSubmitted,
     finisherLetter,
     xp,
+    mode,
     demoYouth,
     activeYouth,
     // actions
@@ -245,6 +271,7 @@ export function YEPProvider({ children }) {
     submitReflection,
     navigate,
     setScreen,
+    setMode,
     resetSession,
   };
 
