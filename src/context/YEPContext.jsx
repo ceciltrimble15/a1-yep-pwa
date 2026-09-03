@@ -94,6 +94,7 @@ export function YEPProvider({ children }) {
   const [screen, setScreen] = useState(saved.screen ?? 'track');
   const [track, setTrack] = useState(saved.track ?? null);
   const [youthName, setYouthName] = useState(saved.youthName ?? '');
+  const [powerName, setPowerName] = useState(saved.powerName ?? '');
 
   const [mirrorScores, setMirrorScores] = useState(saved.mirrorScores ?? null);
   const [mirrorResult, setMirrorResult] = useState(saved.mirrorResult ?? null);
@@ -119,6 +120,7 @@ export function YEPProvider({ children }) {
           screen,
           track,
           youthName,
+          powerName,
           mirrorScores,
           mirrorResult,
           currentMission,
@@ -137,6 +139,7 @@ export function YEPProvider({ children }) {
     screen,
     track,
     youthName,
+    powerName,
     mirrorScores,
     mirrorResult,
     currentMission,
@@ -150,9 +153,10 @@ export function YEPProvider({ children }) {
 
   // ── Actions ──────────────────────────────────────────────
 
-  function selectTrack(trackObj, name) {
+  function selectTrack(trackObj, name, selectedPowerName) {
     setTrack(trackObj);
     if (name) setYouthName(name);
+    if (selectedPowerName) setPowerName(selectedPowerName);
     setScreen('home');
   }
 
@@ -214,6 +218,7 @@ export function YEPProvider({ children }) {
     setScreen('track');
     setTrack(null);
     setYouthName('');
+    setPowerName('');
     setMirrorScores(null);
     setMirrorResult(null);
     setCurrentMission(null);
@@ -229,7 +234,9 @@ export function YEPProvider({ children }) {
   const activeYouth = useMemo(
     () => ({
       id: 'active',
-      name: youthName || 'You',
+      name: powerName || youthName || 'You',
+      legalName: youthName || '',
+      powerName: powerName || '—',
       track: track ? track.name : '—',
       anchor: mirrorResult ? mirrorResult.Anchor : '—',
       edge: mirrorResult ? mirrorResult.Edge : '—',
@@ -242,7 +249,7 @@ export function YEPProvider({ children }) {
       reflection,
       isActive: true,
     }),
-    [youthName, track, mirrorResult, xp, finisherLetter, currentMission, missionComplete, reflectionSubmitted, reflection]
+    [powerName, youthName, track, mirrorResult, xp, finisherLetter, currentMission, missionComplete, reflectionSubmitted, reflection]
   );
 
   // demoYouth array = Marcus, Aaliyah, DeShawn + active (live state).
@@ -253,6 +260,7 @@ export function YEPProvider({ children }) {
     screen,
     track,
     youthName,
+    powerName,
     mirrorScores,
     mirrorResult,
     currentMission,
