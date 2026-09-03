@@ -12,7 +12,6 @@ import { DEFAULT_MODE, isValidMode } from '../data/modes';
 
 const YEPContext = createContext(null);
 
-// XP rules — award ONLY for these actions.
 export const XP = {
   MIRROR: 50,
   MISSION: 75,
@@ -22,6 +21,13 @@ export const XP = {
 const SCREENS = [
   'track',
   'home',
+  'dailyQuest',
+  'weeklyModule',
+  'bossChallenge',
+  'mentorSpotlight',
+  'rewards',
+  'profile',
+  'adminReview',
   'mirrorIntro',
   'mirror',
   'results',
@@ -31,10 +37,15 @@ const SCREENS = [
   'dashboard',
 ];
 
-// ── Persistence ────────────────────────────────────────────
-// All session state is mirrored to localStorage so a refresh or PWA
-// cold-start restores the youth exactly where they left off.
 const STORAGE_KEY = 'yep_session_v1';
+const EMPTY_PILOT_PROGRESS = {
+  dailyQuestText: '',
+  dailyQuestComplete: false,
+  weeklyCompleted: [],
+  bossText: '',
+  bossComplete: false,
+  mentorQuestion: '',
+};
 
 function loadSession() {
   try {
@@ -46,8 +57,6 @@ function loadSession() {
   return {};
 }
 
-// Resolve the starting mode: ?mode=<id> (safe test/gating hook) > persisted
-// > default (builder). No UI is required to set a mode.
 function resolveInitialMode(savedMode) {
   try {
     const fromUrl = new URLSearchParams(window.location.search).get('mode');
@@ -58,10 +67,6 @@ function resolveInitialMode(savedMode) {
   return isValidMode(savedMode) ? savedMode : DEFAULT_MODE;
 }
 
-/**
- * Score the Mirror.
- * @returns { scores, anchor, edge, style }
- */
 function scoreMirror(answers) {
   const scores = {};
   DIMENSIONS.forEach((d) => (scores[d] = 0));
@@ -69,7 +74,6 @@ function scoreMirror(answers) {
     scores[q.dimension] += answers[q.id] || 0;
   });
 
-  // Highest = Anchor, Lowest = Growth Edge. Ties resolve by DIMENSIONS order.
   let anchor = DIMENSIONS[0];
   let edge = DIMENSIONS[0];
   DIMENSIONS.forEach((d) => {
@@ -77,7 +81,6 @@ function scoreMirror(answers) {
     if (scores[d] < scores[edge]) edge = d;
   });
 
-  // Edge must differ from Anchor — if all-equal, pick a distinct lowest.
   if (edge === anchor) {
     const alt = DIMENSIONS.find((d) => d !== anchor);
     if (alt) edge = alt;
@@ -88,7 +91,6 @@ function scoreMirror(answers) {
 }
 
 export function YEPProvider({ children }) {
-  // Read persisted session once on mount (lazy initializer).
   const [saved] = useState(loadSession);
 
   const [screen, setScreen] = useState(saved.screen ?? 'track');
@@ -104,14 +106,13 @@ export function YEPProvider({ children }) {
   const [reflection, setReflection] = useState(saved.reflection ?? '');
   const [reflectionSubmitted, setReflectionSubmitted] = useState(saved.reflectionSubmitted ?? false);
   const [finisherLetter, setFinisherLetter] = useState(saved.finisherLetter ?? '');
-
   const [xp, setXp] = useState(saved.xp ?? 0);
-
-  // Age-mode foundation. Default = builder (current live experience).
   const [mode, setModeState] = useState(() => resolveInitialMode(saved.mode));
+  const [pilotProgress, setPilotProgress] = useState({
+    ...EMPTY_PILOT_PROGRESS,
+    ...(saved.pilotProgress ?? {}),
+  });
 
-  // Mirror ALL session state to localStorage on every change. The active
-  // youth is fully derived from these fields, so persisting them restores it.
   useEffect(() => {
     try {
       localStorage.setItem(
@@ -130,6 +131,7 @@ export function YEPProvider({ children }) {
           finisherLetter,
           xp,
           mode,
+          pilotProgress,
         })
       );
     } catch {
@@ -149,9 +151,8 @@ export function YEPProvider({ children }) {
     finisherLetter,
     xp,
     mode,
+    pilotProgress,
   ]);
-
-  // ── Actions ──────────────────────────────────────────────
 
   function selectTrack(trackObj, name, selectedPowerName) {
     setTrack(trackObj);
@@ -160,7 +161,6 @@ export function YEPProvider({ children }) {
     setScreen('home');
   }
 
-  // Complete Mirror -> compute result + award +50 (once).
   function submitMirror(answers) {
     const { scores, anchor, edge, style } = scoreMirror(answers);
     const mission = getMission(edge, style);
@@ -175,11 +175,10 @@ export function YEPProvider({ children }) {
     });
     setCurrentMission(mission);
 
-    if (mirrorScores === null) setXp((x) => x + XP.MIRROR); // guard: award once
+    if (mirrorScores === null) setXp((x) => x + XP.MIRROR);
     setScreen('results');
   }
 
-  // Complete Mission -> award +75 (once) and grant FINISHER letter.
   function completeMission() {
     if (!missionComplete) {
       setMissionComplete(true);
@@ -189,7 +188,6 @@ export function YEPProvider({ children }) {
     setScreen('reflection');
   }
 
-  // Submit Reflection -> award +25 (once).
   function submitReflection(text) {
     setReflection(text);
     if (!reflectionSubmitted) {
@@ -199,12 +197,40 @@ export function YEPProvider({ children }) {
     setScreen('progress');
   }
 
+  function completeDailyQuest(text) {
+    const cleaned = text.trim();
+    if (!cleaned) return false;
+    setPilotProgress((p) => ({ ...p, dailyQuestText: cleaned, dailyQuestComplete: true }));
+    return true;
+  }
+
+  function toggleWeeklyActivity(id) {
+    setPilotProgress((p) => {
+      const has = p.weeklyCompleted.includes(id);
+      return {
+        ...p,
+        weeklyCompleted: has
+          ? p.weeklyCompleted.filter((item) => item !== id)
+          : [...p.weeklyCompleted, id],
+      };
+    });
+  }
+
+  function completeBossChallenge(text) {
+    const cleaned = text.trim();
+    if (!cleaned) return false;
+    setPilotProgress((p) => ({ ...p, bossText: cleaned, bossComplete: true }));
+    return true;
+  }
+
+  function saveMentorQuestion(text) {
+    setPilotProgress((p) => ({ ...p, mentorQuestion: text.trim() }));
+  }
+
   function navigate(next) {
     if (SCREENS.includes(next)) setScreen(next);
   }
 
-  // Set the age-mode (validated). No flow/copy/XP changes attached yet —
-  // this is the foundation future Explorer audio will gate on.
   function setMode(next) {
     if (isValidMode(next)) setModeState(next);
   }
@@ -228,9 +254,17 @@ export function YEPProvider({ children }) {
     setFinisherLetter('');
     setXp(0);
     setModeState(DEFAULT_MODE);
+    setPilotProgress(EMPTY_PILOT_PROGRESS);
   }
 
-  // ── Derived: the live/active youth record ─────────────────
+  const pilotBadges = useMemo(() => {
+    const badges = [];
+    if (pilotProgress.dailyQuestComplete) badges.push('daily-quest');
+    if (pilotProgress.weeklyCompleted.length >= 3) badges.push('weekly-module');
+    if (pilotProgress.bossComplete) badges.push('boss-challenge');
+    return badges;
+  }, [pilotProgress]);
+
   const activeYouth = useMemo(
     () => ({
       id: 'active',
@@ -247,16 +281,15 @@ export function YEPProvider({ children }) {
       missionComplete,
       reflectionSubmitted,
       reflection,
+      pilotBadges,
       isActive: true,
     }),
-    [powerName, youthName, track, mirrorResult, xp, finisherLetter, currentMission, missionComplete, reflectionSubmitted, reflection]
+    [powerName, youthName, track, mirrorResult, xp, finisherLetter, currentMission, missionComplete, reflectionSubmitted, reflection, pilotBadges]
   );
 
-  // demoYouth array = Marcus, Aaliyah, DeShawn + active (live state).
   const demoYouth = useMemo(() => [...baseDemoYouth, activeYouth], [activeYouth]);
 
   const value = {
-    // state
     screen,
     track,
     youthName,
@@ -270,13 +303,18 @@ export function YEPProvider({ children }) {
     finisherLetter,
     xp,
     mode,
+    pilotProgress,
+    pilotBadges,
     demoYouth,
     activeYouth,
-    // actions
     selectTrack,
     submitMirror,
     completeMission,
     submitReflection,
+    completeDailyQuest,
+    toggleWeeklyActivity,
+    completeBossChallenge,
+    saveMentorQuestion,
     navigate,
     setScreen,
     setMode,
