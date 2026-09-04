@@ -21,15 +21,15 @@ export default function FacilitatorDashboard() {
   return (
     <Shell>
       <div className={styles.head}>
-        <div className={styles.eyebrow}>Facilitator View</div>
+        <div className={styles.eyebrow}>Facilitator Demo View</div>
         <h1 className={styles.title}>Cohort Dashboard</h1>
-        <p className={styles.sub}>Live read on every youth running their process.</p>
+        <p className={styles.sub}>Sample cohort records plus the active tablet pilot record. Sample names below are demonstration data, not real participants.</p>
       </div>
 
       <div className={styles.summary}>
         <div className={styles.stat}>
           <div className={styles.statNum}>{demoYouth.length}</div>
-          <div className={styles.statLabel}>Youth</div>
+          <div className={styles.statLabel}>Records</div>
         </div>
         <div className={styles.stat}>
           <div className={styles.statNum}>{finishers}</div>
@@ -37,7 +37,7 @@ export default function FacilitatorDashboard() {
         </div>
         <div className={styles.stat}>
           <div className={styles.statNum}>{cohortXp}</div>
-          <div className={styles.statLabel}>Cohort XP</div>
+          <div className={styles.statLabel}>Demo XP</div>
         </div>
       </div>
 
@@ -55,7 +55,7 @@ export default function FacilitatorDashboard() {
                   <div className={styles.name}>{y.name}</div>
                   <div className={styles.track2}>{y.track}</div>
                 </div>
-                {y.isActive && <span className={styles.liveTag}>Live</span>}
+                <span className={styles.liveTag}>{y.isActive ? 'Pilot' : 'Sample'}</span>
                 <span className={`${styles.xpBadge} ${full ? styles.xpBadgeGold : ''}`}>
                   {y.xp} XP
                 </span>
@@ -79,9 +79,7 @@ export default function FacilitatorDashboard() {
               <div className={styles.statusRow}>
                 <StatusChip ok={y.missionComplete} label="Mission" />
                 <StatusChip ok={y.reflectionSubmitted} label="Reflection" />
-                <span
-                  className={`${styles.chip} ${hasLetter ? styles.chipLetter : styles.chipPending}`}
-                >
+                <span className={`${styles.chip} ${hasLetter ? styles.chipLetter : styles.chipPending}`}>
                   <Flag size={11} /> {hasLetter ? y.finisherLetter : 'No letter yet'}
                 </span>
               </div>
@@ -91,8 +89,8 @@ export default function FacilitatorDashboard() {
       </div>
 
       <div className={styles.footer}>
-        <button className={ui.btnGhost} onClick={() => navigate('progress')}>
-          <ArrowLeft size={16} style={{ verticalAlign: '-3px', marginRight: 6 }} /> Back To Progress
+        <button className={ui.btnGhost} onClick={() => navigate('adminReview')}>
+          <ArrowLeft size={16} style={{ verticalAlign: '-3px', marginRight: 6 }} /> Back To Admin Review
         </button>
       </div>
     </Shell>

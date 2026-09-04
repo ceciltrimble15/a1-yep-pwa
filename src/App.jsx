@@ -8,12 +8,26 @@ import FinisherMission from './screens/FinisherMission';
 import Reflection from './screens/Reflection';
 import Progress from './screens/Progress';
 import FacilitatorDashboard from './screens/FacilitatorDashboard';
+import {
+  DailyQuest,
+  WeeklyModule,
+  BossChallenge,
+  MentorSpotlight,
+  Rewards,
+  Profile,
+  AdminReview,
+} from './screens/PilotScreens';
 
-/* `screen` from context drives all navigation — the behavior loop:
-   track -> home -> mirrorIntro -> mirror -> results -> mission -> reflection -> progress -> dashboard */
 const SCREENS = {
   track: TrackSelector,
   home: Home,
+  dailyQuest: DailyQuest,
+  weeklyModule: WeeklyModule,
+  bossChallenge: BossChallenge,
+  mentorSpotlight: MentorSpotlight,
+  rewards: Rewards,
+  profile: Profile,
+  adminReview: AdminReview,
   mirrorIntro: MirrorIntro,
   mirror: MirrorAssessment,
   results: MirrorResults,

@@ -14,12 +14,14 @@ export const TRACKS = [
 export default function TrackSelector() {
   const { selectTrack } = useYEP();
   const [name, setName] = useState('');
+  const [powerName, setPowerName] = useState('');
   const [picked, setPicked] = useState(null);
 
   function start() {
     const track = TRACKS.find((t) => t.id === picked);
-    if (!track) return;
-    selectTrack(track, name.trim());
+    const identity = powerName.trim();
+    if (!track || !identity) return;
+    selectTrack(track, name.trim(), identity);
   }
 
   return (
@@ -30,12 +32,12 @@ export default function TrackSelector() {
         Start Your <em>Process.</em>
       </h1>
       <p className={styles.sub}>
-        Pick your track. The Mirror reads you. The mission moves you. Always Forward. Never Back.
+        Pick your track. Choose the Power Name that represents who you are becoming. Then face the Mirror.
       </p>
 
       <div className={styles.nameField}>
         <label className={styles.nameLabel} htmlFor="yname">
-          Your Name <span style={{ opacity: 0.6 }}>(optional)</span>
+          Your Name <span style={{ opacity: 0.6 }}>(optional for pilot)</span>
         </label>
         <input
           id="yname"
@@ -44,6 +46,22 @@ export default function TrackSelector() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           maxLength={24}
+          autoComplete="off"
+        />
+      </div>
+
+      <div className={styles.nameField}>
+        <label className={styles.nameLabel} htmlFor="powerName">
+          Your Power Name
+        </label>
+        <input
+          id="powerName"
+          className={styles.nameInput}
+          placeholder="Example: Vision Builder"
+          value={powerName}
+          onChange={(e) => setPowerName(e.target.value)}
+          maxLength={28}
+          autoComplete="off"
         />
       </div>
 
@@ -71,7 +89,7 @@ export default function TrackSelector() {
       </div>
 
       <div className={styles.footer}>
-        <button className={ui.btnPrimary} onClick={start} disabled={!picked}>
+        <button className={ui.btnPrimary} onClick={start} disabled={!picked || !powerName.trim()}>
           Lock In <ArrowRight size={20} />
         </button>
       </div>
