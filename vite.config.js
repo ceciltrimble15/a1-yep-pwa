@@ -14,7 +14,7 @@ export default defineConfig({
         description: 'Always Forward. Never Back. Train your process. Become a FINISHER.',
         start_url: '/',
         display: 'standalone',
-        orientation: 'portrait',
+        orientation: 'any',
         background_color: '#1A3A8F',
         theme_color: '#1A3A8F',
         icons: [
