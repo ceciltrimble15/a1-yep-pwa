@@ -5,11 +5,6 @@ import { getMission } from '../data/missions';
 import { demoYouth as baseDemoYouth } from '../data/demoYouth';
 import { DEFAULT_MODE, isValidMode } from '../data/modes';
 
-/* ═══════════════════════════════════════════════════════════
-   YEP GLOBAL STATE
-   `screen` drives all navigation. XP is awarded once per action.
-   ═══════════════════════════════════════════════════════════ */
-
 const YEPContext = createContext(null);
 
 export const XP = {
@@ -19,22 +14,9 @@ export const XP = {
 };
 
 const SCREENS = [
-  'track',
-  'home',
-  'dailyQuest',
-  'weeklyModule',
-  'bossChallenge',
-  'mentorSpotlight',
-  'rewards',
-  'profile',
-  'adminReview',
-  'mirrorIntro',
-  'mirror',
-  'results',
-  'mission',
-  'reflection',
-  'progress',
-  'dashboard',
+  'track', 'home', 'dailyQuest', 'weeklyModule', 'stemSin', 'bossChallenge',
+  'mentorSpotlight', 'rewards', 'profile', 'adminReview', 'mirrorIntro', 'mirror',
+  'results', 'mission', 'reflection', 'progress', 'dashboard',
 ];
 
 const STORAGE_KEY = 'yep_session_v1';
@@ -42,6 +24,8 @@ const EMPTY_PILOT_PROGRESS = {
   dailyQuestText: '',
   dailyQuestComplete: false,
   weeklyCompleted: [],
+  stemSinText: '',
+  stemSinComplete: false,
   bossText: '',
   bossComplete: false,
   mentorQuestion: '',
@@ -52,7 +36,7 @@ function loadSession() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) return JSON.parse(raw);
   } catch {
-    /* ignore corrupt/blocked storage — fall back to defaults */
+    /* fall back to defaults */
   }
   return {};
 }
@@ -92,16 +76,13 @@ function scoreMirror(answers) {
 
 export function YEPProvider({ children }) {
   const [saved] = useState(loadSession);
-
   const [screen, setScreen] = useState(saved.screen ?? 'track');
   const [track, setTrack] = useState(saved.track ?? null);
   const [youthName, setYouthName] = useState(saved.youthName ?? '');
   const [powerName, setPowerName] = useState(saved.powerName ?? '');
-
   const [mirrorScores, setMirrorScores] = useState(saved.mirrorScores ?? null);
   const [mirrorResult, setMirrorResult] = useState(saved.mirrorResult ?? null);
   const [currentMission, setCurrentMission] = useState(saved.currentMission ?? null);
-
   const [missionComplete, setMissionComplete] = useState(saved.missionComplete ?? false);
   const [reflection, setReflection] = useState(saved.reflection ?? '');
   const [reflectionSubmitted, setReflectionSubmitted] = useState(saved.reflectionSubmitted ?? false);
@@ -115,44 +96,15 @@ export function YEPProvider({ children }) {
 
   useEffect(() => {
     try {
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify({
-          screen,
-          track,
-          youthName,
-          powerName,
-          mirrorScores,
-          mirrorResult,
-          currentMission,
-          missionComplete,
-          reflection,
-          reflectionSubmitted,
-          finisherLetter,
-          xp,
-          mode,
-          pilotProgress,
-        })
-      );
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        screen, track, youthName, powerName, mirrorScores, mirrorResult, currentMission,
+        missionComplete, reflection, reflectionSubmitted, finisherLetter, xp, mode, pilotProgress,
+      }));
     } catch {
-      /* storage full or blocked — session simply won't persist */
+      /* storage blocked/full */
     }
-  }, [
-    screen,
-    track,
-    youthName,
-    powerName,
-    mirrorScores,
-    mirrorResult,
-    currentMission,
-    missionComplete,
-    reflection,
-    reflectionSubmitted,
-    finisherLetter,
-    xp,
-    mode,
-    pilotProgress,
-  ]);
+  }, [screen, track, youthName, powerName, mirrorScores, mirrorResult, currentMission,
+    missionComplete, reflection, reflectionSubmitted, finisherLetter, xp, mode, pilotProgress]);
 
   function selectTrack(trackObj, name, selectedPowerName) {
     setTrack(trackObj);
@@ -164,17 +116,9 @@ export function YEPProvider({ children }) {
   function submitMirror(answers) {
     const { scores, anchor, edge, style } = scoreMirror(answers);
     const mission = getMission(edge, style);
-
     setMirrorScores(scores);
-    setMirrorResult({
-      Anchor: anchor,
-      Edge: edge,
-      Style: style,
-      Focus: mission ? mission.focus : '',
-      MissionID: mission ? mission.id : null,
-    });
+    setMirrorResult({ Anchor: anchor, Edge: edge, Style: style, Focus: mission ? mission.focus : '', MissionID: mission ? mission.id : null });
     setCurrentMission(mission);
-
     if (mirrorScores === null) setXp((x) => x + XP.MIRROR);
     setScreen('results');
   }
@@ -207,13 +151,15 @@ export function YEPProvider({ children }) {
   function toggleWeeklyActivity(id) {
     setPilotProgress((p) => {
       const has = p.weeklyCompleted.includes(id);
-      return {
-        ...p,
-        weeklyCompleted: has
-          ? p.weeklyCompleted.filter((item) => item !== id)
-          : [...p.weeklyCompleted, id],
-      };
+      return { ...p, weeklyCompleted: has ? p.weeklyCompleted.filter((item) => item !== id) : [...p.weeklyCompleted, id] };
     });
+  }
+
+  function completeStemSin(text) {
+    const cleaned = text.trim();
+    if (!cleaned) return false;
+    setPilotProgress((p) => ({ ...p, stemSinText: cleaned, stemSinComplete: true }));
+    return true;
   }
 
   function completeBossChallenge(text) {
@@ -236,11 +182,7 @@ export function YEPProvider({ children }) {
   }
 
   function resetSession() {
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-    } catch {
-      /* ignore */
-    }
+    try { localStorage.removeItem(STORAGE_KEY); } catch { /* ignore */ }
     setScreen('track');
     setTrack(null);
     setYouthName('');
@@ -265,60 +207,34 @@ export function YEPProvider({ children }) {
     return badges;
   }, [pilotProgress]);
 
-  const activeYouth = useMemo(
-    () => ({
-      id: 'active',
-      name: powerName || youthName || 'You',
-      legalName: youthName || '',
-      powerName: powerName || '—',
-      track: track ? track.name : '—',
-      anchor: mirrorResult ? mirrorResult.Anchor : '—',
-      edge: mirrorResult ? mirrorResult.Edge : '—',
-      style: mirrorResult ? mirrorResult.Style : '—',
-      xp,
-      finisherLetter: finisherLetter || '—',
-      missionTitle: currentMission ? currentMission.title : '—',
-      missionComplete,
-      reflectionSubmitted,
-      reflection,
-      pilotBadges,
-      isActive: true,
-    }),
-    [powerName, youthName, track, mirrorResult, xp, finisherLetter, currentMission, missionComplete, reflectionSubmitted, reflection, pilotBadges]
-  );
+  const activeYouth = useMemo(() => ({
+    id: 'active',
+    name: powerName || youthName || 'You',
+    legalName: youthName || '',
+    powerName: powerName || '—',
+    track: track ? track.name : '—',
+    anchor: mirrorResult ? mirrorResult.Anchor : '—',
+    edge: mirrorResult ? mirrorResult.Edge : '—',
+    style: mirrorResult ? mirrorResult.Style : '—',
+    xp,
+    finisherLetter: finisherLetter || '—',
+    missionTitle: currentMission ? currentMission.title : '—',
+    missionComplete,
+    reflectionSubmitted,
+    reflection,
+    pilotBadges,
+    isActive: true,
+  }), [powerName, youthName, track, mirrorResult, xp, finisherLetter, currentMission, missionComplete, reflectionSubmitted, reflection, pilotBadges]);
 
   const demoYouth = useMemo(() => [...baseDemoYouth, activeYouth], [activeYouth]);
 
   const value = {
-    screen,
-    track,
-    youthName,
-    powerName,
-    mirrorScores,
-    mirrorResult,
-    currentMission,
-    missionComplete,
-    reflection,
-    reflectionSubmitted,
-    finisherLetter,
-    xp,
-    mode,
-    pilotProgress,
-    pilotBadges,
-    demoYouth,
-    activeYouth,
-    selectTrack,
-    submitMirror,
-    completeMission,
-    submitReflection,
-    completeDailyQuest,
-    toggleWeeklyActivity,
-    completeBossChallenge,
-    saveMentorQuestion,
-    navigate,
-    setScreen,
-    setMode,
-    resetSession,
+    screen, track, youthName, powerName, mirrorScores, mirrorResult, currentMission,
+    missionComplete, reflection, reflectionSubmitted, finisherLetter, xp, mode,
+    pilotProgress, pilotBadges, demoYouth, activeYouth, selectTrack, submitMirror,
+    completeMission, submitReflection, completeDailyQuest, toggleWeeklyActivity,
+    completeStemSin, completeBossChallenge, saveMentorQuestion, navigate, setScreen,
+    setMode, resetSession,
   };
 
   return <YEPContext.Provider value={value}>{children}</YEPContext.Provider>;
