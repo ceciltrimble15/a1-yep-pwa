@@ -20,7 +20,7 @@
   font-family: var(--font-display);
   font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--royal);
   margin-bottom: 10px;
@@ -38,12 +38,10 @@
   color: var(--silver);
   font-size: 14.5px;
   margin-bottom: 22px;
-  max-width: 30ch;
+  max-width: 52ch;
 }
 
-.nameField {
-  margin-bottom: 18px;
-}
+.nameField { margin-bottom: 18px; }
 .nameLabel {
   font-family: var(--font-display);
   font-size: 11px;
@@ -55,13 +53,14 @@
 }
 .nameInput {
   width: 100%;
-  padding: 13px 14px;
+  padding: 14px;
   border-radius: 11px;
   background: var(--panel);
   border: 1px solid var(--line-strong);
   color: var(--text);
   font-size: 16px;
   outline: none;
+  min-height: 48px;
 }
 .nameInput:focus { border-color: var(--electric); }
 
@@ -74,6 +73,46 @@
   margin-bottom: 10px;
 }
 
+.pathways {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.pathway {
+  min-height: 74px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 3px 10px;
+  align-items: center;
+  text-align: left;
+  padding: 14px;
+  border-radius: var(--radius);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  color: var(--text);
+}
+
+.pathwayProgram {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 16px;
+  color: var(--royal);
+}
+
+.pathwayLabel {
+  grid-column: 1;
+  color: var(--silver);
+  font-size: 13px;
+}
+
+.pathwaySelected {
+  border-color: var(--electric);
+  background: var(--panel-2);
+  box-shadow: var(--electric-glow);
+}
+
 .tracks { display: flex; flex-direction: column; gap: 11px; }
 
 .track {
@@ -81,6 +120,7 @@
   align-items: center;
   gap: 14px;
   padding: 16px;
+  min-height: 76px;
   border-radius: var(--radius);
   background: var(--panel);
   border: 1px solid var(--line);
@@ -110,3 +150,20 @@
 .tDesc { font-size: 12.5px; color: var(--silver); }
 
 .footer { margin-top: auto; padding-top: 20px; }
+
+@media (min-width: 760px) {
+  .wrap {
+    max-width: 860px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 28px 32px 36px;
+  }
+
+  .title { font-size: 48px; }
+  .tracks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .track { align-items: flex-start; }
+}
+
+@media (max-width: 560px) {
+  .pathways { grid-template-columns: 1fr; }
+}
