@@ -1,480 +1,282 @@
-# YEP / Y.A.E.P. Proof-of-Concept Workbooks — Approval Package (Rev 2)
+# YEP / Y.A.E.P. Proof-of-Concept Workbooks — Approval Package (Rev 3)
 
-**Status:** Re-audited against the V1 tablet pilot branch. Awaiting founder decisions before full copy.
+**Status:** CEO decisions locked. Full workbook copy **HELD** pending app repairs + tablet QA.
 **Prepared for:** Cecil Trimble, Founder & CEO, A/1 Suppliers
-**Supersedes:** Rev 1, which audited `main` and was wrong. Do not use Rev 1.
+**Audit basis:** `ceciltrimble15/a1-yep-pwa`, PR #2 — YEP V1 Tablet Pilot (Draft),
+branch `codex/yep-v1-tablet-pilot-2026-09-03` @ `f08d1109e98c6e49442d86fd53825d98dda940d5`
+**History:** Rev 1 audited `main` and was wrong — discard. Rev 2 corrected the audit.
+Rev 3 folds in CEO decisions and the approved app repairs.
 
 ---
 
-## 0. Audit Basis
+## 0. Where This Stands
 
-| | |
-|---|---|
-| Repo | `ceciltrimble15/a1-yep-pwa` |
-| PR | #2 — YEP V1 Tablet Pilot (Draft — must not be merged until QA passes) |
-| Branch | `codex/yep-v1-tablet-pilot-2026-09-03` |
-| Head audited | `f08d1109e98c6e49442d86fd53825d98dda940d5` (verified match) |
+The chain is `CURRENT APP → WORKBOOK ALIGNMENT → CONTENT REVIEW → APPROVED APP CHANGE → FINAL LOCK`.
+We are at **APPROVED APP CHANGE**.
 
-**Source-of-truth rule applied:** the pilot branch is the functional source of truth. The
-workbooks match the V1 tablet flow. Every curriculum improvement is marked
-`APP CHANGE REQUEST` and left for a deliberate decision. Nothing in the workbook silently
-disagrees with the app.
+Four repairs are approved and owned by Codex. The workbooks are written against that
+approved post-repair behavior, not against `f08d110` as it stands today. Final copy is
+withheld until those repairs are committed and physically retested on the tablet.
 
-Files that carry the functional truth:
-`src/data/pilotContent.js` · `src/data/modes.js` · `src/context/YEPContext.jsx` ·
-`src/screens/PilotScreens.jsx` · `src/screens/Home.jsx` · `src/screens/TrackSelector.jsx` ·
-`src/screens/FacilitatorDashboard.jsx` · `src/App.jsx`
-
-Prior branch docs reviewed and honored:
-`docs/YEP_WORKBOOK_APP_ALIGNMENT_QA_2026-09-08.md` ·
-`docs/YEP_YAEP_DUAL_WORKBOOK_APP_AUDIT_2026-09-08.md`
+Throughout §3 and §4, **⟳** marks a cell whose behavior depends on an approved repair and
+must be re-verified on the tablet before copy is locked. Everything unmarked is verified
+against `f08d110` as built.
 
 ---
 
-## 1. Re-Audit Findings — The Ten Items
+## 1. CEO Decision Log — Locked
 
-### 1. Exact labels and spelling (verified from source)
-
-**Pathways** — `modes.js`. Internal ids differ from display labels. Workbooks use the labels.
-
-| id (code) | Program | Display label |
+| Ref | Decision | Effect on the workbooks |
 |---|---|---|
-| `explorer` | YEP | **Foundation · Ages 7-10** |
-| `builder` | YEP | **Builder · Ages 11-13** |
-| `leader` | YEP | **Momentum · Ages 14-17** |
-| `yaep` | Y.A.E.P. | **Y.A.E.P. · Ages 18-24** |
+| **D-1** | **Option A approved.** Page 3 is preparation for the tablet Mirror. The tablet Mirror is the authoritative scored assessment. No second scored paper Mirror. | Page 3 warms up the six dimensions on paper, then records the tablet's **Anchor · Growth Edge · Learning Style · assigned FINISHER direction**. |
+| **B-1** | **App repair required.** A facilitated participant must move cleanly through Page 3 → Page 7 → Page 8 → Page 9. Do not write around the navigation. | Pages 3, 7, 8, 9 are written against a clean resume/direct path. The Rev 2 "facilitator jumps to hub card 8" workaround is deleted. |
+| **B-2** | **One participant per device accepted** for the POC. No backend sync or export required. **Destructive reset without confirmation is not accepted** — a reset confirmation safeguard is required. | Page 14 states the device-record scope plainly and instructs the facilitator to confirm before reset. No claim of sync or export. |
+| **A-1** | **Approved.** Admin Review will surface the already-persisted writing: Daily Quest response, S.T.E.M.Sin response, Boss Challenge response, Mentor Question. | Page 14 describes Admin Review as showing **completion status + the local pilot participant's saved proof**. Explicitly **not** a cloud-synced multi-participant production backend. |
+| **A-2** | **Approved.** Participant Profile / My Process is the digital My Process proof page and summarizes pathway, Power Name, Mirror result, FINISHER direction/progress, activity completion, badges/status, and saved proof available in the build. | Page 13 aligns field-for-field to that summary. |
+| **XP** | **No point values.** Pilot activities currently award no XP. | Page 9 instructs the participant to record the progress/XP the tablet actually displays. No printed numbers, no invented economy. |
+| **S.T.E.M.Sin** | **Do not expand the acronym** — the formal expansion is not locked in the master curriculum. Use **`S.T.E.M.Sin Technology + Problem-Solving Quest`**, with YEP `Build Something That Solves a Problem` and Y.A.E.P. `Turn a Tool Into Value`. | Page 6 uses the approved label and no expansion. **Creates one naming delta with the current build — see S-1 below.** |
+| **Terminology** | Y.A.E.P. participants are **`Y.A.E.P. Participant`** or **`young adult participant`**. Never "Yeppers". | Y.A.E.P. workbook uses those terms throughout. YEP workbook keeps **Yeppers** per the brand system. |
 
-`builder` is the default mode. Program names in-app: `YEP` / `Young Entrepreneurs Process`,
-`Y.A.E.P.` / `Young Adult Entrepreneur Process`. **The earlier `Y-A.E.P.` misspelling is gone —
-the branch is correct.**
-
-**Screen and card labels, verbatim:**
-
-| Home hub card | Screen title |
-|---|---|
-| Daily Quest | `Problem Spotter` / `Opportunity Spotter` |
-| Weekly Module | `Week 1 — Focus & Identity` / `Week 1 — Position & Purpose` |
-| S.T.E.M.Sin Technology Quest | `S.T.E.M.Sin Technology Quest — Build Something That Solves a Problem` / `— Turn a Tool Into Value` |
-| Boss Challenge | `Boss Challenge — 60-Second Solution` / `— 60-Second Value Pitch` |
-| Mentor Spotlight | `What a Mentor Does` / `Using Mentorship Strategically` |
-| Rewards / Badges | `Proof Badge Log` |
-| My Process / Profile | `Participant Profile` |
-| The Mirror + FINISHER | `Mirror Intro` → assessment → results → mission |
-| Admin Review | `Workbook + Tablet Proof Readout` |
-
-Buttons, verbatim: `Complete Daily Quest` · `Complete S.T.E.M.Sin Quest` ·
-`Complete Boss Challenge` · `Save Mentor Question` · `Lock In` · `Back To Program Home` ·
-`Open Facilitator Demo`.
-
-Note: em dash in every quest title (`Week 1 — Focus & Identity`), hyphen in every mode label
-(`Foundation · Ages 7-10`). Workbook headers must match character for character.
-
-**Activity ids to print in small facilitator text** (real, from `pilotContent.js`):
-`power-name` · `why` · `identity-map` · `problem-spotter` / `opportunity-spotter` ·
-`week-1-focus-identity` / `week-1-position-purpose` ·
-`build-something-that-solves-a-problem` / `turn-a-tool-into-value` ·
-`sixty-second-solution` / `sixty-second-value-pitch` ·
-badges: `daily-quest` · `weekly-module` · `boss-challenge`.
-
-The id list in `YEP_WORKBOOK_APP_ALIGNMENT_QA_2026-09-08.md` (`mirror-check-in`,
-`mentor-question`, `reflection`, `my-process`) was a proposal and **was not implemented**.
-Those four steps have no ids in code. Workbooks use the real ids above only.
-
-### 2. Exact order of activities
-
-The tablet is **not linear**. Entry is `TrackSelector`, then Home is a 9-card hub the
-participant can tap in any order.
-
-Entry screen field order (all on one screen): **Program Pathway → Your Name (optional) →
-Your Power Name (required) → Track → Lock In.** `Lock In` is disabled until both a track and
-a Power Name are entered.
-
-Home hub card order as rendered:
-1. Daily Quest 2. Weekly Module 3. S.T.E.M.Sin Technology Quest 4. Boss Challenge
-5. Mentor Spotlight 6. Rewards / Badges 7. My Process / Profile 8. **The Mirror + FINISHER**
-9. Admin Review
-
-**Finding:** the approved workbook spine puts Mirror Check-In at page 3; the tablet puts the
-Mirror at hub card 8, after the entire pilot sequence. Because the hub is order-agnostic this
-does not break, but a facilitator following the workbook page-by-page will jump to card 8 at
-page 3 and back to card 1 at page 4. See G-7.
-
-### 3. Exact tablet completion action
-
-| Step | Action that marks it done |
-|---|---|
-| Daily Quest | Type in textarea → tap `Complete Daily Quest`. Button disabled while empty. |
-| Weekly Module | Tap each of 3 activity rows to toggle a checkmark. **No text entry.** |
-| S.T.E.M.Sin | Type in textarea → tap `Complete S.T.E.M.Sin Quest`. Disabled while empty. |
-| Boss Challenge | Type in textarea → tap `Complete Boss Challenge`. Disabled while empty. |
-| Mentor Spotlight | Type question → tap `Save Mentor Question`. Disabled while empty. |
-| Mirror | Answer 12 statements on a 4-point scale → results screen. |
-| FINISHER Mission | Tap complete on the assigned mission. |
-| Reflection | Type → submit. |
-| Rewards / Profile / Admin Review | Read-only. No completion action. |
-
-Re-tapping a completed quest changes the button to `Update Completed Quest` — text can be
-revised, completion is not lost.
-
-### 4. What is actually persisted
-
-One `localStorage` key, `yep_session_v1`, one participant per device.
-
-Stored: `screen`, `track`, `youthName`, **`powerName`**, `mirrorScores`, `mirrorResult`,
-`currentMission`, `missionComplete`, `reflection`, `reflectionSubmitted`, `finisherLetter`,
-`xp`, `mode`, and `pilotProgress`:
-`dailyQuestText` · `dailyQuestComplete` · `weeklyCompleted[]` · `stemSinText` ·
-`stemSinComplete` · `bossText` · `bossComplete` · `mentorQuestion`.
-
-**Not stored anywhere:** the participant's Week 1 writing (Power Name reasoning, Why,
-Identity/Asset Map) — only the three checkbox ids. Badges are **derived at render time**, not
-stored.
-
-### 5. What earns a badge
-
-Exactly three, all derived in `YEPContext.pilotBadges`:
-
-| Badge | Condition in code |
-|---|---|
-| **Quest Starter** | `pilotProgress.dailyQuestComplete` |
-| **Identity Builder** | `pilotProgress.weeklyCompleted.length >= 3` |
-| **Boss Move** | `pilotProgress.bossComplete` |
-
-Rewards screen carries the disclaimer: *"Badges are earned by completing real
-proof-of-concept actions. No purchase or cash value is attached in this test."* Workbook copy
-must not imply a prize.
-
-### 6. What only records status
-
-Mirror Check-In · S.T.E.M.Sin Technology Quest · FINISHER Focus · Reflection ·
-Mentor Spotlight. Five of fourteen steps earn no badge — including S.T.E.M.Sin, the hardest
-page in the book. Confirmed unchanged from Rev 1.
-
-Mentor is weaker still: `saveMentorQuestion` sets no completion flag. Status is inferred from
-whether the string is non-empty — `Question Saved` on Home, `Saved` on Admin Review.
-
-### 7. Current Mirror / FINISHER behavior
-
-Unchanged from `main`. Intro → 12 statements across 6 dimensions (Identity, Discipline,
-Confidence, Money Awareness, Adaptability, Community) on a 4-point scale
-(Not yet / Sometimes / Mostly / Always) → Results give **Anchor** (highest), **Growth Edge**
-(lowest), **Learning Style** → app assigns a FINISHER Mission from the Growth Edge →
-complete mission → Reflection → Progress.
-
-**XP exists only here:** Mirror 50 + Mission 75 + Reflection 25 = 150 max. `Profile` labels it
-**"Mirror XP"**. The entire pilot sequence — Daily Quest, Week 1, S.T.E.M.Sin, Boss Challenge,
-Mentor — awards **zero XP**. Verified: none of those handlers touch `setXp`.
-
-**FINISHER letters are assigned by the app, never chosen by the participant:**
-Daily Quest displays `Focus` (read-only) · S.T.E.M.Sin displays `Innovation` (read-only) ·
-the Mirror mission grants a letter from the Growth Edge (Identity → Identity, Discipline →
-Execution, Confidence → Hustle, Money Awareness → Strategy, Adaptability → Resilience,
-Community → Network). Only the mission letter is stored.
-
-### 8. Participant Profile vs the proposed My Process page
-
-The tablet already calls it My Process — Home card reads `My Process / Profile` and the
-screen sub-copy reads *"This is the digital My Process proof page for the tablet pilot."*
-**A separate My Process screen is not needed.** Rev 1 was wrong to call it missing.
-
-`Participant Profile` shows nine fields: Program · Age Pathway · Power Name · Track ·
-Mirror XP · Anchor · S.T.E.M.Sin · Proof Badges (n/3) · Weekly Activities (n/3).
-
-It does **not** show: Daily Quest status, Boss Challenge status, Mentor Question, FINISHER
-letter, Growth Edge, Reflection, or any written text. Admin Review shows more of the
-participant's own progress than the participant's own profile does. See G-4.
-
-### 9. Admin Review limitations
-
-`Workbook + Tablet Proof Readout` renders ten status cards: Program · Pathway · Participant ·
-Daily Quest · Weekly Module · S.T.E.M.Sin · Boss Challenge · Mentor Question · Badges ·
-Mirror / FINISHER Loop.
-
-**Every one is a status flag — `Complete` / `Open` / `Saved` / a count. No participant writing
-is displayed anywhere on this screen.** `dailyQuestText`, `stemSinText`, `bossText` and
-`mentorQuestion` are saved to the device but are only readable on the screen where they were
-typed. Rev 1's matrix claimed Admin Review shows problem statements and mentor questions.
-That was wrong and is corrected below.
-
-Its own sub-copy is accurate and should be echoed, not contradicted: *"This screen reviews the
-active device proof record. It is not the final source-of-truth backend."*
-
-`Open Facilitator Demo` → Cohort Dashboard: three sample records (Marcus, Aaliyah, DeShawn)
-tagged `Sample`, plus the live device record tagged `Pilot`, under the header
-`Facilitator Demo View`. Stats read `Records` / `Finishers` / `Demo XP`. The branch already
-labels this honestly — workbook copy must not upgrade it.
-
-Limitations to state plainly in workbook Page 14: one participant per device · no accounts ·
-no sync · no export or print · `resetSession` wipes the record permanently · written responses
-are not surfaced to the reviewer.
-
-### 10. Workbook content the tablet does not support
-
-From the Rev 1 outline, the following were invented and are removed or rewritten:
-
-| Rev 1 proposed | Reality | Resolution |
-|---|---|---|
-| Participant selects a FINISHER letter | App assigns letters; no selection screen | Page 7 rewritten to record assigned letters |
-| Page 3 short Mirror check-in with its own scoring | No such screen; only the full 12-item Mirror | Page 3 becomes preparation — see §4 D-1 |
-| Admin Review displays written responses | Status flags only | Matrix corrected |
-| Page 9 XP per pilot step | Pilot steps award no XP | Page 9 = copy `Mirror XP` + status |
-| Separate My Process tablet screen | Already exists as Participant Profile | Removed as a request |
-| Week 1 writing saved to tablet | Checkboxes only | Workbook owns the writing; stated on the page |
-
-Still true and confirmed: no leaderboard, no voice/video recording, no parent portal, no
-certificates, no AI answering for the participant, no QR/scan ingestion. Nothing in the
-workbooks promises any of them.
+Rev 2 open items G-6 (acronym) and G-8 (18–24 terminology) are **closed** by the above.
 
 ---
 
-## 2. Corrected YEP Matrix — Ages 7–17
+## 2. Approved App Repairs — What Each Must Deliver for the Workbook
+
+These are the acceptance criteria the workbook copy will assume. Codex owns implementation;
+this is the spec the printed pages will depend on.
+
+**R-1 (from B-1) — Clean path through the Mirror / FINISHER sequence.**
+A facilitated participant must be able to reach, in order and without hunting the hub:
+Mirror Check-In → assigned FINISHER mission → Reflection → XP / Progress, and resume mid-way
+if the tablet is closed and reopened.
+*Workbook dependency:* Pages 3, 7, 8 and 9 each print a single tablet path. **I need the final
+screen and control names before those four pages are typeset.**
+*Open spec question for Codex:* does the repair give Page 7 a dedicated FINISHER destination,
+or does it route straight to the assigned mission? Page 7 currently sends the participant to
+three screens to fill one page (Daily Quest for `Focus`, S.T.E.M.Sin for `Innovation`, Mirror
+Results for the mission letter). One destination would collapse that to one path.
+
+**R-2 (from A-1) — Admin Review surfaces saved writing.**
+`dailyQuestText`, `stemSinText`, `bossText`, `mentorQuestion` displayed alongside the existing
+status cards. All four are already persisted in `pilotProgress`; this is a display change.
+*Workbook dependency:* Page 14 tells the facilitator they can read the participant's actual
+responses on the tablet. That sentence is false until R-2 ships.
+
+**R-3 (from A-2) — Participant Profile widened.**
+Adds to the existing nine fields: FINISHER direction/progress, Daily Quest / Boss Challenge /
+Mentor completion, and the saved proof available in the build.
+*Workbook dependency:* Page 13 is the show-an-adult page and lists which fields the tablet
+mirrors. The field list is the page.
+
+**R-4 (from B-2) — Reset confirmation safeguard.**
+`resetSession` must confirm before wiping. Today it clears `yep_session_v1` and every state
+field with no prompt and no recovery.
+*Workbook dependency:* Page 14's facilitator protocol. Low copy impact, real operational risk.
+
+---
+
+## 3. Corrected Matrices
 
 Chain: `WORKBOOK ENTRY → TABLET ACTION → SAVED PROGRESS → BADGE/STATUS → ADMIN REVIEW`
+**⟳** = depends on an approved repair; re-verify on tablet before copy lock.
 
-| Pg | Workbook Entry | Tablet Screen → Action (verbatim) | Persisted As | Badge / Status | Visible To Reviewer |
+### 3A. YEP — Ages 7–17
+
+| Pg | Workbook Entry | Tablet Screen → Action | Persisted As | Badge / Status | Reviewer Sees |
 |----|---|---|---|---|---|
-| 1 | Circle pathway; draft name; pick track | Start screen → `Choose Your Program Pathway` → `Your Name` (optional) → `Choose Your Track` → `Lock In` | `mode`, `youthName`, `track` | Session started | Admin Review: Program, Pathway · Profile: Program, Age Pathway, Track |
-| 2 | Power Name + why it fits | Same screen → `Your Power Name` (**required**, 28 char max) · then Weekly Module → tap `Power Name` | `powerName`; id `power-name` in `weeklyCompleted` | Counts toward **Identity Builder** | Admin Review: Participant · Profile: Power Name · Home greeting |
-| 3 | Mirror preparation notes | Home → `The Mirror + FINISHER` → Mirror Intro → 12 statements (Not yet/Sometimes/Mostly/Always) → Results | `mirrorScores`, `mirrorResult`, `currentMission` | Status only · **+50 Mirror XP** (first time) | Profile: Anchor, Mirror XP · Admin Review: Mirror / FINISHER Loop |
-| 4 | Problem in one sentence + one way tech or better organization could help | Home → `Daily Quest` → `Problem Spotter` → type → `Complete Daily Quest` | `dailyQuestText`, `dailyQuestComplete` | **Quest Starter** | Admin Review: `Daily Quest: Complete` — **text not shown** |
-| 5 | All Week 1 writing: why the Power Name fits · the problem you care about in one sentence · one skill, one interest, one value | Home → `Weekly Module` → `Week 1 — Focus & Identity` → tap `Power Name`, `Define Your Why`, `Identity Map` | `weeklyCompleted[]` — **ids only, no text** | **Identity Builder** at 3/3 | Admin Review: `Weekly Module: Complete` or n/3 · Profile: Weekly Activities n/3 |
-| 6 | Problem carried from Pg 4 + tool/app/device/AI idea/simple system, what it does, who it helps | Home → `S.T.E.M.Sin Technology Quest` → `Build Something That Solves a Problem` → type → `Complete S.T.E.M.Sin Quest` | `stemSinText`, `stemSinComplete` | Status only. Screen displays FINISHER Focus **Innovation** (read-only) | Admin Review + Profile: `S.T.E.M.Sin: Complete` — **text not shown** |
-| 7 | Record the letters the app assigned you | No dedicated screen. Read `Focus` on Daily Quest, `Innovation` on S.T.E.M.Sin, mission letter on Mirror Results | `finisherLetter` (mission letter only) | Status only | Facilitator Demo View: FINISHER letter chip. **Not on Admin Review** |
-| 8 | Reflection answers | Home → `The Mirror + FINISHER` → mission → complete → Reflection → submit | `reflection`, `reflectionSubmitted` | Status only · **+25 Mirror XP** | Admin Review: Mirror / FINISHER Loop · Facilitator Demo View shows reflection text |
-| 9 | Copy what the tablet shows | Home → `My Process / Profile` → read `Mirror XP`; Progress screen shows XP / 150 | `xp` (max 150, Mirror loop only) | Progress state | Profile: Mirror XP · Facilitator Demo View: XP per record |
-| 10 | 60-second script: problem, solution, who it helps, first step | Home → `Boss Challenge` → `60-Second Solution` → type → `Complete Boss Challenge` | `bossText`, `bossComplete` | **Boss Move** | Admin Review: `Boss Challenge: Complete` — **text not shown** |
-| 11 | One question you would ask a mentor | Home → `Mentor Spotlight` → `What a Mentor Does` → type → `Save Mentor Question` | `mentorQuestion` (string, no flag) | Status only — `Question Saved` | Admin Review: `Mentor Question: Saved` — **text not shown** |
-| 12 | Tick the three badges | Home → `Rewards / Badges` → `Proof Badge Log` | Derived, not stored | All three: Quest Starter, Identity Builder, Boss Move | Admin Review: `Badges: n` · Profile: Proof Badges n/3 |
-| 13 | Full carry-forward summary | Home → `My Process / Profile` → `Participant Profile` | Composite of stored fields | Session state | 9 fields — see §1.8 for what it omits |
-| 14 | Facilitator sign-off | Home → `Admin Review` → `Workbook + Tablet Proof Readout` → `Open Facilitator Demo` | Device record only | Verified by facilitator | 10 status cards; Cohort Dashboard = 3 `Sample` + 1 `Pilot` |
+| 1 | Circle pathway; draft name; pick track | Start → `Choose Your Program Pathway` → `Your Name` (optional) → `Choose Your Track` → `Lock In` | `mode`, `youthName`, `track` | Session started | Admin Review: Program, Pathway · Profile: Program, Age Pathway, Track |
+| 2 | Power Name + why it fits | Start → `Your Power Name` (**required**, 28 char max) · then Weekly Module → tap `Power Name` | `powerName`; `power-name` in `weeklyCompleted` | → **Identity Builder** | Admin Review: Participant · Profile: Power Name · Home greeting |
+| 3 | Six-dimension warm-up on paper, then record the tablet's **Anchor · Growth Edge · Learning Style · assigned FINISHER direction** | ⟳ Mirror Check-In → 12 statements (Not yet / Sometimes / Mostly / Always) → Results | `mirrorScores`, `mirrorResult`, `currentMission` | Status only · **+50 Mirror XP** (first completion) | Profile: Anchor, Mirror XP ⟳ + Mirror result · Admin Review: Mirror / FINISHER Loop |
+| 4 | Problem in one sentence + one way technology or better organization could help | Home → `Daily Quest` → `Problem Spotter` → type → `Complete Daily Quest` | `dailyQuestText`, `dailyQuestComplete` | **Quest Starter** | Status `Complete` ⟳ **+ the saved response** |
+| 5 | All Week 1 writing: why the Power Name fits · the problem you care about in one sentence · one skill, one interest, one value | Home → `Weekly Module` → `Week 1 — Focus & Identity` → tap `Power Name`, `Define Your Why`, `Identity Map` | `weeklyCompleted[]` — **ids only, no text** | **Identity Builder** at 3/3 | Admin Review: `Complete` or n/3 · Profile: Weekly Activities n/3 |
+| 6 | Problem carried from Pg 4 + tool / app / device / AI idea / simple system, what it does, who it helps | Home → S.T.E.M.Sin → `Build Something That Solves a Problem` → type → `Complete S.T.E.M.Sin Quest` | `stemSinText`, `stemSinComplete` | Status only. FINISHER Focus **Innovation** (read-only) | Status `Complete` ⟳ **+ the saved response** |
+| 7 | Record the FINISHER direction the app assigned | ⟳ Single path per R-1. Today: `Focus` on Daily Quest, `Innovation` on S.T.E.M.Sin, mission letter on Mirror Results | `finisherLetter` (mission letter only) | Status only | ⟳ Profile: FINISHER direction/progress · Facilitator Demo View: letter chip |
+| 8 | Reflection answers | ⟳ Mirror sequence → mission → Reflection → submit | `reflection`, `reflectionSubmitted` | Status only · **+25 Mirror XP** | Admin Review: Mirror / FINISHER Loop · Facilitator Demo View shows reflection text |
+| 9 | Record the progress/XP the tablet displays. **No printed values.** | ⟳ Progress screen · `My Process / Profile` → read `Mirror XP` | `xp` (Mirror loop only) | Progress state | Profile: Mirror XP |
+| 10 | 60-second script: problem, solution, who it helps, first step | Home → `Boss Challenge` → `60-Second Solution` → type → `Complete Boss Challenge` | `bossText`, `bossComplete` | **Boss Move** | Status `Complete` ⟳ **+ the saved response** |
+| 11 | One question you would ask a mentor | Home → `Mentor Spotlight` → `What a Mentor Does` → type → `Save Mentor Question` | `mentorQuestion` (string, no completion flag) | Status only — `Question Saved` | Status `Saved` ⟳ **+ the saved question** |
+| 12 | Tick the three badges | Home → `Rewards / Badges` → `Proof Badge Log` | Derived at render, not stored | Quest Starter · Identity Builder · Boss Move | Admin Review: `Badges: n` · Profile: Proof Badges n/3 |
+| 13 | Full carry-forward summary | Home → `My Process / Profile` → `Participant Profile` | Composite of stored fields | Session state | ⟳ pathway · Power Name · Mirror result · FINISHER direction/progress · activity completion · badges/status · saved proof |
+| 14 | Facilitator sign-off | Home → `Admin Review` → `Workbook + Tablet Proof Readout` → `Open Facilitator Demo` | Device record only | Verified by facilitator | ⟳ Status cards **+ the local pilot participant's saved proof**. Not cloud-synced. |
 
-## 3. Corrected Y.A.E.P. Matrix — Ages 18–24
+### 3B. Y.A.E.P. — Ages 18–24
 
-Same page numbers. Differences are content and standard, not structure.
+Same page numbers. Adult framing. `Y.A.E.P. Participant` / `young adult participant` throughout.
 
-| Pg | Workbook Entry | Tablet Screen → Action (verbatim) | Persisted As | Badge / Status | Visible To Reviewer |
+| Pg | Workbook Entry | Tablet Screen → Action | Persisted As | Badge / Status | Reviewer Sees |
 |----|---|---|---|---|---|
-| 1 | Confirm pathway; cohort; pick track | Start screen → `Choose Your Program Pathway` → **`Y.A.E.P. · Ages 18-24`** → `Your Name` → `Choose Your Track` → `Lock In` | `mode: 'yaep'`, `youthName`, `track` | Session started | Admin Review: Program `Y.A.E.P.`, Pathway · Profile: Program, Age Pathway, Track |
-| 2 | Power Name + the evidence behind it | Same screen → `Your Power Name` (**required**) · then Weekly Module → tap `Power Name` (*"Define the professional or entrepreneurial identity your Power Name represents."*) | `powerName`; id `power-name` | Counts toward **Identity Builder** | Admin Review: Participant · Profile: Power Name |
-| 3 | Mirror preparation notes | Home → `The Mirror + FINISHER` → 12 statements → Anchor / Growth Edge / Learning Style | `mirrorScores`, `mirrorResult`, `currentMission` | Status only · **+50 Mirror XP** | Profile: Anchor, Mirror XP · Admin Review: Mirror / FINISHER Loop |
-| 4 | Opportunity, who it affects, one practical way to create value | Home → `Daily Quest` → `Opportunity Spotter` → type → `Complete Daily Quest` | `dailyQuestText`, `dailyQuestComplete` | **Quest Starter** | Admin Review: `Daily Quest: Complete` — **text not shown** |
-| 5 | All Week 1 writing: identity the Power Name represents · the problem/opportunity/future you are committed to · one skill, one relationship, one resource | Home → `Weekly Module` → `Week 1 — Position & Purpose` → tap `Power Name`, `Define Your Why`, **`Asset Map`** | `weeklyCompleted[]` — **ids only, no text** | **Identity Builder** at 3/3 | Admin Review: `Weekly Module: Complete` or n/3 · Profile: Weekly Activities n/3 |
-| 6 | Opportunity from Pg 4 + digital tool / AI workflow / device / system, **the user, the task, the result you would test first** | Home → `S.T.E.M.Sin Technology Quest` → `Turn a Tool Into Value` → type → `Complete S.T.E.M.Sin Quest` | `stemSinText`, `stemSinComplete` | Status only. FINISHER Focus **Innovation** (read-only) | Admin Review + Profile: `S.T.E.M.Sin: Complete` — **text not shown** |
-| 7 | Record the letters the app assigned you | No dedicated screen. `Focus` on Daily Quest, `Innovation` on S.T.E.M.Sin, mission letter on Mirror Results | `finisherLetter` (mission only) | Status only | Facilitator Demo View: letter chip. **Not on Admin Review** |
-| 8 | Reflection incl. what you avoided and why | Home → `The Mirror + FINISHER` → mission → Reflection → submit | `reflection`, `reflectionSubmitted` | Status only · **+25 Mirror XP** | Admin Review: Mirror / FINISHER Loop · Facilitator Demo View shows text |
-| 9 | Copy what the tablet shows | Home → `My Process / Profile` → read `Mirror XP` | `xp` (max 150, Mirror loop only) | Progress state | Profile: Mirror XP |
-| 10 | Pitch: opportunity, value created, who benefits, next concrete move | Home → `Boss Challenge` → `60-Second Value Pitch` → type → `Complete Boss Challenge` | `bossText`, `bossComplete` | **Boss Move** | Admin Review: `Boss Challenge: Complete` — **text not shown** |
-| 11 | One specific question about business, career, money, or next move | Home → `Mentor Spotlight` → `Using Mentorship Strategically` → type → `Save Mentor Question` | `mentorQuestion` (string, no flag) | Status only — `Question Saved` | Admin Review: `Mentor Question: Saved` — **text not shown** |
-| 12 | Tick the three statuses | Home → `Rewards / Badges` → `Proof Badge Log` | Derived, not stored | Quest Starter, Identity Builder, Boss Move | Admin Review: `Badges: n` · Profile: Proof Badges n/3 |
-| 13 | Full carry-forward summary | Home → `My Process / Profile` → `Participant Profile` | Composite of stored fields | Session state | 9 fields — see §1.8 |
-| 14 | Facilitator sign-off | Home → `Admin Review` → `Workbook + Tablet Proof Readout` | Device record only | Verified by facilitator | 10 status cards; pathway shows `Y.A.E.P.` |
+| 1 | Confirm pathway; cohort; pick track | Start → `Choose Your Program Pathway` → **`Y.A.E.P. · Ages 18-24`** → `Your Name` → `Choose Your Track` → `Lock In` | `mode: 'yaep'`, `youthName`, `track` | Session started | Admin Review: Program `Y.A.E.P.`, Pathway · Profile: Program, Age Pathway, Track |
+| 2 | Power Name + the evidence behind it | Start → `Your Power Name` (**required**) · Weekly Module → `Power Name` (*"Define the professional or entrepreneurial identity your Power Name represents."*) | `powerName`; `power-name` | → **Identity Builder** | Admin Review: Participant · Profile: Power Name |
+| 3 | Six-dimension warm-up, then record the tablet's **Anchor · Growth Edge · Learning Style · assigned FINISHER direction** | ⟳ Mirror Check-In → 12 statements → Results | `mirrorScores`, `mirrorResult`, `currentMission` | Status only · **+50 Mirror XP** | Profile: Anchor, Mirror XP ⟳ + Mirror result |
+| 4 | Opportunity, who it affects, one practical way to create value | Home → `Daily Quest` → `Opportunity Spotter` → type → `Complete Daily Quest` | `dailyQuestText`, `dailyQuestComplete` | **Quest Starter** | Status `Complete` ⟳ **+ the saved response** |
+| 5 | All Week 1 writing: the identity the Power Name represents · the problem, opportunity or future you are committed to · one skill, one relationship, one resource | Home → `Weekly Module` → `Week 1 — Position & Purpose` → tap `Power Name`, `Define Your Why`, **`Asset Map`** | `weeklyCompleted[]` — **ids only, no text** | **Identity Builder** at 3/3 | Admin Review: `Complete` or n/3 · Profile: Weekly Activities n/3 |
+| 6 | Opportunity from Pg 4 + digital tool / AI workflow / device / system, **the user, the task, the result you would test first** | Home → S.T.E.M.Sin → `Turn a Tool Into Value` → type → `Complete S.T.E.M.Sin Quest` | `stemSinText`, `stemSinComplete` | Status only. FINISHER Focus **Innovation** (read-only) | Status `Complete` ⟳ **+ the saved response** |
+| 7 | Record the FINISHER direction the app assigned | ⟳ Single path per R-1 | `finisherLetter` (mission only) | Status only | ⟳ Profile: FINISHER direction/progress |
+| 8 | Reflection incl. what you avoided and the honest reason | ⟳ Mirror sequence → mission → Reflection → submit | `reflection`, `reflectionSubmitted` | Status only · **+25 Mirror XP** | Admin Review: Mirror / FINISHER Loop |
+| 9 | Record the progress/XP the tablet displays. **No printed values.** | ⟳ Progress · `My Process / Profile` → `Mirror XP` | `xp` (Mirror loop only) | Progress state | Profile: Mirror XP |
+| 10 | Pitch: opportunity, value created, who benefits, next concrete move | Home → `Boss Challenge` → `60-Second Value Pitch` → type → `Complete Boss Challenge` | `bossText`, `bossComplete` | **Boss Move** | Status `Complete` ⟳ **+ the saved response** |
+| 11 | One specific question about business, career, money, or next move | Home → `Mentor Spotlight` → `Using Mentorship Strategically` → type → `Save Mentor Question` | `mentorQuestion` (string, no flag) | Status only — `Question Saved` | Status `Saved` ⟳ **+ the saved question** |
+| 12 | Tick the three statuses | Home → `Rewards / Badges` → `Proof Badge Log` | Derived at render | Quest Starter · Identity Builder · Boss Move | Admin Review: `Badges: n` · Profile: Proof Badges n/3 |
+| 13 | Full carry-forward summary | Home → `My Process / Profile` → `Participant Profile` | Composite of stored fields | Session state | ⟳ pathway · Power Name · Mirror result · FINISHER direction/progress · activity completion · badges/status · saved proof |
+| 14 | Facilitator sign-off | Home → `Admin Review` → `Workbook + Tablet Proof Readout` | Device record only | Verified by facilitator | ⟳ Status cards **+ saved proof**. Pathway shows `Y.A.E.P.` |
 
 ---
 
-## 4. Revised Gaps — Classified
+## 4. Gap Register — Re-Triaged Against CEO Decisions
 
-### BLOCKER — must be resolved before the tablet demo
+### CLOSED BY CEO DECISION
 
-**B-1 — Reflection and XP are unreachable without running the Mirror loop.**
-Workbook pages 8 and 9 are gated behind hub card 8. A participant who works pages 1–7 in
-order and then turns to page 8 has nothing to open — Reflection only appears after
-Mirror → Mission → Complete Mission. If the demo does not include the full Mirror loop,
-two of fourteen pages have no tablet action at all.
-*Resolution required:* either the demo script always runs the Mirror loop, or pages 8–9 are
-explicitly framed as part of the Mirror sequence. **Recommend the demo always runs it** —
-it is also the only source of XP.
+| Ref | Was | Now |
+|---|---|---|
+| D-1 | Open decision — Mirror A or B | **Closed. Option A.** |
+| A-6 | App change request — pilot steps award no XP | **Closed as a deliberate V1 choice.** No point values. Page 9 records what the tablet shows. |
+| G-6 | Does S.T.E.M.Sin have an expansion? | **Closed. Do not expand.** Approved label locked. |
+| G-8 | What do we call an 18–24 participant? | **Closed.** `Y.A.E.P. Participant` / `young adult participant`. |
+| A-8 | Hub order vs approved spine | **Superseded by R-1.** |
+| G-7 | Facilitator jumps to hub card 8 at Page 3 | **Superseded by R-1.** Workaround deleted. |
 
-**B-2 — One participant per device, no export, destructive reset.**
-Single `yep_session_v1` key. A second participant on the same tablet overwrites the first.
-`resetSession` deletes the record with no confirmation and no way to recover it. Nothing can
-be printed, exported, or emailed off the device.
-*Resolution required:* a written demo protocol — one tablet per participant, or reset only
-after the facilitator has recorded the readout on paper. This is an operational fix, not a
-code fix, and it is enough for V1.
+### APPROVED APP REPAIRS — in flight, Codex owns
 
-### APP CHANGE REQUEST — flagged, not applied
+R-1 clean Mirror→FINISHER→Reflection→XP path (from B-1) ·
+R-2 Admin Review surfaces saved writing (from A-1) ·
+R-3 Participant Profile widened (from A-2) ·
+R-4 reset confirmation safeguard (from B-2).
+Acceptance criteria in §2. All four gate the final copy.
 
-**A-1 — Admin Review shows no participant writing.** Ten status flags, zero text. The
-proof standard promises a reviewer can see the work; right now they see that work
-*happened*. `dailyQuestText`, `stemSinText`, `bossText`, and `mentorQuestion` are already
-persisted — surfacing them is a display change, not a data change. **Highest-value single
-change on this list.**
+### OPEN APP CHANGE REQUESTS — flagged, no decision yet
 
-**A-2 — Participant Profile is thinner than Admin Review.** The participant's own My Process
-page omits Daily Quest, Boss Challenge, Mentor Question, FINISHER letter, Growth Edge, and
-Reflection — all of which the admin screen shows. Page 13 is the show-an-adult moment and
-the tablet half currently under-delivers against the workbook half.
+**S-1 — S.T.E.M.Sin label delta. NEW, needs your call.**
+The approved label is **`S.T.E.M.Sin Technology + Problem-Solving Quest`**. The build says
+**`S.T.E.M.Sin Technology Quest`** in three places:
+`pilotContent.js:21` and `:55` (both quest titles) and `Home.jsx:54` (hub card).
+The eyebrow at `PilotScreens.jsx:88` renders the short form `S.T.E.M.Sin` and is unaffected.
+Under the source-of-truth rule I will not print a label the tablet does not show.
+*Options:* (a) Codex updates the three strings while already in the repair batch — 3-line
+change, keeps workbook and tablet identical; or (b) the workbook prints the current
+`Technology Quest` label and the longer form waits for the master curriculum.
+**Recommend (a).**
 
-**A-3 — Identity Builder can be lost.** `toggleWeeklyActivity` un-checks. Badges are derived
-at render, not stored, so a mis-tap silently removes an earned badge with no warning.
-*Suggested:* make completion one-way, or confirm before un-checking.
+**A-3 — Identity Builder can be silently lost.** `toggleWeeklyActivity` un-checks and badges
+are derived at render, so a mis-tap removes an earned badge with no warning. Cheap to fix
+while R-4's confirmation pattern is being added.
 
 **A-4 — Mentor Spotlight has no completion flag.** Status is inferred from a non-empty
-string. It is the only proof step without a real completion boolean, which makes it the odd
-one out in any completion count.
+string. The only proof step without a real completion boolean.
 
-**A-5 — No FINISHER Focus screen.** Letters appear as read-only fields on two screens and as
-a mission grant on a third. There is no single place a participant sees their FINISHER
-progress, so workbook page 7 sends them to three screens to fill one page.
+**A-7 — Y.A.E.P. `Asset Map` carries the id `identity-map`.** Cosmetic; the workbook prints
+the title, so no workbook impact today. Note only.
 
-**A-6 — Pilot sequence awards no XP.** Five completed proof actions move the XP number zero.
-A participant who finishes Daily Quest, Week 1, S.T.E.M.Sin, Boss Challenge and Mentor and
-skips the Mirror shows **0 XP**. Not fixed here — no XP economy is approved. Flagged so the
-decision is deliberate.
+### ACCEPTED V1 LIMITATIONS — stated honestly in the workbook
 
-**A-7 — Y.A.E.P. Asset Map carries the id `identity-map`.** Cosmetic in code, but the
-facilitator id printed in the Y.A.E.P. workbook would read `identity-map` next to a page
-titled Asset Map. Low priority; the workbook prints the title, not the id, so no workbook
-impact today.
-
-**A-8 — Hub order does not match the approved spine.** The Mirror sits at card 8; the spine
-puts it at page 3. See G-7 under Accepted Limitations for the V1 handling.
-
-### WORKBOOK CHANGE — my side, already applied to the structure below
-
-**W-1 — Page 7 rewritten.** Participants **record** the FINISHER letters the app assigned
-(Focus, Innovation, mission letter), they do not choose one. Rev 1 had them selecting a
-letter, which the app does not support.
-
-**W-2 — Page 3 becomes Mirror preparation.** See decision D-1.
-
-**W-3 — Page 9 drops all point values.** Copy reads `Mirror XP` to match the Profile label,
-states plainly that the pilot steps record status rather than points, and has the participant
-copy the number off the tablet.
-
-**W-4 — Page 1 absorbs pathway and track selection.** Both happen on the entry screen before
-anything else, so the Welcome page must cover them. Rev 1 omitted track entirely.
-
-**W-5 — Page 5 carries all Week 1 writing and says so.** Because the tablet stores only three
-checkboxes, the workbook is the sole record of the Week 1 responses. The page states this in
-facilitator text: *"The tablet records that you did this. This page records what you said."*
-
-**W-6 — Page 13 marks which fields the tablet mirrors.** Fields the Participant Profile also
-shows get a small tablet glyph; the rest are workbook-only until A-2 lands. No page implies
-the tablet holds something it does not.
-
-**W-7 — Foundation lane 5A/5B split confirmed.** Page 5 now carries three writing activities
-for ages 7–10 with no tablet capture to fall back on. Foundation prints as 5A/5B (15 pages);
-Builder, Momentum and Y.A.E.P. stay at 14.
-
-**W-8 — Rewards page carries the app's own disclaimer.** *"No purchase or cash value is
-attached in this test."* Nothing in the workbook frames badges as prizes.
-
-### ACCEPTED V1 LIMITATION — stated honestly in the workbook, not fixed
-
-**G-1** Five of fourteen steps earn no badge (Mirror, S.T.E.M.Sin, FINISHER Focus,
-Reflection, Mentor). Workbook marks them **"Saved status only."** No badge is invented.
-
-**G-2** Written responses live only on the screen where they were typed. Page 14 tells the
-facilitator to read the workbook alongside the tablet rather than expecting the tablet to
-show the writing.
-
-**G-3** Admin Review is a device readout, not a synced backend. Page 14 echoes the app's own
-sentence and claims nothing more.
-
-**G-4** Cohort Dashboard is three sample records plus one live record, already labeled
-`Sample` / `Pilot` / `Demo XP` by the branch. Workbook does not present it as a cohort report.
-
-**G-5** No offline dependency. All 14 workbook pages are completable on paper if the tablet
-is unavailable; only the save step waits. This satisfies QA question 10.
-
-**G-6** `S.T.E.M.Sin` has no defined expansion anywhere in the repo or brand system. Used
-verbatim, unexplained. *If it should be defined, Page 6 needs one line from you.*
-
-**G-7** Mirror at page 3 vs hub card 8. Accepted for V1 because the hub is order-agnostic —
-the participant taps card 8 at page 3 and returns to card 1 at page 4. Page 3 carries a
-facilitator note naming the card. Reordering the hub is A-8 if you want it clean.
-
-**G-8** No participant term exists for Y.A.E.P. Brand fixes **Yeppers** for youth. Y.A.E.P.
-copy says "participant" throughout. *Still an open naming decision, not a blocker.*
-
-**G-9** **A.Ai** is in the brand system, not in the build. It appears in neither workbook.
-
-**G-10** F.L.A.G. and the three Tracks (Build & Sell, Brand & Influence, Money & Markets) are
-live in the app but outside the 14-step spine. Tracks now appear on Page 1 because selection
-is mandatory at entry. F.L.A.G. renders on no pilot screen and stays out of both workbooks.
-
-**G-11** The app header no longer displays *Always Forward. Never Back.* — it now shows the
-program name and age range. The workbooks keep the daily close as a brand element. Not a
-conflict.
-
-### DECISION REQUIRED
-
-**D-1 — Mirror Check-In, Page 3. Recommend Option A: preparation for the full tablet Mirror.**
-
-Reasoning. Option B asks the workbook to be a short paper Mirror that points to the fuller
-tablet assessment. The tablet Mirror produces a scored, consequential result — Anchor, Growth
-Edge, Learning Style — and the Growth Edge **selects the participant's FINISHER mission**. A
-paper instrument would either be unscored, in which case it is preparation wearing a
-different name, or scored differently, in which case a participant can hold two conflicting
-reads of themselves in one session and the facilitator has to explain which one counts.
-
-Option A avoids that entirely. Page 3 warms up the same six dimensions in plain language,
-the participant answers honestly on paper, then takes the real assessment on the tablet and
-writes their Anchor, Growth Edge, Learning Style and assigned mission into the workbook. One
-result, one source, and the paper page still does real thinking work.
-
-**This does not replace or redefine the existing Mirror. It adds nothing to it.**
+- One participant per device. No accounts, no sync, no export or print. *(B-2 accepted.)*
+- Five of fourteen steps earn no badge — Mirror, S.T.E.M.Sin, FINISHER Focus, Reflection,
+  Mentor. Workbook prints **"Saved status only."** No badge invented.
+- Week 1 stores three checkbox ids and no text. **The workbook is the sole record of the
+  Week 1 responses**, and Page 5 says so in facilitator text.
+- Admin Review is a local device readout. Post-R-2 it shows status **and** the local
+  participant's saved proof — never described as a synced multi-participant backend.
+- Cohort Dashboard is three sample records plus one live record, already labeled
+  `Sample` / `Pilot` / `Demo XP`. Not presented as a cohort report.
+- Badges carry the app's own line: *"No purchase or cash value is attached in this test."*
+- All 14 pages are completable on paper if the tablet is unavailable; only the save waits.
+- **A.Ai** is in the brand system but not in the build. It appears in neither workbook.
+- F.L.A.G. renders on no pilot screen and stays out of both workbooks. Tracks appear on
+  Page 1 only because selection is mandatory at entry.
+- The app header shows program name + age range, not *Always Forward. Never Back.* The
+  workbooks keep the daily close as a brand element. Not a conflict.
 
 ---
 
-## 5. Final Recommended Page Structure
+## 5. Final Page Structure — Locked
 
 Fourteen pages, both books, same number = same step. Foundation lane prints 5A/5B.
 Cover + 14 = **15 printed pages** (Foundation: 16).
 
 | Pg | YEP 7–17 | Y.A.E.P. 18–24 | Tablet Destination | Badge |
 |----|---|---|---|---|
-| 1 | Welcome — This Is a Process, Not a Program | Welcome — This Is a Process, Not a Program | Start screen: pathway, name, track | — |
-| 2 | Power Name — Claim What They Call You | Power Name — Your Professional Identity | Start screen: Power Name · Weekly Module | → Identity Builder |
-| 3 | Mirror Check-In — Read Yourself First | Mirror Check-In — An Honest Read | The Mirror + FINISHER (hub card 8) | status |
+| 1 | Welcome — This Is a Process, Not a Program | Welcome — This Is a Process, Not a Program | Start: pathway, name, track | — |
+| 2 | Power Name — Claim What They Call You | Power Name — Your Professional Identity | Start: Power Name · Weekly Module | → Identity Builder |
+| 3 | Mirror Check-In — Read Yourself First | Mirror Check-In — An Honest Read on Where You Stand | ⟳ Mirror Check-In | status |
 | 4 | Daily Quest — Problem Spotter | Daily Quest — Opportunity Spotter | Daily Quest | **Quest Starter** |
 | 5 | Week 1 — Focus & Identity | Week 1 — Position & Purpose | Weekly Module | **Identity Builder** |
-| 6 | S.T.E.M.Sin — Build Something That Solves a Problem | S.T.E.M.Sin — Turn a Tool Into Value | S.T.E.M.Sin Technology Quest | status |
-| 7 | FINISHER Focus — Record Your Letters | FINISHER Focus — Record Your Letters | read-only across 3 screens | status |
-| 8 | Reflection — What Moved You Forward | Reflection — What Moved the Work Forward | Reflection (inside Mirror loop) | status |
-| 9 | Mirror XP & Progress | Mirror XP & Progress | My Process / Profile | — |
+| 6 | S.T.E.M.Sin Technology + Problem-Solving Quest — Build Something That Solves a Problem | S.T.E.M.Sin Technology + Problem-Solving Quest — Turn a Tool Into Value | S.T.E.M.Sin Quest *(label pending S-1)* | status |
+| 7 | FINISHER Focus — Record Your Direction | FINISHER Focus — Record Your Direction | ⟳ per R-1 | status |
+| 8 | Reflection — What Moved You Forward | Reflection — What Moved the Work Forward | ⟳ Reflection | status |
+| 9 | Mirror XP & Progress | Mirror XP & Progress | ⟳ Progress · My Process / Profile | — |
 | 10 | Boss Challenge — 60-Second Solution | Boss Challenge — 60-Second Value Pitch | Boss Challenge | **Boss Move** |
 | 11 | Mentor Spotlight — What a Mentor Does | Mentorship — Using Mentorship Strategically | Mentor Spotlight | status |
 | 12 | Rewards & Badges | Rewards & Status | Rewards / Badges | — |
-| 13 | My Process Page | My Process Page | My Process / Profile | — |
-| 14 | Facilitator & Admin Proof Connection | Facilitator & Admin Proof Connection | Admin Review | — |
+| 13 | My Process Page | My Process Page | ⟳ My Process / Profile | — |
+| 14 | Facilitator & Admin Proof Connection | Facilitator & Admin Proof Connection | ⟳ Admin Review | — |
 
 **Lane markers (YEP only), matched to the app's own labels:**
-**▲ Foundation · Ages 7-10** — short sentences, visible problems, one worked example, largest
-writing area, 5A/5B split ·
-**■ Builder · Ages 11-13** — independent work, problem→solution, first money awareness ·
-**● Momentum · Ages 14-17** — execution, market thinking, decisions, accountability.
-One lane block per page. Y.A.E.P. carries no lane markers.
+**▲ Foundation · Ages 7-10** — short sentences, concrete visible problems, one worked
+example, largest writing area, prints 5A/5B ·
+**■ Builder · Ages 11-13** — independent work, problem→solution, first money and customer
+awareness ·
+**● Momentum · Ages 14-17** — execution, market thinking, decisions, accountability,
+leadership.
+One lane block per page. **Y.A.E.P. carries no lane markers.**
 
-**Standing page furniture:**
-- **WORKBOOK:** / **TABLET:** callouts on every activity page, tablet path verbatim from §2–3.
-- Activity id in small facilitator text, real ids only (§1.1).
+**Standing page furniture (both books):**
+- **WORKBOOK:** / **TABLET:** callouts on every activity page, tablet paths verbatim from §3.
+- Activity id in small facilitator text — real ids only: `power-name` · `why` ·
+  `identity-map` · `problem-spotter` / `opportunity-spotter` · `week-1-focus-identity` /
+  `week-1-position-purpose` · `build-something-that-solves-a-problem` /
+  `turn-a-tool-into-value` · `sixty-second-solution` / `sixty-second-value-pitch` ·
+  badges `daily-quest` · `weekly-module` · `boss-challenge`.
 - Steps without a badge print **"Saved status only."**
-- Sensitive-data rule on Pages 1 and 14: first name, Power Name, cohort. Nothing else.
-- Sample-data rule echoing the app: use sample or non-sensitive information only until
-  intake, consent, privacy, and permissions are approved.
+- AI rule on Page 6: AI may support thinking, it does not produce the participant's work;
+  write what you asked and what you decided.
+- Real-people rule on Page 11.
+- Data rule on Pages 1 and 14: first name, Power Name, cohort only. Sample or non-sensitive
+  information only until intake, consent, privacy, and permissions are approved.
 - Daily close at the foot of Pages 1 and 13: **Always Forward. Never Back.**
 
 ---
 
-## 6. What I Need From You
+## 6. Tablet QA Gate — What Must Pass Before Final Copy
 
-Four decisions, then I write full copy for both books plus the print-ready structure.
+Final copy is written after these are committed on the pilot branch and physically retested
+on the tablet. Suggested pass/fail list for the retest:
 
-1. **D-1 — Mirror Page 3.** Approve Option A (preparation), or choose B.
-2. **B-1 — Demo script.** Confirm the tablet demo always runs the Mirror loop, so pages 8–9
-   have a destination and XP is non-zero.
-3. **B-2 — Device protocol.** One tablet per participant, or facilitator records the readout
-   before reset.
-4. **A-1 / A-2 — App change requests.** Approve, defer, or decline surfacing participant
-   writing on Admin Review and widening the Participant Profile. Either answer is workable —
-   the workbook copy differs depending on it, so I need it before writing Pages 13 and 14.
+| # | Check | Gates |
+|---|---|---|
+| 1 | From Page 3, a participant reaches the Mirror and completes it without hunting the hub | R-1 |
+| 2 | After the Mirror, the assigned FINISHER direction is reachable in one step | R-1 |
+| 3 | Reflection is reachable after the mission, and resumes after the tablet is closed and reopened | R-1 |
+| 4 | XP / Progress is reachable and displays a number the participant can copy | R-1 |
+| 5 | Admin Review shows the Daily Quest response text | R-2 |
+| 6 | Admin Review shows the S.T.E.M.Sin response text | R-2 |
+| 7 | Admin Review shows the Boss Challenge response text | R-2 |
+| 8 | Admin Review shows the Mentor Question text | R-2 |
+| 9 | Participant Profile shows pathway, Power Name, Mirror result, FINISHER direction/progress, activity completion, badges/status, saved proof | R-3 |
+| 10 | Reset prompts for confirmation and can be cancelled without data loss | R-4 |
+| 11 | Both pathways demo end to end: YEP (each of the three lanes) and Y.A.E.P. | existing |
+| 12 | All three badges unlock from real actions and survive a close/reopen | existing |
+| 13 | Final screen labels captured verbatim for typesetting Pages 3, 7, 8, 9, 13, 14 | R-1–R-3 |
 
-Open naming items that can ride along: **G-6** (does S.T.E.M.Sin have an expansion?) and
-**G-8** (what do we call an 18–24 participant?).
+Item 13 is the one I need handed back to me directly — the final screen and control names.
+Six pages print a tablet path and I will not guess at a label.
 
 ---
-*A/1 Suppliers — YEP / Y.A.E.P. Proof-of-Concept Workbooks — Approval Package, Rev 2*
+
+## 7. Next Actions
+
+**Codex:** R-1, R-2, R-3, R-4 on `codex/yep-v1-tablet-pilot-2026-09-03`. S-1 recommended for
+the same batch (3 strings). PR #2 stays Draft until QA passes.
+
+**Krisha:** run §6 on the physical tablet, return pass/fail per row plus the verbatim screen
+and control names from item 13.
+
+**Claude:** on QA pass — full YEP copy, full Y.A.E.P. copy, final workbook-to-app audit
+against the retested build, and the print-ready structure for PDF formatting.
+
+**Cecil:** one open call — **S-1**, the S.T.E.M.Sin label. Recommend (a), update the three
+strings so workbook and tablet read identically.
+
+---
+*A/1 Suppliers — YEP / Y.A.E.P. Proof-of-Concept Workbooks — Approval Package, Rev 3*
 *Audited against `codex/yep-v1-tablet-pilot-2026-09-03` @ `f08d110`*
 *Supplying the Tools. Supporting the Hustle.*
