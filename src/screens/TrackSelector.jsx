@@ -1,39 +1,63 @@
 import { useState } from 'react';
 import { Hammer, Megaphone, LineChart, ArrowRight, Check } from 'lucide-react';
 import { useYEP } from '../context/YEPContext';
+import { MODES } from '../data/modes';
 import styles from './TrackSelector.module.css';
 import ui from '../styles/ui.module.css';
 
-/* YEP tracks — the lane a youth runs their process in. */
 export const TRACKS = [
   { id: 'build', name: 'Build & Sell', desc: 'Make a product. Put it in the market.', icon: Hammer },
   { id: 'brand', name: 'Brand & Influence', desc: 'Build a name people follow and trust.', icon: Megaphone },
   { id: 'money', name: 'Money & Markets', desc: 'Master the numbers behind the hustle.', icon: LineChart },
 ];
 
+const PATHWAYS = ['explorer', 'builder', 'leader', 'yaep'];
+
 export default function TrackSelector() {
-  const { selectTrack } = useYEP();
+  const { selectTrack, setMode } = useYEP();
   const [name, setName] = useState('');
   const [powerName, setPowerName] = useState('');
   const [picked, setPicked] = useState(null);
+  const [pathway, setPathway] = useState('builder');
 
   function start() {
     const track = TRACKS.find((t) => t.id === picked);
     const identity = powerName.trim();
     if (!track || !identity) return;
+    setMode(pathway);
     selectTrack(track, name.trim(), identity);
   }
 
   return (
     <div className={styles.wrap}>
       <img className={styles.logo} src="/logo.png" alt="A/1 Suppliers" />
-      <div className={styles.brandLine}>Young Entrepreneurs Process · Ages 7–17</div>
+      <div className={styles.brandLine}>A/1 Suppliers · YEP + Y.A.E.P. Proof of Concept</div>
       <h1 className={styles.title}>
         Start Your <em>Process.</em>
       </h1>
       <p className={styles.sub}>
-        Pick your track. Choose the Power Name that represents who you are becoming. Then face the Mirror.
+        Choose the age pathway, create a Power Name, select a track, and enter the proof-of-concept experience.
       </p>
+
+      <div className={styles.tracksLabel}>Choose Your Program Pathway</div>
+      <div className={styles.pathways}>
+        {PATHWAYS.map((id) => {
+          const option = MODES[id];
+          const sel = pathway === id;
+          return (
+            <button
+              key={id}
+              type="button"
+              className={`${styles.pathway} ${sel ? styles.pathwaySelected : ''}`}
+              onClick={() => setPathway(id)}
+            >
+              <span className={styles.pathwayProgram}>{option.program}</span>
+              <span className={styles.pathwayLabel}>{option.label}</span>
+              {sel && <Check size={18} />}
+            </button>
+          );
+        })}
+      </div>
 
       <div className={styles.nameField}>
         <label className={styles.nameLabel} htmlFor="yname">
@@ -65,7 +89,7 @@ export default function TrackSelector() {
         />
       </div>
 
-      <div className={styles.tracksLabel}>Choose Your YEP Track</div>
+      <div className={styles.tracksLabel}>Choose Your Track</div>
       <div className={styles.tracks}>
         {TRACKS.map((t) => {
           const Icon = t.icon;
