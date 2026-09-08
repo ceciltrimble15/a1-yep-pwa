@@ -11,6 +11,7 @@ import FacilitatorDashboard from './screens/FacilitatorDashboard';
 import {
   DailyQuest,
   WeeklyModule,
+  StemSinQuest,
   BossChallenge,
   MentorSpotlight,
   Rewards,
@@ -23,6 +24,7 @@ const SCREENS = {
   home: Home,
   dailyQuest: DailyQuest,
   weeklyModule: WeeklyModule,
+  stemSin: StemSinQuest,
   bossChallenge: BossChallenge,
   mentorSpotlight: MentorSpotlight,
   rewards: Rewards,
