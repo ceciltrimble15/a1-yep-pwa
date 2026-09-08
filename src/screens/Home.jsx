@@ -18,7 +18,7 @@ function HubCard({ title, text, status, done, onClick }) {
 export default function Home() {
   const { powerName, navigate, pilotProgress, pilotBadges, mirrorResult, mode } = useYEP();
   const program = MODES[mode] || MODES.builder;
-  const { weeklyModule } = getProgramContent(mode);
+  const { weeklyModule, stemSin } = getProgramContent(mode);
   const weeklyDone = pilotProgress.weeklyCompleted.length >= weeklyModule.activities.length;
 
   return (
@@ -27,8 +27,12 @@ export default function Home() {
         <div className={styles.eyebrow}>{program.program} · {program.label}</div>
         <h1 className={styles.title}>{powerName ? `Welcome, ${powerName}.` : `Welcome To ${program.program}.`}</h1>
         <p className={styles.sub}>
-          This proof shows the Process on a real device: identity, action, reflection, progress, rewards, mentor thinking, and admin review.
+          This proof connects workbook thinking to tablet action, saved progress, rewards, reflection, and facilitator review.
         </p>
+      </div>
+
+      <div className={styles.note}>
+        <strong>Proof Flow:</strong> Workbook entry → matching app action → saved progress → badge/status → Admin Review.
       </div>
 
       <div className={styles.grid}>
@@ -45,6 +49,13 @@ export default function Home() {
           status={weeklyDone ? 'Complete' : `${pilotProgress.weeklyCompleted.length}/${weeklyModule.activities.length} Done`}
           done={weeklyDone}
           onClick={() => navigate('weeklyModule')}
+        />
+        <HubCard
+          title="S.T.E.M.Sin Technology Quest"
+          text={stemSin.title}
+          status={pilotProgress.stemSinComplete ? 'Complete' : 'Open'}
+          done={pilotProgress.stemSinComplete}
+          onClick={() => navigate('stemSin')}
         />
         <HubCard
           title="Boss Challenge"
@@ -68,14 +79,14 @@ export default function Home() {
           onClick={() => navigate('rewards')}
         />
         <HubCard
-          title="Participant Profile"
-          text="Review program, age pathway, Power Name, track, Mirror result, XP, and proof progress."
+          title="My Process / Profile"
+          text="Review program, age pathway, Power Name, track, Mirror result, XP, S.T.E.M.Sin, and proof progress."
           status="View"
           onClick={() => navigate('profile')}
         />
         <HubCard
           title="The Mirror + FINISHER"
-          text="Run the existing assessment → mission → reflection → XP behavior loop."
+          text="Run the assessment → mission → reflection → XP behavior loop."
           status={mirrorResult ? 'Started' : 'Start'}
           done={!!mirrorResult}
           onClick={() => navigate('mirrorIntro')}
