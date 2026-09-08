@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Send } from 'lucide-react';
+import { getProgramContent } from '../data/pilotContent';
 import { useYEP, XP } from '../context/YEPContext';
 import Shell from '../components/Shell';
 import styles from './Reflection.module.css';
@@ -8,18 +9,19 @@ import ui from '../styles/ui.module.css';
 const MIN = 12;
 
 export default function Reflection() {
-  const { currentMission, submitReflection } = useYEP();
-  const [text, setText] = useState('');
+  const { currentMission, submitReflection, mode, reflection: savedReflection } = useYEP();
+  const { reflection } = getProgramContent(mode);
+  const [text, setText] = useState(savedReflection);
   const ready = text.trim().length >= MIN;
 
   return (
     <Shell>
       <div className={styles.eyebrow}>Reflection</div>
       <h1 className={styles.title}>
-        Lock It <em>In.</em>
+        {reflection.title}
       </h1>
       <p className={styles.sub}>
-        The work means nothing until you name what it taught you. This is how it sticks.
+        {reflection.prompt}
       </p>
 
       <div className={styles.prompt}>
@@ -30,7 +32,7 @@ export default function Reflection() {
 
       <textarea
         className={styles.area}
-        placeholder="Be honest. No one is grading this — you are."
+        placeholder={reflection.placeholder}
         value={text}
         onChange={(e) => setText(e.target.value)}
       />

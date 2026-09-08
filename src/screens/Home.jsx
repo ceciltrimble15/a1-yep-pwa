@@ -1,7 +1,7 @@
 import { ScanFace } from 'lucide-react';
 import { useYEP } from '../context/YEPContext';
 import { MODES } from '../data/modes';
-import { getProgramContent } from '../data/pilotContent';
+import { getProgramContent, STEM_SIN_LABEL } from '../data/pilotContent';
 import Shell from '../components/Shell';
 import styles from './PilotScreens.module.css';
 
@@ -18,7 +18,7 @@ function HubCard({ title, text, status, done, onClick }) {
 export default function Home() {
   const { powerName, navigate, pilotProgress, pilotBadges, mirrorResult, mode } = useYEP();
   const program = MODES[mode] || MODES.builder;
-  const { weeklyModule, stemSin } = getProgramContent(mode);
+  const { weeklyModule, stemSin, dailyQuest, bossChallenge, mentorSpotlight, instructions, expectations } = getProgramContent(mode);
   const weeklyDone = pilotProgress.weeklyCompleted.length >= weeklyModule.activities.length;
 
   return (
@@ -27,7 +27,7 @@ export default function Home() {
         <div className={styles.eyebrow}>{program.program} · {program.label}</div>
         <h1 className={styles.title}>{powerName ? `Welcome, ${powerName}.` : `Welcome To ${program.program}.`}</h1>
         <p className={styles.sub}>
-          This proof connects workbook thinking to tablet action, saved progress, rewards, reflection, and facilitator review.
+          {instructions}
         </p>
       </div>
 
@@ -35,10 +35,12 @@ export default function Home() {
         <strong>Proof Flow:</strong> Workbook entry → matching app action → saved progress → badge/status → Admin Review.
       </div>
 
+      <div className={styles.note}>{expectations}</div>
+
       <div className={styles.grid}>
         <HubCard
           title="Daily Quest"
-          text={mode === 'yaep' ? 'Identify a real opportunity and record the value you could create.' : 'Complete one real-world action and save the result on this device.'}
+          text={dailyQuest.prompt}
           status={pilotProgress.dailyQuestComplete ? 'Complete' : 'Start'}
           done={pilotProgress.dailyQuestComplete}
           onClick={() => navigate('dailyQuest')}
@@ -51,22 +53,22 @@ export default function Home() {
           onClick={() => navigate('weeklyModule')}
         />
         <HubCard
-          title="S.T.E.M.Sin Technology Quest"
-          text={stemSin.title}
+          title={STEM_SIN_LABEL}
+          text={stemSin.challengeTitle}
           status={pilotProgress.stemSinComplete ? 'Complete' : 'Open'}
           done={pilotProgress.stemSinComplete}
           onClick={() => navigate('stemSin')}
         />
         <HubCard
           title="Boss Challenge"
-          text={mode === 'yaep' ? 'Build and practice a 60-second value pitch.' : 'Build and practice a 60-second solution to a real problem.'}
+          text={bossChallenge.prompt}
           status={pilotProgress.bossComplete ? 'Complete' : 'Open'}
           done={pilotProgress.bossComplete}
           onClick={() => navigate('bossChallenge')}
         />
         <HubCard
           title="Mentor Spotlight"
-          text="Learn how mentorship strengthens decisions and save one question you would bring to a mentor."
+          text={mentorSpotlight.challenge}
           status={pilotProgress.mentorQuestion ? 'Question Saved' : 'Open'}
           done={!!pilotProgress.mentorQuestion}
           onClick={() => navigate('mentorSpotlight')}
@@ -84,6 +86,7 @@ export default function Home() {
           status="View"
           onClick={() => navigate('profile')}
         />
+        <HubCard title="FINISHER Focus" text="See your saved Focus, Innovation, Growth Edge, and assigned mission together." status="View" onClick={() => navigate('finisherFocus')} />
         <HubCard
           title="The Mirror + FINISHER"
           text="Run the assessment → mission → reflection → XP behavior loop."

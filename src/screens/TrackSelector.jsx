@@ -14,11 +14,11 @@ export const TRACKS = [
 const PATHWAYS = ['explorer', 'builder', 'leader', 'yaep'];
 
 export default function TrackSelector() {
-  const { selectTrack, setMode } = useYEP();
+  const { selectTrack, setMode, mode } = useYEP();
   const [name, setName] = useState('');
   const [powerName, setPowerName] = useState('');
   const [picked, setPicked] = useState(null);
-  const [pathway, setPathway] = useState('builder');
+  const [pathway, setPathway] = useState(mode);
 
   function start() {
     const track = TRACKS.find((t) => t.id === picked);

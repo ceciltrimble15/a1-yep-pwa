@@ -1,6 +1,7 @@
 import { YEPProvider, useYEP } from './context/YEPContext';
 import TrackSelector from './screens/TrackSelector';
 import Home from './screens/Home';
+import FinisherFocus from './screens/FinisherFocus';
 import MirrorIntro from './screens/MirrorIntro';
 import MirrorAssessment from './screens/MirrorAssessment';
 import MirrorResults from './screens/MirrorResults';
@@ -22,6 +23,7 @@ import {
 const SCREENS = {
   track: TrackSelector,
   home: Home,
+  finisherFocus: FinisherFocus,
   dailyQuest: DailyQuest,
   weeklyModule: WeeklyModule,
   stemSin: StemSinQuest,
@@ -40,9 +42,9 @@ const SCREENS = {
 };
 
 function Router() {
-  const { screen } = useYEP();
+  const { screen, mode } = useYEP();
   const Screen = SCREENS[screen] || TrackSelector;
-  return <Screen />;
+  return <Screen key={`${screen}:${mode}`} />;
 }
 
 export default function App() {

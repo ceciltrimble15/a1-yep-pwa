@@ -4,6 +4,7 @@ import { dimensionToStyle } from '../data/mirrorProfiles';
 import { getMission } from '../data/missions';
 import { demoYouth as baseDemoYouth } from '../data/demoYouth';
 import { DEFAULT_MODE, isValidMode } from '../data/modes';
+import { EMPTY_PILOT_PROGRESS, migrateLaneProgress } from '../data/laneProgress';
 
 const YEPContext = createContext(null);
 
@@ -14,22 +15,12 @@ export const XP = {
 };
 
 const SCREENS = [
-  'track', 'home', 'dailyQuest', 'weeklyModule', 'stemSin', 'bossChallenge',
+  'track', 'home', 'finisherFocus', 'dailyQuest', 'weeklyModule', 'stemSin', 'bossChallenge',
   'mentorSpotlight', 'rewards', 'profile', 'adminReview', 'mirrorIntro', 'mirror',
   'results', 'mission', 'reflection', 'progress', 'dashboard',
 ];
 
 const STORAGE_KEY = 'yep_session_v1';
-const EMPTY_PILOT_PROGRESS = {
-  dailyQuestText: '',
-  dailyQuestComplete: false,
-  weeklyCompleted: [],
-  stemSinText: '',
-  stemSinComplete: false,
-  bossText: '',
-  bossComplete: false,
-  mentorQuestion: '',
-};
 
 function loadSession() {
   try {
@@ -89,22 +80,23 @@ export function YEPProvider({ children }) {
   const [finisherLetter, setFinisherLetter] = useState(saved.finisherLetter ?? '');
   const [xp, setXp] = useState(saved.xp ?? 0);
   const [mode, setModeState] = useState(() => resolveInitialMode(saved.mode));
-  const [pilotProgress, setPilotProgress] = useState({
-    ...EMPTY_PILOT_PROGRESS,
-    ...(saved.pilotProgress ?? {}),
-  });
+  const [laneProgress, setLaneProgress] = useState(() => migrateLaneProgress(saved));
+  const pilotProgress = laneProgress[mode] || EMPTY_PILOT_PROGRESS;
+  function setPilotProgress(update) {
+    setLaneProgress((all) => ({ ...all, [mode]: update(all[mode] || EMPTY_PILOT_PROGRESS) }));
+  }
 
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         screen, track, youthName, powerName, mirrorScores, mirrorResult, currentMission,
-        missionComplete, reflection, reflectionSubmitted, finisherLetter, xp, mode, pilotProgress,
+        missionComplete, reflection, reflectionSubmitted, finisherLetter, xp, mode, pilotProgress, laneProgress,
       }));
     } catch {
       /* storage blocked/full */
     }
   }, [screen, track, youthName, powerName, mirrorScores, mirrorResult, currentMission,
-    missionComplete, reflection, reflectionSubmitted, finisherLetter, xp, mode, pilotProgress]);
+    missionComplete, reflection, reflectionSubmitted, finisherLetter, xp, mode, pilotProgress, laneProgress]);
 
   function selectTrack(trackObj, name, selectedPowerName) {
     setTrack(trackObj);
@@ -196,7 +188,7 @@ export function YEPProvider({ children }) {
     setFinisherLetter('');
     setXp(0);
     setModeState(DEFAULT_MODE);
-    setPilotProgress(EMPTY_PILOT_PROGRESS);
+    setLaneProgress({});
   }
 
   const pilotBadges = useMemo(() => {

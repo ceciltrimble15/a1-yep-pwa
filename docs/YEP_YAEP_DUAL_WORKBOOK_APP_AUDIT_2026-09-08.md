@@ -1,3 +1,5 @@
+> Superseded where inconsistent by [REV 3 CEO decisions](REV3_CEO_DECISIONS_AND_RETEST.md). Final copy is held pending R-1 through R-5 and four-lane retest.
+
 # YEP + Y.A.E.P. DUAL WORKBOOK / APP PROOF AUDIT
 
 Date: 2026-09-08

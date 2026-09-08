@@ -25,6 +25,12 @@ function WorkbookCallout({ text }) {
   return <div className={styles.note}><strong>Workbook ↔ App:</strong> {text}</div>;
 }
 
+function LaneGuidance() {
+  const { mode } = useYEP();
+  const { instructions, example, expectations } = getProgramContent(mode);
+  return <div className={styles.note}><p>{instructions}</p><p><strong>Example:</strong> {example}</p><p>{expectations}</p></div>;
+}
+
 export function DailyQuest() {
   const { pilotProgress, completeDailyQuest, mode } = useYEP();
   const { dailyQuest } = getProgramContent(mode);
@@ -33,6 +39,7 @@ export function DailyQuest() {
   return (
     <Shell>
       <ScreenHead eyebrow={`${MODES[mode]?.program || 'YEP'} · Daily Quest`} title={dailyQuest.title} sub={dailyQuest.prompt} />
+      <LaneGuidance />
       <WorkbookCallout text="Complete the matching Daily Quest page in your workbook, then save the same core response here as proof of work." />
       <div className={styles.card}>
         <div className={styles.label}>FINISHER Focus</div>
@@ -57,6 +64,7 @@ export function WeeklyModule() {
   return (
     <Shell>
       <ScreenHead eyebrow={`${MODES[mode]?.program || 'YEP'} · Weekly Module`} title={weeklyModule.title} sub={weeklyModule.description} />
+      <LaneGuidance />
       <WorkbookCallout text="Work each matching workbook activity first. Mark it complete here only after the participant has actually done the corresponding work." />
       <div className={styles.stack}>
         {weeklyModule.activities.map((activity) => {
@@ -86,10 +94,12 @@ export function StemSinQuest() {
   return (
     <Shell>
       <ScreenHead eyebrow={`${MODES[mode]?.program || 'YEP'} · S.T.E.M.Sin`} title={stemSin.title} sub={stemSin.prompt} />
+      <LaneGuidance />
       <WorkbookCallout text="Use the workbook S.T.E.M.Sin page to think it through on paper, then record the tested idea here so the proof trail is visible on the tablet." />
       <div className={styles.card}>
         <div className={styles.label}>FINISHER Focus</div>
         <div className={styles.value}>{stemSin.finisher}</div>
+        <p>{stemSin.challengeTitle}</p>
       </div>
       <textarea className={styles.textarea} value={text} onChange={(e) => setText(e.target.value)} placeholder="Describe the tool, user, problem, and result you would test..." />
       <div className={styles.actions}>
@@ -110,8 +120,9 @@ export function BossChallenge() {
   return (
     <Shell>
       <ScreenHead eyebrow={`${MODES[mode]?.program || 'YEP'} · Boss Challenge`} title={bossChallenge.title} sub={bossChallenge.prompt} />
+      <LaneGuidance />
       <WorkbookCallout text="Draft the challenge in the workbook, practice it out loud, then save the core points here as the digital proof step." />
-      <textarea className={styles.textarea} value={text} onChange={(e) => setText(e.target.value)} placeholder="Write the points of your 60-second response..." />
+      <textarea className={styles.textarea} value={text} onChange={(e) => setText(e.target.value)} placeholder={bossChallenge.prompt} />
       <div className={styles.actions}>
         <button className={ui.btnPrimary} disabled={!text.trim()} onClick={() => completeBossChallenge(text)}>
           {pilotProgress.bossComplete ? 'Update Boss Challenge' : 'Complete Boss Challenge'}
@@ -130,6 +141,7 @@ export function MentorSpotlight() {
   return (
     <Shell>
       <ScreenHead eyebrow={`${MODES[mode]?.program || 'YEP'} · Mentor Spotlight`} title={mentorSpotlight.title} sub={mentorSpotlight.body} />
+      <LaneGuidance />
       <WorkbookCallout text="Write the mentor question in the workbook, then save the same question here so it appears in the participant proof record." />
       <div className={styles.card}>
         <div className={styles.cardTitle}>Your Mentor Question</div>
