@@ -21,6 +21,10 @@ function BackHome() {
   return <button className={ui.btnGhost} onClick={() => navigate('home')}>Back To Program Home</button>;
 }
 
+function WorkbookCallout({ text }) {
+  return <div className={styles.note}><strong>Workbook ↔ App:</strong> {text}</div>;
+}
+
 export function DailyQuest() {
   const { pilotProgress, completeDailyQuest, mode } = useYEP();
   const { dailyQuest } = getProgramContent(mode);
@@ -29,6 +33,7 @@ export function DailyQuest() {
   return (
     <Shell>
       <ScreenHead eyebrow={`${MODES[mode]?.program || 'YEP'} · Daily Quest`} title={dailyQuest.title} sub={dailyQuest.prompt} />
+      <WorkbookCallout text="Complete the matching Daily Quest page in your workbook, then save the same core response here as proof of work." />
       <div className={styles.card}>
         <div className={styles.label}>FINISHER Focus</div>
         <div className={styles.value}>{dailyQuest.finisher}</div>
@@ -52,6 +57,7 @@ export function WeeklyModule() {
   return (
     <Shell>
       <ScreenHead eyebrow={`${MODES[mode]?.program || 'YEP'} · Weekly Module`} title={weeklyModule.title} sub={weeklyModule.description} />
+      <WorkbookCallout text="Work each matching workbook activity first. Mark it complete here only after the participant has actually done the corresponding work." />
       <div className={styles.stack}>
         {weeklyModule.activities.map((activity) => {
           const done = pilotProgress.weeklyCompleted.includes(activity.id);
@@ -72,6 +78,30 @@ export function WeeklyModule() {
   );
 }
 
+export function StemSinQuest() {
+  const { pilotProgress, completeStemSin, mode } = useYEP();
+  const { stemSin } = getProgramContent(mode);
+  const [text, setText] = useState(pilotProgress.stemSinText);
+
+  return (
+    <Shell>
+      <ScreenHead eyebrow={`${MODES[mode]?.program || 'YEP'} · S.T.E.M.Sin`} title={stemSin.title} sub={stemSin.prompt} />
+      <WorkbookCallout text="Use the workbook S.T.E.M.Sin page to think it through on paper, then record the tested idea here so the proof trail is visible on the tablet." />
+      <div className={styles.card}>
+        <div className={styles.label}>FINISHER Focus</div>
+        <div className={styles.value}>{stemSin.finisher}</div>
+      </div>
+      <textarea className={styles.textarea} value={text} onChange={(e) => setText(e.target.value)} placeholder="Describe the tool, user, problem, and result you would test..." />
+      <div className={styles.actions}>
+        <button className={ui.btnPrimary} disabled={!text.trim()} onClick={() => completeStemSin(text)}>
+          {pilotProgress.stemSinComplete ? 'Update S.T.E.M.Sin Quest' : 'Complete S.T.E.M.Sin Quest'}
+        </button>
+        <BackHome />
+      </div>
+    </Shell>
+  );
+}
+
 export function BossChallenge() {
   const { pilotProgress, completeBossChallenge, mode } = useYEP();
   const { bossChallenge } = getProgramContent(mode);
@@ -80,6 +110,7 @@ export function BossChallenge() {
   return (
     <Shell>
       <ScreenHead eyebrow={`${MODES[mode]?.program || 'YEP'} · Boss Challenge`} title={bossChallenge.title} sub={bossChallenge.prompt} />
+      <WorkbookCallout text="Draft the challenge in the workbook, practice it out loud, then save the core points here as the digital proof step." />
       <textarea className={styles.textarea} value={text} onChange={(e) => setText(e.target.value)} placeholder="Write the points of your 60-second response..." />
       <div className={styles.actions}>
         <button className={ui.btnPrimary} disabled={!text.trim()} onClick={() => completeBossChallenge(text)}>
@@ -99,6 +130,7 @@ export function MentorSpotlight() {
   return (
     <Shell>
       <ScreenHead eyebrow={`${MODES[mode]?.program || 'YEP'} · Mentor Spotlight`} title={mentorSpotlight.title} sub={mentorSpotlight.body} />
+      <WorkbookCallout text="Write the mentor question in the workbook, then save the same question here so it appears in the participant proof record." />
       <div className={styles.card}>
         <div className={styles.cardTitle}>Your Mentor Question</div>
         <div className={styles.cardText}>{mentorSpotlight.challenge}</div>
@@ -142,7 +174,7 @@ export function Profile() {
 
   return (
     <Shell>
-      <ScreenHead eyebrow={`${program.program} · Participant Profile`} title={powerName || 'Your Process Profile'} sub="Proof-of-concept data is stored on this device for testing. Do not use real sensitive participant information in this build." />
+      <ScreenHead eyebrow={`${program.program} · Participant Profile`} title={powerName || 'Your Process Profile'} sub="This is the digital My Process proof page for the tablet pilot. Use sample/non-sensitive data only." />
       <div className={styles.profileGrid}>
         <div className={styles.card}><div className={styles.label}>Program</div><div className={styles.value}>{program.program}</div></div>
         <div className={styles.card}><div className={styles.label}>Age Pathway</div><div className={styles.value}>{program.label}</div></div>
@@ -150,6 +182,7 @@ export function Profile() {
         <div className={styles.card}><div className={styles.label}>Track</div><div className={styles.value}>{track?.name || 'Not set'}</div></div>
         <div className={styles.card}><div className={styles.label}>Mirror XP</div><div className={styles.value}>{xp}</div></div>
         <div className={styles.card}><div className={styles.label}>Anchor</div><div className={styles.value}>{mirrorResult?.Anchor || 'Not completed'}</div></div>
+        <div className={styles.card}><div className={styles.label}>S.T.E.M.Sin</div><div className={styles.value}>{pilotProgress.stemSinComplete ? 'Complete' : 'Open'}</div></div>
         <div className={styles.card}><div className={styles.label}>Proof Badges</div><div className={styles.value}>{pilotBadges.length} / {PILOT_BADGES.length}</div></div>
         <div className={styles.card}><div className={styles.label}>Weekly Activities</div><div className={styles.value}>{weeklyDone} / {weeklyModule.activities.length}</div></div>
       </div>
@@ -166,18 +199,20 @@ export function AdminReview() {
 
   return (
     <Shell>
-      <ScreenHead eyebrow="Admin Review" title="Tablet Proof Readout" sub="This screen reviews the active device proof record only. It is not the final source-of-truth backend." />
+      <ScreenHead eyebrow="Admin Review" title="Workbook + Tablet Proof Readout" sub="This screen reviews the active device proof record. It is not the final source-of-truth backend." />
       <div className={styles.profileGrid}>
         <div className={styles.card}><div className={styles.label}>Program</div><div className={styles.value}>{program.program}</div></div>
         <div className={styles.card}><div className={styles.label}>Pathway</div><div className={styles.value}>{program.label}</div></div>
         <div className={styles.card}><div className={styles.label}>Participant</div><div className={styles.value}>{activeYouth.name}</div></div>
         <div className={styles.card}><div className={styles.label}>Daily Quest</div><div className={styles.value}>{pilotProgress.dailyQuestComplete ? 'Complete' : 'Open'}</div></div>
         <div className={styles.card}><div className={styles.label}>Weekly Module</div><div className={styles.value}>{weeklyComplete ? 'Complete' : `${pilotProgress.weeklyCompleted.length}/${weeklyModule.activities.length}`}</div></div>
+        <div className={styles.card}><div className={styles.label}>S.T.E.M.Sin</div><div className={styles.value}>{pilotProgress.stemSinComplete ? 'Complete' : 'Open'}</div></div>
         <div className={styles.card}><div className={styles.label}>Boss Challenge</div><div className={styles.value}>{pilotProgress.bossComplete ? 'Complete' : 'Open'}</div></div>
+        <div className={styles.card}><div className={styles.label}>Mentor Question</div><div className={styles.value}>{pilotProgress.mentorQuestion ? 'Saved' : 'Open'}</div></div>
         <div className={styles.card}><div className={styles.label}>Badges</div><div className={styles.value}>{pilotBadges.length}</div></div>
         <div className={styles.card}><div className={styles.label}>Mirror / FINISHER Loop</div><div className={styles.value}>{activeYouth.reflectionSubmitted ? 'Complete' : 'Not complete'}</div></div>
       </div>
-      <div className={styles.note}>The proof keeps YEP ages 7-17 and Y.A.E.P. ages 18-24 visibly separate while using the same core Process structure. Seeded facilitator records are demonstration data only.</div>
+      <div className={styles.note}>Proof standard: workbook entry → matching app action → saved progress → badge/status → admin review. YEP ages 7–17 and Y.A.E.P. ages 18–24 stay separate while sharing the same Process spine.</div>
       <div className={styles.actions}>
         <button className={ui.btnPrimary} onClick={() => navigate('dashboard')}>Open Facilitator Demo</button>
         <BackHome />
