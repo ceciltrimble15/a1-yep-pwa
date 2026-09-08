@@ -1,8 +1,12 @@
 import GlobalBar from './GlobalBar';
+import { useYEP } from '../context/YEPContext';
+import { MODES } from '../data/modes';
 import styles from './Shell.module.css';
 
-/* App frame: brand header + global status bar + screen content. */
 export default function Shell({ children, showBar = true }) {
+  const { mode } = useYEP();
+  const program = MODES[mode] || MODES.builder;
+
   return (
     <div className={styles.shell}>
       <header className={styles.header}>
@@ -10,9 +14,9 @@ export default function Shell({ children, showBar = true }) {
           <img className={styles.mark} src="/logo.png" alt="A/1 Suppliers" />
           <div>
             <div className={styles.brandText}>
-              A/1 <em>YEP</em>
+              A/1 <em>{program.program}</em>
             </div>
-            <div className={styles.tagline}>Always Forward. Never Back.</div>
+            <div className={styles.tagline}>{program.programName} · {program.ageRange}</div>
           </div>
         </div>
       </header>
