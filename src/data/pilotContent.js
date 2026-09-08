@@ -16,6 +16,12 @@ export const PROGRAM_CONTENT = {
         { id: 'identity-map', title: 'Identity Map', text: 'List one skill, one interest, and one value you can use to move forward.' },
       ],
     },
+    stemSin: {
+      id: 'build-something-that-solves-a-problem',
+      title: 'S.T.E.M.Sin Technology Quest — Build Something That Solves a Problem',
+      prompt: 'Choose one problem from your Problem Spotter work. Name one tool, app, device, AI/computer idea, or simple system you could use to test a solution. Explain what it would do and who it would help. You do not need to code it for this proof.',
+      finisher: 'Innovation',
+    },
     bossChallenge: {
       id: 'sixty-second-solution',
       title: 'Boss Challenge — 60-Second Solution',
@@ -44,6 +50,12 @@ export const PROGRAM_CONTENT = {
         { id: 'identity-map', title: 'Asset Map', text: 'List one skill, one relationship, and one resource you can use to move forward.' },
       ],
     },
+    stemSin: {
+      id: 'turn-a-tool-into-value',
+      title: 'S.T.E.M.Sin Technology Quest — Turn a Tool Into Value',
+      prompt: 'Choose one opportunity from your Opportunity Spotter work. Identify a digital tool, AI/computer workflow, device, or system that could help create or deliver value. Explain the user, the task, and the result you would test first.',
+      finisher: 'Innovation',
+    },
     bossChallenge: {
       id: 'sixty-second-value-pitch',
       title: 'Boss Challenge — 60-Second Value Pitch',
@@ -67,8 +79,8 @@ export function getProgramContent(mode) {
   return mode === 'yaep' ? PROGRAM_CONTENT.yaep : PROGRAM_CONTENT.yep;
 }
 
-// Default YEP exports retained for compatibility with any older imports.
 export const DAILY_QUEST = PROGRAM_CONTENT.yep.dailyQuest;
 export const WEEKLY_MODULE = PROGRAM_CONTENT.yep.weeklyModule;
+export const STEM_SIN = PROGRAM_CONTENT.yep.stemSin;
 export const BOSS_CHALLENGE = PROGRAM_CONTENT.yep.bossChallenge;
 export const MENTOR_SPOTLIGHT = PROGRAM_CONTENT.yep.mentorSpotlight;
