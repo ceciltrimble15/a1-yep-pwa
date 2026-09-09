@@ -30,14 +30,18 @@ export default function TrackSelector() {
 
   return (
     <div className={styles.wrap}>
-      <img className={styles.logo} src="/logo.png" alt="A/1 Suppliers" />
-      <div className={styles.brandLine}>A/1 Suppliers · YEP + Y.A.E.P. Tablet Demo V0.5</div>
-      <h1 className={styles.title}>
-        Choose Your <em>Process.</em>
-      </h1>
-      <p className={styles.sub}>
-        Choose the age pathway, confirm the Power Name and track, then enter the controlled demo experience.
-      </p>
+      <div className={styles.introRow}>
+        <img className={styles.logo} src="/logo.png" alt="A/1 Suppliers" />
+        <div className={styles.introCopy}>
+          <div className={styles.brandLine}>A/1 Suppliers · YEP + Y.A.E.P. Tablet Demo V0.5</div>
+          <h1 className={styles.title}>
+            Choose Your <em>Process.</em>
+          </h1>
+          <p className={styles.sub}>
+            Choose the age pathway, confirm the Power Name and track, then enter the controlled demo experience.
+          </p>
+        </div>
+      </div>
 
       <div className={styles.tracksLabel}>Choose Your Program Pathway</div>
       <div className={styles.pathways}>
@@ -53,40 +57,42 @@ export default function TrackSelector() {
             >
               <span className={styles.pathwayProgram}>{option.program}</span>
               <span className={styles.pathwayLabel}>{option.label}</span>
-              {sel && <Check size={18} />}
+              {sel && <Check size={20} />}
             </button>
           );
         })}
       </div>
 
-      <div className={styles.nameField}>
-        <label className={styles.nameLabel} htmlFor="yname">
-          Your Name <span style={{ opacity: 0.6 }}>(optional for demo)</span>
-        </label>
-        <input
-          id="yname"
-          className={styles.nameInput}
-          placeholder="What should we call you?"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          maxLength={24}
-          autoComplete="off"
-        />
-      </div>
+      <div className={styles.identityGrid}>
+        <div className={styles.nameField}>
+          <label className={styles.nameLabel} htmlFor="yname">
+            Your Name <span style={{ opacity: 0.6 }}>(optional for demo)</span>
+          </label>
+          <input
+            id="yname"
+            className={styles.nameInput}
+            placeholder="What should we call you?"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            maxLength={24}
+            autoComplete="off"
+          />
+        </div>
 
-      <div className={styles.nameField}>
-        <label className={styles.nameLabel} htmlFor="powerName">
-          Your Power Name
-        </label>
-        <input
-          id="powerName"
-          className={styles.nameInput}
-          placeholder="Example: Vision Builder"
-          value={powerName}
-          onChange={(e) => setPowerName(e.target.value)}
-          maxLength={28}
-          autoComplete="off"
-        />
+        <div className={styles.nameField}>
+          <label className={styles.nameLabel} htmlFor="powerName">
+            Your Power Name
+          </label>
+          <input
+            id="powerName"
+            className={styles.nameInput}
+            placeholder="Example: Vision Builder"
+            value={powerName}
+            onChange={(e) => setPowerName(e.target.value)}
+            maxLength={28}
+            autoComplete="off"
+          />
+        </div>
       </div>
 
       <div className={styles.tracksLabel}>Choose Your Track</div>
@@ -101,7 +107,7 @@ export default function TrackSelector() {
               onClick={() => setPicked(t.id)}
             >
               <span className={styles.tIcon}>
-                {sel ? <Check size={22} /> : <Icon size={22} />}
+                {sel ? <Check size={24} /> : <Icon size={24} />}
               </span>
               <span className={styles.tMeta}>
                 <span className={styles.tName}>{t.name}</span>
@@ -114,7 +120,7 @@ export default function TrackSelector() {
 
       <div className={styles.footer}>
         <button className={ui.btnPrimary} onClick={start} disabled={!picked || !powerName.trim()}>
-          Enter This Pathway <ArrowRight size={20} />
+          Enter This Pathway <ArrowRight size={22} />
         </button>
       </div>
     </div>
