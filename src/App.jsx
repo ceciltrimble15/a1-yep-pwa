@@ -11,27 +11,31 @@ import Progress from './screens/Progress';
 import FacilitatorDashboard from './screens/FacilitatorDashboard';
 import {
   DailyQuest,
-  WeeklyModule,
   StemSinQuest,
   BossChallenge,
   MentorSpotlight,
   Rewards,
-  Profile,
-  AdminReview,
 } from './screens/PilotScreens';
+import {
+  DemoWeeklyModule,
+  DemoProfile,
+  DemoAdminReview,
+  ResetDemo,
+} from './screens/DemoB05Screens';
 
 const SCREENS = {
   track: TrackSelector,
   home: Home,
   finisherFocus: FinisherFocus,
   dailyQuest: DailyQuest,
-  weeklyModule: WeeklyModule,
+  weeklyModule: DemoWeeklyModule,
   stemSin: StemSinQuest,
   bossChallenge: BossChallenge,
   mentorSpotlight: MentorSpotlight,
   rewards: Rewards,
-  profile: Profile,
-  adminReview: AdminReview,
+  profile: DemoProfile,
+  adminReview: DemoAdminReview,
+  resetDemo: ResetDemo,
   mirrorIntro: MirrorIntro,
   mirror: MirrorAssessment,
   results: MirrorResults,
