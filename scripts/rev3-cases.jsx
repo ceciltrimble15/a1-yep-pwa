@@ -16,6 +16,8 @@ assert.deepEqual(Object.keys(PROGRAM_CONTENT), modes);
 for (const field of ['instructions','example','expectations','dailyQuest','weeklyModule','stemSin','bossChallenge','mentorSpotlight','reflection']) {
   assert.equal(new Set(modes.map(m=>JSON.stringify(getProgramContent(m)[field]))).size,4, `${field} must differ meaningfully by lane`);
 }
+// S-1: one locked label. Every lane must resolve to the single constant, never a retyped copy.
+for (const m of modes) assert.equal(getProgramContent(m).stemSin.title, STEM_SIN_LABEL, `${m} must use the single S-1 label`);
 const render = (Component) => renderToStaticMarkup(<YEPProvider><Component /></YEPProvider>);
 for (const mode of modes) {
   saved = {mode};

@@ -39,7 +39,7 @@ export const PROGRAM_CONTENT = {
     },
     "stemSin": {
       "id": "explorer-stem",
-      "title": "S.T.E.M.Sin Technology + Problem-Solving Quest",
+      title: STEM_SIN_LABEL,
       "challengeTitle": "Try a Helpful Tool",
       "prompt": "Choose a simple tool or material. Draw your idea, try it safely with an adult, and say what happened. You can describe the test instead of coding.",
       "finisher": "Innovation"
@@ -94,7 +94,7 @@ export const PROGRAM_CONTENT = {
     },
     "stemSin": {
       "id": "builder-stem",
-      "title": "S.T.E.M.Sin Technology + Problem-Solving Quest",
+      title: STEM_SIN_LABEL,
       "challengeTitle": "Build and Compare",
       "prompt": "Choose a tool, simple model, or app idea. Test it with permission, compare what happened before and after, and record one improvement. Coding is optional.",
       "finisher": "Innovation"
@@ -149,7 +149,7 @@ export const PROGRAM_CONTENT = {
     },
     "stemSin": {
       "id": "leader-stem",
-      "title": "S.T.E.M.Sin Technology + Problem-Solving Quest",
+      title: STEM_SIN_LABEL,
       "challengeTitle": "Prototype With Evidence",
       "prompt": "Plan a simple prototype using a digital tool, device, or workflow. State your assumption, test with permission using sample data, and record evidence plus one limitation. Coding is optional.",
       "finisher": "Innovation"
@@ -204,7 +204,7 @@ export const PROGRAM_CONTENT = {
     },
     "stemSin": {
       "id": "yaep-stem",
-      "title": "S.T.E.M.Sin Technology + Problem-Solving Quest",
+      title: STEM_SIN_LABEL,
       "challengeTitle": "Turn a Tool Into Value",
       "prompt": "Choose a digital tool, AI/computer workflow, device, or system. Define the user task, success measure, cost, and risk. Run a small permitted test with sample data and explain whether the result supports your value proposition.",
       "finisher": "Innovation"
