@@ -40,6 +40,12 @@ export default function Home() {
       <div className={styles.note}>{expectations}</div>
 
       <div className={styles.grid}>
+        <HubCard
+          title="Choose / Change Age Pathway"
+          text={`Current pathway: ${program.label}. Open the pathway screen to choose Foundation, Builder, Momentum, or Y.A.E.P.`}
+          status="Change"
+          onClick={() => navigate('track')}
+        />
         <HubCard title="Daily Quest" text={dailyQuest.prompt} status={pilotProgress.dailyQuestComplete ? 'Complete' : 'Start'} done={pilotProgress.dailyQuestComplete} onClick={() => navigate('dailyQuest')} />
         <HubCard title="Weekly Module" text={`Run the ${weeklyModule.title} demo module.`} status={weeklyDone ? 'Complete' : `${pilotProgress.weeklyCompleted.length}/${weeklyModule.activities.length} Done`} done={weeklyDone} onClick={() => navigate('weeklyModule')} />
         <HubCard title={STEM_SIN_LABEL} text={stemSin.challengeTitle} status={pilotProgress.stemSinComplete ? 'Complete' : 'Open'} done={pilotProgress.stemSinComplete} onClick={() => navigate('stemSin')} />
