@@ -16,7 +16,7 @@ export const XP = {
 
 const SCREENS = [
   'track', 'home', 'finisherFocus', 'dailyQuest', 'weeklyModule', 'stemSin', 'bossChallenge',
-  'mentorSpotlight', 'rewards', 'profile', 'adminReview', 'mirrorIntro', 'mirror',
+  'mentorSpotlight', 'rewards', 'profile', 'adminReview', 'resetDemo', 'mirrorIntro', 'mirror',
   'results', 'mission', 'reflection', 'progress', 'dashboard',
 ];
 
@@ -142,8 +142,8 @@ export function YEPProvider({ children }) {
 
   function toggleWeeklyActivity(id) {
     setPilotProgress((p) => {
-      const has = p.weeklyCompleted.includes(id);
-      return { ...p, weeklyCompleted: has ? p.weeklyCompleted.filter((item) => item !== id) : [...p.weeklyCompleted, id] };
+      if (p.weeklyCompleted.includes(id)) return p;
+      return { ...p, weeklyCompleted: [...p.weeklyCompleted, id] };
     });
   }
 
