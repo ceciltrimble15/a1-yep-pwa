@@ -14,29 +14,29 @@ export const TRACKS = [
 const PATHWAYS = ['explorer', 'builder', 'leader', 'yaep'];
 
 export default function TrackSelector() {
-  const { selectTrack, setMode, mode } = useYEP();
-  const [name, setName] = useState('');
-  const [powerName, setPowerName] = useState('');
-  const [picked, setPicked] = useState(null);
+  const { selectTrack, setMode, mode, track, youthName, powerName: savedPowerName } = useYEP();
+  const [name, setName] = useState(youthName || '');
+  const [powerName, setPowerName] = useState(savedPowerName || '');
+  const [picked, setPicked] = useState(track?.id || null);
   const [pathway, setPathway] = useState(mode);
 
   function start() {
-    const track = TRACKS.find((t) => t.id === picked);
+    const selectedTrack = TRACKS.find((t) => t.id === picked);
     const identity = powerName.trim();
-    if (!track || !identity) return;
+    if (!selectedTrack || !identity) return;
     setMode(pathway);
-    selectTrack(track, name.trim(), identity);
+    selectTrack(selectedTrack, name.trim(), identity);
   }
 
   return (
     <div className={styles.wrap}>
       <img className={styles.logo} src="/logo.png" alt="A/1 Suppliers" />
-      <div className={styles.brandLine}>A/1 Suppliers · YEP + Y.A.E.P. Proof of Concept</div>
+      <div className={styles.brandLine}>A/1 Suppliers · YEP + Y.A.E.P. Tablet Demo V0.5</div>
       <h1 className={styles.title}>
-        Start Your <em>Process.</em>
+        Choose Your <em>Process.</em>
       </h1>
       <p className={styles.sub}>
-        Choose the age pathway, create a Power Name, select a track, and enter the proof-of-concept experience.
+        Choose the age pathway, confirm the Power Name and track, then enter the controlled demo experience.
       </p>
 
       <div className={styles.tracksLabel}>Choose Your Program Pathway</div>
@@ -61,7 +61,7 @@ export default function TrackSelector() {
 
       <div className={styles.nameField}>
         <label className={styles.nameLabel} htmlFor="yname">
-          Your Name <span style={{ opacity: 0.6 }}>(optional for pilot)</span>
+          Your Name <span style={{ opacity: 0.6 }}>(optional for demo)</span>
         </label>
         <input
           id="yname"
@@ -114,7 +114,7 @@ export default function TrackSelector() {
 
       <div className={styles.footer}>
         <button className={ui.btnPrimary} onClick={start} disabled={!picked || !powerName.trim()}>
-          Lock In <ArrowRight size={20} />
+          Enter This Pathway <ArrowRight size={20} />
         </button>
       </div>
     </div>
