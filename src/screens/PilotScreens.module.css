@@ -1,5 +1,5 @@
 .head {
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 
 .eyebrow {
@@ -14,7 +14,7 @@
 
 .title {
   font-family: var(--font-display);
-  font-size: clamp(30px, 5vw, 44px);
+  font-size: clamp(32px, 4vw, 52px);
   line-height: 1;
   color: var(--text);
   margin: 0 0 10px;
@@ -23,7 +23,8 @@
 .sub {
   color: var(--text-muted);
   line-height: 1.6;
-  max-width: 720px;
+  max-width: 920px;
+  font-size: 15px;
 }
 
 .grid {
@@ -44,6 +45,7 @@
 
 button.card {
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 .card:active {
@@ -84,12 +86,13 @@ button.card {
 
 .textarea {
   width: 100%;
-  min-height: 150px;
+  min-height: 170px;
   resize: vertical;
   border: 1px solid var(--line-strong);
   border-radius: var(--radius);
-  padding: 15px;
+  padding: 16px;
   font: inherit;
+  font-size: 16px;
   color: var(--text);
   background: var(--panel);
   margin: 12px 0 16px;
@@ -107,15 +110,16 @@ button.card {
   align-items: flex-start;
   text-align: left;
   padding: 16px;
+  min-height: 76px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--panel);
 }
 
 .check {
-  width: 28px;
-  height: 28px;
-  flex: 0 0 28px;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
   border-radius: 8px;
   border: 2px solid var(--line-strong);
   display: grid;
@@ -133,6 +137,10 @@ button.card {
   display: grid;
   gap: 10px;
   margin-top: 18px;
+}
+
+.actions button {
+  min-height: 52px;
 }
 
 .badgeGrid {
@@ -181,6 +189,31 @@ button.card {
   background: rgba(41, 121, 255, 0.06);
   color: var(--text-muted);
   line-height: 1.5;
+}
+
+@media (min-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .profileGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .card {
+    min-height: 128px;
+    padding: 20px;
+  }
+}
+
+@media (orientation: landscape) and (min-width: 1100px) {
+  .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .profileGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 700px) {
