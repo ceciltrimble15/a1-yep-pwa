@@ -22,9 +22,10 @@
   display: grid;
   place-items: center;
   flex: 0 0 auto;
-  color: var(--gold);
-  background: linear-gradient(135deg, rgba(14, 26, 58, 0.96), rgba(26, 58, 143, 0.96));
-  box-shadow: 0 8px 18px rgba(14, 26, 58, 0.14);
+  color: var(--silver);
+  background: var(--panel-2);
+  border: 1px solid var(--line-strong);
+  box-shadow: var(--card-shadow);
 }
 
 .identity strong,
@@ -34,7 +35,7 @@
 }
 
 .identity strong {
-  color: var(--navy);
+  color: var(--text);
   font-size: 11px;
   font-weight: 900;
   letter-spacing: 0.12em;
@@ -76,23 +77,23 @@
 .rate:active { transform: scale(0.98); }
 
 .primary {
-  background: linear-gradient(135deg, var(--navy), var(--royal));
+  background: var(--royal);
   color: var(--white);
-  box-shadow: 0 8px 18px rgba(14, 26, 58, 0.13);
+  box-shadow: var(--electric-glow);
   font-size: 11px;
   text-transform: uppercase;
 }
 
 .control,
 .rate {
-  background: var(--white);
+  background: var(--panel);
   border: 1px solid var(--line-strong);
-  color: var(--navy);
+  color: var(--text);
   font-size: 10px;
 }
 
 .rate {
-  color: var(--royal);
+  color: var(--silver);
   min-width: 62px;
 }
 
