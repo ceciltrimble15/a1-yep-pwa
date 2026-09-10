@@ -72,6 +72,7 @@ export function YEPProvider({ children }) {
   const [youthName, setYouthName] = useState(saved.youthName ?? '');
   const [powerName, setPowerName] = useState(saved.powerName ?? '');
   const [directionProfile, setDirectionProfile] = useState(saved.directionProfile ?? { interest: '', why: '' });
+  const [exposureLog, setExposureLog] = useState(Array.isArray(saved.exposureLog) ? saved.exposureLog : []);
   const [mirrorScores, setMirrorScores] = useState(saved.mirrorScores ?? null);
   const [mirrorResult, setMirrorResult] = useState(saved.mirrorResult ?? null);
   const [currentMission, setCurrentMission] = useState(saved.currentMission ?? null);
@@ -91,13 +92,13 @@ export function YEPProvider({ children }) {
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        screen, track, youthName, powerName, directionProfile, mirrorScores, mirrorResult, currentMission,
+        screen, track, youthName, powerName, directionProfile, exposureLog, mirrorScores, mirrorResult, currentMission,
         missionComplete, reflection, reflectionSubmitted, finisherLetter, xp, mode, pilotProgress, laneProgress,
       }));
     } catch {
       /* storage blocked/full */
     }
-  }, [screen, track, youthName, powerName, directionProfile, mirrorScores, mirrorResult, currentMission,
+  }, [screen, track, youthName, powerName, directionProfile, exposureLog, mirrorScores, mirrorResult, currentMission,
     missionComplete, reflection, reflectionSubmitted, finisherLetter, xp, mode, pilotProgress, laneProgress]);
 
   function selectTrack(trackObj, name, selectedPowerName) {
@@ -109,6 +110,14 @@ export function YEPProvider({ children }) {
 
   function saveDirectionProfile(update) {
     setDirectionProfile((current) => ({ ...current, ...update }));
+  }
+
+  function saveExposureReaction(world, reaction) {
+    if (!world?.id || !reaction) return;
+    setExposureLog((current) => {
+      const next = current.filter((entry) => entry.worldId !== world.id);
+      return [...next, { worldId: world.id, label: world.label, reaction }];
+    });
   }
 
   function submitMirror(answers) {
@@ -186,6 +195,7 @@ export function YEPProvider({ children }) {
     setYouthName('');
     setPowerName('');
     setDirectionProfile({ interest: '', why: '' });
+    setExposureLog([]);
     setMirrorScores(null);
     setMirrorResult(null);
     setCurrentMission(null);
@@ -214,6 +224,7 @@ export function YEPProvider({ children }) {
     track: track ? track.name : '—',
     directionInterest: directionProfile.interest || '—',
     directionWhy: directionProfile.why || '',
+    exposureCount: exposureLog.length,
     anchor: mirrorResult ? mirrorResult.Anchor : '—',
     edge: mirrorResult ? mirrorResult.Edge : '—',
     style: mirrorResult ? mirrorResult.Style : '—',
@@ -225,14 +236,14 @@ export function YEPProvider({ children }) {
     reflection,
     pilotBadges,
     isActive: true,
-  }), [powerName, youthName, track, directionProfile, mirrorResult, xp, finisherLetter, currentMission, missionComplete, reflectionSubmitted, reflection, pilotBadges]);
+  }), [powerName, youthName, track, directionProfile, exposureLog, mirrorResult, xp, finisherLetter, currentMission, missionComplete, reflectionSubmitted, reflection, pilotBadges]);
 
   const demoYouth = useMemo(() => [...baseDemoYouth, activeYouth], [activeYouth]);
 
   const value = {
-    screen, track, youthName, powerName, directionProfile, mirrorScores, mirrorResult, currentMission,
+    screen, track, youthName, powerName, directionProfile, exposureLog, mirrorScores, mirrorResult, currentMission,
     missionComplete, reflection, reflectionSubmitted, finisherLetter, xp, mode,
-    pilotProgress, pilotBadges, demoYouth, activeYouth, selectTrack, saveDirectionProfile, submitMirror,
+    pilotProgress, pilotBadges, demoYouth, activeYouth, selectTrack, saveDirectionProfile, saveExposureReaction, submitMirror,
     completeMission, submitReflection, completeDailyQuest, toggleWeeklyActivity,
     completeStemSin, completeBossChallenge, saveMentorQuestion, navigate, setScreen,
     setMode, resetSession,
