@@ -18,8 +18,14 @@ function GuideCard({ icon: Icon, title, children }) {
   );
 }
 
+const REACTIONS = [
+  { id: 'curious', label: 'I am curious' },
+  { id: 'try', label: 'I want to try this' },
+  { id: 'not-now', label: 'Not for me right now' },
+];
+
 export default function MyDirection() {
-  const { directionProfile, saveDirectionProfile, mode, setScreen } = useYEP();
+  const { directionProfile, exposureLog, saveDirectionProfile, saveExposureReaction, mode, setScreen } = useYEP();
   const [interest, setInterest] = useState(directionProfile.interest || '');
   const [why, setWhy] = useState(directionProfile.why || '');
   const [saved, setSaved] = useState(false);
@@ -29,6 +35,10 @@ export default function MyDirection() {
   function save() {
     saveDirectionProfile({ interest: interest.trim(), why: why.trim() });
     setSaved(true);
+  }
+
+  function currentReaction(worldId) {
+    return exposureLog.find((entry) => entry.worldId === worldId)?.reaction || '';
   }
 
   return (
@@ -87,12 +97,8 @@ export default function MyDirection() {
         <GuideCard icon={BadgeDollarSign} title="Money + Ownership Lens">{guide.cluster.money}</GuideCard>
         <GuideCard icon={Cpu} title="Technology Lens">{guide.cluster.technology}</GuideCard>
         <GuideCard icon={Network} title="People + Network Lens">{guide.cluster.people}</GuideCard>
-        <GuideCard icon={Compass} title="Adjacent Doors">
-          {guide.cluster.adjacent.join(' · ')}
-        </GuideCard>
-        <GuideCard icon={Shuffle} title="Outside Your Current Interest">
-          <strong>{guide.outside.label}:</strong> {guide.outside.prompt}
-        </GuideCard>
+        <GuideCard icon={Compass} title="Adjacent Doors">{guide.cluster.adjacent.join(' · ')}</GuideCard>
+        <GuideCard icon={Shuffle} title="Outside Your Current Interest"><strong>{guide.outside.label}:</strong> {guide.outside.prompt}</GuideCard>
       </div>
 
       <div className={styles.note}>
@@ -109,12 +115,30 @@ export default function MyDirection() {
       </div>
 
       <div className={styles.grid}>
-        {EXPOSURE_WORLDS.map((world) => (
-          <div className={styles.card} key={world.id}>
-            <div className={styles.cardTitle}>{world.label}</div>
-            <div className={styles.cardText}>{world.prompt}</div>
-          </div>
-        ))}
+        {EXPOSURE_WORLDS.map((world) => {
+          const reaction = currentReaction(world.id);
+          return (
+            <div className={styles.card} key={world.id}>
+              <div className={styles.cardTitle}>{world.label}</div>
+              <div className={styles.cardText}>{world.prompt}</div>
+              <div className={styles.actions}>
+                {REACTIONS.map((option) => (
+                  <button
+                    key={option.id}
+                    className={reaction === option.id ? ui.btnPrimary : ui.btnGhost}
+                    onClick={() => saveExposureReaction(world, option.id)}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className={styles.note}>
+        <strong>Exposure record:</strong> {exposureLog.length} world{exposureLog.length === 1 ? '' : 's'} reacted to. The point is not to pick one forever. The point is to keep learning what fits, what does not, and what you did not know existed.
       </div>
 
       <div className={styles.note}>
