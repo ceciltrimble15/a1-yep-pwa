@@ -1,15 +1,18 @@
+import { useRef } from 'react';
 import GlobalBar from './GlobalBar';
+import AudioGuide from './AudioGuide';
 import { useYEP } from '../context/YEPContext';
 import { MODES } from '../data/modes';
 import styles from './Shell.module.css';
 
-export default function Shell({ children, showBar = true }) {
+export default function Shell({ children, showBar = true, showAudio = true }) {
   const { mode } = useYEP();
   const program = MODES[mode] || MODES.builder;
+  const audioTargetRef = useRef(null);
 
   return (
     <div className={styles.shell}>
-      <header className={styles.header}>
+      <header className={styles.header} data-audio-skip="true">
         <div className={styles.brand}>
           <img className={styles.mark} src="/logo.png" alt="A/1 Suppliers" />
           <div className={styles.wordmark}>
@@ -27,8 +30,9 @@ export default function Shell({ children, showBar = true }) {
           <small>{program.label} · {program.ageRange}</small>
         </div>
       </header>
-      {showBar && <GlobalBar />}
-      <main className={styles.content}>{children}</main>
+      {showBar && <div data-audio-skip="true"><GlobalBar /></div>}
+      {showAudio && <AudioGuide targetRef={audioTargetRef} />}
+      <main ref={audioTargetRef} className={styles.content}>{children}</main>
     </div>
   );
 }
