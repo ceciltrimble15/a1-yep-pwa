@@ -1,6 +1,7 @@
 import { YEPProvider, useYEP } from './context/YEPContext';
 import TrackSelector from './screens/TrackSelector';
 import Home from './screens/Home';
+import MyDirection from './screens/MyDirection';
 import FinisherFocus from './screens/FinisherFocus';
 import MirrorIntro from './screens/MirrorIntro';
 import MirrorAssessment from './screens/MirrorAssessment';
@@ -26,6 +27,7 @@ import {
 const SCREENS = {
   track: TrackSelector,
   home: Home,
+  myDirection: MyDirection,
   finisherFocus: FinisherFocus,
   dailyQuest: DailyQuest,
   weeklyModule: DemoWeeklyModule,
