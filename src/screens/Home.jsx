@@ -16,11 +16,12 @@ function HubCard({ title, text, status, done, onClick }) {
 }
 
 export default function Home() {
-  const { powerName, directionProfile, navigate, pilotProgress, pilotBadges, mirrorResult, mode } = useYEP();
+  const { powerName, directionProfile, exposureLog, navigate, pilotProgress, pilotBadges, mirrorResult, mode } = useYEP();
   const program = MODES[mode] || MODES.builder;
   const { weeklyModule, stemSin, dailyQuest, bossChallenge, mentorSpotlight, instructions, expectations } = getProgramContent(mode);
   const weeklyDone = pilotProgress.weeklyCompleted.length >= weeklyModule.activities.length;
   const directionSaved = !!directionProfile?.interest;
+  const exposureCount = exposureLog?.length || 0;
 
   return (
     <Shell>
@@ -35,7 +36,7 @@ export default function Home() {
       </div>
 
       <div className={styles.note}>
-        <strong>Demo Flow:</strong> Identity → My Direction → exposure → workbook thinking → matching app action → saved progress → badge/status → My Process → Admin Review.
+        <strong>Demo Flow:</strong> Identity → My Direction → exposure → Exposure Passport → workbook thinking → matching app action → saved progress → badge/status → My Process → Admin Review.
       </div>
 
       <div className={styles.note}>{expectations}</div>
@@ -53,6 +54,13 @@ export default function Home() {
           status={directionSaved ? 'Direction Saved' : 'Explore'}
           done={directionSaved}
           onClick={() => navigate('myDirection')}
+        />
+        <HubCard
+          title="Exposure Passport"
+          text="See what worlds you have reacted to, what you want to try, what you have not seen yet, and the next door to open."
+          status={exposureCount ? `${exposureCount} Worlds Logged` : 'Start Exploring'}
+          done={exposureCount > 0}
+          onClick={() => navigate('exposurePassport')}
         />
         <HubCard title="Daily Quest" text={dailyQuest.prompt} status={pilotProgress.dailyQuestComplete ? 'Complete' : 'Start'} done={pilotProgress.dailyQuestComplete} onClick={() => navigate('dailyQuest')} />
         <HubCard title="Weekly Module" text={`Run the ${weeklyModule.title} demo module.`} status={weeklyDone ? 'Complete' : `${pilotProgress.weeklyCompleted.length}/${weeklyModule.activities.length} Done`} done={weeklyDone} onClick={() => navigate('weeklyModule')} />
