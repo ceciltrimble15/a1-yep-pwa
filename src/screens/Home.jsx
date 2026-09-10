@@ -16,10 +16,11 @@ function HubCard({ title, text, status, done, onClick }) {
 }
 
 export default function Home() {
-  const { powerName, navigate, pilotProgress, pilotBadges, mirrorResult, mode } = useYEP();
+  const { powerName, directionProfile, navigate, pilotProgress, pilotBadges, mirrorResult, mode } = useYEP();
   const program = MODES[mode] || MODES.builder;
   const { weeklyModule, stemSin, dailyQuest, bossChallenge, mentorSpotlight, instructions, expectations } = getProgramContent(mode);
   const weeklyDone = pilotProgress.weeklyCompleted.length >= weeklyModule.activities.length;
+  const directionSaved = !!directionProfile?.interest;
 
   return (
     <Shell>
@@ -34,7 +35,7 @@ export default function Home() {
       </div>
 
       <div className={styles.note}>
-        <strong>Demo Flow:</strong> Workbook thinking → matching app action → saved progress → badge/status → My Process → Admin Review.
+        <strong>Demo Flow:</strong> Identity → My Direction → exposure → workbook thinking → matching app action → saved progress → badge/status → My Process → Admin Review.
       </div>
 
       <div className={styles.note}>{expectations}</div>
@@ -46,13 +47,20 @@ export default function Home() {
           status="Change"
           onClick={() => navigate('track')}
         />
+        <HubCard
+          title="My Direction"
+          text={directionSaved ? `Current interest: ${directionProfile.interest}. Explore the work, money, technology, people, adjacent paths, and a world outside your current interest.` : 'Start with what you are curious about, then open doors to careers, skills, people, money, technology, and possibilities you may not know yet.'}
+          status={directionSaved ? 'Direction Saved' : 'Explore'}
+          done={directionSaved}
+          onClick={() => navigate('myDirection')}
+        />
         <HubCard title="Daily Quest" text={dailyQuest.prompt} status={pilotProgress.dailyQuestComplete ? 'Complete' : 'Start'} done={pilotProgress.dailyQuestComplete} onClick={() => navigate('dailyQuest')} />
         <HubCard title="Weekly Module" text={`Run the ${weeklyModule.title} demo module.`} status={weeklyDone ? 'Complete' : `${pilotProgress.weeklyCompleted.length}/${weeklyModule.activities.length} Done`} done={weeklyDone} onClick={() => navigate('weeklyModule')} />
         <HubCard title={STEM_SIN_LABEL} text={stemSin.challengeTitle} status={pilotProgress.stemSinComplete ? 'Complete' : 'Open'} done={pilotProgress.stemSinComplete} onClick={() => navigate('stemSin')} />
         <HubCard title="Boss Challenge" text={bossChallenge.prompt} status={pilotProgress.bossComplete ? 'Complete' : 'Open'} done={pilotProgress.bossComplete} onClick={() => navigate('bossChallenge')} />
         <HubCard title="Mentor Spotlight" text={mentorSpotlight.challenge} status={pilotProgress.mentorQuestion ? 'Question Saved' : 'Open'} done={!!pilotProgress.mentorQuestion} onClick={() => navigate('mentorSpotlight')} />
         <HubCard title="Rewards / Badges" text="See which demo badges were earned from completed actions." status={`${pilotBadges.length}/3 Unlocked`} done={pilotBadges.length === 3} onClick={() => navigate('rewards')} />
-        <HubCard title="My Process / Profile" text="See your pathway, Mirror result, FINISHER direction, completion status, badges, and Mirror XP." status="View" onClick={() => navigate('profile')} />
+        <HubCard title="My Process / Profile" text="See your pathway, My Direction, Mirror result, FINISHER direction, completion status, badges, and Mirror XP." status="View" onClick={() => navigate('profile')} />
         <HubCard title="FINISHER Focus" text="See your saved Focus, Innovation, Growth Edge, and assigned mission together." status="View" onClick={() => navigate('finisherFocus')} />
         <HubCard title="The Mirror + FINISHER" text="Run the assessment → mission → reflection → Mirror XP behavior loop." status={mirrorResult ? 'Started' : 'Start'} done={!!mirrorResult} onClick={() => navigate('mirrorIntro')} />
         <HubCard title="Admin Review" text="Review the active tablet demo record and the proof actually saved on this device." status="Review" onClick={() => navigate('adminReview')} />
