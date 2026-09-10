@@ -5,50 +5,101 @@
   flex-direction: column;
   padding: 20px;
   padding-top: calc(24px + env(safe-area-inset-top, 0));
+  background: linear-gradient(180deg, #FFFFFF 0%, #F6F8FC 100%);
   animation: fadeUp 0.45s ease-out both;
 }
 
-.introRow {
+.brandHero {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: 18px;
+  margin-bottom: 22px;
+  padding: 18px;
+  border: 1px solid var(--line-strong);
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(26, 58, 143, 0.06), rgba(255, 255, 255, 0.96) 45%, rgba(212, 160, 23, 0.06));
+  box-shadow: 0 14px 36px rgba(14, 26, 58, 0.08);
 }
 
 .introCopy { min-width: 0; }
 
 .logo {
-  width: 58px;
-  height: 58px;
-  border-radius: 14px;
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
   object-fit: cover;
-  box-shadow: 0 0 0 1px var(--line-strong);
+  box-shadow: 0 0 0 1px var(--line-strong), 0 12px 24px rgba(14, 26, 58, 0.12);
   flex: 0 0 auto;
 }
 
-.brandLine {
+.organization {
   font-family: var(--font-display);
-  font-size: 12px;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+
+.programLine {
+  margin-top: 5px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--royal);
+}
+
+.motto {
+  margin-top: 5px;
+  font-family: var(--font-display);
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--royal);
-  margin-bottom: 8px;
+  color: var(--silver);
 }
 
 .title {
-  font-size: clamp(36px, 5vw, 58px);
+  margin-top: 16px;
+  font-size: clamp(36px, 5vw, 60px);
   line-height: 0.96;
   color: var(--text);
-  margin-bottom: 8px;
 }
-.title em { color: var(--electric); font-style: normal; }
+
+.title em { color: var(--royal); font-style: normal; }
 
 .sub {
   color: var(--silver);
   font-size: 15px;
-  margin-bottom: 0;
-  max-width: 72ch;
+  margin-top: 10px;
+  max-width: 78ch;
+}
+
+.processStrip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  margin-top: 14px;
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: var(--navy);
+}
+
+.processStrip span {
+  padding: 7px 9px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--white);
+}
+
+.processStrip b {
+  color: var(--gold);
+  font-weight: 900;
 }
 
 .identityGrid {
@@ -72,18 +123,22 @@
   width: 100%;
   padding: 15px 16px;
   border-radius: 12px;
-  background: var(--panel);
+  background: var(--white);
   border: 1px solid var(--line-strong);
   color: var(--text);
   font-size: 17px;
   outline: none;
   min-height: 54px;
 }
-.nameInput:focus { border-color: var(--electric); }
+.nameInput:focus {
+  border-color: var(--royal);
+  box-shadow: 0 0 0 3px rgba(26, 58, 143, 0.10);
+}
 
 .tracksLabel {
   font-family: var(--font-display);
   font-size: 12px;
+  font-weight: 800;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--silver);
@@ -106,9 +161,10 @@
   text-align: left;
   padding: 16px;
   border-radius: var(--radius);
-  background: var(--panel);
+  background: var(--white);
   border: 1px solid var(--line);
   color: var(--text);
+  box-shadow: 0 7px 18px rgba(14, 26, 58, 0.04);
 }
 
 .pathwayProgram {
@@ -125,8 +181,8 @@
 }
 
 .pathwaySelected {
-  border-color: var(--electric);
-  background: var(--panel-2);
+  border-color: var(--royal);
+  background: linear-gradient(180deg, #FFFFFF, #EDF2FB);
   box-shadow: var(--electric-glow);
 }
 
@@ -143,16 +199,17 @@
   padding: 16px;
   min-height: 82px;
   border-radius: var(--radius);
-  background: var(--panel);
+  background: var(--white);
   border: 1px solid var(--line);
   text-align: left;
   transition: border-color 0.15s ease, transform 0.12s ease;
+  box-shadow: 0 7px 18px rgba(14, 26, 58, 0.04);
 }
 .track:active { transform: scale(0.99); }
 .selected {
-  border-color: var(--electric);
+  border-color: var(--royal);
   box-shadow: var(--electric-glow);
-  background: var(--panel-2);
+  background: linear-gradient(180deg, #FFFFFF, #EDF2FB);
 }
 
 .tIcon {
@@ -163,14 +220,14 @@
   align-items: center;
   justify-content: center;
   border-radius: 13px;
-  background: linear-gradient(135deg, var(--blue), var(--electric));
+  background: linear-gradient(135deg, var(--navy), var(--royal));
   color: var(--white);
 }
 .tMeta { flex: 1; min-width: 0; }
 .tName {
   display: block;
   font-family: var(--font-display);
-  font-weight: 800;
+  font-weight: 900;
   font-size: 18px;
   letter-spacing: 0.02em;
   color: var(--text);
@@ -201,19 +258,23 @@
     padding: 30px clamp(30px, 4vw, 64px) 34px;
   }
 
-  .introRow {
-    gap: 20px;
-    margin-bottom: 24px;
+  .brandHero {
+    gap: 24px;
+    padding: 24px 26px;
+    margin-bottom: 26px;
   }
 
   .logo {
-    width: 70px;
-    height: 70px;
-    border-radius: 17px;
+    width: 96px;
+    height: 96px;
+    border-radius: 22px;
   }
 
-  .brandLine { font-size: 13px; }
-  .sub { font-size: 16px; }
+  .organization { font-size: 17px; }
+  .programLine { font-size: 15px; }
+  .motto { font-size: 11px; }
+  .sub { font-size: 17px; }
+  .processStrip { font-size: 11px; gap: 8px; }
 
   .identityGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -237,9 +298,7 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
-  .pathway {
-    min-height: 92px;
-  }
+  .pathway { min-height: 92px; }
 
   .footer button {
     min-height: 64px;
@@ -253,24 +312,17 @@
     padding-bottom: 24px;
   }
 
-  .introRow { margin-bottom: 18px; }
+  .brandHero { margin-bottom: 18px; }
   .pathways { margin-bottom: 16px; }
   .identityGrid { margin-bottom: 16px; }
   .footer { padding-top: 16px; }
 }
 
 @media (max-width: 560px) {
-  .introRow {
-    display: block;
-  }
-
-  .logo {
-    margin-bottom: 14px;
-  }
-
+  .brandHero { display: block; }
+  .logo { margin-bottom: 16px; }
   .pathways,
   .identityGrid,
-  .tracks {
-    grid-template-columns: 1fr;
-  }
+  .tracks { grid-template-columns: 1fr; }
+  .processStrip b { display: none; }
 }
