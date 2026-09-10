@@ -1,31 +1,31 @@
 /* A/1 SUPPLIERS · YEP / Y.A.E.P. · THE PROCESS
-   Premium field-tablet visual system: deep navy, royal blue, silver, restrained gold. */
+   Controlled premium palette: navy, silver/white, royal blue. Gold only for earned/completion moments. */
 :root {
-  --royal: #1A3A8F;
-  --blue: #123C96;
-  --electric: #2F6BFF;
-  --gold: #D7A92A;
-  --gold-soft: #F0C765;
+  --royal: #234F94;
+  --blue: #173B70;
+  --electric: #426DB7;
+  --gold: #B08D3A;
+  --gold-soft: #C5AE73;
   --white: #FFFFFF;
-  --navy: #071322;
-  --navy-2: #0B1C31;
-  --navy-3: #102640;
-  --silver: #A9B6C9;
+  --navy: #08121F;
+  --navy-2: #0C1928;
+  --navy-3: #122235;
+  --silver: #AEB8C6;
 
-  --panel: #0F2239;
-  --panel-2: #142D49;
-  --panel-3: #183858;
-  --line: rgba(170, 190, 216, 0.15);
-  --line-strong: rgba(184, 204, 230, 0.28);
+  --panel: #111D2B;
+  --panel-2: #162436;
+  --panel-3: #1A2A3E;
+  --line: rgba(185, 197, 214, 0.12);
+  --line-strong: rgba(196, 207, 222, 0.22);
 
-  --text: #F7FAFF;
-  --text-dim: #C7D2E1;
-  --text-muted: #A9B6C9;
-  --text-faint: #71839A;
+  --text: #F4F7FA;
+  --text-dim: #CDD4DE;
+  --text-muted: #AEB8C6;
+  --text-faint: #738091;
 
-  --electric-glow: 0 0 0 1px rgba(47, 107, 255, 0.34), 0 14px 34px rgba(0, 0, 0, 0.26);
-  --gold-glow: 0 0 0 1px rgba(215, 169, 42, 0.45), 0 14px 34px rgba(0, 0, 0, 0.28);
-  --card-shadow: 0 14px 32px rgba(0, 0, 0, 0.24);
+  --electric-glow: 0 0 0 1px rgba(66, 109, 183, 0.24), 0 10px 24px rgba(0, 0, 0, 0.20);
+  --gold-glow: 0 0 0 1px rgba(176, 141, 58, 0.30), 0 10px 24px rgba(0, 0, 0, 0.22);
+  --card-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
 
   --font-display: 'Outfit', system-ui, sans-serif;
   --font-body: 'Outfit', system-ui, sans-serif;
