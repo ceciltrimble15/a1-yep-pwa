@@ -30,18 +30,21 @@ export default function TrackSelector() {
 
   return (
     <div className={styles.wrap}>
-      <div className={styles.introRow}>
+      <section className={styles.brandHero}>
         <img className={styles.logo} src="/logo.png" alt="A/1 Suppliers" />
         <div className={styles.introCopy}>
-          <div className={styles.brandLine}>A/1 Suppliers · YEP + Y.A.E.P. Tablet Demo V0.5</div>
-          <h1 className={styles.title}>
-            Choose Your <em>Process.</em>
-          </h1>
+          <div className={styles.organization}>A/1 SUPPLIERS</div>
+          <div className={styles.programLine}>YEP / Y.A.E.P. · THE PROCESS</div>
+          <div className={styles.motto}>Supplying the Tools. Supporting the Hustle.</div>
+          <h1 className={styles.title}>Your Process. <em>Your Direction.</em></h1>
           <p className={styles.sub}>
-            Choose the age pathway, confirm the Power Name and track, then enter the controlled demo experience.
+            Get exposed. Try something real. Learn how money, technology, people, and opportunity connect. Reflect, adapt, and keep moving.
           </p>
+          <div className={styles.processStrip}>
+            <span>EXPLORE</span><b>→</b><span>EXPERIENCE</span><b>→</b><span>LEARN</span><b>→</b><span>REFLECT</span><b>→</b><span>ADAPT</span><b>→</b><span>EXPLORE AGAIN</span>
+          </div>
         </div>
-      </div>
+      </section>
 
       <div className={styles.tracksLabel}>Choose Your Program Pathway</div>
       <div className={styles.pathways}>
@@ -80,9 +83,7 @@ export default function TrackSelector() {
         </div>
 
         <div className={styles.nameField}>
-          <label className={styles.nameLabel} htmlFor="powerName">
-            Your Power Name
-          </label>
+          <label className={styles.nameLabel} htmlFor="powerName">Your Power Name</label>
           <input
             id="powerName"
             className={styles.nameInput}
@@ -101,14 +102,8 @@ export default function TrackSelector() {
           const Icon = t.icon;
           const sel = picked === t.id;
           return (
-            <button
-              key={t.id}
-              className={`${styles.track} ${sel ? styles.selected : ''}`}
-              onClick={() => setPicked(t.id)}
-            >
-              <span className={styles.tIcon}>
-                {sel ? <Check size={24} /> : <Icon size={24} />}
-              </span>
+            <button key={t.id} className={`${styles.track} ${sel ? styles.selected : ''}`} onClick={() => setPicked(t.id)}>
+              <span className={styles.tIcon}>{sel ? <Check size={24} /> : <Icon size={24} />}</span>
               <span className={styles.tMeta}>
                 <span className={styles.tName}>{t.name}</span>
                 <span className={styles.tDesc}>{t.desc}</span>
@@ -120,7 +115,7 @@ export default function TrackSelector() {
 
       <div className={styles.footer}>
         <button className={ui.btnPrimary} onClick={start} disabled={!picked || !powerName.trim()}>
-          Enter This Pathway <ArrowRight size={22} />
+          Enter The Process <ArrowRight size={22} />
         </button>
       </div>
     </div>
