@@ -13,9 +13,17 @@ body,
   min-height: 100%;
 }
 
+html {
+  width: 100%;
+  min-width: 100%;
+  background: var(--navy);
+}
+
 body {
+  width: 100%;
+  min-width: 100%;
   font-family: var(--font-body);
-  background: #EEF1F7;
+  background: linear-gradient(180deg, #08121F 0%, #0B1725 52%, #08121F 100%);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -23,13 +31,14 @@ body {
 }
 
 #root {
-  max-width: var(--maxw);
-  margin: 0 auto;
-  background: #FFFFFF;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  background: linear-gradient(180deg, rgba(8, 18, 31, 0.99), rgba(10, 22, 36, 0.99));
   min-height: 100dvh;
   position: relative;
-  overflow: hidden;
-  box-shadow: 0 0 0 1px var(--line);
+  overflow-x: hidden;
+  box-shadow: none;
 }
 
 h1, h2, h3, h4 {
@@ -48,10 +57,18 @@ button {
   border: none;
   background: none;
   color: inherit;
+  touch-action: manipulation;
 }
 
 input, textarea {
   font-family: var(--font-body);
+}
+
+@media (min-width: 760px) {
+  body,
+  #root {
+    min-height: 100dvh;
+  }
 }
 
 ::-webkit-scrollbar { width: 0; height: 0; }
@@ -62,12 +79,12 @@ input, textarea {
 }
 @keyframes popIn {
   0% { opacity: 0; transform: scale(0.7); }
-  60% { opacity: 1; transform: scale(1.06); }
+  60% { opacity: 1; transform: scale(1.04); }
   100% { transform: scale(1); }
 }
 @keyframes goldPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(212, 160, 23, 0.45); }
-  50% { box-shadow: 0 0 0 16px rgba(212, 160, 23, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(176, 141, 58, 0.28); }
+  50% { box-shadow: 0 0 0 12px rgba(176, 141, 58, 0); }
 }
 @keyframes barGrow {
   from { width: 0; }
