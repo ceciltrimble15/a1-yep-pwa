@@ -15,7 +15,7 @@ export const XP = {
 };
 
 const SCREENS = [
-  'track', 'home', 'finisherFocus', 'dailyQuest', 'weeklyModule', 'stemSin', 'bossChallenge',
+  'track', 'home', 'myDirection', 'finisherFocus', 'dailyQuest', 'weeklyModule', 'stemSin', 'bossChallenge',
   'mentorSpotlight', 'rewards', 'profile', 'adminReview', 'resetDemo', 'mirrorIntro', 'mirror',
   'results', 'mission', 'reflection', 'progress', 'dashboard',
 ];
@@ -71,6 +71,7 @@ export function YEPProvider({ children }) {
   const [track, setTrack] = useState(saved.track ?? null);
   const [youthName, setYouthName] = useState(saved.youthName ?? '');
   const [powerName, setPowerName] = useState(saved.powerName ?? '');
+  const [directionProfile, setDirectionProfile] = useState(saved.directionProfile ?? { interest: '', why: '' });
   const [mirrorScores, setMirrorScores] = useState(saved.mirrorScores ?? null);
   const [mirrorResult, setMirrorResult] = useState(saved.mirrorResult ?? null);
   const [currentMission, setCurrentMission] = useState(saved.currentMission ?? null);
@@ -82,6 +83,7 @@ export function YEPProvider({ children }) {
   const [mode, setModeState] = useState(() => resolveInitialMode(saved.mode));
   const [laneProgress, setLaneProgress] = useState(() => migrateLaneProgress(saved));
   const pilotProgress = laneProgress[mode] || EMPTY_PILOT_PROGRESS;
+
   function setPilotProgress(update) {
     setLaneProgress((all) => ({ ...all, [mode]: update(all[mode] || EMPTY_PILOT_PROGRESS) }));
   }
@@ -89,13 +91,13 @@ export function YEPProvider({ children }) {
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        screen, track, youthName, powerName, mirrorScores, mirrorResult, currentMission,
+        screen, track, youthName, powerName, directionProfile, mirrorScores, mirrorResult, currentMission,
         missionComplete, reflection, reflectionSubmitted, finisherLetter, xp, mode, pilotProgress, laneProgress,
       }));
     } catch {
       /* storage blocked/full */
     }
-  }, [screen, track, youthName, powerName, mirrorScores, mirrorResult, currentMission,
+  }, [screen, track, youthName, powerName, directionProfile, mirrorScores, mirrorResult, currentMission,
     missionComplete, reflection, reflectionSubmitted, finisherLetter, xp, mode, pilotProgress, laneProgress]);
 
   function selectTrack(trackObj, name, selectedPowerName) {
@@ -103,6 +105,10 @@ export function YEPProvider({ children }) {
     if (name) setYouthName(name);
     if (selectedPowerName) setPowerName(selectedPowerName);
     setScreen('home');
+  }
+
+  function saveDirectionProfile(update) {
+    setDirectionProfile((current) => ({ ...current, ...update }));
   }
 
   function submitMirror(answers) {
@@ -179,6 +185,7 @@ export function YEPProvider({ children }) {
     setTrack(null);
     setYouthName('');
     setPowerName('');
+    setDirectionProfile({ interest: '', why: '' });
     setMirrorScores(null);
     setMirrorResult(null);
     setCurrentMission(null);
@@ -205,6 +212,8 @@ export function YEPProvider({ children }) {
     legalName: youthName || '',
     powerName: powerName || '—',
     track: track ? track.name : '—',
+    directionInterest: directionProfile.interest || '—',
+    directionWhy: directionProfile.why || '',
     anchor: mirrorResult ? mirrorResult.Anchor : '—',
     edge: mirrorResult ? mirrorResult.Edge : '—',
     style: mirrorResult ? mirrorResult.Style : '—',
@@ -216,14 +225,14 @@ export function YEPProvider({ children }) {
     reflection,
     pilotBadges,
     isActive: true,
-  }), [powerName, youthName, track, mirrorResult, xp, finisherLetter, currentMission, missionComplete, reflectionSubmitted, reflection, pilotBadges]);
+  }), [powerName, youthName, track, directionProfile, mirrorResult, xp, finisherLetter, currentMission, missionComplete, reflectionSubmitted, reflection, pilotBadges]);
 
   const demoYouth = useMemo(() => [...baseDemoYouth, activeYouth], [activeYouth]);
 
   const value = {
-    screen, track, youthName, powerName, mirrorScores, mirrorResult, currentMission,
+    screen, track, youthName, powerName, directionProfile, mirrorScores, mirrorResult, currentMission,
     missionComplete, reflection, reflectionSubmitted, finisherLetter, xp, mode,
-    pilotProgress, pilotBadges, demoYouth, activeYouth, selectTrack, submitMirror,
+    pilotProgress, pilotBadges, demoYouth, activeYouth, selectTrack, saveDirectionProfile, submitMirror,
     completeMission, submitReflection, completeDailyQuest, toggleWeeklyActivity,
     completeStemSin, completeBossChallenge, saveMentorQuestion, navigate, setScreen,
     setMode, resetSession,
