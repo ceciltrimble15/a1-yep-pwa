@@ -1,0 +1,35 @@
+.voice {
+  margin: 14px 0 18px;
+  padding: 16px;
+  border: 1px solid rgba(212, 160, 23, 0.34);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(145deg, rgba(14, 26, 58, 0.98), rgba(26, 58, 143, 0.96));
+  color: var(--white);
+  box-shadow: 0 14px 30px rgba(14, 26, 58, 0.18);
+}
+
+.topline { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.identity { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.identity strong, .identity span { display: block; font-family: var(--font-display); }
+.identity strong { font-size: 13px; letter-spacing: 0.16em; }
+.identity span { margin-top: 2px; font-size: 10px; letter-spacing: 0.08em; color: rgba(255, 255, 255, 0.72); }
+.micMark { width: 40px; height: 40px; display: grid; place-items: center; flex: 0 0 40px; border-radius: 50%; background: rgba(255, 255, 255, 0.10); border: 1px solid rgba(255, 255, 255, 0.16); }
+.live { background: var(--gold); color: #1A1304; box-shadow: 0 0 0 8px rgba(212, 160, 23, 0.12); animation: voicePulse 1.25s ease-in-out infinite; }
+.demoBadge { flex: 0 0 auto; padding: 6px 8px; border-radius: 999px; background: rgba(212, 160, 23, 0.14); border: 1px solid rgba(212, 160, 23, 0.36); color: #F4CC66; font-family: var(--font-display); font-size: 9px; font-weight: 900; letter-spacing: 0.12em; }
+.prompt { margin-top: 14px; color: rgba(255, 255, 255, 0.95); font-size: 14px; line-height: 1.45; }
+.instruction { margin-top: 6px; color: rgba(255, 255, 255, 0.68); font-size: 12px; }
+.transcript { margin-top: 12px; min-height: 76px; padding: 12px 13px; border-radius: 12px; background: rgba(255, 255, 255, 0.08); border: 1px dashed rgba(255, 255, 255, 0.22); color: rgba(255, 255, 255, 0.66); font-size: 14px; line-height: 1.5; }
+.hasText { background: rgba(255, 255, 255, 0.12); border-style: solid; color: var(--white); }
+.error { margin-top: 10px; padding: 9px 10px; border-radius: 10px; background: rgba(255, 135, 135, 0.10); border: 1px solid rgba(255, 135, 135, 0.32); color: #FFD5D5; font-size: 12px; }
+.controls { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+.controls button { min-height: 46px; display: flex; align-items: center; justify-content: center; gap: 7px; padding: 10px; border-radius: 11px; font-family: var(--font-display); font-size: 11px; font-weight: 900; letter-spacing: 0.04em; text-transform: uppercase; }
+.controls button:disabled { opacity: 0.38; }
+.talk { background: var(--gold); color: #1A1304; }
+.stop { background: #F7E0E0; color: #6D1818; }
+.secondary { background: rgba(255, 255, 255, 0.10); color: var(--white); border: 1px solid rgba(255, 255, 255, 0.16); }
+.confirm { background: var(--white); color: var(--royal); }
+.privacy { display: flex; align-items: flex-start; gap: 7px; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.10); color: rgba(255, 255, 255, 0.64); font-size: 10px; line-height: 1.4; }
+.privacy svg { flex: 0 0 auto; margin-top: 1px; }
+.unsupported { display: flex; align-items: center; gap: 8px; margin: 10px 0 16px; padding: 11px 12px; border-radius: 12px; background: rgba(212, 160, 23, 0.08); border: 1px solid rgba(212, 160, 23, 0.24); color: var(--text); font-size: 12px; }
+@keyframes voicePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+@media (max-width: 700px) { .controls { grid-template-columns: 1fr; } .demoBadge { display: none; } }
