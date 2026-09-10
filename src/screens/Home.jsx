@@ -36,7 +36,11 @@ export default function Home() {
       </div>
 
       <div className={styles.note}>
-        <strong>Demo Flow:</strong> Identity → My Direction → exposure → Exposure Passport → workbook thinking → matching app action → saved progress → badge/status → My Process → Admin Review.
+        <strong>The Process Never Ends:</strong> EXPLORE → EXPERIENCE → LEARN → REFLECT → ADAPT → EXPLORE AGAIN. Completing a quest or module means you finished that step — not that you are finished learning.
+      </div>
+
+      <div className={styles.note}>
+        <strong>Demo Flow:</strong> Identity → My Direction → exposure → Exposure Passport → workbook thinking → matching app action → saved progress → badge/status → My Process → Admin Review → new exposure.
       </div>
 
       <div className={styles.note}>{expectations}</div>
@@ -57,7 +61,7 @@ export default function Home() {
         />
         <HubCard
           title="Exposure Passport"
-          text="See what worlds you have reacted to, what you want to try, what you have not seen yet, and the next door to open."
+          text="Track what you have seen, what you want to try, what did not fit, and what door you should open next. This record grows as you keep learning."
           status={exposureCount ? `${exposureCount} Worlds Logged` : 'Start Exploring'}
           done={exposureCount > 0}
           onClick={() => navigate('exposurePassport')}
