@@ -15,7 +15,7 @@ export const XP = {
 };
 
 const SCREENS = [
-  'track', 'home', 'myDirection', 'finisherFocus', 'dailyQuest', 'weeklyModule', 'stemSin', 'bossChallenge',
+  'track', 'home', 'myDirection', 'exposurePassport', 'finisherFocus', 'dailyQuest', 'weeklyModule', 'stemSin', 'bossChallenge',
   'mentorSpotlight', 'rewards', 'profile', 'adminReview', 'resetDemo', 'mirrorIntro', 'mirror',
   'results', 'mission', 'reflection', 'progress', 'dashboard',
 ];
