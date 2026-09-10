@@ -5,7 +5,9 @@
   flex-direction: column;
   padding: 20px;
   padding-top: calc(24px + env(safe-area-inset-top, 0));
-  background: linear-gradient(180deg, #FFFFFF 0%, #F6F8FC 100%);
+  background:
+    radial-gradient(circle at 85% 0%, rgba(47, 107, 255, 0.18), transparent 34%),
+    linear-gradient(180deg, #071322 0%, #0A1A2D 48%, #071322 100%);
   animation: fadeUp 0.45s ease-out both;
 }
 
@@ -14,11 +16,11 @@
   align-items: flex-start;
   gap: 18px;
   margin-bottom: 22px;
-  padding: 18px;
-  border: 1px solid var(--line-strong);
+  padding: 20px;
+  border: 1px solid rgba(215, 169, 42, 0.26);
   border-radius: 20px;
-  background: linear-gradient(135deg, rgba(26, 58, 143, 0.06), rgba(255, 255, 255, 0.96) 45%, rgba(212, 160, 23, 0.06));
-  box-shadow: 0 14px 36px rgba(14, 26, 58, 0.08);
+  background: linear-gradient(135deg, rgba(215, 169, 42, 0.07), rgba(15, 34, 57, 0.96) 44%, rgba(47, 107, 255, 0.08));
+  box-shadow: var(--card-shadow);
 }
 
 .introCopy { min-width: 0; }
@@ -28,7 +30,7 @@
   height: 72px;
   border-radius: 16px;
   object-fit: cover;
-  box-shadow: 0 0 0 1px var(--line-strong), 0 12px 24px rgba(14, 26, 58, 0.12);
+  box-shadow: 0 0 0 1px rgba(215, 169, 42, 0.40), 0 14px 28px rgba(0, 0, 0, 0.34);
   flex: 0 0 auto;
 }
 
@@ -38,7 +40,7 @@
   font-weight: 900;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--navy);
+  color: var(--white);
 }
 
 .programLine {
@@ -48,7 +50,7 @@
   font-weight: 900;
   letter-spacing: 0.11em;
   text-transform: uppercase;
-  color: var(--royal);
+  color: var(--gold-soft);
 }
 
 .motto {
@@ -68,10 +70,10 @@
   color: var(--text);
 }
 
-.title em { color: var(--royal); font-style: normal; }
+.title em { color: var(--gold-soft); font-style: normal; }
 
 .sub {
-  color: var(--silver);
+  color: var(--text-dim);
   font-size: 15px;
   margin-top: 10px;
   max-width: 78ch;
@@ -87,14 +89,14 @@
   font-size: 10px;
   font-weight: 900;
   letter-spacing: 0.08em;
-  color: var(--navy);
+  color: var(--text);
 }
 
 .processStrip span {
   padding: 7px 9px;
   border: 1px solid var(--line-strong);
   border-radius: 999px;
-  background: var(--white);
+  background: rgba(255,255,255,0.04);
 }
 
 .processStrip b {
@@ -123,16 +125,17 @@
   width: 100%;
   padding: 15px 16px;
   border-radius: 12px;
-  background: var(--white);
+  background: var(--panel);
   border: 1px solid var(--line-strong);
   color: var(--text);
   font-size: 17px;
   outline: none;
   min-height: 54px;
 }
+.nameInput::placeholder { color: var(--text-faint); }
 .nameInput:focus {
-  border-color: var(--royal);
-  box-shadow: 0 0 0 3px rgba(26, 58, 143, 0.10);
+  border-color: var(--electric);
+  box-shadow: var(--electric-glow);
 }
 
 .tracksLabel {
@@ -161,17 +164,17 @@
   text-align: left;
   padding: 16px;
   border-radius: var(--radius);
-  background: var(--white);
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
   border: 1px solid var(--line);
   color: var(--text);
-  box-shadow: 0 7px 18px rgba(14, 26, 58, 0.04);
+  box-shadow: var(--card-shadow);
 }
 
 .pathwayProgram {
   font-family: var(--font-display);
   font-weight: 900;
   font-size: 17px;
-  color: var(--royal);
+  color: var(--gold-soft);
 }
 
 .pathwayLabel {
@@ -181,8 +184,8 @@
 }
 
 .pathwaySelected {
-  border-color: var(--royal);
-  background: linear-gradient(180deg, #FFFFFF, #EDF2FB);
+  border-color: var(--electric);
+  background: linear-gradient(180deg, #17395F, #112B47);
   box-shadow: var(--electric-glow);
 }
 
@@ -199,17 +202,17 @@
   padding: 16px;
   min-height: 82px;
   border-radius: var(--radius);
-  background: var(--white);
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
   border: 1px solid var(--line);
   text-align: left;
   transition: border-color 0.15s ease, transform 0.12s ease;
-  box-shadow: 0 7px 18px rgba(14, 26, 58, 0.04);
+  box-shadow: var(--card-shadow);
 }
 .track:active { transform: scale(0.99); }
 .selected {
-  border-color: var(--royal);
-  box-shadow: var(--electric-glow);
-  background: linear-gradient(180deg, #FFFFFF, #EDF2FB);
+  border-color: var(--gold);
+  box-shadow: var(--gold-glow);
+  background: linear-gradient(180deg, #183858, #102640);
 }
 
 .tIcon {
@@ -220,8 +223,9 @@
   align-items: center;
   justify-content: center;
   border-radius: 13px;
-  background: linear-gradient(135deg, var(--navy), var(--royal));
+  background: linear-gradient(135deg, var(--blue), var(--electric));
   color: var(--white);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.24);
 }
 .tMeta { flex: 1; min-width: 0; }
 .tName {
