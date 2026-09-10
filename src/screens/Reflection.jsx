@@ -3,6 +3,7 @@ import { Send } from 'lucide-react';
 import { getProgramContent } from '../data/pilotContent';
 import { useYEP, XP } from '../context/YEPContext';
 import Shell from '../components/Shell';
+import VoiceCapture from '../components/VoiceCapture';
 import styles from './Reflection.module.css';
 import ui from '../styles/ui.module.css';
 
@@ -13,6 +14,9 @@ export default function Reflection() {
   const { reflection } = getProgramContent(mode);
   const [text, setText] = useState(savedReflection);
   const ready = text.trim().length >= MIN;
+  const voicePrompt = currentMission
+    ? `What did ${currentMission.title} teach you about yourself?`
+    : 'What did this mission teach you about yourself?';
 
   return (
     <Shell>
@@ -36,9 +40,16 @@ export default function Reflection() {
         value={text}
         onChange={(e) => setText(e.target.value)}
       />
+      <VoiceCapture
+        prompt={voicePrompt}
+        currentValue={text}
+        onConfirm={setText}
+        buttonLabel="Talk To YEP"
+        confirmLabel="Use As My Reflection"
+      />
       <div className={styles.meta}>
         <span className={styles.count}>{text.trim().length} chars</span>
-        {!ready && <span className={styles.hint}>Write at least a sentence.</span>}
+        {!ready && <span className={styles.hint}>Write or say at least a sentence.</span>}
       </div>
 
       <button
