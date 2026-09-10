@@ -4,6 +4,7 @@ import { useYEP } from '../context/YEPContext';
 import { MODES } from '../data/modes';
 import { EXPOSURE_WORLDS, getDirectionGuide } from '../data/directionGuidance';
 import Shell from '../components/Shell';
+import VoiceCapture from '../components/VoiceCapture';
 import styles from './PilotScreens.module.css';
 import ui from '../styles/ui.module.css';
 
@@ -78,6 +79,13 @@ export default function MyDirection() {
             placeholder="Example: I think I might want to be an architect."
             maxLength={240}
           />
+          <VoiceCapture
+            prompt="What are you curious about right now?"
+            currentValue={interest}
+            onConfirm={(answer) => { setInterest(answer); setSaved(false); }}
+            buttonLabel="Talk To YEP"
+            confirmLabel="Use As My Interest"
+          />
         </div>
         <div className={styles.card}>
           <label className={styles.label} htmlFor="direction-why">Why does that interest you?</label>
@@ -89,6 +97,13 @@ export default function MyDirection() {
             onChange={(e) => { setWhy(e.target.value); setSaved(false); }}
             placeholder="What about it catches your attention?"
             maxLength={320}
+          />
+          <VoiceCapture
+            prompt="Why does that interest you?"
+            currentValue={why}
+            onConfirm={(answer) => { setWhy(answer); setSaved(false); }}
+            buttonLabel="Talk To YEP"
+            confirmLabel="Use This Reason"
           />
         </div>
       </div>
