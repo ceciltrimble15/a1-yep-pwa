@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Compass, Lightbulb, Network, BadgeDollarSign, Cpu, Shuffle, ArrowLeft } from 'lucide-react';
+import { Compass, Lightbulb, Network, BadgeDollarSign, Cpu, Shuffle, ArrowLeft, Target } from 'lucide-react';
 import { useYEP } from '../context/YEPContext';
 import { MODES } from '../data/modes';
 import { EXPOSURE_WORLDS, getDirectionGuide } from '../data/directionGuidance';
@@ -31,6 +31,17 @@ export default function MyDirection() {
   const [saved, setSaved] = useState(false);
   const program = MODES[mode] || MODES.builder;
   const guide = useMemo(() => getDirectionGuide(interest, mode), [interest, mode]);
+
+  const exposureSnapshot = useMemo(() => {
+    const curious = exposureLog.filter((entry) => entry.reaction === 'curious');
+    const wantToTry = exposureLog.filter((entry) => entry.reaction === 'try');
+    const notNow = exposureLog.filter((entry) => entry.reaction === 'not-now');
+    const priority = wantToTry[0] || curious[0] || null;
+    const nextMove = priority
+      ? `Take one small real-world step in ${priority.label}: watch the work, try a task, meet someone, or build something small. Then come back and reflect.`
+      : `Pick one world that makes you curious. You do not need to know your future. Your job is just to explore one door.`;
+    return { curious, wantToTry, notNow, priority, nextMove };
+  }, [exposureLog]);
 
   function save() {
     saveDirectionProfile({ interest: interest.trim(), why: why.trim() });
@@ -135,6 +146,39 @@ export default function MyDirection() {
             </div>
           );
         })}
+      </div>
+
+      <div className={styles.head} style={{ marginTop: 28 }}>
+        <div className={styles.eyebrow}>Exposure Snapshot</div>
+        <h2 className={styles.cardTitle}>What Your Choices Are Starting To Show</h2>
+      </div>
+
+      <div className={styles.profileGrid}>
+        <div className={styles.card}>
+          <div className={styles.label}>Curious About</div>
+          <div className={styles.value}>{exposureSnapshot.curious.length}</div>
+          <div className={styles.cardText}>{exposureSnapshot.curious.map((entry) => entry.label).join(' · ') || 'Nothing marked yet.'}</div>
+        </div>
+        <div className={styles.card}>
+          <div className={styles.label}>Want To Try</div>
+          <div className={styles.value}>{exposureSnapshot.wantToTry.length}</div>
+          <div className={styles.cardText}>{exposureSnapshot.wantToTry.map((entry) => entry.label).join(' · ') || 'Nothing marked yet.'}</div>
+        </div>
+        <div className={styles.card}>
+          <div className={styles.label}>Not For Me Right Now</div>
+          <div className={styles.value}>{exposureSnapshot.notNow.length}</div>
+          <div className={styles.cardText}>{exposureSnapshot.notNow.map((entry) => entry.label).join(' · ') || 'Nothing marked yet.'}</div>
+        </div>
+        <div className={styles.card}>
+          <div className={styles.label}>Current Priority</div>
+          <div className={styles.value}>{exposureSnapshot.priority?.label || 'Still exploring'}</div>
+          <div className={styles.cardText}>This is not a permanent choice. It is simply the strongest next door based on what you marked.</div>
+        </div>
+      </div>
+
+      <div className={styles.note}>
+        <Target size={18} style={{ verticalAlign: '-3px', marginRight: 6 }} />
+        <strong>Your Next Move:</strong> {exposureSnapshot.nextMove}
       </div>
 
       <div className={styles.note}>
