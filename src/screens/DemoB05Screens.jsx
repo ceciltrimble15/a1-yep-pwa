@@ -93,6 +93,7 @@ export function DemoProfile() {
     finisherLetter,
     pilotBadges,
     pilotProgress,
+    directionProfile,
     mode,
   } = useYEP();
   const program = MODES[mode] || MODES.builder;
@@ -111,6 +112,8 @@ export function DemoProfile() {
         <StatusCard label="Age Pathway" value={program.label} />
         <StatusCard label="Power Name" value={powerName || 'Not set'} />
         <StatusCard label="Track" value={track?.name || 'Not set'} />
+        <StatusCard label="My Direction" value={directionProfile?.interest || 'Not explored yet'} />
+        <StatusCard label="Why It Interests Me" value={directionProfile?.why || 'Not recorded yet'} />
         <StatusCard label="Mirror Anchor" value={mirrorResult?.Anchor || 'Not completed'} />
         <StatusCard label="Mirror Growth Edge" value={mirrorResult?.Edge || 'Not completed'} />
         <StatusCard label="Learning Style" value={mirrorResult?.Style || 'Not completed'} />
@@ -141,6 +144,7 @@ export function DemoAdminReview() {
     reflectionSubmitted,
     finisherLetter,
     mirrorResult,
+    directionProfile,
     setScreen,
     mode,
   } = useYEP();
@@ -159,6 +163,8 @@ export function DemoAdminReview() {
         <StatusCard label="Program" value={program.program} />
         <StatusCard label="Pathway" value={program.label} />
         <StatusCard label="Participant / Power Name" value={activeYouth.powerName || activeYouth.name} />
+        <StatusCard label="My Direction" value={directionProfile?.interest || 'Not explored yet'} />
+        <StatusCard label="Direction Reason" value={directionProfile?.why || 'Not recorded yet'} />
         <StatusCard label="Week 1" value={weeklyComplete ? 'Complete' : `${pilotProgress.weeklyCompleted.length}/${weeklyModule.activities.length} complete`} />
         <StatusCard label="Badges" value={`${pilotBadges.length} / ${PILOT_BADGES.length}`} />
         <StatusCard label="Mirror Anchor" value={mirrorResult?.Anchor || 'Not completed'} />
@@ -198,7 +204,7 @@ export function ResetDemo() {
         sub="This is the destructive reset for the current local tablet demo record."
       />
       <div className={styles.note}>
-        <strong>This will permanently clear the participant's locally saved demo progress from this tablet</strong>, including identity, four-lane activity progress, Mirror/FINISHER progress, badges, responses, reflection, and XP. This cannot be undone.
+        <strong>This will permanently clear the participant's locally saved demo progress from this tablet</strong>, including identity, My Direction, four-lane activity progress, Mirror/FINISHER progress, badges, responses, reflection, and XP. This cannot be undone.
       </div>
       <div className={styles.note}>The app stays installed. The tablet returns to the clean pathway/start screen for the next tester.</div>
       <div className={styles.actions}>
