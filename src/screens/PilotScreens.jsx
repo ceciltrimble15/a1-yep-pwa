@@ -3,6 +3,7 @@ import { getProgramContent, PILOT_BADGES } from '../data/pilotContent';
 import { MODES } from '../data/modes';
 import { useYEP } from '../context/YEPContext';
 import Shell from '../components/Shell';
+import VoiceCapture from '../components/VoiceCapture';
 import styles from './PilotScreens.module.css';
 import ui from '../styles/ui.module.css';
 
@@ -46,6 +47,7 @@ export function DailyQuest() {
         <div className={styles.value}>{dailyQuest.finisher}</div>
       </div>
       <textarea className={styles.textarea} value={text} onChange={(e) => setText(e.target.value)} placeholder="Write your response here..." />
+      <VoiceCapture prompt={dailyQuest.prompt} currentValue={text} onConfirm={setText} buttonLabel="Talk To YEP" confirmLabel="Use As My Answer" />
       <div className={styles.actions}>
         <button className={ui.btnPrimary} disabled={!text.trim()} onClick={() => completeDailyQuest(text)}>
           {pilotProgress.dailyQuestComplete ? 'Update Completed Quest' : 'Complete Daily Quest'}
@@ -102,6 +104,7 @@ export function StemSinQuest() {
         <p>{stemSin.challengeTitle}</p>
       </div>
       <textarea className={styles.textarea} value={text} onChange={(e) => setText(e.target.value)} placeholder="Describe the tool, user, problem, and result you would test..." />
+      <VoiceCapture prompt={stemSin.prompt} currentValue={text} onConfirm={setText} buttonLabel="Talk To YEP" confirmLabel="Use As My Answer" />
       <div className={styles.actions}>
         <button className={ui.btnPrimary} disabled={!text.trim()} onClick={() => completeStemSin(text)}>
           {pilotProgress.stemSinComplete ? 'Update S.T.E.M.Sin Quest' : 'Complete S.T.E.M.Sin Quest'}
@@ -123,6 +126,7 @@ export function BossChallenge() {
       <LaneGuidance />
       <WorkbookCallout text="Draft the challenge in the workbook, practice it out loud, then save the core points here as the digital proof step." />
       <textarea className={styles.textarea} value={text} onChange={(e) => setText(e.target.value)} placeholder={bossChallenge.prompt} />
+      <VoiceCapture prompt={bossChallenge.prompt} currentValue={text} onConfirm={setText} buttonLabel="Talk To YEP" confirmLabel="Use As My Challenge" />
       <div className={styles.actions}>
         <button className={ui.btnPrimary} disabled={!text.trim()} onClick={() => completeBossChallenge(text)}>
           {pilotProgress.bossComplete ? 'Update Boss Challenge' : 'Complete Boss Challenge'}
@@ -148,6 +152,7 @@ export function MentorSpotlight() {
         <div className={styles.cardText}>{mentorSpotlight.challenge}</div>
       </div>
       <textarea className={styles.textarea} value={question} onChange={(e) => setQuestion(e.target.value)} placeholder="What would you ask a mentor?" />
+      <VoiceCapture prompt={mentorSpotlight.challenge} currentValue={question} onConfirm={setQuestion} buttonLabel="Talk To YEP" confirmLabel="Use As My Question" />
       <div className={styles.actions}>
         <button className={ui.btnPrimary} disabled={!question.trim()} onClick={() => saveMentorQuestion(question)}>Save Mentor Question</button>
         <BackHome />
