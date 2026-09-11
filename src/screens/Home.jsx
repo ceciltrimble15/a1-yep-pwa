@@ -1,43 +1,75 @@
-import { ScanFace, ArrowRight } from 'lucide-react';
+import { ScanFace } from 'lucide-react';
 import { useYEP } from '../context/YEPContext';
+import { MODES } from '../data/modes';
+import { getProgramContent, STEM_SIN_LABEL } from '../data/pilotContent';
 import Shell from '../components/Shell';
-import PillarBadges from '../components/PillarBadges';
-import styles from './Home.module.css';
-import ui from '../styles/ui.module.css';
+import styles from './PilotScreens.module.css';
+
+function HubCard({ title, text, status, done, onClick }) {
+  return (
+    <button className={styles.card} onClick={onClick}>
+      <div className={styles.cardTitle}>{title}</div>
+      <div className={styles.cardText}>{text}</div>
+      {status && <span className={`${styles.status} ${done ? styles.done : ''}`}>{status}</span>}
+    </button>
+  );
+}
 
 export default function Home() {
-  const { youthName, navigate } = useYEP();
+  const { powerName, directionProfile, navigate, pilotProgress, pilotBadges, mirrorResult, mode } = useYEP();
+  const program = MODES[mode] || MODES.builder;
+  const { weeklyModule, stemSin, dailyQuest, bossChallenge, mentorSpotlight, instructions, expectations } = getProgramContent(mode);
+  const weeklyDone = pilotProgress.weeklyCompleted.length >= weeklyModule.activities.length;
+  const directionSaved = !!directionProfile?.interest;
 
   return (
     <Shell>
-      <section className={styles.hero}>
-        <div className={styles.eyebrow}>Your Process Starts Here</div>
-        <h1 className={styles.welcome}>
-          {youthName ? <>What's good, <em>{youthName}.</em></> : <>Welcome, <em>Future Founder.</em></>}
-        </h1>
-        <p className={styles.lede}>
-          Lock in. Let's finish. Run the four pillars every day — then face the Mirror.
-        </p>
-      </section>
-
-      <div className={styles.flagHead}>
-        <span className={styles.flagWord}>F.L.A.G.</span>
-        <span className={styles.flagSub}>The Mindset</span>
+      <div className={styles.head}>
+        <div className={styles.eyebrow}>Tablet Demo V0.5 · {program.program} · {program.label}</div>
+        <h1 className={styles.title}>{powerName ? `Welcome, ${powerName}.` : `Welcome To ${program.program}.`}</h1>
+        <p className={styles.sub}>{instructions}</p>
       </div>
-      <PillarBadges />
 
-      <div className={styles.next}>
-        <div className={styles.nextCard}>
-          <div className={styles.nextLabel}>Next Step</div>
-          <div className={styles.nextTitle}>The Mirror</div>
-          <p className={styles.nextDesc}>
-            Six dimensions. Honest answers. It finds your Anchor Strength and your Growth Edge —
-            then hands you a mission built for you.
-          </p>
-        </div>
-        <button className={ui.btnPrimary} onClick={() => navigate('mirrorIntro')}>
-          <ScanFace size={20} /> Face The Mirror <ArrowRight size={20} />
-        </button>
+      <div className={styles.note}>
+        <strong>Controlled Experience Test:</strong> use this build to observe navigation, understanding, engagement, saved proof, and feedback. It does not prove program outcomes.
+      </div>
+
+      <div className={styles.note}>
+        <strong>Demo Flow:</strong> Identity → My Direction → exposure → workbook thinking → matching app action → saved progress → badge/status → My Process → Admin Review.
+      </div>
+
+      <div className={styles.note}>{expectations}</div>
+
+      <div className={styles.grid}>
+        <HubCard
+          title="Choose / Change Age Pathway"
+          text={`Current pathway: ${program.label}. Open the pathway screen to choose Foundation, Builder, Momentum, or Y.A.E.P.`}
+          status="Change"
+          onClick={() => navigate('track')}
+        />
+        <HubCard
+          title="My Direction"
+          text={directionSaved ? `Current interest: ${directionProfile.interest}. Explore the work, money, technology, people, adjacent paths, and a world outside your current interest.` : 'Start with what you are curious about, then open doors to careers, skills, people, money, technology, and possibilities you may not know yet.'}
+          status={directionSaved ? 'Direction Saved' : 'Explore'}
+          done={directionSaved}
+          onClick={() => navigate('myDirection')}
+        />
+        <HubCard title="Daily Quest" text={dailyQuest.prompt} status={pilotProgress.dailyQuestComplete ? 'Complete' : 'Start'} done={pilotProgress.dailyQuestComplete} onClick={() => navigate('dailyQuest')} />
+        <HubCard title="Weekly Module" text={`Run the ${weeklyModule.title} demo module.`} status={weeklyDone ? 'Complete' : `${pilotProgress.weeklyCompleted.length}/${weeklyModule.activities.length} Done`} done={weeklyDone} onClick={() => navigate('weeklyModule')} />
+        <HubCard title={STEM_SIN_LABEL} text={stemSin.challengeTitle} status={pilotProgress.stemSinComplete ? 'Complete' : 'Open'} done={pilotProgress.stemSinComplete} onClick={() => navigate('stemSin')} />
+        <HubCard title="Boss Challenge" text={bossChallenge.prompt} status={pilotProgress.bossComplete ? 'Complete' : 'Open'} done={pilotProgress.bossComplete} onClick={() => navigate('bossChallenge')} />
+        <HubCard title="Mentor Spotlight" text={mentorSpotlight.challenge} status={pilotProgress.mentorQuestion ? 'Question Saved' : 'Open'} done={!!pilotProgress.mentorQuestion} onClick={() => navigate('mentorSpotlight')} />
+        <HubCard title="Rewards / Badges" text="See which demo badges were earned from completed actions." status={`${pilotBadges.length}/3 Unlocked`} done={pilotBadges.length === 3} onClick={() => navigate('rewards')} />
+        <HubCard title="My Process / Profile" text="See your pathway, My Direction, Mirror result, FINISHER direction, completion status, badges, and Mirror XP." status="View" onClick={() => navigate('profile')} />
+        <HubCard title="FINISHER Focus" text="See your saved Focus, Innovation, Growth Edge, and assigned mission together." status="View" onClick={() => navigate('finisherFocus')} />
+        <HubCard title="The Mirror + FINISHER" text="Run the assessment → mission → reflection → Mirror XP behavior loop." status={mirrorResult ? 'Started' : 'Start'} done={!!mirrorResult} onClick={() => navigate('mirrorIntro')} />
+        <HubCard title="Admin Review" text="Review the active tablet demo record and the proof actually saved on this device." status="Review" onClick={() => navigate('adminReview')} />
+        <HubCard title="Reset Demo Participant" text="Clear this tablet's local demo participant and prepare a clean start for the next tester." status="Safety Gate" onClick={() => navigate('resetDemo')} />
+      </div>
+
+      <div className={styles.note}>
+        <ScanFace size={17} style={{ verticalAlign: '-3px', marginRight: 6 }} />
+        Demo rule: use sample or non-sensitive information only until intake, consent, privacy, and permissions are approved for real participant data.
       </div>
     </Shell>
   );
