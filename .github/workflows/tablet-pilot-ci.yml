@@ -1,0 +1,31 @@
+name: YEP Tablet Pilot CI
+
+on:
+  push:
+    branches:
+      - codex/yep-v1-tablet-pilot-2026-09-03
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build YEP PWA
+        run: npm run build
+
+      - name: Verify build output
+        run: test -f dist/index.html
