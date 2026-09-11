@@ -14,7 +14,7 @@ const CUES = {
 };
 
 export default function MirrorAssessment() {
-  const { submitMirror } = useYEP();
+  const { submitMirror, copy } = useYEP();
   const [answers, setAnswers] = useState({});
   const [step, setStep] = useState(0);
   const [cue, setCue] = useState(null); // momentum interstitial between questions
@@ -74,7 +74,7 @@ export default function MirrorAssessment() {
       </div>
 
       <h2 key={q.id} className={styles.question}>
-        {q.text}
+        {copy.mirrorQuestions[q.id] || q.text}
       </h2>
 
       <div className={styles.options}>

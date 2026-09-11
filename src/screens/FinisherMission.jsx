@@ -6,7 +6,8 @@ import styles from './FinisherMission.module.css';
 import ui from '../styles/ui.module.css';
 
 export default function FinisherMission() {
-  const { currentMission, completeMission } = useYEP();
+  const { currentMission, completeMission, copy } = useYEP();
+  const c = copy.mission;
   const [done, setDone] = useState({});
 
   if (!currentMission) {
@@ -26,21 +27,21 @@ export default function FinisherMission() {
 
   return (
     <Shell>
-      <div className={styles.eyebrow}>FINISHER Mission</div>
+      <div className={styles.eyebrow}>{c.eyebrow}</div>
       <h1 className={styles.title}>{m.title}</h1>
       <p className={styles.objective}>{m.objective}</p>
 
       <div className={styles.letterTag}>
         <span className={styles.letterBadge}>{m.finisherLetter[0]}</span>
-        <span className={styles.letterText}>Unlocks: {m.finisherLetter}</span>
+        <span className={styles.letterText}>{c.unlocksPrefix}{m.finisherLetter}</span>
       </div>
 
       <div className={styles.approach}>
-        <div className={styles.approachLabel}>Your {m.style} Approach</div>
+        <div className={styles.approachLabel}>{c.approachLabel(m.style)}</div>
         <div className={styles.approachText}>{m.activeApproach}</div>
       </div>
 
-      <div className={styles.stepsLabel}>Mission Steps</div>
+      <div className={styles.stepsLabel}>{c.stepsLabel}</div>
       <div className={styles.steps}>
         {m.steps.map((step, i) => {
           const isDone = !!done[i];
@@ -60,13 +61,13 @@ export default function FinisherMission() {
       </div>
 
       <div className={styles.focus}>
-        <div className={styles.focusLabel}>Focus</div>
+        <div className={styles.focusLabel}>{c.focusLabel}</div>
         <div className={styles.focusText}>{m.focus}</div>
       </div>
 
       <div className={styles.cta}>
         <button className={ui.btnPrimary} onClick={completeMission} disabled={!allDone}>
-          <Flag size={19} /> Mark Mission Complete · +{XP.MISSION} XP <ArrowRight size={19} />
+          <Flag size={19} /> {c.completeCta} · +{XP.MISSION} XP <ArrowRight size={19} />
         </button>
       </div>
     </Shell>
