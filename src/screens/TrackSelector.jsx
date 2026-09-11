@@ -1,109 +1,66 @@
 import { useState } from 'react';
 import { Hammer, Megaphone, LineChart, ArrowRight, Check } from 'lucide-react';
 import { useYEP } from '../context/YEPContext';
-import { MODES } from '../data/modes';
 import styles from './TrackSelector.module.css';
 import ui from '../styles/ui.module.css';
 
+/* YEP tracks — the lane a youth runs their process in. */
 export const TRACKS = [
   { id: 'build', name: 'Build & Sell', desc: 'Make a product. Put it in the market.', icon: Hammer },
   { id: 'brand', name: 'Brand & Influence', desc: 'Build a name people follow and trust.', icon: Megaphone },
   { id: 'money', name: 'Money & Markets', desc: 'Master the numbers behind the hustle.', icon: LineChart },
 ];
 
-const PATHWAYS = ['explorer', 'builder', 'leader', 'yaep'];
-
 export default function TrackSelector() {
-  const { selectTrack, setMode, mode, track, youthName, powerName: savedPowerName } = useYEP();
-  const [name, setName] = useState(youthName || '');
-  const [powerName, setPowerName] = useState(savedPowerName || '');
-  const [picked, setPicked] = useState(track?.id || null);
-  const [pathway, setPathway] = useState(mode);
+  const { selectTrack } = useYEP();
+  const [name, setName] = useState('');
+  const [picked, setPicked] = useState(null);
 
   function start() {
-    const selectedTrack = TRACKS.find((t) => t.id === picked);
-    const identity = powerName.trim();
-    if (!selectedTrack || !identity) return;
-    setMode(pathway);
-    selectTrack(selectedTrack, name.trim(), identity);
+    const track = TRACKS.find((t) => t.id === picked);
+    if (!track) return;
+    selectTrack(track, name.trim());
   }
 
   return (
     <div className={styles.wrap}>
-      <section className={styles.brandHero}>
-        <img className={styles.logo} src="/logo.png" alt="A/1 Suppliers" />
-        <div className={styles.introCopy}>
-          <div className={styles.organization}>A/1 SUPPLIERS</div>
-          <div className={styles.programLine}>YEP / Y.A.E.P. · THE PROCESS</div>
-          <div className={styles.motto}>Supplying the Tools. Supporting the Hustle.</div>
-          <h1 className={styles.title}>Your Process. <em>Your Direction.</em></h1>
-          <p className={styles.sub}>
-            Get exposed. Try something real. Learn how money, technology, people, and opportunity connect. Reflect, adapt, and keep moving.
-          </p>
-          <div className={styles.processStrip}>
-            <span>EXPLORE</span><b>→</b><span>EXPERIENCE</span><b>→</b><span>LEARN</span><b>→</b><span>REFLECT</span><b>→</b><span>ADAPT</span><b>→</b><span>EXPLORE AGAIN</span>
-          </div>
-        </div>
-      </section>
+      <img className={styles.logo} src="/logo.png" alt="A/1 Suppliers" />
+      <div className={styles.brandLine}>Young Entrepreneurs Process · Ages 7–17</div>
+      <h1 className={styles.title}>
+        Start Your <em>Process.</em>
+      </h1>
+      <p className={styles.sub}>
+        Pick your track. The Mirror reads you. The mission moves you. Always Forward. Never Back.
+      </p>
 
-      <div className={styles.tracksLabel}>Choose Your Program Pathway</div>
-      <div className={styles.pathways}>
-        {PATHWAYS.map((id) => {
-          const option = MODES[id];
-          const sel = pathway === id;
-          return (
-            <button
-              key={id}
-              type="button"
-              className={`${styles.pathway} ${sel ? styles.pathwaySelected : ''}`}
-              onClick={() => setPathway(id)}
-            >
-              <span className={styles.pathwayProgram}>{option.program}</span>
-              <span className={styles.pathwayLabel}>{option.label}</span>
-              {sel && <Check size={20} />}
-            </button>
-          );
-        })}
+      <div className={styles.nameField}>
+        <label className={styles.nameLabel} htmlFor="yname">
+          Your Name <span style={{ opacity: 0.6 }}>(optional)</span>
+        </label>
+        <input
+          id="yname"
+          className={styles.nameInput}
+          placeholder="What should we call you?"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          maxLength={24}
+        />
       </div>
 
-      <div className={styles.identityGrid}>
-        <div className={styles.nameField}>
-          <label className={styles.nameLabel} htmlFor="yname">
-            Your Name <span style={{ opacity: 0.6 }}>(optional for demo)</span>
-          </label>
-          <input
-            id="yname"
-            className={styles.nameInput}
-            placeholder="What should we call you?"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            maxLength={24}
-            autoComplete="off"
-          />
-        </div>
-
-        <div className={styles.nameField}>
-          <label className={styles.nameLabel} htmlFor="powerName">Your Power Name</label>
-          <input
-            id="powerName"
-            className={styles.nameInput}
-            placeholder="Example: Vision Builder"
-            value={powerName}
-            onChange={(e) => setPowerName(e.target.value)}
-            maxLength={28}
-            autoComplete="off"
-          />
-        </div>
-      </div>
-
-      <div className={styles.tracksLabel}>Choose Your Track</div>
+      <div className={styles.tracksLabel}>Choose Your YEP Track</div>
       <div className={styles.tracks}>
         {TRACKS.map((t) => {
           const Icon = t.icon;
           const sel = picked === t.id;
           return (
-            <button key={t.id} className={`${styles.track} ${sel ? styles.selected : ''}`} onClick={() => setPicked(t.id)}>
-              <span className={styles.tIcon}>{sel ? <Check size={24} /> : <Icon size={24} />}</span>
+            <button
+              key={t.id}
+              className={`${styles.track} ${sel ? styles.selected : ''}`}
+              onClick={() => setPicked(t.id)}
+            >
+              <span className={styles.tIcon}>
+                {sel ? <Check size={22} /> : <Icon size={22} />}
+              </span>
               <span className={styles.tMeta}>
                 <span className={styles.tName}>{t.name}</span>
                 <span className={styles.tDesc}>{t.desc}</span>
@@ -114,8 +71,8 @@ export default function TrackSelector() {
       </div>
 
       <div className={styles.footer}>
-        <button className={ui.btnPrimary} onClick={start} disabled={!picked || !powerName.trim()}>
-          Enter The Process <ArrowRight size={22} />
+        <button className={ui.btnPrimary} onClick={start} disabled={!picked}>
+          Lock In <ArrowRight size={20} />
         </button>
       </div>
     </div>

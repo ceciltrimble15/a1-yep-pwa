@@ -6,8 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview",
-    "test:rev3": "node scripts/rev3-check.mjs"
+    "preview": "vite preview"
   },
   "dependencies": {
     "lucide-react": "^0.456.0",
