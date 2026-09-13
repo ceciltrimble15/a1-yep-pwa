@@ -47,6 +47,12 @@ export default function Home() {
 
       <div className={styles.grid}>
         <HubCard
+          title="A/1 Privacy + Safeguards"
+          text="Read the tablet rules for privacy, youth data, microphone use, consent boundaries, infrastructure protection, device handling, and incident response before using real participant information."
+          status="Required Safeguard"
+          onClick={() => navigate('privacySafeguards')}
+        />
+        <HubCard
           title="A/1 Suppliers Learning Guide"
           text="Leadership orientation: what A/1 Suppliers is, how YEP / Y.A.E.P. fit, what The Process teaches, tablet purpose, safety rules, roles, and feedback method."
           status="Learn The Organization"
