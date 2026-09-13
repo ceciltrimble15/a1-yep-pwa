@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Hammer, Megaphone, LineChart, ArrowRight, Check } from 'lucide-react';
+import { Hammer, Megaphone, LineChart, ArrowRight, Check, ShieldCheck } from 'lucide-react';
 import { useYEP } from '../context/YEPContext';
 import { MODES } from '../data/modes';
 import styles from './TrackSelector.module.css';
@@ -16,16 +16,17 @@ export const TRACKS = [
 const PATHWAYS = ['explorer', 'builder', 'leader', 'yaep'];
 
 export default function TrackSelector() {
-  const { selectTrack, setMode, mode, track, youthName, powerName: savedPowerName } = useYEP();
+  const { selectTrack, setMode, mode, track, youthName, powerName: savedPowerName, navigate } = useYEP();
   const [name, setName] = useState(youthName || '');
   const [powerName, setPowerName] = useState(savedPowerName || '');
   const [picked, setPicked] = useState(track?.id || null);
   const [pathway, setPathway] = useState(mode);
+  const [safeguardsAccepted, setSafeguardsAccepted] = useState(false);
 
   function start() {
     const selectedTrack = TRACKS.find((t) => t.id === picked);
     const identity = powerName.trim();
-    if (!selectedTrack || !identity) return;
+    if (!selectedTrack || !identity || !safeguardsAccepted) return;
     setMode(pathway);
     selectTrack(selectedTrack, name.trim(), identity);
   }
@@ -59,6 +60,27 @@ export default function TrackSelector() {
             <span>You cannot choose from a world you have never been exposed to.</span>
           </div>
         </div>
+      </section>
+
+      <section className={styles.safeguardBox}>
+        <div className={styles.safeguardHead}>
+          <ShieldCheck size={22} />
+          <div>
+            <strong>Demo Privacy + Safeguard Notice</strong>
+            <span>This tablet is a controlled test build, not a production participant database.</span>
+          </div>
+        </div>
+        <p>
+          Use a nickname or Power Name and non-sensitive answers only. Do not enter addresses, personal contact information, IDs, medical information, passwords, financial information, or other sensitive data. Microphone use is optional. For youth, typing should be used until the approved parent/guardian consent and privacy process is in place.
+        </p>
+        <button type="button" className={styles.safeguardLink} onClick={() => navigate('privacySafeguards')}>
+          Read A/1 Privacy + Safeguards
+        </button>
+        <label className={styles.safeguardCheck}>
+          <input type="checkbox" checked={safeguardsAccepted} onChange={(e) => setSafeguardsAccepted(e.target.checked)} />
+          <span>I understand this is a demo and I will use sample or non-sensitive information only.</span>
+        </label>
+        <small>This acknowledgment is not parental consent and does not replace the final privacy/consent documents for real participants.</small>
       </section>
 
       <div className={styles.tracksLabel}>Choose Your Program Pathway</div>
@@ -129,7 +151,7 @@ export default function TrackSelector() {
       </div>
 
       <div className={styles.footer}>
-        <button className={ui.btnPrimary} onClick={start} disabled={!picked || !powerName.trim()}>
+        <button className={ui.btnPrimary} onClick={start} disabled={!picked || !powerName.trim() || !safeguardsAccepted}>
           Enter The Process <ArrowRight size={22} />
         </button>
       </div>
