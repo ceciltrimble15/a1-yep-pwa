@@ -47,6 +47,18 @@ export default function Home() {
 
       <div className={styles.grid}>
         <HubCard
+          title="A/1 Suppliers Learning Guide"
+          text="Leadership orientation: what A/1 Suppliers is, how YEP / Y.A.E.P. fit, what The Process teaches, tablet purpose, safety rules, roles, and feedback method."
+          status="Learn The Organization"
+          onClick={() => navigate('a1Guide')}
+        />
+        <HubCard
+          title="Unc's A/1 Operations Hub"
+          text="Private working guide for Unc: role clarity, meeting prep, field notes, proof/sample log, next moves, and the path toward a formally funded operations position."
+          status="Internal Leadership"
+          onClick={() => navigate('uncHub')}
+        />
+        <HubCard
           title="Choose / Change Age Pathway"
           text={`Current pathway: ${program.label}. Open the pathway screen to choose Foundation, Builder, Momentum, or Y.A.E.P.`}
           status="Change"
