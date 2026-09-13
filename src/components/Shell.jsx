@@ -5,7 +5,9 @@ import { useYEP } from '../context/YEPContext';
 import { MODES } from '../data/modes';
 import styles from './Shell.module.css';
 
-export default function Shell({ children, showBar = true, showAudio = true }) {
+const A1_LOGO = 'https://raw.githubusercontent.com/ceciltrimble15/a1-suppliers-website/main/src/assets/branding/a1-suppliers-logo.png';
+
+export default function Shell({ children, showBar = true, showAudio = true, showPathway = true }) {
   const { mode } = useYEP();
   const program = MODES[mode] || MODES.builder;
   const audioTargetRef = useRef(null);
@@ -14,7 +16,7 @@ export default function Shell({ children, showBar = true, showAudio = true }) {
     <div className={styles.shell}>
       <header className={styles.header} data-audio-skip="true">
         <div className={styles.brand}>
-          <img className={styles.mark} src="/logo.png" alt="A/1 Suppliers" />
+          <img className={styles.mark} src={A1_LOGO} alt="A/1 Suppliers" />
           <div className={styles.wordmark}>
             <div className={styles.organization}>A/1 SUPPLIERS</div>
             <div className={styles.programMark}>
@@ -25,11 +27,13 @@ export default function Shell({ children, showBar = true, showAudio = true }) {
           </div>
         </div>
 
-        <div className={styles.activePathway} aria-label={`Active pathway: ${program.program}, ${program.label}`}>
-          <span>ACTIVE PATHWAY</span>
-          <strong>{program.program}</strong>
-          <small>{program.label} · {program.ageRange}</small>
-        </div>
+        {showPathway && (
+          <div className={styles.activePathway} aria-label={`Active pathway: ${program.program}, ${program.label}`}>
+            <span>ACTIVE PATHWAY</span>
+            <strong>{program.program}</strong>
+            <small>{program.label} · {program.ageRange}</small>
+          </div>
+        )}
       </header>
       {showBar && <div data-audio-skip="true"><GlobalBar /></div>}
       {showAudio && <AudioGuide targetRef={audioTargetRef} />}
