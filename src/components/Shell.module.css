@@ -3,6 +3,7 @@
   flex-direction: column;
   min-height: 100dvh;
   width: 100%;
+  background: linear-gradient(180deg, #071226 0%, #0a1730 46%, #071226 100%);
 }
 
 .header {
@@ -13,8 +14,10 @@
   width: 100%;
   padding: 14px 18px 12px;
   padding-top: calc(14px + env(safe-area-inset-top, 0));
-  background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFE 100%);
-  border-bottom: 1px solid var(--line);
+  background: rgba(7, 18, 38, 0.94);
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+  backdrop-filter: blur(14px);
 }
 
 .brand {
@@ -29,7 +32,7 @@
   height: 42px;
   border-radius: 11px;
   object-fit: cover;
-  box-shadow: 0 0 0 1px var(--line-strong), 0 7px 18px rgba(14, 26, 58, 0.10);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.14), 0 7px 18px rgba(0,0,0,0.28);
   flex: 0 0 auto;
 }
 
@@ -41,7 +44,7 @@
   font-size: 16px;
   line-height: 1;
   letter-spacing: 0.08em;
-  color: var(--navy);
+  color: var(--white);
 }
 
 .programMark {
@@ -58,13 +61,13 @@
 }
 
 .programMark strong {
-  color: var(--royal);
+  color: var(--electric);
   font-size: 13px;
   font-weight: 900;
 }
 
 .processName {
-  color: var(--text);
+  color: var(--white);
   font-weight: 800;
 }
 
@@ -78,16 +81,27 @@
   text-transform: uppercase;
 }
 
+.founder {
+  margin-top: 3px;
+  font-family: var(--font-display);
+  font-size: 8px;
+  line-height: 1.1;
+  letter-spacing: 0.10em;
+  color: var(--gold);
+  text-transform: uppercase;
+  font-weight: 800;
+}
+
 .activePathway {
   flex: 0 0 auto;
   display: none;
   min-width: 188px;
   padding: 9px 12px;
-  border: 1px solid var(--line-strong);
+  border: 1px solid rgba(255,255,255,0.12);
   border-radius: 12px;
-  background: var(--white);
+  background: rgba(255,255,255,0.05);
   text-align: right;
-  box-shadow: 0 6px 16px rgba(26, 58, 143, 0.07);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.18);
 }
 
 .activePathway span,
@@ -106,7 +120,7 @@
 .activePathway strong {
   display: block;
   margin-top: 2px;
-  color: var(--royal);
+  color: var(--white);
   font-family: var(--font-display);
   font-size: 15px;
   font-weight: 900;
@@ -156,6 +170,7 @@
   .programMark { font-size: 13px; }
   .programMark strong { font-size: 15px; }
   .motto { font-size: 10px; }
+  .founder { font-size: 9px; }
   .activePathway { min-width: 220px; padding: 10px 14px; }
   .activePathway strong { font-size: 17px; }
   .activePathway small { font-size: 10px; }
@@ -178,4 +193,5 @@
   .programMark strong { font-size: 12px; }
   .processName { display: none; }
   .motto { font-size: 8px; letter-spacing: 0.07em; }
+  .founder { font-size: 7px; }
 }
