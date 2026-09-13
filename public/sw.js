@@ -1,5 +1,5 @@
-const CACHE = 'yep-process-v05-2026-09-13';
-const SHELL = ['/', '/index.html', '/logo.png', '/manifest.webmanifest'];
+const CACHE = 'yep-process-v05-2026-09-13-privacy-audit-1';
+const SHELL = ['/', '/index.html', '/a1-suppliers-logo.png', '/manifest.webmanifest'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
