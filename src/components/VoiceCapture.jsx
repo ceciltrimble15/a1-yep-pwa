@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { CheckCircle2, Mic, MicOff, RotateCcw, ShieldCheck } from 'lucide-react';
+import { useYEP } from '../context/YEPContext';
 import styles from './VoiceCapture.module.css';
 
 function recognitionConstructor() {
@@ -18,6 +19,8 @@ export default function VoiceCapture({
   buttonLabel = 'Talk To YEP',
   confirmLabel = 'Use This Answer',
 }) {
+  const { mode } = useYEP();
+  const youthVoiceLocked = mode !== 'yaep';
   const SpeechRecognition = useMemo(() => recognitionConstructor(), []);
   const recognitionRef = useRef(null);
   const finalTextRef = useRef('');
@@ -37,7 +40,7 @@ export default function VoiceCapture({
   }, []);
 
   function startListening() {
-    if (!supported || listening) return;
+    if (!supported || listening || youthVoiceLocked) return;
 
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
 
@@ -106,6 +109,14 @@ export default function VoiceCapture({
     if (!answer) return;
     onConfirm(answer);
     setStatus('confirmed');
+  }
+
+  if (youthVoiceLocked) {
+    return (
+      <div className={styles.unsupported} data-audio-skip="true" role="status">
+        <ShieldCheck size={17} /> Youth voice input is locked in this V0.5 demo until the approved parent/guardian consent and privacy process is in place. Please type the answer instead.
+      </div>
+    );
   }
 
   if (!supported) {
