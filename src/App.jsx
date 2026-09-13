@@ -13,6 +13,7 @@ import Progress from './screens/Progress';
 import FacilitatorDashboard from './screens/FacilitatorDashboard';
 import A1SuppliersGuide from './screens/A1SuppliersGuide';
 import UncOperationsHub from './screens/UncOperationsHub';
+import PrivacySafeguards from './screens/PrivacySafeguards';
 import {
   DailyQuest,
   StemSinQuest,
@@ -32,6 +33,7 @@ const SCREENS = {
   home: Home,
   a1Guide: A1SuppliersGuide,
   uncHub: UncOperationsHub,
+  privacySafeguards: PrivacySafeguards,
   myDirection: MyDirection,
   exposurePassport: ExposurePassport,
   finisherFocus: FinisherFocus,
