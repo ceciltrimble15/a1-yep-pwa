@@ -36,12 +36,25 @@ export default function TrackSelector() {
           <div className={styles.organization}>A/1 SUPPLIERS</div>
           <div className={styles.programLine}>YEP / Y.A.E.P. · THE PROCESS</div>
           <div className={styles.motto}>Supplying the Tools. Supporting the Hustle.</div>
-          <h1 className={styles.title}>Your Process. <em>Your Direction.</em></h1>
+          <div className={styles.founder}>Cecil Trimble · Founder & CEO</div>
+
+          <h1 className={styles.title}>
+            Build the Person.<br />
+            <em>Build the Process.</em><br />
+            Open the World.
+          </h1>
+
           <p className={styles.sub}>
-            Get exposed. Try something real. Learn how money, technology, people, and opportunity connect. Reflect, adapt, and keep moving.
+            Your process. Your direction. A/1 Suppliers supplies exposure, and YEP / Y.A.E.P. teaches you how to use the tools — technology, mentorship, money, ownership, skills, relationships, and real-world experience — to support your hustle and keep moving.
           </p>
-          <div className={styles.processStrip}>
+
+          <div className={styles.processStrip} aria-label="The Process lifelong learning loop">
             <span>EXPLORE</span><b>→</b><span>EXPERIENCE</span><b>→</b><span>LEARN</span><b>→</b><span>REFLECT</span><b>→</b><span>ADAPT</span><b>→</b><span>EXPLORE AGAIN</span>
+          </div>
+
+          <div className={styles.a1Rule}>
+            <strong>THE A/1 RULE</strong>
+            <span>You cannot choose from a world you have never been exposed to.</span>
           </div>
         </div>
       </section>
