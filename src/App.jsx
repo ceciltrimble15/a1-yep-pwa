@@ -11,6 +11,8 @@ import FinisherMission from './screens/FinisherMission';
 import Reflection from './screens/Reflection';
 import Progress from './screens/Progress';
 import FacilitatorDashboard from './screens/FacilitatorDashboard';
+import A1SuppliersGuide from './screens/A1SuppliersGuide';
+import UncOperationsHub from './screens/UncOperationsHub';
 import {
   DailyQuest,
   StemSinQuest,
@@ -28,6 +30,8 @@ import {
 const SCREENS = {
   track: TrackSelector,
   home: Home,
+  a1Guide: A1SuppliersGuide,
+  uncHub: UncOperationsHub,
   myDirection: MyDirection,
   exposurePassport: ExposurePassport,
   finisherFocus: FinisherFocus,
