@@ -21,6 +21,7 @@ export default function Shell({ children, showBar = true, showAudio = true }) {
               <strong>YEP</strong><span>/</span><strong>Y.A.E.P.</strong><span className={styles.processName}>· THE PROCESS</span>
             </div>
             <div className={styles.motto}>Supplying the Tools. Supporting the Hustle.</div>
+            <div className={styles.founder}>Cecil Trimble · Founder & CEO</div>
           </div>
         </div>
 
