@@ -5,7 +5,7 @@ import { useYEP } from '../context/YEPContext';
 import { MODES } from '../data/modes';
 import styles from './Shell.module.css';
 
-const A1_LOGO = 'https://raw.githubusercontent.com/ceciltrimble15/a1-suppliers-website/main/src/assets/branding/a1-suppliers-logo.png';
+const A1_LOGO = '/a1-suppliers-logo.png';
 
 export default function Shell({ children, showBar = true, showAudio = true, showPathway = true }) {
   const { mode } = useYEP();
