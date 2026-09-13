@@ -1,0 +1,25 @@
+{
+  "name": "A/1 Suppliers — YEP / Y.A.E.P. · The Process",
+  "short_name": "YEP Process",
+  "description": "A/1 Suppliers YEP / Y.A.E.P. tablet experience — Supplying the Tools. Supporting the Hustle.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#08142F",
+  "theme_color": "#0F2460",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
