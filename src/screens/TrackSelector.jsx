@@ -5,7 +5,7 @@ import { MODES } from '../data/modes';
 import styles from './TrackSelector.module.css';
 import ui from '../styles/ui.module.css';
 
-const A1_LOGO = 'https://raw.githubusercontent.com/ceciltrimble15/a1-suppliers-website/main/src/assets/branding/a1-suppliers-logo.png';
+const A1_LOGO = '/a1-suppliers-logo.png';
 
 export const TRACKS = [
   { id: 'build', name: 'Build & Sell', desc: 'Make a product. Put it in the market.', icon: Hammer },
@@ -16,8 +16,7 @@ export const TRACKS = [
 const PATHWAYS = ['explorer', 'builder', 'leader', 'yaep'];
 
 export default function TrackSelector() {
-  const { selectTrack, setMode, mode, track, youthName, powerName: savedPowerName, navigate } = useYEP();
-  const [name, setName] = useState(youthName || '');
+  const { selectTrack, setMode, mode, track, powerName: savedPowerName, navigate } = useYEP();
   const [powerName, setPowerName] = useState(savedPowerName || '');
   const [picked, setPicked] = useState(track?.id || null);
   const [pathway, setPathway] = useState(mode);
@@ -28,7 +27,7 @@ export default function TrackSelector() {
     const identity = powerName.trim();
     if (!selectedTrack || !identity || !safeguardsAccepted) return;
     setMode(pathway);
-    selectTrack(selectedTrack, name.trim(), identity);
+    selectTrack(selectedTrack, '', identity);
   }
 
   return (
@@ -71,7 +70,7 @@ export default function TrackSelector() {
           </div>
         </div>
         <p>
-          Use a nickname or Power Name and non-sensitive answers only. Do not enter addresses, personal contact information, IDs, medical information, passwords, financial information, or other sensitive data. Microphone use is optional. For youth, typing should be used until the approved parent/guardian consent and privacy process is in place.
+          Use a made-up Power Name and non-sensitive answers only. Do not enter legal names, addresses, personal contact information, IDs, medical information, passwords, financial information, or other sensitive data. Youth microphone input is locked in this demo until an approved parent/guardian consent and privacy process is in place.
         </p>
         <button type="button" className={styles.safeguardLink} onClick={() => navigate('privacySafeguards')}>
           Read A/1 Privacy + Safeguards
@@ -105,22 +104,7 @@ export default function TrackSelector() {
 
       <div className={styles.identityGrid}>
         <div className={styles.nameField}>
-          <label className={styles.nameLabel} htmlFor="yname">
-            Your Name <span style={{ opacity: 0.6 }}>(optional for demo)</span>
-          </label>
-          <input
-            id="yname"
-            className={styles.nameInput}
-            placeholder="What should we call you?"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            maxLength={24}
-            autoComplete="off"
-          />
-        </div>
-
-        <div className={styles.nameField}>
-          <label className={styles.nameLabel} htmlFor="powerName">Your Power Name</label>
+          <label className={styles.nameLabel} htmlFor="powerName">Demo Power Name</label>
           <input
             id="powerName"
             className={styles.nameInput}
@@ -130,6 +114,7 @@ export default function TrackSelector() {
             maxLength={28}
             autoComplete="off"
           />
+          <small>Use a made-up name for V0.5. Do not enter a participant's legal name.</small>
         </div>
       </div>
 
