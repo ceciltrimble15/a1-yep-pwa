@@ -5,6 +5,8 @@ import { MODES } from '../data/modes';
 import styles from './TrackSelector.module.css';
 import ui from '../styles/ui.module.css';
 
+const A1_LOGO = 'https://raw.githubusercontent.com/ceciltrimble15/a1-suppliers-website/main/src/assets/branding/a1-suppliers-logo.png';
+
 export const TRACKS = [
   { id: 'build', name: 'Build & Sell', desc: 'Make a product. Put it in the market.', icon: Hammer },
   { id: 'brand', name: 'Brand & Influence', desc: 'Build a name people follow and trust.', icon: Megaphone },
@@ -31,7 +33,7 @@ export default function TrackSelector() {
   return (
     <div className={styles.wrap}>
       <section className={styles.brandHero}>
-        <img className={styles.logo} src="/logo.png" alt="A/1 Suppliers" />
+        <img className={styles.logo} src={A1_LOGO} alt="A/1 Suppliers" />
         <div className={styles.introCopy}>
           <div className={styles.organization}>A/1 SUPPLIERS</div>
           <div className={styles.programLine}>YEP / Y.A.E.P. · THE PROCESS</div>
