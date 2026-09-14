@@ -1,5 +1,16 @@
 import { useState } from 'react';
-import { Hammer, Megaphone, LineChart, ArrowRight, Check, ShieldCheck } from 'lucide-react';
+import {
+  Hammer,
+  Megaphone,
+  LineChart,
+  ArrowRight,
+  Check,
+  ShieldCheck,
+  Sparkles,
+  Blocks,
+  Rocket,
+  BriefcaseBusiness,
+} from 'lucide-react';
 import { useYEP } from '../context/YEPContext';
 import { MODES } from '../data/modes';
 import styles from './TrackSelector.module.css';
@@ -14,6 +25,12 @@ export const TRACKS = [
 ];
 
 const PATHWAYS = ['explorer', 'builder', 'leader', 'yaep'];
+const PATHWAY_ICONS = {
+  explorer: Sparkles,
+  builder: Blocks,
+  leader: Rocket,
+  yaep: BriefcaseBusiness,
+};
 
 export default function TrackSelector() {
   const { selectTrack, setMode, mode, track, powerName: savedPowerName, navigate } = useYEP();
@@ -87,16 +104,28 @@ export default function TrackSelector() {
         {PATHWAYS.map((id) => {
           const option = MODES[id];
           const sel = pathway === id;
+          const Icon = PATHWAY_ICONS[id];
           return (
             <button
               key={id}
               type="button"
+              data-lane={id}
               className={`${styles.pathway} ${sel ? styles.pathwaySelected : ''}`}
               onClick={() => setPathway(id)}
             >
-              <span className={styles.pathwayProgram}>{option.program}</span>
-              <span className={styles.pathwayLabel}>{option.label}</span>
-              {sel && <Check size={20} />}
+              <span className={styles.pathwayIcon} aria-hidden>
+                {sel ? <Check size={25} /> : <Icon size={25} />}
+              </span>
+              <span className={styles.pathwayMeta}>
+                <span className={styles.pathwayProgram}>{option.program}</span>
+                <span className={styles.pathwayTier}>{option.tier}</span>
+                <span className={styles.pathwayLabel}>Ages {option.ageRange}</span>
+              </span>
+              <span className={styles.pathwayMessage}>
+                <strong>{option.visualTitle}</strong>
+                <span>{option.visualCopy}</span>
+                <small>{option.entrepreneurCue}</small>
+              </span>
             </button>
           );
         })}
@@ -118,7 +147,7 @@ export default function TrackSelector() {
         </div>
       </div>
 
-      <div className={styles.tracksLabel}>Choose Your Track</div>
+      <div className={styles.tracksLabel}>Choose Your Entrepreneur Track</div>
       <div className={styles.tracks}>
         {TRACKS.map((t) => {
           const Icon = t.icon;
