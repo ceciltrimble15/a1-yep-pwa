@@ -75,8 +75,21 @@
   border-radius: 20px;
   border: 1px solid rgba(255,255,255,.15);
   color: var(--text);
+  background:
+    linear-gradient(145deg, rgba(47,99,255,.20), rgba(15,36,96,.28) 56%, rgba(255,255,255,.045)),
+    #0b1730;
   box-shadow: 0 14px 30px rgba(0,0,0,.18);
   transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+.pathway::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .16;
+  background-image: linear-gradient(rgba(255,255,255,.18) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.18) 1px, transparent 1px);
+  background-size: 22px 22px;
+  mask-image: linear-gradient(to bottom right, rgba(0,0,0,.85), transparent 72%);
 }
 .pathway::after {
   content: '';
@@ -85,16 +98,15 @@
   width: 115px;
   height: 115px;
   border-radius: 999px;
-  background: rgba(255,255,255,.09);
-  filter: blur(1px);
+  background: rgba(212,160,23,.11);
 }
 .pathway:active { transform: scale(.985); }
-.pathway[data-lane='explorer'] { background: linear-gradient(145deg, rgba(56,189,248,.24), rgba(37,99,235,.16) 55%, rgba(255,255,255,.04)); }
-.pathway[data-lane='builder'] { background: linear-gradient(145deg, rgba(168,85,247,.23), rgba(79,70,229,.17) 55%, rgba(255,255,255,.04)); }
-.pathway[data-lane='leader'] { background: linear-gradient(145deg, rgba(249,115,22,.22), rgba(220,38,38,.12) 55%, rgba(255,255,255,.04)); }
-.pathway[data-lane='yaep'] { background: linear-gradient(145deg, rgba(212,160,23,.20), rgba(15,36,96,.35) 58%, rgba(255,255,255,.04)); }
-.pathwaySelected { border-color: rgba(255,255,255,.72); box-shadow: 0 0 0 2px rgba(47,99,255,.42), 0 18px 38px rgba(0,0,0,.28); transform: translateY(-2px); }
-.pathwayIcon { width: 49px; height: 49px; display: grid; place-items: center; border-radius: 15px; color: white; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18); box-shadow: inset 0 1px 0 rgba(255,255,255,.10); }
+.pathway[data-lane='explorer']::before { background-size: 28px 28px; }
+.pathway[data-lane='builder']::before { background-size: 20px 20px; transform: rotate(8deg) scale(1.1); }
+.pathway[data-lane='leader']::before { background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.20) 0 1px, transparent 1px 18px); }
+.pathway[data-lane='yaep']::before { opacity: .10; background-size: 34px 34px; }
+.pathwaySelected { border-color: rgba(212,160,23,.78); box-shadow: 0 0 0 2px rgba(47,99,255,.40), 0 18px 38px rgba(0,0,0,.28); transform: translateY(-2px); }
+.pathwayIcon { width: 49px; height: 49px; display: grid; place-items: center; border-radius: 15px; color: white; background: linear-gradient(145deg, rgba(47,99,255,.85), rgba(15,36,96,.95)); border: 1px solid rgba(255,255,255,.20); box-shadow: inset 0 1px 0 rgba(255,255,255,.10), 0 8px 18px rgba(0,0,0,.20); }
 .pathwayMeta { min-width: 0; }
 .pathwayProgram { display: block; font-family: var(--font-display); font-weight: 900; font-size: 12px; letter-spacing: .14em; color: var(--silver); }
 .pathwayTier { display: block; margin-top: 2px; font-family: var(--font-display); font-weight: 900; font-size: 19px; line-height: 1; text-transform: uppercase; color: var(--white); }
