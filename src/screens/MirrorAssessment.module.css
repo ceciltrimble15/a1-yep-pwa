@@ -1,3 +1,89 @@
+/* Age-aware Mirror shell. Same scoring and Process, different presentation. */
+.laneWrap {
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.mirrorHero {
+  position: relative;
+  overflow: hidden;
+  margin: 4px 0 20px;
+  padding: 22px;
+  border: 1px solid var(--line-strong);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 88% 14%, rgba(47,99,255,.18), transparent 30%),
+    linear-gradient(145deg, rgba(255,255,255,.07), rgba(255,255,255,.025));
+  box-shadow: 0 18px 36px rgba(0,0,0,.18);
+}
+
+.laneBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 10px;
+  padding: 7px 10px;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 999px;
+  background: rgba(255,255,255,.06);
+  color: var(--gold);
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.heroTitle {
+  margin: 0;
+  max-width: 760px;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: clamp(34px, 5vw, 58px);
+  font-weight: 900;
+  line-height: .98;
+}
+
+.heroHelper {
+  margin: 10px 0 0;
+  max-width: 720px;
+  color: var(--silver);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Foundation: more playful scale, softer shapes, bigger touch targets. */
+.laneWrap[data-lane='explorer'] .mirrorHero {
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 82% 18%, rgba(255,255,255,.10), transparent 22%),
+    radial-gradient(circle at 16% 82%, rgba(47,99,255,.22), transparent 30%),
+    linear-gradient(145deg, rgba(19,78,160,.68), rgba(7,18,38,.96));
+}
+
+.laneWrap[data-lane='explorer'] .heroTitle {
+  font-size: clamp(38px, 6vw, 64px);
+  letter-spacing: -.025em;
+}
+
+.laneWrap[data-lane='explorer'] .heroHelper {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* Builder: still energetic, but starts tightening toward challenge mode. */
+.laneWrap[data-lane='builder'] .mirrorHero {
+  background:
+    linear-gradient(135deg, rgba(47,99,255,.18), transparent 48%),
+    linear-gradient(145deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+}
+
+/* Momentum and Y.A.E.P. stay progressively more restrained. */
+.laneWrap[data-lane='leader'] .mirrorHero,
+.laneWrap[data-lane='yaep'] .mirrorHero {
+  border-radius: 18px;
+}
+
 /* Momentum interstitial */
 .cue {
   min-height: 56vh;
@@ -19,7 +105,7 @@
   font-weight: 800; font-size: 34px; line-height: 1; color: var(--text);
 }
 .cueText { color: var(--silver); font-size: 16px; margin-bottom: 16px; }
-.cue button { max-width: 260px; }
+.cue button { max-width: 300px; }
 
 .progressWrap { margin: 6px 0 22px; }
 .progressTop {
@@ -43,7 +129,7 @@
   letter-spacing: 0.08em;
 }
 .bar {
-  height: 6px;
+  height: 8px;
   border-radius: 999px;
   background: var(--panel);
   overflow: hidden;
@@ -59,16 +145,23 @@
   font-family: var(--font-display);
   font-weight: 800;
   font-size: 27px;
-  line-height: 1.06;
+  line-height: 1.08;
   color: var(--text);
   margin: 18px 0 26px;
   text-transform: none;
   animation: fadeUp 0.3s ease-out both;
 }
 
+.laneWrap[data-lane='explorer'] .question {
+  font-size: clamp(30px, 5vw, 46px);
+  line-height: 1.04;
+  margin-bottom: 22px;
+}
+
 .options { display: flex; flex-direction: column; gap: 10px; }
 .opt {
   width: 100%;
+  min-height: 58px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -91,11 +184,22 @@
   box-shadow: var(--electric-glow);
 }
 .dot {
-  width: 18px; height: 18px;
+  width: 20px; height: 20px;
   border-radius: 999px;
   border: 2px solid var(--line-strong);
 }
 .dotActive { border-color: var(--electric); background: var(--electric); }
+
+.laneWrap[data-lane='explorer'] .options { gap: 12px; }
+.laneWrap[data-lane='explorer'] .opt {
+  min-height: 72px;
+  padding: 18px 20px;
+  border-radius: 20px;
+  font-size: 19px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.laneWrap[data-lane='explorer'] .dot { width: 24px; height: 24px; }
 
 .nav { margin-top: 26px; display: flex; gap: 10px; }
 .back {
@@ -111,3 +215,11 @@
   letter-spacing: 0.04em;
 }
 .next { flex: 1; }
+
+@media (min-width: 760px) {
+  .mirrorHero { padding: 28px; }
+  .laneWrap[data-lane='explorer'] .options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

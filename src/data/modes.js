@@ -6,6 +6,11 @@
 
    The shared POC loop stays consistent across pathways. Copy may be
    adapted by pathway without changing the core FINISHER/progress logic.
+
+   V0.5 visual rule:
+   - make each lane feel age-aware without changing Process logic
+   - keep entrepreneurship as the shared thread
+   - no new scoring, leveling, or reward engine in this pilot pass
    ═══════════════════════════════════════════════════════════ */
 
 export const DEFAULT_MODE = 'builder';
@@ -18,6 +23,9 @@ export const MODES = {
     tier: 'Foundation',
     ageRange: '7-10',
     label: 'Foundation · Ages 7-10',
+    visualTitle: 'Discover. Try. Create.',
+    visualCopy: 'Explore ideas, notice problems, and learn that your ideas can become something real.',
+    entrepreneurCue: 'Entrepreneur skill: Curiosity',
     audio: false,
   },
   builder: {
@@ -27,6 +35,9 @@ export const MODES = {
     tier: 'Builder',
     ageRange: '11-13',
     label: 'Builder · Ages 11-13',
+    visualTitle: 'Build. Test. Improve.',
+    visualCopy: 'Turn ideas into action, test what works, and learn how builders create value.',
+    entrepreneurCue: 'Entrepreneur skill: Problem-solving',
     audio: false,
   },
   leader: {
@@ -36,6 +47,9 @@ export const MODES = {
     tier: 'Momentum',
     ageRange: '14-17',
     label: 'Momentum · Ages 14-17',
+    visualTitle: 'Pitch. Lead. Create Value.',
+    visualCopy: 'Push ideas into the real world, sharpen your voice, and learn how opportunity moves.',
+    entrepreneurCue: 'Entrepreneur skill: Initiative',
     audio: false,
   },
   yaep: {
@@ -45,6 +59,9 @@ export const MODES = {
     tier: 'Young Adult',
     ageRange: '18-24',
     label: 'Y.A.E.P. · Ages 18-24',
+    visualTitle: 'Own. Execute. Build Proof.',
+    visualCopy: 'Turn direction into professional action, ownership thinking, and proof you can build on.',
+    entrepreneurCue: 'Entrepreneur skill: Ownership',
     audio: false,
   },
 };
