@@ -1,10 +1,32 @@
-.wrap { animation: fadeUp 0.4s ease-out both; }
+.wrap {
+  animation: fadeUp 0.4s ease-out both;
+  max-width: 900px;
+  margin: 0 auto;
+}
 
 .eyebrow {
   font-family: var(--font-display);
   font-size: 12px; font-weight: 700; letter-spacing: 0.22em;
   text-transform: uppercase; color: var(--electric); margin: 8px 0 6px;
 }
+
+.laneTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 2px 0 12px;
+  padding: 7px 10px;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 999px;
+  background: rgba(255,255,255,.05);
+  color: var(--gold);
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
 .title {
   font-size: 38px; line-height: 0.96; color: var(--text); margin-bottom: 12px;
 }
@@ -42,13 +64,47 @@
   font-weight: 700; font-size: 16px; letter-spacing: 0.06em;
   text-transform: uppercase; color: var(--silver); margin-bottom: 8px;
 }
-.lockin {
-  font-family: var(--font-display);
-  font-weight: 800; font-size: 26px; color: var(--text);
-  text-transform: uppercase; line-height: 1;
-}
 .motto {
   font-family: var(--font-display);
   font-weight: 700; font-size: 13px; letter-spacing: 0.16em;
   text-transform: uppercase; color: var(--electric); margin-top: 6px;
+}
+
+.wrap[data-lane='explorer'] {
+  padding: 24px;
+  border: 1px solid var(--line-strong);
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 86% 14%, rgba(255,255,255,.10), transparent 24%),
+    radial-gradient(circle at 16% 84%, rgba(47,99,255,.22), transparent 30%),
+    linear-gradient(145deg, rgba(19,78,160,.58), rgba(7,18,38,.96));
+}
+
+.wrap[data-lane='explorer'] .title {
+  font-size: clamp(42px, 6vw, 66px);
+  letter-spacing: -.025em;
+}
+
+.wrap[data-lane='explorer'] .lede {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.wrap[data-lane='explorer'] .sub,
+.wrap[data-lane='explorer'] .rText {
+  font-size: 16px;
+}
+
+.wrap[data-lane='explorer'] .chip {
+  font-size: 14px;
+  padding: 10px 14px;
+  border-radius: 16px;
+}
+
+.wrap[data-lane='builder'] .title { font-size: clamp(38px, 5vw, 56px); }
+.wrap[data-lane='leader'] .title,
+.wrap[data-lane='yaep'] .title { font-size: clamp(36px, 4vw, 50px); }
+
+@media (min-width: 760px) {
+  .wrap[data-lane='explorer'] { padding: 30px; }
 }
