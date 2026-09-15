@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Sparkles, Lightbulb, Target, BriefcaseBusiness } from 'lucide-react';
 import { getProgramContent, PILOT_BADGES } from '../data/pilotContent';
 import { MODES } from '../data/modes';
 import { useYEP } from '../context/YEPContext';
@@ -7,12 +8,64 @@ import VoiceCapture from '../components/VoiceCapture';
 import styles from './PilotScreens.module.css';
 import ui from '../styles/ui.module.css';
 
+const LANE_ICONS = {
+  explorer: Sparkles,
+  builder: Lightbulb,
+  leader: Target,
+  yaep: BriefcaseBusiness,
+};
+
+const QUEST_LABELS = {
+  explorer: {
+    kicker: "Today's Quest",
+    title: 'Look Around You',
+    helper: 'Big ideas can start with one small problem. Notice it, think about who it affects, and tell us one way you could help.',
+    placeholder: 'I see a problem with… I could help by…',
+    action: 'Finish My Quest',
+  },
+  builder: {
+    kicker: 'Daily Challenge',
+    title: 'Spot It. Think It Through. Try Something.',
+    helper: 'Find a real problem, name who has it, and choose one change you could test.',
+    placeholder: 'The problem is… It affects… One thing I could test is…',
+    action: 'Complete Daily Quest',
+  },
+  leader: {
+    kicker: 'Daily Quest',
+    title: 'Find the Need Behind the Problem',
+    helper: 'Use evidence, not guesses. Define who experiences the problem and one assumption you need to test.',
+    placeholder: 'The need is… My evidence is… I still need to test…',
+    action: 'Complete Daily Quest',
+  },
+  yaep: {
+    kicker: 'Opportunity Scan',
+    title: 'Identify Value Worth Testing',
+    helper: 'Define the user, the current workaround, evidence of demand, and the value you could test.',
+    placeholder: 'The opportunity is… The user is… The current workaround is…',
+    action: 'Complete Opportunity Quest',
+  },
+};
+
 function ScreenHead({ eyebrow, title, sub }) {
   return (
     <div className={styles.head}>
       <div className={styles.eyebrow}>{eyebrow}</div>
       <h1 className={styles.title}>{title}</h1>
       {sub && <p className={styles.sub}>{sub}</p>}
+    </div>
+  );
+}
+
+function QuestLaneHero({ mode }) {
+  const program = MODES[mode] || MODES.builder;
+  const copy = QUEST_LABELS[mode] || QUEST_LABELS.builder;
+  const Icon = LANE_ICONS[mode] || Lightbulb;
+  return (
+    <div className={styles.questHero} data-lane={mode}>
+      <div className={styles.questLane}><Icon size={18} /> {program.tier} · Ages {program.ageRange}</div>
+      <div className={styles.questKicker}>{copy.kicker}</div>
+      <h1 className={styles.questTitle}>{copy.title}</h1>
+      <p className={styles.questHelper}>{copy.helper}</p>
     </div>
   );
 }
@@ -35,10 +88,12 @@ function LaneGuidance() {
 export function DailyQuest() {
   const { pilotProgress, completeDailyQuest, mode } = useYEP();
   const { dailyQuest } = getProgramContent(mode);
+  const copy = QUEST_LABELS[mode] || QUEST_LABELS.builder;
   const [text, setText] = useState(pilotProgress.dailyQuestText);
 
   return (
     <Shell>
+      <QuestLaneHero mode={mode} />
       <ScreenHead eyebrow={`${MODES[mode]?.program || 'YEP'} · Daily Quest`} title={dailyQuest.title} sub={dailyQuest.prompt} />
       <LaneGuidance />
       <WorkbookCallout text="Complete the matching Daily Quest page in your workbook, then save the same core response here as proof of work." />
@@ -46,11 +101,11 @@ export function DailyQuest() {
         <div className={styles.label}>FINISHER Focus</div>
         <div className={styles.value}>{dailyQuest.finisher}</div>
       </div>
-      <textarea className={styles.textarea} value={text} onChange={(e) => setText(e.target.value)} placeholder="Write your response here..." />
+      <textarea className={styles.textarea} value={text} onChange={(e) => setText(e.target.value)} placeholder={copy.placeholder} />
       <VoiceCapture prompt={dailyQuest.prompt} currentValue={text} onConfirm={setText} buttonLabel="Talk To YEP" confirmLabel="Use As My Answer" />
       <div className={styles.actions}>
         <button className={ui.btnPrimary} disabled={!text.trim()} onClick={() => completeDailyQuest(text)}>
-          {pilotProgress.dailyQuestComplete ? 'Update Completed Quest' : 'Complete Daily Quest'}
+          {pilotProgress.dailyQuestComplete ? 'Update Completed Quest' : copy.action}
         </button>
         <BackHome />
       </div>
