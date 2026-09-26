@@ -791,3 +791,102 @@ button.card:hover {
   .processNode { display: none; }
   .processVisual { min-height: 220px; }
 }
+
+
+/* === AGE-AWARE HOME PRESENTATION === */
+.homeHero[data-age-mode='explorer'] {
+  border-radius: 34px;
+  background:
+    radial-gradient(circle at 84% 18%, rgba(255,255,255,.10), transparent 24%),
+    radial-gradient(circle at 12% 90%, rgba(42,78,175,.34), transparent 34%),
+    linear-gradient(145deg, #1B4A91 0%, #0B2454 58%, #06142F 100%);
+}
+.homeHero[data-age-mode='explorer'] .heroTitle {
+  font-size: clamp(48px, 6.5vw, 84px);
+  line-height: .94;
+}
+.homeHero[data-age-mode='explorer'] .heroAction {
+  border-radius: 20px;
+  min-height: 58px;
+}
+.processVisual[data-age-mode='explorer'] .processCenter,
+.laneSection[data-age-mode='explorer'] .laneCard {
+  border-radius: 28px;
+}
+.laneSection[data-age-mode='explorer'] .laneCard {
+  min-height: 210px;
+}
+.laneSection[data-age-mode='explorer'] .laneIcon {
+  width: 50px;
+  height: 50px;
+  border-radius: 16px;
+}
+.laneSection[data-age-mode='explorer'] .laneTitle {
+  font-size: clamp(24px, 2.4vw, 30px);
+}
+
+.homeHero[data-age-mode='builder'] {
+  background:
+    linear-gradient(90deg, rgba(42,78,175,.08) 1px, transparent 1px),
+    linear-gradient(rgba(42,78,175,.08) 1px, transparent 1px),
+    linear-gradient(145deg, #123163, #081B3D);
+  background-size: 30px 30px, 30px 30px, auto;
+}
+.laneSection[data-age-mode='builder'] .laneCard {
+  border-radius: 18px;
+}
+.laneSection[data-age-mode='builder'] .laneIcon {
+  border-radius: 12px;
+}
+
+.homeHero[data-age-mode='leader'] {
+  border-radius: 20px;
+  background:
+    repeating-linear-gradient(135deg, rgba(255,255,255,.025) 0 1px, transparent 1px 20px),
+    linear-gradient(145deg, #142E59, #08172F);
+}
+.homeHero[data-age-mode='leader'] .heroTitle {
+  letter-spacing: -.045em;
+}
+.laneSection[data-age-mode='leader'] .laneCard {
+  border-radius: 16px;
+  min-height: 205px;
+}
+.laneSection[data-age-mode='leader'] .laneTitle {
+  letter-spacing: -.02em;
+}
+
+.homeHero[data-age-mode='yaep'] {
+  border-radius: 16px;
+  background:
+    linear-gradient(90deg, rgba(212,160,23,.07), transparent 30%),
+    linear-gradient(145deg, #18233A 0%, #0D1627 58%, #07101D 100%);
+}
+.homeHero[data-age-mode='yaep'] .heroEyebrow,
+.laneSection[data-age-mode='yaep'] .sectionEyebrow {
+  color: var(--gold-soft);
+}
+.homeHero[data-age-mode='yaep'] .heroTitle {
+  font-size: clamp(42px, 5.2vw, 68px);
+}
+.homeHero[data-age-mode='yaep'] .heroAction {
+  border-radius: 10px;
+}
+.processVisual[data-age-mode='yaep'] .processCenter,
+.laneSection[data-age-mode='yaep'] .laneCard {
+  border-radius: 12px;
+}
+.laneSection[data-age-mode='yaep'] .laneCard {
+  min-height: 198px;
+  background: linear-gradient(145deg, #1B263A, #101827);
+}
+.laneSection[data-age-mode='yaep'] .laneIcon {
+  border-radius: 9px;
+}
+.laneSection[data-age-mode='yaep'] .laneStatus {
+  letter-spacing: .12em;
+}
+
+.heroAgeAccent {
+  color: #91ACF1;
+}
