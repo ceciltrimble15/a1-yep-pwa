@@ -149,3 +149,321 @@
 @media (min-width: 980px) { .pathways { grid-template-columns: repeat(4, minmax(0, 1fr)); } .footer button { min-height: 64px; font-size: 17px; } }
 @media (orientation: landscape) and (min-width: 900px) { .wrap { padding-top: 24px; padding-bottom: 24px; } .brandHero { margin-bottom: 18px; } .pathways { margin-bottom: 16px; } .identityGrid { margin-bottom: 16px; } .footer { padding-top: 16px; } }
 @media (max-width: 560px) { .brandHero { display: block; } .logo { margin-bottom: 16px; } .pathways, .identityGrid, .tracks { grid-template-columns: 1fr; } .processStrip b { display: none; } .pathway { min-height: 158px; } }
+
+
+/* === AGE-AWARE PATHWAY JOURNEY === */
+.pathwaySection {
+  margin: 8px 0 26px;
+}
+
+.pathwaySectionHead {
+  display: grid;
+  grid-template-columns: 1fr minmax(300px, .72fr);
+  gap: 22px;
+  align-items: end;
+  margin-bottom: 14px;
+}
+
+.pathwaySectionHead h2 {
+  margin-top: 5px;
+  color: var(--white);
+  font-size: clamp(28px, 3.3vw, 42px);
+  line-height: 1;
+}
+
+.pathwaySectionHead p {
+  color: var(--silver);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.pathwayJourney {
+  display: grid;
+  gap: 12px;
+}
+
+.pathwayStage {
+  position: relative;
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  width: 100%;
+  min-height: 186px;
+  padding: 0;
+  overflow: hidden;
+  text-align: left;
+  border-radius: 24px;
+  border: 1px solid rgba(212,218,230,.16);
+  background: linear-gradient(145deg, rgba(18,43,85,.92), rgba(8,24,56,.98));
+  box-shadow: 0 14px 30px rgba(0,0,0,.18);
+  transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+
+.pathwayStage:hover {
+  transform: translateY(-2px);
+  border-color: rgba(145,172,241,.42);
+}
+
+.pathwayStageSelected {
+  border-color: rgba(212,160,23,.72);
+  box-shadow: 0 0 0 2px rgba(42,78,175,.36), 0 18px 40px rgba(0,0,0,.24);
+}
+
+.pathwayAgeRail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 10px;
+  background: rgba(255,255,255,.035);
+  border-right: 1px solid rgba(212,218,230,.12);
+}
+
+.pathwayStageNumber {
+  color: var(--gold-soft);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .16em;
+}
+
+.pathwayAge {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  color: var(--silver-light);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .16em;
+}
+
+.pathwayStageBody {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 18px;
+  align-items: center;
+  padding: 22px 22px 22px 20px;
+}
+
+.pathwayStageIcon {
+  width: 68px;
+  height: 68px;
+  display: grid;
+  place-items: center;
+  border-radius: 20px;
+  color: var(--white);
+  border: 1px solid rgba(255,255,255,.16);
+  box-shadow: 0 10px 24px rgba(0,0,0,.18);
+}
+
+.pathwayStageCopy { min-width: 0; }
+
+.pathwayKicker {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--gold-soft);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .17em;
+}
+
+.pathwayProgram {
+  color: var(--silver);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+
+.pathwayTier {
+  margin-top: 2px;
+  color: var(--white);
+  font-size: clamp(24px, 3vw, 34px);
+  font-weight: 900;
+  line-height: .98;
+}
+
+.pathwayHeadline {
+  display: block;
+  margin-top: 7px;
+  color: var(--white);
+  font-size: 16px;
+}
+
+.pathwayStageCopy p {
+  margin-top: 5px;
+  max-width: 760px;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.48;
+}
+
+.pathwayTraits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.pathwayTraits span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(212,218,230,.14);
+  background: rgba(255,255,255,.045);
+  color: var(--white);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.pathwayCue {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin-top: 12px;
+}
+
+.pathwayCue span {
+  color: var(--silver-light);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.pathwayCue small {
+  color: var(--gold-soft);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.pathwayArrow {
+  color: var(--silver);
+}
+
+/* Foundation: friendlier scale, rounder geometry, visual discovery. */
+.pathwayStage[data-lane='explorer'] {
+  min-height: 214px;
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 88% 18%, rgba(255,255,255,.10), transparent 22%),
+    radial-gradient(circle at 10% 90%, rgba(42,78,175,.30), transparent 30%),
+    linear-gradient(145deg, #1B4A91, #0A1E47);
+}
+.pathwayStage[data-lane='explorer'] .pathwayStageIcon {
+  width: 78px;
+  height: 78px;
+  border-radius: 26px;
+  background: linear-gradient(145deg, #6A8EE0, #2A4EAF);
+}
+.pathwayStage[data-lane='explorer'] .pathwayTier { font-size: clamp(30px, 4vw, 42px); }
+.pathwayStage[data-lane='explorer'] .pathwayHeadline { font-size: 18px; }
+.pathwayStage[data-lane='explorer'] .pathwayStageCopy p { font-size: 14px; max-width: 650px; }
+
+/* Builder: workshop/challenge feel. */
+.pathwayStage[data-lane='builder'] {
+  background:
+    linear-gradient(90deg, rgba(42,78,175,.18) 1px, transparent 1px),
+    linear-gradient(rgba(42,78,175,.18) 1px, transparent 1px),
+    linear-gradient(145deg, #123163, #081B3D);
+  background-size: 26px 26px, 26px 26px, auto;
+}
+.pathwayStage[data-lane='builder'] .pathwayStageIcon {
+  border-radius: 16px;
+  background: linear-gradient(145deg, #315EAF, #173668);
+}
+
+/* Momentum: sharper, directional, more independent. */
+.pathwayStage[data-lane='leader'] {
+  border-radius: 18px;
+  background:
+    repeating-linear-gradient(135deg, rgba(255,255,255,.028) 0 1px, transparent 1px 18px),
+    linear-gradient(145deg, #142E59, #08172F);
+}
+.pathwayStage[data-lane='leader'] .pathwayStageIcon {
+  border-radius: 14px;
+  background: linear-gradient(145deg, #234F94, #0F2460);
+}
+.pathwayStage[data-lane='leader'] .pathwayTier { letter-spacing: -.02em; }
+
+/* Y.A.E.P.: restrained professional execution feel. */
+.pathwayStage[data-lane='yaep'] {
+  border-radius: 16px;
+  background:
+    linear-gradient(90deg, rgba(212,160,23,.08), transparent 26%),
+    linear-gradient(145deg, #18233A, #091220);
+}
+.pathwayStage[data-lane='yaep'] .pathwayAgeRail {
+  background: rgba(212,160,23,.06);
+}
+.pathwayStage[data-lane='yaep'] .pathwayStageIcon {
+  border-radius: 12px;
+  background: linear-gradient(145deg, #2A3347, #111827);
+  border-color: rgba(212,160,23,.35);
+}
+.pathwayStage[data-lane='yaep'] .pathwayTraits span {
+  border-radius: 8px;
+  background: rgba(255,255,255,.035);
+}
+
+@media (min-width: 1000px) {
+  .pathwayJourney {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pathwayStage {
+    grid-template-columns: 74px 1fr;
+    min-height: 232px;
+  }
+
+  .pathwayStageBody {
+    grid-template-columns: 1fr auto;
+    align-items: start;
+  }
+
+  .pathwayStageIcon {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    width: 56px;
+    height: 56px;
+  }
+
+  .pathwayStageCopy {
+    padding-right: 74px;
+  }
+}
+
+@media (max-width: 720px) {
+  .pathwaySectionHead {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .pathwayStage {
+    grid-template-columns: 58px 1fr;
+    min-height: 184px;
+    border-radius: 20px;
+  }
+
+  .pathwayAgeRail { padding: 14px 7px; }
+
+  .pathwayStageBody {
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    padding: 18px 16px;
+  }
+
+  .pathwayStageIcon {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+  }
+
+  .pathwayStageCopy { padding-right: 52px; }
+  .pathwayTier { font-size: 26px; }
+  .pathwayStageCopy p { font-size: 12px; }
+}
