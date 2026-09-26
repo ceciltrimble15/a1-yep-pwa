@@ -1,33 +1,36 @@
 .bar {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin: 4px 18px 12px;
-  padding: 9px 12px;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 12px;
+  gap: 12px;
+  margin: 10px auto 14px;
+  width: min(calc(100% - 36px), 1360px);
+  padding: 10px 12px;
+  background: linear-gradient(135deg, rgba(18,43,85,.92), rgba(14,32,63,.92));
+  border: 1px solid rgba(212,218,230,.18);
+  border-radius: 15px;
+  box-shadow: 0 12px 28px rgba(0,0,0,.18);
+  backdrop-filter: blur(12px);
 }
 
 .track {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   min-width: 0;
 }
 
 .trackLabel {
   font-family: var(--font-display);
   font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  font-weight: 800;
+  letter-spacing: 0.035em;
   color: var(--text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.icon { color: var(--electric); flex-shrink: 0; }
+.icon { color: var(--electric-soft); flex-shrink: 0; }
 
 .spacer { flex: 1; }
 
@@ -35,16 +38,16 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  min-height: 34px;
-  padding: 5px 10px;
-  border: 1px solid rgba(176, 141, 58, 0.35);
+  min-height: 36px;
+  padding: 6px 11px;
+  border: 1px solid rgba(212,160,23,.42);
   border-radius: 999px;
-  background: rgba(176, 141, 58, 0.09);
+  background: rgba(212,160,23,.10);
   color: var(--gold-soft);
   font-family: var(--font-display);
   font-size: 10px;
   font-weight: 900;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.075em;
   text-transform: uppercase;
   flex-shrink: 0;
 }
@@ -53,29 +56,41 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 11px;
-  background: rgba(41, 121, 255, 0.12);
-  border: 1px solid rgba(41, 121, 255, 0.35);
+  padding: 6px 12px;
+  min-height: 36px;
+  background: rgba(42,78,175,.18);
+  border: 1px solid rgba(79,115,199,.48);
   border-radius: 999px;
   flex-shrink: 0;
 }
 
 .xpVal {
   font-family: var(--font-display);
-  font-weight: 800;
+  font-weight: 900;
   font-size: 14px;
-  color: var(--electric);
+  color: #91ACF1;
   letter-spacing: 0.02em;
 }
 
 .xpLabel {
   font-family: var(--font-display);
   font-size: 10px;
+  font-weight: 800;
   letter-spacing: 0.14em;
-  color: var(--silver);
+  color: var(--silver-light);
+}
+
+@media (min-width: 768px) {
+  .bar {
+    width: min(calc(100% - 56px), 1360px);
+    padding: 11px 14px;
+  }
+  .trackLabel { font-size: 14px; }
 }
 
 @media (max-width: 560px) {
+  .bar { width: calc(100% - 28px); margin-top: 8px; }
   .privacy span { display: none; }
   .privacy { padding: 6px 8px; }
+  .xp { padding: 6px 9px; }
 }

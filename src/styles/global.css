@@ -23,33 +23,47 @@ body {
   width: 100%;
   min-width: 100%;
   font-family: var(--font-body);
-  background: linear-gradient(180deg, #08121F 0%, #0B1725 52%, #08121F 100%);
+  background:
+    radial-gradient(circle at 12% -8%, rgba(42, 78, 175, 0.28), transparent 30%),
+    radial-gradient(circle at 94% 12%, rgba(212, 160, 23, 0.10), transparent 22%),
+    linear-gradient(180deg, #06142F 0%, #0A1B3D 52%, #06142F 100%);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overscroll-behavior: none;
 }
 
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.14;
+  background-image:
+    linear-gradient(rgba(212,218,230,.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212,218,230,.08) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,.75), transparent 72%);
+}
+
 #root {
   width: 100%;
   max-width: none;
   margin: 0;
-  background: linear-gradient(180deg, rgba(8, 18, 31, 0.99), rgba(10, 22, 36, 0.99));
+  background: transparent;
   min-height: 100dvh;
   position: relative;
   overflow-x: hidden;
-  box-shadow: none;
 }
 
 h1, h2, h3, h4 {
   font-family: var(--font-display);
-  font-weight: 800;
-  letter-spacing: 0.01em;
+  font-weight: 850;
+  letter-spacing: -0.015em;
   margin: 0;
-  text-transform: uppercase;
 }
 
-p { margin: 0; line-height: 1.5; }
+p { margin: 0; line-height: 1.55; }
 
 button {
   font-family: var(--font-display);
@@ -60,14 +74,45 @@ button {
   touch-action: manipulation;
 }
 
+button,
+a,
+input,
+textarea {
+  outline: none;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+
 input, textarea {
   font-family: var(--font-body);
+}
+
+::selection {
+  background: rgba(212, 160, 23, 0.28);
+  color: var(--white);
 }
 
 @media (min-width: 760px) {
   body,
   #root {
     min-height: 100dvh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
   }
 }
 
@@ -83,8 +128,8 @@ input, textarea {
   100% { transform: scale(1); }
 }
 @keyframes goldPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(176, 141, 58, 0.28); }
-  50% { box-shadow: 0 0 0 12px rgba(176, 141, 58, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(212, 160, 23, 0.28); }
+  50% { box-shadow: 0 0 0 12px rgba(212, 160, 23, 0); }
 }
 @keyframes barGrow {
   from { width: 0; }
