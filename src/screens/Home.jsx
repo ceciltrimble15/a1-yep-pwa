@@ -20,9 +20,9 @@ import styles from './PilotScreens.module.css';
 
 const AGE_PRESENTATION = {
   explorer: {
-    label: 'FOUNDATION DISCOVERY',
-    headline: 'Discover. Try. Create.',
-    laneLead: 'Pick a quest and see what you can make happen.',
+    label: 'FOUNDATION DISCOVERY ZONE',
+    headline: 'Look. Try. Make.',
+    laneLead: 'Pick one thing to try next.',
   },
   builder: {
     label: 'BUILDER CHALLENGE LAB',
@@ -132,7 +132,7 @@ export default function Home() {
 
           <button className={styles.heroAction} onClick={() => navigate('myDirection')}>
             <Compass size={19} />
-            {directionSaved ? 'Continue My Direction' : 'Start My Direction'}
+            {directionSaved ? (mode === 'explorer' ? 'Keep Exploring' : 'Continue My Direction') : (mode === 'explorer' ? 'Show Me My Path' : 'Start My Direction')}
             <ArrowRight size={18} />
           </button>
         </div>
@@ -176,7 +176,7 @@ export default function Home() {
           <LaneCard
             number="01"
             title="Daily Quest"
-            subtitle={mode === 'explorer' ? 'Try one thing today.' : mode === 'yaep' ? 'Execute one focused move.' : 'Take one focused action.'}
+            subtitle={mode === 'explorer' ? 'Spot it. Try it.' : mode === 'yaep' ? 'Execute one focused move.' : 'Take one focused action.'}
             status={pilotProgress.dailyQuestComplete ? 'Complete' : 'Start here'}
             icon={Sparkles}
             tone="Blue"
@@ -185,7 +185,7 @@ export default function Home() {
           <LaneCard
             number="02"
             title={STEM_SIN_LABEL}
-            subtitle={mode === 'explorer' ? 'Solve it with tools and ideas.' : mode === 'leader' ? 'Use technology to solve a real problem.' : 'Technology + problem-solving.'}
+            subtitle={mode === 'explorer' ? 'Use a tool. Solve it.' : mode === 'leader' ? 'Use technology to solve a real problem.' : 'Technology + problem-solving.'}
             status={pilotProgress.stemSinComplete ? 'Complete' : 'Open quest'}
             icon={Cpu}
             tone="Electric"
@@ -194,7 +194,7 @@ export default function Home() {
           <LaneCard
             number="03"
             title="Mirror Results"
-            subtitle={mode === 'explorer' ? 'Look back at what you tried.' : mode === 'yaep' ? 'Assess choices, habits, and growth edges.' : 'Reflect on choices and growth.'}
+            subtitle={mode === 'explorer' ? 'What happened?' : mode === 'yaep' ? 'Assess choices, habits, and growth edges.' : 'Reflect on choices and growth.'}
             status={mirrorResult ? 'View result' : 'Run mirror'}
             icon={ScanFace}
             tone="Silver"
@@ -203,7 +203,7 @@ export default function Home() {
           <LaneCard
             number="04"
             title="FINISHER Mission"
-            subtitle={mode === 'explorer' ? 'Finish one mission strong.' : mode === 'yaep' ? 'Convert reflection into measurable action.' : 'Turn reflection into action.'}
+            subtitle={mode === 'explorer' ? 'Finish your mission.' : mode === 'yaep' ? 'Convert reflection into measurable action.' : 'Turn reflection into action.'}
             status={mirrorResult ? 'Mission ready' : 'Unlock through Mirror'}
             icon={Flag}
             tone="Gold"
