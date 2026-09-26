@@ -10,6 +10,11 @@ import {
   Blocks,
   Rocket,
   BriefcaseBusiness,
+  Eye,
+  Lightbulb,
+  Wrench,
+  Presentation,
+  BadgeDollarSign,
 } from 'lucide-react';
 import { useYEP } from '../context/YEPContext';
 import { MODES } from '../data/modes';
@@ -25,11 +30,51 @@ export const TRACKS = [
 ];
 
 const PATHWAYS = ['explorer', 'builder', 'leader', 'yaep'];
+
 const PATHWAY_ICONS = {
   explorer: Sparkles,
   builder: Blocks,
   leader: Rocket,
   yaep: BriefcaseBusiness,
+};
+
+const PATHWAY_VISUALS = {
+  explorer: {
+    kicker: 'DISCOVERY ZONE',
+    cue: 'See it. Try it. Make something.',
+    traits: [
+      { icon: Eye, label: 'Notice' },
+      { icon: Lightbulb, label: 'Imagine' },
+      { icon: Sparkles, label: 'Create' },
+    ],
+  },
+  builder: {
+    kicker: 'CHALLENGE LAB',
+    cue: 'Build it. Test it. Make it better.',
+    traits: [
+      { icon: Blocks, label: 'Build' },
+      { icon: Wrench, label: 'Test' },
+      { icon: Lightbulb, label: 'Improve' },
+    ],
+  },
+  leader: {
+    kicker: 'OPPORTUNITY STUDIO',
+    cue: 'Pitch it. Lead it. Create value.',
+    traits: [
+      { icon: Presentation, label: 'Pitch' },
+      { icon: Rocket, label: 'Lead' },
+      { icon: BadgeDollarSign, label: 'Value' },
+    ],
+  },
+  yaep: {
+    kicker: 'EXECUTION STUDIO',
+    cue: 'Own it. Execute it. Build proof.',
+    traits: [
+      { icon: BriefcaseBusiness, label: 'Own' },
+      { icon: ArrowRight, label: 'Execute' },
+      { icon: BadgeDollarSign, label: 'Prove' },
+    ],
+  },
 };
 
 export default function TrackSelector() {
@@ -99,37 +144,70 @@ export default function TrackSelector() {
         <small>This acknowledgment is not parental consent and does not replace the final privacy/consent documents for real participants.</small>
       </section>
 
-      <div className={styles.tracksLabel}>Choose Your Program Pathway</div>
-      <div className={styles.pathways}>
-        {PATHWAYS.map((id) => {
-          const option = MODES[id];
-          const sel = pathway === id;
-          const Icon = PATHWAY_ICONS[id];
-          return (
-            <button
-              key={id}
-              type="button"
-              data-lane={id}
-              className={`${styles.pathway} ${sel ? styles.pathwaySelected : ''}`}
-              onClick={() => setPathway(id)}
-            >
-              <span className={styles.pathwayIcon} aria-hidden>
-                {sel ? <Check size={25} /> : <Icon size={25} />}
-              </span>
-              <span className={styles.pathwayMeta}>
-                <span className={styles.pathwayProgram}>{option.program}</span>
-                <span className={styles.pathwayTier}>{option.tier}</span>
-                <span className={styles.pathwayLabel}>Ages {option.ageRange}</span>
-              </span>
-              <span className={styles.pathwayMessage}>
-                <strong>{option.visualTitle}</strong>
-                <span>{option.visualCopy}</span>
-                <small>{option.entrepreneurCue}</small>
-              </span>
-            </button>
-          );
-        })}
-      </div>
+      <section className={styles.pathwaySection}>
+        <div className={styles.pathwaySectionHead}>
+          <div>
+            <div className={styles.tracksLabel}>Choose Your Program Pathway</div>
+            <h2>Same Process. Different Stage of Life.</h2>
+          </div>
+          <p>Pick the experience that matches the participant's age. The core process stays connected while the language and visual experience grow with them.</p>
+        </div>
+
+        <div className={styles.pathwayJourney}>
+          {PATHWAYS.map((id, index) => {
+            const option = MODES[id];
+            const visual = PATHWAY_VISUALS[id];
+            const sel = pathway === id;
+            const Icon = PATHWAY_ICONS[id];
+
+            return (
+              <button
+                key={id}
+                type="button"
+                data-lane={id}
+                aria-pressed={sel}
+                className={`${styles.pathwayStage} ${sel ? styles.pathwayStageSelected : ''}`}
+                onClick={() => setPathway(id)}
+              >
+                <div className={styles.pathwayAgeRail}>
+                  <span className={styles.pathwayStageNumber}>{String(index + 1).padStart(2, '0')}</span>
+                  <span className={styles.pathwayAge}>AGES {option.ageRange}</span>
+                </div>
+
+                <div className={styles.pathwayStageBody}>
+                  <div className={styles.pathwayStageIcon} aria-hidden>
+                    {sel ? <Check size={28} /> : <Icon size={28} />}
+                  </div>
+
+                  <div className={styles.pathwayStageCopy}>
+                    <span className={styles.pathwayKicker}>{visual.kicker}</span>
+                    <div className={styles.pathwayProgram}>{option.program}</div>
+                    <div className={styles.pathwayTier}>{option.tier}</div>
+                    <strong className={styles.pathwayHeadline}>{option.visualTitle}</strong>
+                    <p>{option.visualCopy}</p>
+
+                    <div className={styles.pathwayTraits}>
+                      {visual.traits.map(({ icon: TraitIcon, label }) => (
+                        <span key={label}>
+                          <TraitIcon size={16} />
+                          {label}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className={styles.pathwayCue}>
+                      <span>{visual.cue}</span>
+                      <small>{option.entrepreneurCue}</small>
+                    </div>
+                  </div>
+
+                  <ArrowRight className={styles.pathwayArrow} size={22} aria-hidden />
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </section>
 
       <div className={styles.identityGrid}>
         <div className={styles.nameField}>
