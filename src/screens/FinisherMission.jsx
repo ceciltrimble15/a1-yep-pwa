@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Check, Flag, ArrowRight } from 'lucide-react';
 import { useYEP, XP } from '../context/YEPContext';
 import Shell from '../components/Shell';
@@ -6,8 +5,7 @@ import styles from './FinisherMission.module.css';
 import ui from '../styles/ui.module.css';
 
 export default function FinisherMission() {
-  const { currentMission, completeMission } = useYEP();
-  const [done, setDone] = useState({});
+  const { currentMission, missionStepsDone, toggleMissionStep, completeMission } = useYEP();
 
   if (!currentMission) {
     return (
@@ -18,11 +16,7 @@ export default function FinisherMission() {
   }
 
   const m = currentMission;
-  const allDone = m.steps.every((_, i) => done[i]);
-
-  function toggle(i) {
-    setDone((d) => ({ ...d, [i]: !d[i] }));
-  }
+  const allDone = m.steps.every((_, i) => missionStepsDone[i]);
 
   return (
     <Shell>
@@ -43,12 +37,12 @@ export default function FinisherMission() {
       <div className={styles.stepsLabel}>Mission Steps</div>
       <div className={styles.steps}>
         {m.steps.map((step, i) => {
-          const isDone = !!done[i];
+          const isDone = !!missionStepsDone[i];
           return (
             <button
               key={i}
               className={`${styles.step} ${isDone ? styles.stepDone : ''}`}
-              onClick={() => toggle(i)}
+              onClick={() => toggleMissionStep(i)}
             >
               <span className={`${styles.check} ${isDone ? styles.checkDone : ''}`}>
                 {isDone && <Check size={15} strokeWidth={3} />}
