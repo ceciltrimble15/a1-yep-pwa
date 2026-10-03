@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Sparkles, Lightbulb, Target, BriefcaseBusiness } from 'lucide-react';
+import { Sparkles, Lightbulb, Target, BriefcaseBusiness, Eye, PenLine, CheckCircle2, Flag, BookOpenCheck } from 'lucide-react';
 import { getProgramContent, PILOT_BADGES } from '../data/pilotContent';
 import { MODES } from '../data/modes';
 import { useYEP } from '../context/YEPContext';
@@ -87,28 +87,142 @@ function LaneGuidance() {
 
 export function DailyQuest() {
   const { pilotProgress, completeDailyQuest, mode } = useYEP();
-  const { dailyQuest } = getProgramContent(mode);
+  const { dailyQuest, instructions, example, expectations } = getProgramContent(mode);
   const copy = QUEST_LABELS[mode] || QUEST_LABELS.builder;
   const [text, setText] = useState(pilotProgress.dailyQuestText);
+  const complete = pilotProgress.dailyQuestComplete;
+  const program = MODES[mode] || MODES.builder;
 
   return (
     <Shell>
-      <QuestLaneHero mode={mode} />
-      <ScreenHead eyebrow={`${MODES[mode]?.program || 'YEP'} · Daily Quest`} title={dailyQuest.title} sub={dailyQuest.prompt} />
-      <LaneGuidance />
-      <WorkbookCallout text="Complete the matching Daily Quest page in your workbook, then save the same core response here as proof of work." />
-      <div className={styles.card}>
-        <div className={styles.label}>FINISHER Focus</div>
-        <div className={styles.value}>{dailyQuest.finisher}</div>
-      </div>
-      <textarea className={styles.textarea} value={text} onChange={(e) => setText(e.target.value)} placeholder={copy.placeholder} />
-      <VoiceCapture prompt={dailyQuest.prompt} currentValue={text} onConfirm={setText} buttonLabel="Talk To YEP" confirmLabel="Use As My Answer" />
-      <div className={styles.actions}>
-        <button className={ui.btnPrimary} disabled={!text.trim()} onClick={() => completeDailyQuest(text)}>
-          {pilotProgress.dailyQuestComplete ? 'Update Completed Quest' : copy.action}
-        </button>
-        <BackHome />
-      </div>
+      <section className={styles.dailyQuestStage} data-lane={mode}>
+        <div className={styles.dailyQuestMasthead}>
+          <div className={styles.dailyQuestTitleBlock}>
+            <div className={styles.dailyQuestBadge}>
+              <Flag size={18} aria-hidden="true" />
+              Daily Quest
+            </div>
+            <h1>{copy.title}</h1>
+            <p>{copy.helper}</p>
+            <div className={styles.dailyQuestPathway}>
+              <span>{program.program}</span>
+              <b>{program.tier}</b>
+              <small>Ages {program.ageRange}</small>
+            </div>
+          </div>
+
+          <div className={styles.questFlowCard} aria-label="Daily Quest flow">
+            <span className={styles.questFlowLabel}>TODAY'S FLOW</span>
+            <div className={styles.questFlowNodes}>
+              <div className={styles.questFlowNode} data-state="active">
+                <span>1</span>
+                <strong>NOTICE</strong>
+              </div>
+              <i aria-hidden="true" />
+              <div className={styles.questFlowNode} data-state={text.trim() ? 'active' : 'waiting'}>
+                <span>2</span>
+                <strong>BUILD</strong>
+              </div>
+              <i aria-hidden="true" />
+              <div className={styles.questFlowNode} data-state={complete ? 'done' : 'waiting'}>
+                <span>3</span>
+                <strong>FINISH</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.dailyQuestPromptCard}>
+          <div className={styles.dailyQuestPromptIcon} aria-hidden="true">
+            <Lightbulb size={34} strokeWidth={2.1} />
+          </div>
+          <div className={styles.dailyQuestPromptCopy}>
+            <span>TODAY'S QUEST</span>
+            <h2>{dailyQuest.title}</h2>
+            <p>{dailyQuest.prompt}</p>
+          </div>
+          <div className={styles.dailyQuestFocus}>
+            <span>FINISHER FOCUS</span>
+            <strong>{dailyQuest.finisher}</strong>
+          </div>
+        </div>
+
+        <div className={styles.dailyQuestWorkbench}>
+          <article className={styles.dailyQuestStep}>
+            <div className={styles.dailyQuestStepHead}>
+              <span className={styles.dailyQuestStepNumber}>1</span>
+              <Eye size={22} aria-hidden="true" />
+              <div>
+                <strong>Notice & Think</strong>
+                <small>See the problem before you solve it.</small>
+              </div>
+            </div>
+            <p>{instructions}</p>
+            <div className={styles.dailyQuestExample}>
+              <span>EXAMPLE</span>
+              <strong>{example}</strong>
+            </div>
+          </article>
+
+          <article className={styles.dailyQuestStep}>
+            <div className={styles.dailyQuestStepHead}>
+              <span className={styles.dailyQuestStepNumber}>2</span>
+              <PenLine size={22} aria-hidden="true" />
+              <div>
+                <strong>Your Turn</strong>
+                <small>Put your idea into your own words.</small>
+              </div>
+            </div>
+            <textarea
+              className={styles.dailyQuestTextarea}
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder={copy.placeholder}
+            />
+            <VoiceCapture
+              prompt={dailyQuest.prompt}
+              currentValue={text}
+              onConfirm={setText}
+              buttonLabel="Talk To YEP"
+              confirmLabel="Use As My Answer"
+            />
+          </article>
+
+          <article className={styles.dailyQuestStep + ' ' + styles.dailyQuestFinish}>
+            <div className={styles.dailyQuestStepHead}>
+              <span className={styles.dailyQuestStepNumber}>3</span>
+              <CheckCircle2 size={22} aria-hidden="true" />
+              <div>
+                <strong>Finish & Save</strong>
+                <small>Save proof that you completed today's quest.</small>
+              </div>
+            </div>
+            <p>{expectations}</p>
+            <button
+              className={styles.dailyQuestSubmit}
+              disabled={!text.trim()}
+              onClick={() => completeDailyQuest(text)}
+            >
+              {complete ? 'Update Completed Quest' : copy.action}
+            </button>
+            <span className={styles.dailyQuestSaveState}>
+              {complete ? 'Quest saved on this tablet.' : 'Your answer stays on this tablet when you save it.'}
+            </span>
+          </article>
+        </div>
+
+        <div className={styles.dailyQuestWorkbook}>
+          <BookOpenCheck size={20} aria-hidden="true" />
+          <div>
+            <strong>Workbook ↔ App</strong>
+            <span>Complete the matching Daily Quest page, then save the same core response here as proof of work.</span>
+          </div>
+        </div>
+
+        <div className={styles.actions}>
+          <BackHome />
+        </div>
+      </section>
     </Shell>
   );
 }
