@@ -1429,3 +1429,463 @@ button.card:hover {
     font-size: 9px;
   }
 }
+
+
+/* === DAILY QUEST VISUAL TABLET WORKBENCH === */
+.dailyQuestStage {
+  display: grid;
+  gap: 18px;
+}
+
+.dailyQuestMasthead {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(280px, .7fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.dailyQuestTitleBlock,
+.questFlowCard,
+.dailyQuestPromptCard,
+.dailyQuestStep,
+.dailyQuestWorkbook {
+  border: 1px solid rgba(212,218,230,.16);
+  box-shadow: 0 16px 34px rgba(0,0,0,.18);
+}
+
+.dailyQuestTitleBlock {
+  position: relative;
+  overflow: hidden;
+  padding: 24px;
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at 85% 15%, rgba(212,160,23,.13), transparent 24%),
+    radial-gradient(circle at 10% 90%, rgba(42,78,175,.28), transparent 28%),
+    linear-gradient(145deg, #102C66, #07172F);
+}
+
+.dailyQuestBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(212,160,23,.12);
+  border: 1px solid rgba(212,160,23,.35);
+  color: var(--gold-soft);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.dailyQuestTitleBlock h1 {
+  margin: 16px 0 10px;
+  max-width: 800px;
+  color: var(--white);
+  font-size: clamp(38px, 5vw, 62px);
+  line-height: .95;
+  letter-spacing: -.03em;
+}
+
+.dailyQuestTitleBlock > p {
+  margin: 0;
+  max-width: 780px;
+  color: var(--silver-light);
+  font-size: clamp(16px, 1.8vw, 19px);
+  line-height: 1.5;
+}
+
+.dailyQuestPathway {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.dailyQuestPathway span,
+.dailyQuestPathway b,
+.dailyQuestPathway small {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.dailyQuestPathway span {
+  background: var(--blue);
+  color: var(--white);
+}
+
+.dailyQuestPathway b {
+  border: 1px solid rgba(212,218,230,.16);
+  background: rgba(255,255,255,.05);
+  color: var(--white);
+}
+
+.dailyQuestPathway small {
+  color: var(--silver-light);
+  border: 1px solid rgba(212,218,230,.14);
+}
+
+.questFlowCard {
+  padding: 22px;
+  border-radius: 26px;
+  background:
+    linear-gradient(145deg, rgba(18,43,85,.96), rgba(6,20,47,.98));
+}
+
+.questFlowLabel {
+  color: var(--gold-soft);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .15em;
+}
+
+.questFlowNodes {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: calc(100% - 24px);
+}
+
+.questFlowNodes i {
+  width: 38px;
+  height: 2px;
+  background: rgba(212,218,230,.24);
+}
+
+.questFlowNode {
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  min-width: 64px;
+}
+
+.questFlowNode span {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 2px solid rgba(212,218,230,.26);
+  background: rgba(255,255,255,.04);
+  color: var(--silver);
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.questFlowNode strong {
+  color: var(--silver);
+  font-size: 9px;
+  letter-spacing: .12em;
+}
+
+.questFlowNode[data-state='active'] span,
+.questFlowNode[data-state='done'] span {
+  border-color: var(--gold);
+  background: var(--gold);
+  color: var(--navy);
+  box-shadow: 0 0 0 5px rgba(212,160,23,.1);
+}
+
+.questFlowNode[data-state='active'] strong,
+.questFlowNode[data-state='done'] strong {
+  color: var(--gold-soft);
+}
+
+.dailyQuestPromptCard {
+  display: grid;
+  grid-template-columns: auto minmax(0,1fr) minmax(180px, .45fr);
+  gap: 18px;
+  align-items: center;
+  padding: 20px;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 90% 10%, rgba(42,78,175,.23), transparent 25%),
+    linear-gradient(145deg, #123163, #081B3D);
+}
+
+.dailyQuestPromptIcon {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  border-radius: 20px;
+  background: var(--gold);
+  color: var(--navy);
+  box-shadow: 0 12px 28px rgba(0,0,0,.18);
+}
+
+.dailyQuestPromptCopy > span,
+.dailyQuestFocus span {
+  color: var(--gold-soft);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .14em;
+}
+
+.dailyQuestPromptCopy h2 {
+  margin: 4px 0 6px;
+  color: var(--white);
+  font-size: clamp(25px, 3vw, 38px);
+  line-height: 1;
+}
+
+.dailyQuestPromptCopy p {
+  margin: 0;
+  color: var(--silver-light);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.dailyQuestFocus {
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(212,160,23,.34);
+  background: rgba(212,160,23,.08);
+}
+
+.dailyQuestFocus strong {
+  display: block;
+  margin-top: 6px;
+  color: var(--white);
+  font-size: 16px;
+  line-height: 1.25;
+}
+
+.dailyQuestWorkbench {
+  display: grid;
+  grid-template-columns: .9fr 1.15fr .95fr;
+  gap: 14px;
+}
+
+.dailyQuestStep {
+  min-width: 0;
+  padding: 18px;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(42,78,175,.12), transparent 36%),
+    linear-gradient(145deg, rgba(18,43,85,.88), rgba(14,32,63,.98));
+}
+
+.dailyQuestStepHead {
+  display: grid;
+  grid-template-columns: 38px 28px 1fr;
+  gap: 10px;
+  align-items: center;
+  color: var(--electric-soft);
+}
+
+.dailyQuestStepNumber {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--electric);
+  color: var(--white);
+  font-weight: 900;
+}
+
+.dailyQuestStepHead strong,
+.dailyQuestStepHead small {
+  display: block;
+}
+
+.dailyQuestStepHead strong {
+  color: var(--white);
+  font-size: 18px;
+  line-height: 1.05;
+}
+
+.dailyQuestStepHead small {
+  margin-top: 3px;
+  color: var(--silver);
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.dailyQuestStep > p {
+  margin: 16px 0 0;
+  color: var(--silver-light);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.dailyQuestExample {
+  margin-top: 16px;
+  padding: 13px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.045);
+  border: 1px solid rgba(212,218,230,.13);
+}
+
+.dailyQuestExample span {
+  display: block;
+  color: var(--gold-soft);
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: .14em;
+}
+
+.dailyQuestExample strong {
+  display: block;
+  margin-top: 5px;
+  color: var(--white);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.dailyQuestTextarea {
+  width: 100%;
+  min-height: 200px;
+  margin-top: 16px;
+  padding: 16px;
+  resize: vertical;
+  border: 1px solid rgba(212,218,230,.18);
+  border-radius: 16px;
+  background: rgba(255,255,255,.06);
+  color: var(--white);
+  font-size: 15px;
+  line-height: 1.5;
+  outline: none;
+}
+
+.dailyQuestTextarea:focus {
+  border-color: var(--electric-soft);
+  box-shadow: 0 0 0 3px rgba(42,78,175,.16);
+}
+
+.dailyQuestTextarea::placeholder {
+  color: var(--silver);
+}
+
+.dailyQuestFinish {
+  border-color: rgba(212,160,23,.28);
+  background:
+    radial-gradient(circle at 95% 0%, rgba(212,160,23,.12), transparent 30%),
+    linear-gradient(145deg, #24304D, #151D2D);
+}
+
+.dailyQuestSubmit {
+  width: 100%;
+  min-height: 58px;
+  margin-top: 18px;
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--gold);
+  color: var(--navy);
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 12px 28px rgba(212,160,23,.18);
+}
+
+.dailyQuestSubmit:disabled {
+  opacity: .38;
+  cursor: not-allowed;
+}
+
+.dailyQuestSaveState {
+  display: block;
+  margin-top: 10px;
+  color: var(--silver);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.dailyQuestWorkbook {
+  display: flex;
+  gap: 11px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.035);
+}
+
+.dailyQuestWorkbook svg {
+  color: var(--gold-soft);
+  flex: 0 0 auto;
+}
+
+.dailyQuestWorkbook strong,
+.dailyQuestWorkbook span {
+  display: block;
+}
+
+.dailyQuestWorkbook strong {
+  color: var(--white);
+  font-size: 12px;
+}
+
+.dailyQuestWorkbook span {
+  margin-top: 3px;
+  color: var(--silver);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+@media (max-width: 1050px) {
+  .dailyQuestMasthead {
+    grid-template-columns: 1fr;
+  }
+
+  .questFlowNodes {
+    min-height: 120px;
+  }
+
+  .dailyQuestWorkbench {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .dailyQuestFinish {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 680px) {
+  .dailyQuestTitleBlock,
+  .questFlowCard,
+  .dailyQuestPromptCard,
+  .dailyQuestStep {
+    border-radius: 18px;
+  }
+
+  .dailyQuestPromptCard {
+    grid-template-columns: auto 1fr;
+  }
+
+  .dailyQuestFocus {
+    grid-column: 1 / -1;
+  }
+
+  .dailyQuestWorkbench {
+    grid-template-columns: 1fr;
+  }
+
+  .dailyQuestFinish {
+    grid-column: auto;
+  }
+
+  .dailyQuestTitleBlock h1 {
+    font-size: 38px;
+  }
+
+  .questFlowNodes i {
+    width: 18px;
+  }
+
+  .questFlowNode span {
+    width: 44px;
+    height: 44px;
+  }
+}
