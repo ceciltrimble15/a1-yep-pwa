@@ -1124,3 +1124,213 @@ button.card:hover {
     min-height: 190px;
   }
 }
+
+
+/* === VISUAL-FIRST FOUR-LANE JOURNEY PANEL === */
+.journeyPanel {
+  position: relative;
+  overflow: hidden;
+  min-height: 360px;
+  padding: 18px;
+  border-radius: 28px;
+  border: 1px solid rgba(212,218,230,.18);
+  background:
+    radial-gradient(circle at 88% 12%, rgba(212,160,23,.14), transparent 24%),
+    radial-gradient(circle at 10% 90%, rgba(42,78,175,.24), transparent 28%),
+    linear-gradient(160deg, rgba(14,32,63,.98), rgba(6,20,47,.98));
+  box-shadow: var(--card-shadow);
+}
+
+.journeyPanelTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.journeyPanelTop strong {
+  display: block;
+  margin-top: 4px;
+  color: var(--white);
+  font-size: 22px;
+  line-height: 1.05;
+}
+
+.journeyEyebrow {
+  color: var(--gold-soft);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .17em;
+}
+
+.journeyProgram {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 94px;
+  justify-content: center;
+  padding: 8px 10px;
+  border: 1px solid rgba(212,160,23,.34);
+  border-radius: 14px;
+  background: rgba(255,255,255,.045);
+}
+
+.journeyProgram img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  padding: 3px;
+  border-radius: 8px;
+  background: var(--white);
+}
+
+.journeyProgram span {
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: .06em;
+}
+
+.journeySteps {
+  display: grid;
+  gap: 10px;
+}
+
+.journeyStep {
+  position: relative;
+  display: grid;
+  grid-template-columns: 34px 48px 1fr auto;
+  gap: 11px;
+  align-items: center;
+  width: 100%;
+  min-height: 72px;
+  padding: 10px 12px;
+  text-align: left;
+  border-radius: 18px;
+  border: 1px solid rgba(212,218,230,.16);
+  box-shadow: 0 10px 24px rgba(0,0,0,.13);
+  transition: transform .14s ease, border-color .14s ease, opacity .14s ease;
+}
+
+.journeyStep:active { transform: scale(.992); }
+
+.journeyNumber {
+  color: rgba(255,255,255,.7);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .13em;
+}
+
+.journeyIcon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.10);
+}
+
+.journeyCopy {
+  min-width: 0;
+}
+
+.journeyCopy strong,
+.journeyCopy small {
+  display: block;
+}
+
+.journeyCopy strong {
+  color: var(--white);
+  font-size: 17px;
+  line-height: 1.05;
+}
+
+.journeyCopy small {
+  margin-top: 4px;
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.25;
+}
+
+.journeyStatus {
+  min-width: 74px;
+  text-align: right;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: currentColor;
+}
+
+.journeyBlue {
+  color: #9CB5F3;
+  background: linear-gradient(135deg, #1A3A8F, #102A5A);
+}
+.journeyElectric {
+  color: #C3D1FF;
+  background: linear-gradient(135deg, #2A4EAF, #173668);
+}
+.journeySilver {
+  color: #E0E6F0;
+  background: linear-gradient(135deg, #314562, #182A46);
+}
+.journeyGold {
+  color: var(--gold-soft);
+  background: linear-gradient(135deg, #5B4516, #1A2030);
+  border-color: rgba(212,160,23,.42);
+}
+
+.journeydone {
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.07), 0 10px 24px rgba(0,0,0,.13);
+}
+
+.journeylocked {
+  opacity: .58;
+}
+
+.journeyFlow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(212,218,230,.11);
+  color: var(--silver);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+
+.journeyFlow b { color: var(--gold-soft); }
+
+@media (max-width: 1080px) {
+  .journeyPanel { min-height: 0; }
+}
+
+@media (max-width: 560px) {
+  .journeyPanel { padding: 14px; border-radius: 22px; }
+  .journeyPanelTop { align-items: flex-start; }
+  .journeyPanelTop strong { font-size: 19px; }
+  .journeyProgram { min-width: 82px; }
+  .journeyStep {
+    grid-template-columns: 28px 42px 1fr;
+    min-height: 78px;
+  }
+  .journeyIcon { width: 40px; height: 40px; }
+  .journeyStatus {
+    grid-column: 3;
+    text-align: left;
+    margin-top: -3px;
+  }
+  .journeyFlow { gap: 5px; font-size: 8px; letter-spacing: .09em; }
+}
+
+@media (max-width: 390px) {
+  .journeyProgram img { display: none; }
+  .journeyPanelTop strong { font-size: 17px; }
+  .journeyCopy strong { font-size: 15px; }
+  .journeyCopy small { font-size: 10px; }
+}
