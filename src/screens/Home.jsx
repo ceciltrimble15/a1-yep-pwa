@@ -73,11 +73,11 @@ function LaneCard({ number, title, subtitle, status, onClick, icon: Icon, tone =
   );
 }
 
-function JourneyStep({ number, title, short, status, state = 'ready', onClick, icon: Icon, tone = 'Blue' }) {
+function JourneyStep({ number, title, short, status, state = 'ready', attention = false, onClick, icon: Icon, tone = 'Blue' }) {
   return (
     <button
       type="button"
-      className={`${styles.journeyStep} ${styles[`journey${tone}`]} ${styles[`journey${state}`]}`}
+      className={`${styles.journeyStep} ${styles[`journey${tone}`]} ${styles[`journey${state}`]} ${attention ? styles.journeyAttention : ''}`}
       onClick={onClick}
       aria-label={`${title}: ${status}`}
     >
@@ -168,6 +168,37 @@ export default function Home() {
             </div>
           </div>
 
+          {mode === 'explorer' && (
+            <div
+              className={`${styles.processVisual} ${styles.foundationVisual}`}
+              data-age-mode={mode}
+              aria-label="Foundation Discovery Zone visual: look, try, solve, reflect, and finish"
+            >
+              <div className={styles.processGlow} aria-hidden="true" />
+              <div className={`${styles.processNode} ${styles.nodeOne}`}>
+                <Sparkles size={18} aria-hidden="true" />
+                <span>LOOK + TRY</span>
+              </div>
+              <div className={`${styles.processNode} ${styles.nodeTwo}`}>
+                <Cpu size={18} aria-hidden="true" />
+                <span>SOLVE</span>
+              </div>
+              <div className={`${styles.processNode} ${styles.nodeThree}`}>
+                <Flag size={18} aria-hidden="true" />
+                <span>FINISH</span>
+              </div>
+              <div className={`${styles.processNode} ${styles.nodeFour}`}>
+                <ScanFace size={18} aria-hidden="true" />
+                <span>REFLECT</span>
+              </div>
+              <div className={styles.processCenter}>
+                <img src="/a1-suppliers-logo.png" alt="" />
+                <strong>YEP</strong>
+                <span>DISCOVERY ZONE</span>
+              </div>
+            </div>
+          )}
+
           <div className={styles.journeySteps}>
             <JourneyStep
               number="01"
@@ -175,6 +206,7 @@ export default function Home() {
               short={mode === 'explorer' ? 'Try one thing.' : 'Take one focused action.'}
               status={pilotProgress.dailyQuestComplete ? 'Complete' : 'Start'}
               state={pilotProgress.dailyQuestComplete ? 'done' : 'ready'}
+              attention={!pilotProgress.dailyQuestComplete}
               icon={Sparkles}
               tone="Blue"
               onClick={() => navigate('dailyQuest')}
@@ -185,6 +217,7 @@ export default function Home() {
               short={mode === 'explorer' ? 'Use a tool. Solve it.' : 'Use technology to solve.'}
               status={pilotProgress.stemSinComplete ? 'Complete' : 'Open'}
               state={pilotProgress.stemSinComplete ? 'done' : 'ready'}
+              attention={pilotProgress.dailyQuestComplete && !pilotProgress.stemSinComplete}
               icon={Cpu}
               tone="Electric"
               onClick={() => navigate('stemSin')}
@@ -195,6 +228,7 @@ export default function Home() {
               short={mode === 'explorer' ? 'See what happened.' : 'Reflect and learn.'}
               status={mirrorResult ? 'Ready' : 'Run Mirror'}
               state={mirrorResult ? 'done' : 'ready'}
+              attention={pilotProgress.dailyQuestComplete && pilotProgress.stemSinComplete && !mirrorResult}
               icon={ScanFace}
               tone="Silver"
               onClick={() => navigate(mirrorResult ? 'results' : 'mirrorIntro')}
@@ -205,6 +239,7 @@ export default function Home() {
               short={mode === 'explorer' ? 'Finish your mission.' : 'Turn reflection into action.'}
               status={mirrorResult ? 'Mission Ready' : 'After Mirror'}
               state={mirrorResult ? 'ready' : 'locked'}
+              attention={!!mirrorResult}
               icon={Flag}
               tone="Gold"
               onClick={() => navigate(mirrorResult ? 'mission' : 'mirrorIntro')}
