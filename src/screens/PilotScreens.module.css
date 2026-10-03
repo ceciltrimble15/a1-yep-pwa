@@ -1334,3 +1334,98 @@ button.card:hover {
   .journeyCopy strong { font-size: 15px; }
   .journeyCopy small { font-size: 10px; }
 }
+
+
+/* === FOUNDATION POC MOTION: lightweight, tablet-safe, no new app logic === */
+.foundationVisual {
+  margin: 4px 0 16px;
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.055), transparent 34%),
+    linear-gradient(145deg, rgba(42,78,175,.16), rgba(6,20,47,.18));
+}
+
+.journeyPanel[data-age-mode='explorer'] .processGlow {
+  animation: foundationOrbit 8s linear infinite;
+}
+
+.journeyPanel[data-age-mode='explorer'] .processCenter {
+  animation: foundationFloat 3.6s ease-in-out infinite;
+}
+
+.journeyPanel[data-age-mode='explorer'] .processNode {
+  animation: foundationNodeIn .42s ease-out both;
+}
+
+.journeyPanel[data-age-mode='explorer'] .nodeOne { animation-delay: .04s; }
+.journeyPanel[data-age-mode='explorer'] .nodeTwo { animation-delay: .10s; }
+.journeyPanel[data-age-mode='explorer'] .nodeThree { animation-delay: .16s; }
+.journeyPanel[data-age-mode='explorer'] .nodeFour { animation-delay: .22s; }
+
+.journeyPanel[data-age-mode='explorer'] .journeyAttention {
+  animation: foundationNext 2.2s ease-in-out infinite;
+  border-color: rgba(248,222,142,.68);
+}
+
+.journeyPanel[data-age-mode='explorer'] .journeydone .journeyIcon {
+  animation: foundationComplete .34s ease-out both;
+}
+
+@keyframes foundationOrbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes foundationFloat {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-7px) rotate(1deg); }
+}
+
+@keyframes foundationNodeIn {
+  from { opacity: 0; filter: blur(2px); }
+  to { opacity: 1; filter: blur(0); }
+}
+
+@keyframes foundationNext {
+  0%, 100% { box-shadow: 0 10px 24px rgba(0,0,0,.13), 0 0 0 0 rgba(248,222,142,.16); }
+  50% { box-shadow: 0 12px 28px rgba(0,0,0,.16), 0 0 0 5px rgba(248,222,142,.08); }
+}
+
+@keyframes foundationComplete {
+  0% { transform: scale(.82); }
+  70% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .journeyPanel[data-age-mode='explorer'] .processGlow,
+  .journeyPanel[data-age-mode='explorer'] .processCenter,
+  .journeyPanel[data-age-mode='explorer'] .processNode,
+  .journeyPanel[data-age-mode='explorer'] .journeyAttention,
+  .journeyPanel[data-age-mode='explorer'] .journeydone .journeyIcon {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .foundationVisual {
+    min-height: 270px;
+    margin-bottom: 12px;
+  }
+
+  .foundationVisual .processGlow {
+    width: 210px;
+    height: 210px;
+  }
+
+  .foundationVisual .processCenter {
+    width: 126px;
+    height: 126px;
+  }
+
+  .foundationVisual .processNode {
+    min-width: 104px;
+    min-height: 50px;
+    font-size: 9px;
+  }
+}
