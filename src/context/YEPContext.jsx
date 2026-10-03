@@ -251,7 +251,7 @@ export function YEPProvider({ children }) {
 
   const value = {
     screen, track, youthName, powerName, directionProfile, exposureLog, mirrorScores, mirrorResult, currentMission,
-    missionComplete, reflection, reflectionSubmitted, finisherLetter, xp, mode,
+    missionStepsDone, missionComplete, reflection, reflectionSubmitted, finisherLetter, xp, mode,
     pilotProgress, pilotBadges, demoYouth, activeYouth, selectTrack, saveDirectionProfile, saveExposureReaction, submitMirror,
     toggleMissionStep, completeMission, submitReflection, completeDailyQuest, toggleWeeklyActivity,
     completeStemSin, completeBossChallenge, saveMentorQuestion, navigate, setScreen,
