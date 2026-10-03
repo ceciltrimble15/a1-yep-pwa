@@ -15,6 +15,9 @@ import {
   Wrench,
   Presentation,
   BadgeDollarSign,
+  Cpu,
+  ScanFace,
+  Flag,
 } from 'lucide-react';
 import { useYEP } from '../context/YEPContext';
 import { MODES } from '../data/modes';
@@ -37,6 +40,37 @@ const PATHWAY_ICONS = {
   leader: Rocket,
   yaep: BriefcaseBusiness,
 };
+
+const PROCESS_LANES = [
+  {
+    n: '01',
+    title: 'Daily Quest',
+    short: 'Try. Build. Move.',
+    icon: Sparkles,
+    tone: 'blue',
+  },
+  {
+    n: '02',
+    title: 'S.T.E.M.Sin',
+    short: 'Technology + problem solving.',
+    icon: Cpu,
+    tone: 'electric',
+  },
+  {
+    n: '03',
+    title: 'Mirror Results',
+    short: 'See what your choices show.',
+    icon: ScanFace,
+    tone: 'silver',
+  },
+  {
+    n: '04',
+    title: 'FINISHER Mission',
+    short: 'Turn reflection into action.',
+    icon: Flag,
+    tone: 'gold',
+  },
+];
 
 const PATHWAY_VISUALS = {
   explorer: {
@@ -109,8 +143,26 @@ export default function TrackSelector() {
           </h1>
 
           <p className={styles.sub}>
-            Your process. Your direction. A/1 Suppliers supplies exposure, and YEP / Y.A.E.P. teaches you how to use the tools — technology, mentorship, money, ownership, skills, relationships, and real-world experience — to support your hustle and keep moving.
+            Your process. Your direction. See more possibilities, use real tools, reflect on what happens, and finish the mission in front of you.
           </p>
+
+          <div className={styles.heroProcessHeader}>
+            <span>YOUR FOUR-LANE PROCESS</span>
+            <strong>Start with action. Finish with a mission.</strong>
+          </div>
+
+          <div className={styles.heroProcessMap} aria-label="The four YEP process lanes">
+            {PROCESS_LANES.map(({ n, title, short, icon: Icon, tone }) => (
+              <div key={title} className={styles.heroLane + ' ' + styles['heroLane_' + tone]}>
+                <div className={styles.heroLaneTop}>
+                  <span>{n}</span>
+                  <Icon size={25} strokeWidth={2.35} aria-hidden="true" />
+                </div>
+                <strong>{title}</strong>
+                <small>{short}</small>
+              </div>
+            ))}
+          </div>
 
           <div className={styles.processStrip} aria-label="The Process lifelong learning loop">
             <span>EXPLORE</span><b>→</b><span>EXPERIENCE</span><b>→</b><span>LEARN</span><b>→</b><span>REFLECT</span><b>→</b><span>ADAPT</span><b>→</b><span>EXPLORE AGAIN</span>
