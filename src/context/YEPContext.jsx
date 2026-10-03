@@ -76,6 +76,7 @@ export function YEPProvider({ children }) {
   const [mirrorScores, setMirrorScores] = useState(saved.mirrorScores ?? null);
   const [mirrorResult, setMirrorResult] = useState(saved.mirrorResult ?? null);
   const [currentMission, setCurrentMission] = useState(saved.currentMission ?? null);
+  const [missionStepsDone, setMissionStepsDone] = useState(saved.missionStepsDone ?? {});
   const [missionComplete, setMissionComplete] = useState(saved.missionComplete ?? false);
   const [reflection, setReflection] = useState(saved.reflection ?? '');
   const [reflectionSubmitted, setReflectionSubmitted] = useState(saved.reflectionSubmitted ?? false);
@@ -93,13 +94,13 @@ export function YEPProvider({ children }) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         screen, track, youthName, powerName, directionProfile, exposureLog, mirrorScores, mirrorResult, currentMission,
-        missionComplete, reflection, reflectionSubmitted, finisherLetter, xp, mode, pilotProgress, laneProgress,
+        missionStepsDone, missionComplete, reflection, reflectionSubmitted, finisherLetter, xp, mode, pilotProgress, laneProgress,
       }));
     } catch {
       /* storage blocked/full */
     }
   }, [screen, track, youthName, powerName, directionProfile, exposureLog, mirrorScores, mirrorResult, currentMission,
-    missionComplete, reflection, reflectionSubmitted, finisherLetter, xp, mode, pilotProgress, laneProgress]);
+    missionStepsDone, missionComplete, reflection, reflectionSubmitted, finisherLetter, xp, mode, pilotProgress, laneProgress]);
 
   function selectTrack(trackObj, name, selectedPowerName) {
     setTrack(trackObj);
@@ -126,8 +127,15 @@ export function YEPProvider({ children }) {
     setMirrorScores(scores);
     setMirrorResult({ Anchor: anchor, Edge: edge, Style: style, Focus: mission ? mission.focus : '', MissionID: mission ? mission.id : null });
     setCurrentMission(mission);
+    setMissionStepsDone({});
+    setMissionComplete(false);
     if (mirrorScores === null) setXp((x) => x + XP.MIRROR);
     setScreen('results');
+  }
+
+  function toggleMissionStep(index) {
+    if (!Number.isInteger(index) || index < 0) return;
+    setMissionStepsDone((current) => ({ ...current, [index]: !current[index] }));
   }
 
   function completeMission() {
@@ -199,6 +207,7 @@ export function YEPProvider({ children }) {
     setMirrorScores(null);
     setMirrorResult(null);
     setCurrentMission(null);
+    setMissionStepsDone({});
     setMissionComplete(false);
     setReflection('');
     setReflectionSubmitted(false);
@@ -242,9 +251,9 @@ export function YEPProvider({ children }) {
 
   const value = {
     screen, track, youthName, powerName, directionProfile, exposureLog, mirrorScores, mirrorResult, currentMission,
-    missionComplete, reflection, reflectionSubmitted, finisherLetter, xp, mode,
+    missionStepsDone, missionComplete, reflection, reflectionSubmitted, finisherLetter, xp, mode,
     pilotProgress, pilotBadges, demoYouth, activeYouth, selectTrack, saveDirectionProfile, saveExposureReaction, submitMirror,
-    completeMission, submitReflection, completeDailyQuest, toggleWeeklyActivity,
+    toggleMissionStep, completeMission, submitReflection, completeDailyQuest, toggleWeeklyActivity,
     completeStemSin, completeBossChallenge, saveMentorQuestion, navigate, setScreen,
     setMode, resetSession,
   };

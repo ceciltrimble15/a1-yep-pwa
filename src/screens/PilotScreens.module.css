@@ -1124,3 +1124,768 @@ button.card:hover {
     min-height: 190px;
   }
 }
+
+
+/* === VISUAL-FIRST FOUR-LANE JOURNEY PANEL === */
+.journeyPanel {
+  position: relative;
+  overflow: hidden;
+  min-height: 360px;
+  padding: 18px;
+  border-radius: 28px;
+  border: 1px solid rgba(212,218,230,.18);
+  background:
+    radial-gradient(circle at 88% 12%, rgba(212,160,23,.14), transparent 24%),
+    radial-gradient(circle at 10% 90%, rgba(42,78,175,.24), transparent 28%),
+    linear-gradient(160deg, rgba(14,32,63,.98), rgba(6,20,47,.98));
+  box-shadow: var(--card-shadow);
+}
+
+.journeyPanelTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.journeyPanelTop strong {
+  display: block;
+  margin-top: 4px;
+  color: var(--white);
+  font-size: 22px;
+  line-height: 1.05;
+}
+
+.journeyEyebrow {
+  color: var(--gold-soft);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .17em;
+}
+
+.journeyProgram {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 94px;
+  justify-content: center;
+  padding: 8px 10px;
+  border: 1px solid rgba(212,160,23,.34);
+  border-radius: 14px;
+  background: rgba(255,255,255,.045);
+}
+
+.journeyProgram img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  padding: 3px;
+  border-radius: 8px;
+  background: var(--white);
+}
+
+.journeyProgram span {
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: .06em;
+}
+
+.journeySteps {
+  display: grid;
+  gap: 10px;
+}
+
+.journeyStep {
+  position: relative;
+  display: grid;
+  grid-template-columns: 34px 48px 1fr auto;
+  gap: 11px;
+  align-items: center;
+  width: 100%;
+  min-height: 72px;
+  padding: 10px 12px;
+  text-align: left;
+  border-radius: 18px;
+  border: 1px solid rgba(212,218,230,.16);
+  box-shadow: 0 10px 24px rgba(0,0,0,.13);
+  transition: transform .14s ease, border-color .14s ease, opacity .14s ease;
+}
+
+.journeyStep:active { transform: scale(.992); }
+
+.journeyNumber {
+  color: rgba(255,255,255,.7);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .13em;
+}
+
+.journeyIcon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.10);
+}
+
+.journeyCopy {
+  min-width: 0;
+}
+
+.journeyCopy strong,
+.journeyCopy small {
+  display: block;
+}
+
+.journeyCopy strong {
+  color: var(--white);
+  font-size: 17px;
+  line-height: 1.05;
+}
+
+.journeyCopy small {
+  margin-top: 4px;
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.25;
+}
+
+.journeyStatus {
+  min-width: 74px;
+  text-align: right;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: currentColor;
+}
+
+.journeyBlue {
+  color: #9CB5F3;
+  background: linear-gradient(135deg, #1A3A8F, #102A5A);
+}
+.journeyElectric {
+  color: #C3D1FF;
+  background: linear-gradient(135deg, #2A4EAF, #173668);
+}
+.journeySilver {
+  color: #E0E6F0;
+  background: linear-gradient(135deg, #314562, #182A46);
+}
+.journeyGold {
+  color: var(--gold-soft);
+  background: linear-gradient(135deg, #5B4516, #1A2030);
+  border-color: rgba(212,160,23,.42);
+}
+
+.journeydone {
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.07), 0 10px 24px rgba(0,0,0,.13);
+}
+
+.journeylocked {
+  opacity: .58;
+}
+
+.journeyFlow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(212,218,230,.11);
+  color: var(--silver);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+
+.journeyFlow b { color: var(--gold-soft); }
+
+@media (max-width: 1080px) {
+  .journeyPanel { min-height: 0; }
+}
+
+@media (max-width: 560px) {
+  .journeyPanel { padding: 14px; border-radius: 22px; }
+  .journeyPanelTop { align-items: flex-start; }
+  .journeyPanelTop strong { font-size: 19px; }
+  .journeyProgram { min-width: 82px; }
+  .journeyStep {
+    grid-template-columns: 28px 42px 1fr;
+    min-height: 78px;
+  }
+  .journeyIcon { width: 40px; height: 40px; }
+  .journeyStatus {
+    grid-column: 3;
+    text-align: left;
+    margin-top: -3px;
+  }
+  .journeyFlow { gap: 5px; font-size: 8px; letter-spacing: .09em; }
+}
+
+@media (max-width: 390px) {
+  .journeyProgram img { display: none; }
+  .journeyPanelTop strong { font-size: 17px; }
+  .journeyCopy strong { font-size: 15px; }
+  .journeyCopy small { font-size: 10px; }
+}
+
+
+/* === FOUNDATION POC MOTION: lightweight, tablet-safe, no new app logic === */
+.foundationVisual {
+  margin: 4px 0 16px;
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.055), transparent 34%),
+    linear-gradient(145deg, rgba(42,78,175,.16), rgba(6,20,47,.18));
+}
+
+.journeyPanel[data-age-mode='explorer'] .processGlow {
+  animation: foundationOrbit 8s linear infinite;
+}
+
+.journeyPanel[data-age-mode='explorer'] .processCenter {
+  animation: foundationFloat 3.6s ease-in-out infinite;
+}
+
+.journeyPanel[data-age-mode='explorer'] .processNode {
+  animation: foundationNodeIn .42s ease-out both;
+}
+
+.journeyPanel[data-age-mode='explorer'] .nodeOne { animation-delay: .04s; }
+.journeyPanel[data-age-mode='explorer'] .nodeTwo { animation-delay: .10s; }
+.journeyPanel[data-age-mode='explorer'] .nodeThree { animation-delay: .16s; }
+.journeyPanel[data-age-mode='explorer'] .nodeFour { animation-delay: .22s; }
+
+.journeyPanel[data-age-mode='explorer'] .journeyAttention {
+  animation: foundationNext 2.2s ease-in-out infinite;
+  border-color: rgba(248,222,142,.68);
+}
+
+.journeyPanel[data-age-mode='explorer'] .journeydone .journeyIcon {
+  animation: foundationComplete .34s ease-out both;
+}
+
+@keyframes foundationOrbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes foundationFloat {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-7px) rotate(1deg); }
+}
+
+@keyframes foundationNodeIn {
+  from { opacity: 0; filter: blur(2px); }
+  to { opacity: 1; filter: blur(0); }
+}
+
+@keyframes foundationNext {
+  0%, 100% { box-shadow: 0 10px 24px rgba(0,0,0,.13), 0 0 0 0 rgba(248,222,142,.16); }
+  50% { box-shadow: 0 12px 28px rgba(0,0,0,.16), 0 0 0 5px rgba(248,222,142,.08); }
+}
+
+@keyframes foundationComplete {
+  0% { transform: scale(.82); }
+  70% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .journeyPanel[data-age-mode='explorer'] .processGlow,
+  .journeyPanel[data-age-mode='explorer'] .processCenter,
+  .journeyPanel[data-age-mode='explorer'] .processNode,
+  .journeyPanel[data-age-mode='explorer'] .journeyAttention,
+  .journeyPanel[data-age-mode='explorer'] .journeydone .journeyIcon {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .foundationVisual {
+    min-height: 270px;
+    margin-bottom: 12px;
+  }
+
+  .foundationVisual .processGlow {
+    width: 210px;
+    height: 210px;
+  }
+
+  .foundationVisual .processCenter {
+    width: 126px;
+    height: 126px;
+  }
+
+  .foundationVisual .processNode {
+    min-width: 104px;
+    min-height: 50px;
+    font-size: 9px;
+  }
+}
+
+
+/* === DAILY QUEST VISUAL TABLET WORKBENCH === */
+.dailyQuestStage {
+  display: grid;
+  gap: 18px;
+}
+
+.dailyQuestMasthead {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(280px, .7fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.dailyQuestTitleBlock,
+.questFlowCard,
+.dailyQuestPromptCard,
+.dailyQuestStep,
+.dailyQuestWorkbook {
+  border: 1px solid rgba(212,218,230,.16);
+  box-shadow: 0 16px 34px rgba(0,0,0,.18);
+}
+
+.dailyQuestTitleBlock {
+  position: relative;
+  overflow: hidden;
+  padding: 24px;
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at 85% 15%, rgba(212,160,23,.13), transparent 24%),
+    radial-gradient(circle at 10% 90%, rgba(42,78,175,.28), transparent 28%),
+    linear-gradient(145deg, #102C66, #07172F);
+}
+
+.dailyQuestBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(212,160,23,.12);
+  border: 1px solid rgba(212,160,23,.35);
+  color: var(--gold-soft);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.dailyQuestTitleBlock h1 {
+  margin: 16px 0 10px;
+  max-width: 800px;
+  color: var(--white);
+  font-size: clamp(38px, 5vw, 62px);
+  line-height: .95;
+  letter-spacing: -.03em;
+}
+
+.dailyQuestTitleBlock > p {
+  margin: 0;
+  max-width: 780px;
+  color: var(--silver-light);
+  font-size: clamp(16px, 1.8vw, 19px);
+  line-height: 1.5;
+}
+
+.dailyQuestPathway {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.dailyQuestPathway span,
+.dailyQuestPathway b,
+.dailyQuestPathway small {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.dailyQuestPathway span {
+  background: var(--blue);
+  color: var(--white);
+}
+
+.dailyQuestPathway b {
+  border: 1px solid rgba(212,218,230,.16);
+  background: rgba(255,255,255,.05);
+  color: var(--white);
+}
+
+.dailyQuestPathway small {
+  color: var(--silver-light);
+  border: 1px solid rgba(212,218,230,.14);
+}
+
+.questFlowCard {
+  padding: 22px;
+  border-radius: 26px;
+  background:
+    linear-gradient(145deg, rgba(18,43,85,.96), rgba(6,20,47,.98));
+}
+
+.questFlowLabel {
+  color: var(--gold-soft);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .15em;
+}
+
+.questFlowNodes {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: calc(100% - 24px);
+}
+
+.questFlowNodes i {
+  width: 38px;
+  height: 2px;
+  background: rgba(212,218,230,.24);
+}
+
+.questFlowNode {
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  min-width: 64px;
+}
+
+.questFlowNode span {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 2px solid rgba(212,218,230,.26);
+  background: rgba(255,255,255,.04);
+  color: var(--silver);
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.questFlowNode strong {
+  color: var(--silver);
+  font-size: 9px;
+  letter-spacing: .12em;
+}
+
+.questFlowNode[data-state='active'] span,
+.questFlowNode[data-state='done'] span {
+  border-color: var(--gold);
+  background: var(--gold);
+  color: var(--navy);
+  box-shadow: 0 0 0 5px rgba(212,160,23,.1);
+}
+
+.questFlowNode[data-state='active'] strong,
+.questFlowNode[data-state='done'] strong {
+  color: var(--gold-soft);
+}
+
+.dailyQuestPromptCard {
+  display: grid;
+  grid-template-columns: auto minmax(0,1fr) minmax(180px, .45fr);
+  gap: 18px;
+  align-items: center;
+  padding: 20px;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 90% 10%, rgba(42,78,175,.23), transparent 25%),
+    linear-gradient(145deg, #123163, #081B3D);
+}
+
+.dailyQuestPromptIcon {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  border-radius: 20px;
+  background: var(--gold);
+  color: var(--navy);
+  box-shadow: 0 12px 28px rgba(0,0,0,.18);
+}
+
+.dailyQuestPromptCopy > span,
+.dailyQuestFocus span {
+  color: var(--gold-soft);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .14em;
+}
+
+.dailyQuestPromptCopy h2 {
+  margin: 4px 0 6px;
+  color: var(--white);
+  font-size: clamp(25px, 3vw, 38px);
+  line-height: 1;
+}
+
+.dailyQuestPromptCopy p {
+  margin: 0;
+  color: var(--silver-light);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.dailyQuestFocus {
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(212,160,23,.34);
+  background: rgba(212,160,23,.08);
+}
+
+.dailyQuestFocus strong {
+  display: block;
+  margin-top: 6px;
+  color: var(--white);
+  font-size: 16px;
+  line-height: 1.25;
+}
+
+.dailyQuestWorkbench {
+  display: grid;
+  grid-template-columns: .9fr 1.15fr .95fr;
+  gap: 14px;
+}
+
+.dailyQuestStep {
+  min-width: 0;
+  padding: 18px;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(42,78,175,.12), transparent 36%),
+    linear-gradient(145deg, rgba(18,43,85,.88), rgba(14,32,63,.98));
+}
+
+.dailyQuestStepHead {
+  display: grid;
+  grid-template-columns: 38px 28px 1fr;
+  gap: 10px;
+  align-items: center;
+  color: var(--electric-soft);
+}
+
+.dailyQuestStepNumber {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--electric);
+  color: var(--white);
+  font-weight: 900;
+}
+
+.dailyQuestStepHead strong,
+.dailyQuestStepHead small {
+  display: block;
+}
+
+.dailyQuestStepHead strong {
+  color: var(--white);
+  font-size: 18px;
+  line-height: 1.05;
+}
+
+.dailyQuestStepHead small {
+  margin-top: 3px;
+  color: var(--silver);
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.dailyQuestStep > p {
+  margin: 16px 0 0;
+  color: var(--silver-light);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.dailyQuestExample {
+  margin-top: 16px;
+  padding: 13px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.045);
+  border: 1px solid rgba(212,218,230,.13);
+}
+
+.dailyQuestExample span {
+  display: block;
+  color: var(--gold-soft);
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: .14em;
+}
+
+.dailyQuestExample strong {
+  display: block;
+  margin-top: 5px;
+  color: var(--white);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.dailyQuestTextarea {
+  width: 100%;
+  min-height: 200px;
+  margin-top: 16px;
+  padding: 16px;
+  resize: vertical;
+  border: 1px solid rgba(212,218,230,.18);
+  border-radius: 16px;
+  background: rgba(255,255,255,.06);
+  color: var(--white);
+  font-size: 15px;
+  line-height: 1.5;
+  outline: none;
+}
+
+.dailyQuestTextarea:focus {
+  border-color: var(--electric-soft);
+  box-shadow: 0 0 0 3px rgba(42,78,175,.16);
+}
+
+.dailyQuestTextarea::placeholder {
+  color: var(--silver);
+}
+
+.dailyQuestFinish {
+  border-color: rgba(212,160,23,.28);
+  background:
+    radial-gradient(circle at 95% 0%, rgba(212,160,23,.12), transparent 30%),
+    linear-gradient(145deg, #24304D, #151D2D);
+}
+
+.dailyQuestSubmit {
+  width: 100%;
+  min-height: 58px;
+  margin-top: 18px;
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--gold);
+  color: var(--navy);
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 12px 28px rgba(212,160,23,.18);
+}
+
+.dailyQuestSubmit:disabled {
+  opacity: .38;
+  cursor: not-allowed;
+}
+
+.dailyQuestSaveState {
+  display: block;
+  margin-top: 10px;
+  color: var(--silver);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.dailyQuestWorkbook {
+  display: flex;
+  gap: 11px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.035);
+}
+
+.dailyQuestWorkbook svg {
+  color: var(--gold-soft);
+  flex: 0 0 auto;
+}
+
+.dailyQuestWorkbook strong,
+.dailyQuestWorkbook span {
+  display: block;
+}
+
+.dailyQuestWorkbook strong {
+  color: var(--white);
+  font-size: 12px;
+}
+
+.dailyQuestWorkbook span {
+  margin-top: 3px;
+  color: var(--silver);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+@media (max-width: 1050px) {
+  .dailyQuestMasthead {
+    grid-template-columns: 1fr;
+  }
+
+  .questFlowNodes {
+    min-height: 120px;
+  }
+
+  .dailyQuestWorkbench {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .dailyQuestFinish {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 680px) {
+  .dailyQuestTitleBlock,
+  .questFlowCard,
+  .dailyQuestPromptCard,
+  .dailyQuestStep {
+    border-radius: 18px;
+  }
+
+  .dailyQuestPromptCard {
+    grid-template-columns: auto 1fr;
+  }
+
+  .dailyQuestFocus {
+    grid-column: 1 / -1;
+  }
+
+  .dailyQuestWorkbench {
+    grid-template-columns: 1fr;
+  }
+
+  .dailyQuestFinish {
+    grid-column: auto;
+  }
+
+  .dailyQuestTitleBlock h1 {
+    font-size: 38px;
+  }
+
+  .questFlowNodes i {
+    width: 18px;
+  }
+
+  .questFlowNode span {
+    width: 44px;
+    height: 44px;
+  }
+}

@@ -5,10 +5,12 @@ on:
     branches:
       - codex/yep-v1-tablet-pilot-2026-09-03
       - weekend-tablet-readiness-2026-09-25
+      - codex/poc-tablet-finish-2026-10-02
   pull_request:
     branches:
       - main
       - pilot-v05-lane-visuals-2026-09-14
+      - weekend-tablet-readiness-2026-09-25
 
 jobs:
   build:

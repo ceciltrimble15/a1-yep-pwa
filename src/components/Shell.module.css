@@ -204,3 +204,248 @@
   .motto { font-size: 7.5px; letter-spacing: 0.06em; }
   .founder { font-size: 7px; }
 }
+
+
+/* === TABLET LANE RAIL INSPIRED BY APPROVED MOCKUP === */
+.appFrame {
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+  width: min(100%, 1600px);
+  margin: 0 auto;
+}
+
+.tabletRail {
+  position: sticky;
+  top: 88px;
+  align-self: start;
+  min-height: calc(100dvh - 88px);
+  padding: 18px 16px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(42,78,175,.22), transparent 26%),
+    linear-gradient(180deg, #0A2A5B 0%, #07172F 100%);
+  border-right: 1px solid rgba(212,218,230,.14);
+  box-shadow: 16px 0 40px rgba(0,0,0,.12);
+}
+
+.railBrand {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 11px;
+  align-items: center;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(212,218,230,.14);
+}
+
+.railBrand img {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  padding: 5px;
+  border-radius: 14px;
+  background: var(--white);
+  border: 1px solid rgba(212,160,23,.55);
+}
+
+.railBrand strong,
+.railBrand span,
+.railBrand small {
+  display: block;
+}
+
+.railBrand strong {
+  color: var(--white);
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.railBrand span {
+  margin-top: 2px;
+  color: var(--gold-soft);
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.railBrand small {
+  margin-top: 4px;
+  color: var(--silver);
+  font-size: 9px;
+  line-height: 1.25;
+}
+
+.railNav {
+  display: grid;
+  gap: 9px;
+  margin-top: 18px;
+}
+
+.railButton,
+.railButtonActive {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 10px;
+  align-items: center;
+  min-height: 54px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  color: var(--silver-light);
+  background: transparent;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.railButton:hover {
+  background: rgba(255,255,255,.045);
+  border-color: rgba(212,218,230,.12);
+}
+
+.railButton svg {
+  color: #6DD7FF;
+}
+
+.railButtonActive {
+  color: var(--white);
+  background:
+    radial-gradient(circle at 0% 50%, rgba(0,229,255,.14), transparent 34%),
+    linear-gradient(135deg, #1C77F0, #0B4EBA);
+  border-color: rgba(122,224,255,.48);
+  box-shadow: 0 0 0 1px rgba(122,224,255,.16), 0 12px 28px rgba(0,0,0,.20);
+}
+
+.railButtonActive svg {
+  color: var(--white);
+}
+
+.railPath {
+  margin-top: 22px;
+  padding: 14px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(212,160,23,.28);
+  background: rgba(212,160,23,.07);
+}
+
+.railPath span,
+.railPath strong,
+.railPath small {
+  display: block;
+}
+
+.railPath span {
+  color: var(--gold-soft);
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: .14em;
+}
+
+.railPath strong {
+  margin-top: 5px;
+  color: var(--white);
+  font-size: 16px;
+}
+
+.railPath small {
+  margin-top: 3px;
+  color: var(--silver);
+  font-size: 10px;
+}
+
+.railClose {
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(212,218,230,.14);
+}
+
+.railClose strong,
+.railClose span {
+  display: block;
+}
+
+.railClose strong {
+  color: var(--white);
+  font-size: 13px;
+}
+
+.railClose span {
+  margin-top: 5px;
+  color: var(--gold-soft);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.mainColumn {
+  min-width: 0;
+}
+
+.mainColumn > [data-audio-skip="true"] .bar {
+  width: min(calc(100% - 36px), 1360px);
+}
+
+@media (max-width: 1050px) {
+  .appFrame {
+    grid-template-columns: 210px minmax(0, 1fr);
+  }
+
+  .tabletRail {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .railBrand {
+    grid-template-columns: 44px 1fr;
+  }
+
+  .railBrand img {
+    width: 44px;
+    height: 44px;
+  }
+
+  .railBrand strong { font-size: 13px; }
+  .railBrand span { font-size: 19px; }
+  .railButton,
+  .railButtonActive {
+    font-size: 12px;
+    grid-template-columns: 24px 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .appFrame {
+    display: block;
+  }
+
+  .tabletRail {
+    position: static;
+    min-height: 0;
+    padding: 10px 14px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(212,218,230,.14);
+  }
+
+  .railBrand,
+  .railPath,
+  .railClose {
+    display: none;
+  }
+
+  .railNav {
+    grid-template-columns: repeat(4, minmax(0,1fr));
+    gap: 7px;
+    margin: 0;
+  }
+
+  .railButton,
+  .railButtonActive {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 5px;
+    min-height: 58px;
+    padding: 8px 5px;
+    text-align: center;
+    font-size: 9px;
+    line-height: 1.15;
+  }
+}

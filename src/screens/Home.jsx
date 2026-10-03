@@ -73,6 +73,25 @@ function LaneCard({ number, title, subtitle, status, onClick, icon: Icon, tone =
   );
 }
 
+function JourneyStep({ number, title, short, status, state = 'ready', attention = false, onClick, icon: Icon, tone = 'Blue' }) {
+  return (
+    <button
+      type="button"
+      className={`${styles.journeyStep} ${styles[`journey${tone}`]} ${styles[`journey${state}`]} ${attention ? styles.journeyAttention : ''}`}
+      onClick={onClick}
+      aria-label={`${title}: ${status}`}
+    >
+      <span className={styles.journeyNumber}>{number}</span>
+      <span className={styles.journeyIcon} aria-hidden="true"><Icon size={24} strokeWidth={2.25} /></span>
+      <span className={styles.journeyCopy}>
+        <strong>{title}</strong>
+        <small>{short}</small>
+      </span>
+      <span className={styles.journeyStatus}>{status}</span>
+    </button>
+  );
+}
+
 export default function Home() {
   const {
     powerName,
@@ -137,30 +156,100 @@ export default function Home() {
           </button>
         </div>
 
-        <div className={styles.processVisual} aria-label="YEP process visual" data-age-mode={mode}>
-          <div className={styles.processGlow} />
-          <div className={styles.processCenter}>
-            <img src="/a1-suppliers-logo.png" alt="" />
-            <strong>{program.program}</strong>
-            <span>{program.tier}</span>
+        <aside className={styles.journeyPanel} aria-label={`${program.program} four-lane journey`} data-age-mode={mode}>
+          <div className={styles.journeyPanelTop}>
+            <div>
+              <span className={styles.journeyEyebrow}>YOUR {program.program} JOURNEY</span>
+              <strong>Four lanes. One process.</strong>
+            </div>
+            <div className={styles.journeyProgram} aria-label={`${program.program} ${program.tier}`}>
+              <img src="/a1-suppliers-logo.png" alt="" />
+              <span>{program.program}</span>
+            </div>
           </div>
-          <div className={`${styles.processNode} ${styles.nodeOne}`}>
-            <Sparkles size={17} />
-            <span>QUEST</span>
+
+          {mode === 'explorer' && (
+            <div
+              className={`${styles.processVisual} ${styles.foundationVisual}`}
+              data-age-mode={mode}
+              aria-label="Foundation Discovery Zone visual: look, try, solve, reflect, and finish"
+            >
+              <div className={styles.processGlow} aria-hidden="true" />
+              <div className={`${styles.processNode} ${styles.nodeOne}`}>
+                <Sparkles size={18} aria-hidden="true" />
+                <span>LOOK + TRY</span>
+              </div>
+              <div className={`${styles.processNode} ${styles.nodeTwo}`}>
+                <Cpu size={18} aria-hidden="true" />
+                <span>SOLVE</span>
+              </div>
+              <div className={`${styles.processNode} ${styles.nodeThree}`}>
+                <Flag size={18} aria-hidden="true" />
+                <span>FINISH</span>
+              </div>
+              <div className={`${styles.processNode} ${styles.nodeFour}`}>
+                <ScanFace size={18} aria-hidden="true" />
+                <span>REFLECT</span>
+              </div>
+              <div className={styles.processCenter}>
+                <img src="/a1-suppliers-logo.png" alt="" />
+                <strong>YEP</strong>
+                <span>DISCOVERY ZONE</span>
+              </div>
+            </div>
+          )}
+
+          <div className={styles.journeySteps}>
+            <JourneyStep
+              number="01"
+              title="Daily Quest"
+              short={mode === 'explorer' ? 'Try one thing.' : 'Take one focused action.'}
+              status={pilotProgress.dailyQuestComplete ? 'Complete' : 'Start'}
+              state={pilotProgress.dailyQuestComplete ? 'done' : 'ready'}
+              attention={!pilotProgress.dailyQuestComplete}
+              icon={Sparkles}
+              tone="Blue"
+              onClick={() => navigate('dailyQuest')}
+            />
+            <JourneyStep
+              number="02"
+              title="S.T.E.M.Sin"
+              short={mode === 'explorer' ? 'Use a tool. Solve it.' : 'Use technology to solve.'}
+              status={pilotProgress.stemSinComplete ? 'Complete' : 'Open'}
+              state={pilotProgress.stemSinComplete ? 'done' : 'ready'}
+              attention={pilotProgress.dailyQuestComplete && !pilotProgress.stemSinComplete}
+              icon={Cpu}
+              tone="Electric"
+              onClick={() => navigate('stemSin')}
+            />
+            <JourneyStep
+              number="03"
+              title="Mirror Results"
+              short={mode === 'explorer' ? 'See what happened.' : 'Reflect and learn.'}
+              status={mirrorResult ? 'Ready' : 'Run Mirror'}
+              state={mirrorResult ? 'done' : 'ready'}
+              attention={pilotProgress.dailyQuestComplete && pilotProgress.stemSinComplete && !mirrorResult}
+              icon={ScanFace}
+              tone="Silver"
+              onClick={() => navigate(mirrorResult ? 'results' : 'mirrorIntro')}
+            />
+            <JourneyStep
+              number="04"
+              title="FINISHER Mission"
+              short={mode === 'explorer' ? 'Finish your mission.' : 'Turn reflection into action.'}
+              status={mirrorResult ? 'Mission Ready' : 'After Mirror'}
+              state={mirrorResult ? 'ready' : 'locked'}
+              attention={!!mirrorResult}
+              icon={Flag}
+              tone="Gold"
+              onClick={() => navigate(mirrorResult ? 'mission' : 'mirrorIntro')}
+            />
           </div>
-          <div className={`${styles.processNode} ${styles.nodeTwo}`}>
-            <Cpu size={17} />
-            <span>S.T.E.M.Sin</span>
+
+          <div className={styles.journeyFlow} aria-hidden="true">
+            <span>TRY</span><b>→</b><span>SOLVE</span><b>→</b><span>REFLECT</span><b>→</b><span>FINISH</span>
           </div>
-          <div className={`${styles.processNode} ${styles.nodeThree}`}>
-            <ScanFace size={17} />
-            <span>MIRROR</span>
-          </div>
-          <div className={`${styles.processNode} ${styles.nodeFour}`}>
-            <Flag size={17} />
-            <span>FINISHER</span>
-          </div>
-        </div>
+        </aside>
       </section>
 
       <section className={styles.laneSection} data-age-mode={mode}>
