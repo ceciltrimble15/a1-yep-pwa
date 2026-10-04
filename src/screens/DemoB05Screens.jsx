@@ -1,5 +1,5 @@
 import { useYEP } from '../context/YEPContext';
-import { getProgramContent, PILOT_BADGES } from '../data/pilotContent';
+import { getProgramContent } from '../data/pilotContent';
 import { MODES } from '../data/modes';
 import Shell from '../components/Shell';
 import styles from './PilotScreens.module.css';
@@ -85,13 +85,11 @@ export function DemoProfile() {
   const {
     powerName,
     track,
-    xp,
     mirrorResult,
     currentMission,
     missionComplete,
     reflectionSubmitted,
     finisherLetter,
-    pilotBadges,
     pilotProgress,
     directionProfile,
     mode,
@@ -125,8 +123,6 @@ export function DemoProfile() {
         <StatusCard label="Boss Challenge" value={pilotProgress.bossComplete ? 'Complete' : 'Open'} />
         <StatusCard label="Mentor Question" value={pilotProgress.mentorQuestion ? 'Saved' : 'Open'} />
         <StatusCard label="Reflection" value={reflectionSubmitted ? 'Submitted' : 'Open'} />
-        <StatusCard label="Mirror XP" value={xp} />
-        <StatusCard label="Proof Badges" value={`${pilotBadges.length} / ${PILOT_BADGES.length}`} />
       </div>
       <div className={styles.note}>My Process answers one question: <strong>Where am I in my Process?</strong></div>
       <div className={styles.actions}><BackHome /></div>
@@ -138,7 +134,6 @@ export function DemoAdminReview() {
   const {
     activeYouth,
     pilotProgress,
-    pilotBadges,
     currentMission,
     missionComplete,
     reflectionSubmitted,
@@ -166,7 +161,6 @@ export function DemoAdminReview() {
         <StatusCard label="My Direction" value={directionProfile?.interest || 'Not explored yet'} />
         <StatusCard label="Direction Reason" value={directionProfile?.why || 'Not recorded yet'} />
         <StatusCard label="Week 1" value={weeklyComplete ? 'Complete' : `${pilotProgress.weeklyCompleted.length}/${weeklyModule.activities.length} complete`} />
-        <StatusCard label="Badges" value={`${pilotBadges.length} / ${PILOT_BADGES.length}`} />
         <StatusCard label="Mirror Anchor" value={mirrorResult?.Anchor || 'Not completed'} />
         <StatusCard label="Growth Edge" value={mirrorResult?.Edge || 'Not completed'} />
         <StatusCard label="Learning Style" value={mirrorResult?.Style || 'Not completed'} />
@@ -204,7 +198,7 @@ export function ResetDemo() {
         sub="This is the destructive reset for the current local tablet demo record."
       />
       <div className={styles.note}>
-        <strong>This will permanently clear the participant's locally saved demo progress from this tablet</strong>, including identity, My Direction, four-lane activity progress, Mirror/FINISHER progress, badges, responses, reflection, and XP. This cannot be undone.
+        <strong>This will permanently clear the participant's locally saved demo progress from this tablet</strong>, including identity, My Direction, four-lane activity progress, Mirror/FINISHER progress, responses, and reflection. This cannot be undone.
       </div>
       <div className={styles.note}>The app stays installed. The tablet returns to the clean pathway/start screen for the next tester.</div>
       <div className={styles.actions}>
