@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Sparkles, Lightbulb, Target, BriefcaseBusiness, Eye, PenLine, CheckCircle2, Flag, BookOpenCheck, FlaskConical, ScanFace } from 'lucide-react';
+import { Sparkles, Lightbulb, Target, BriefcaseBusiness, Eye, PenLine, CheckCircle2, Flag, BookOpenCheck, FlaskConical, ScanFace, PackageOpen, Trash2, UsersRound, Clock3, Smartphone, MessageCircle, Store, Wrench } from 'lucide-react';
 import { getProgramContent } from '../data/pilotContent';
 import { MODES } from '../data/modes';
 import { useYEP } from '../context/YEPContext';
@@ -19,32 +19,128 @@ const QUEST_LABELS = {
   explorer: {
     kicker: "Today's Quest",
     title: 'Look Around You',
-    helper: 'Big ideas can start with one small problem. Notice it, think about who it affects, and tell us one way you could help.',
+    helper: 'Look around. Real ideas start with real problems. Spot one, think about who it affects, and tell us one way you could help.',
     placeholder: 'I see a problem with… I could help by…',
     action: 'Finish My Quest',
   },
   builder: {
     kicker: 'Daily Challenge',
     title: 'Spot It. Think It Through. Try Something.',
-    helper: 'Find a real problem, name who has it, and choose one change you could test.',
+    helper: 'Don’t guess. Spot a real problem, name who deals with it, and choose one small move you could test.',
     placeholder: 'The problem is… It affects… One thing I could test is…',
     action: 'Complete Daily Quest',
   },
   leader: {
     kicker: 'Daily Quest',
     title: 'Find the Need Behind the Problem',
-    helper: 'Use evidence, not guesses. Define who experiences the problem and one assumption you need to test.',
+    helper: 'Look for the need behind the problem. Who feels it, what do you know, and what still needs to be tested?',
     placeholder: 'The need is… My evidence is… I still need to test…',
     action: 'Complete Daily Quest',
   },
   yaep: {
     kicker: 'Opportunity Scan',
     title: 'Identify Value Worth Testing',
-    helper: 'Define the user, the current workaround, evidence of demand, and the value you could test.',
+    helper: 'Find a real need. Who has it, how are they handling it now, and what value could you test?',
     placeholder: 'The opportunity is… The user is… The current workaround is…',
     action: 'Complete Opportunity Quest',
   },
 };
+
+const VISUAL_SCENARIOS = {
+  explorer: {
+    eyebrow: 'LOOK AT THE SCENE',
+    title: 'What do you notice?',
+    lead: 'You do not need the perfect answer. Start by seeing what is right in front of you.',
+    items: [
+      { icon: PackageOpen, label: 'Supplies everywhere', detail: 'Things are hard to find.' },
+      { icon: Trash2, label: 'Trash is piling up', detail: 'The space gets harder to use.' },
+      { icon: UsersRound, label: 'Someone needs help', detail: 'A person is stuck or waiting.' },
+    ],
+    footer: 'Pick one thing you notice. Who does it affect? What could make it better?',
+  },
+  builder: {
+    eyebrow: 'SEE THE PROBLEM',
+    title: 'What is slowing people down?',
+    lead: 'Look for something that creates confusion, wasted time, or extra work.',
+    items: [
+      { icon: Clock3, label: 'Too much waiting', detail: 'People lose time.' },
+      { icon: PackageOpen, label: 'Hard to find things', detail: 'The system is not clear.' },
+      { icon: UsersRound, label: 'People keep asking', detail: 'A process may be missing.' },
+    ],
+    footer: 'Name the user, the problem, and one small change worth testing.',
+  },
+  leader: {
+    eyebrow: 'SEE THE NEED',
+    title: 'What is the evidence telling you?',
+    lead: 'Separate what you know from what you are assuming before you build a solution.',
+    items: [
+      { icon: MessageCircle, label: 'Repeated complaints', detail: 'People keep naming the same issue.' },
+      { icon: Clock3, label: 'Time keeps getting lost', detail: 'The current process has friction.' },
+      { icon: Wrench, label: 'Workarounds everywhere', detail: 'People are fixing the same gap by hand.' },
+    ],
+    footer: 'What evidence do you have, and what still needs to be tested?',
+  },
+  yaep: {
+    eyebrow: 'SEE THE OPPORTUNITY',
+    title: 'Where is value being missed?',
+    lead: 'Find the gap between what people need and how they are handling it right now.',
+    items: [
+      { icon: Store, label: 'Customer need', detail: 'A task is not being handled well.' },
+      { icon: Smartphone, label: 'Broken workflow', detail: 'Messages or requests get lost.' },
+      { icon: Clock3, label: 'Time or money leaking', detail: 'The current process costs too much effort.' },
+    ],
+    footer: 'Who is the user, what is the workaround, and what value could you test?',
+  },
+};
+
+function VisualScenario({ mode }) {
+  const scenario = VISUAL_SCENARIOS[mode] || VISUAL_SCENARIOS.builder;
+  return (
+    <section className={styles.visualScenario} data-lane={mode} aria-label="Visual problem-finding example">
+      <div className={styles.visualScenarioHeader}>
+        <div>
+          <span>{scenario.eyebrow}</span>
+          <h2>{scenario.title}</h2>
+          <p>{scenario.lead}</p>
+        </div>
+        <div className={styles.visualScenarioCue} aria-hidden="true">
+          <Eye size={28} strokeWidth={2.1} />
+          <strong>SEE IT</strong>
+        </div>
+      </div>
+
+      <div className={styles.visualScenarioScene}>
+        <div className={styles.visualSceneBackdrop} aria-hidden="true">
+          <span className={styles.visualSceneWall} />
+          <span className={styles.visualSceneTable} />
+          <span className={styles.visualSceneBox} />
+          <span className={styles.visualScenePersonOne} />
+          <span className={styles.visualScenePersonTwo} />
+        </div>
+
+        <div className={styles.visualScenarioItems}>
+          {scenario.items.map(({ icon: Icon, label, detail }, index) => (
+            <div key={label} className={styles.visualScenarioItem}>
+              <div className={styles.visualScenarioItemIcon}>
+                <span>{index + 1}</span>
+                <Icon size={25} strokeWidth={2.1} aria-hidden="true" />
+              </div>
+              <div>
+                <strong>{label}</strong>
+                <small>{detail}</small>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className={styles.visualScenarioFooter}>
+        <Lightbulb size={20} aria-hidden="true" />
+        <strong>{scenario.footer}</strong>
+      </div>
+    </section>
+  );
+}
 
 function ScreenHead({ eyebrow, title, sub }) {
   return (
@@ -146,6 +242,8 @@ export function DailyQuest() {
             <strong>{dailyQuest.finisher}</strong>
           </div>
         </div>
+
+        <VisualScenario mode={mode} />
 
         <div className={styles.dailyQuestWorkbench}>
           <article className={styles.dailyQuestStep}>
