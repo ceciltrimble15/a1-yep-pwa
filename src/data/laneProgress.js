@@ -2,7 +2,7 @@ import { DEFAULT_MODE, isValidMode } from './modes.js';
 
 export const EMPTY_PILOT_PROGRESS = {
   dailyQuestText: '', dailyQuestComplete: false, weeklyCompleted: [],
-  stemSinText: '', stemSinComplete: false, bossText: '', bossComplete: false,
+  stemSinText: '', stemSinChoice: '', stemSinComplete: false, bossText: '', bossComplete: false,
   mentorQuestion: '',
 };
 
