@@ -109,28 +109,108 @@ function VisualScenario({ mode }) {
         </div>
       </div>
 
-      <div className={styles.visualScenarioScene}>
-        <div className={styles.visualSceneBackdrop} aria-hidden="true">
-          <span className={styles.visualSceneWall} />
-          <span className={styles.visualSceneTable} />
-          <span className={styles.visualSceneBox} />
-          <span className={styles.visualScenePersonOne} />
-          <span className={styles.visualScenePersonTwo} />
-        </div>
+      <div className={styles.broadcastScene}>
+        <svg
+          className={styles.broadcastSceneArt}
+          viewBox="0 0 1000 430"
+          role="img"
+          aria-label="Illustrated community workspace with three numbered problem areas to notice"
+        >
+          <defs>
+            <linearGradient id="sceneBg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#173f7c" />
+              <stop offset="100%" stopColor="#081a38" />
+            </linearGradient>
+            <linearGradient id="sceneFloor" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#18345c" />
+              <stop offset="100%" stopColor="#0d2346" />
+            </linearGradient>
+            <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="5" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
 
-        <div className={styles.visualScenarioItems}>
+          <rect x="0" y="0" width="1000" height="430" rx="28" fill="url(#sceneBg)" />
+          <rect x="0" y="285" width="1000" height="145" fill="url(#sceneFloor)" />
+          <rect x="55" y="70" width="270" height="140" rx="18" fill="#244f8f" opacity=".78" />
+          <rect x="78" y="94" width="104" height="90" rx="12" fill="#d4dae6" opacity=".9" />
+          <rect x="196" y="94" width="104" height="90" rx="12" fill="#b0b8c8" opacity=".56" />
+
+          <rect x="382" y="192" width="260" height="42" rx="12" fill="#315b91" />
+          <rect x="400" y="230" width="18" height="88" rx="9" fill="#203d69" />
+          <rect x="605" y="230" width="18" height="88" rx="9" fill="#203d69" />
+
+          <rect x="432" y="154" width="84" height="54" rx="10" fill="#d4a017" opacity=".82" />
+          <rect x="495" y="144" width="92" height="63" rx="10" fill="#7d90b8" />
+          <rect x="535" y="163" width="82" height="45" rx="10" fill="#a8b9dd" />
+
+          <rect x="705" y="190" width="108" height="122" rx="16" fill="#1b3155" />
+          <rect x="724" y="210" width="70" height="18" rx="9" fill="#6e86b4" />
+          <rect x="724" y="239" width="70" height="18" rx="9" fill="#4f6794" />
+          <rect x="724" y="268" width="70" height="18" rx="9" fill="#3e547d" />
+
+          <circle cx="846" cy="167" r="30" fill="#c8d6f5" />
+          <rect x="817" y="197" width="58" height="94" rx="24" fill="#2a4eaf" />
+          <rect x="805" y="285" width="28" height="70" rx="14" fill="#1f3f78" />
+          <rect x="859" y="285" width="28" height="70" rx="14" fill="#1f3f78" />
+
+          <path d="M112 315 C136 294 167 294 193 315" fill="none" stroke="#8799bd" strokeWidth="10" strokeLinecap="round" />
+          <path d="M114 329 C142 314 172 314 196 329" fill="none" stroke="#687da7" strokeWidth="8" strokeLinecap="round" />
+          <circle cx="126" cy="340" r="9" fill="#b0b8c8" />
+          <circle cx="153" cy="348" r="8" fill="#d4dae6" />
+          <circle cx="181" cy="341" r="9" fill="#9aaacc" />
+
+          <g filter="url(#softGlow)">
+            <circle cx="525" cy="176" r="58" fill="none" stroke="#d4a017" strokeWidth="7" />
+            <circle cx="525" cy="176" r="46" fill="none" stroke="#d4a017" strokeOpacity=".35" strokeWidth="3" />
+            <circle cx="525" cy="89" r="25" fill="#d4a017" />
+            <text x="525" y="98" textAnchor="middle" fill="#0f2460" fontSize="26" fontWeight="900">1</text>
+          </g>
+
+          <g filter="url(#softGlow)">
+            <circle cx="154" cy="332" r="61" fill="none" stroke="#d4a017" strokeWidth="7" />
+            <circle cx="154" cy="332" r="49" fill="none" stroke="#d4a017" strokeOpacity=".35" strokeWidth="3" />
+            <circle cx="89" cy="270" r="25" fill="#d4a017" />
+            <text x="89" y="279" textAnchor="middle" fill="#0f2460" fontSize="26" fontWeight="900">2</text>
+          </g>
+
+          <g filter="url(#softGlow)">
+            <circle cx="846" cy="244" r="76" fill="none" stroke="#d4a017" strokeWidth="7" />
+            <circle cx="846" cy="244" r="64" fill="none" stroke="#d4a017" strokeOpacity=".35" strokeWidth="3" />
+            <circle cx="915" cy="157" r="25" fill="#d4a017" />
+            <text x="915" y="166" textAnchor="middle" fill="#0f2460" fontSize="26" fontWeight="900">3</text>
+          </g>
+
+          <path d="M582 93 C650 61 732 61 805 100" fill="none" stroke="#d4a017" strokeWidth="3" strokeDasharray="10 10" opacity=".85" />
+          <path d="M214 283 C300 245 367 224 447 211" fill="none" stroke="#d4a017" strokeWidth="3" strokeDasharray="10 10" opacity=".85" />
+          <path d="M879 313 C905 334 924 349 944 370" fill="none" stroke="#d4a017" strokeWidth="3" strokeDasharray="10 10" opacity=".85" />
+        </svg>
+
+        <div className={styles.broadcastOverlay} aria-label="Three things to notice in the visual scene">
           {scenario.items.map(({ icon: Icon, label, detail }, index) => (
-            <div key={label} className={styles.visualScenarioItem}>
-              <div className={styles.visualScenarioItemIcon}>
-                <span>{index + 1}</span>
-                <Icon size={25} strokeWidth={2.1} aria-hidden="true" />
-              </div>
+            <div key={label} className={styles.broadcastCallout}>
+              <div className={styles.broadcastCalloutNumber}>{index + 1}</div>
+              <Icon size={23} strokeWidth={2.15} aria-hidden="true" />
               <div>
                 <strong>{label}</strong>
                 <small>{detail}</small>
               </div>
             </div>
           ))}
+        </div>
+
+        <div className={styles.broadcastFlow} aria-label="How to read the scene">
+          <span>SEE</span>
+          <i aria-hidden="true">→</i>
+          <span>NOTICE</span>
+          <i aria-hidden="true">→</i>
+          <span>WHO IT AFFECTS</span>
+          <i aria-hidden="true">→</i>
+          <span>IDEA</span>
         </div>
       </div>
 
