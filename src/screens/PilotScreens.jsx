@@ -483,82 +483,65 @@ export function DailyQuest() {
 
         <VisualScenario mode={mode} selectedIndex={selectedProblem} onSelect={chooseProblem} />
 
-        <div className={styles.dailyQuestWorkbench}>
-          <article className={styles.dailyQuestStep}>
-            <div className={styles.dailyQuestStepHead}>
-              <span className={styles.dailyQuestStepNumber}>1</span>
-              <Eye size={22} aria-hidden="true" />
-              <div>
-                <strong>Notice & Think</strong>
-                <small>See the problem before you solve it.</small>
-              </div>
+        {selected && (
+          <section className={styles.dailyQuestResponseStage}>
+            <div className={styles.dailyQuestResponseLead}>
+              <span>{guideStep >= 4 ? 'FINISH' : 'BUILD'}</span>
+              <h2>{guideStep >= 4 ? 'Read it back. Does it say what you mean?' : 'What could you try?'}</h2>
+              <p>
+                {guideStep >= 4
+                  ? 'When it sounds right, save it as your proof and keep moving.'
+                  : selected.label + ' — ' + selected.detail}
+              </p>
             </div>
-            <p>{selected ? selected.label + ': ' + selected.detail : instructions}</p>
-            <div className={styles.dailyQuestExample}>
-              <span>EXAMPLE</span>
-              <strong>{example}</strong>
-            </div>
-          </article>
 
-          <article className={styles.dailyQuestStep}>
-            <div className={styles.dailyQuestStepHead}>
-              <span className={styles.dailyQuestStepNumber}>2</span>
-              <PenLine size={22} aria-hidden="true" />
-              <div>
-                <strong>Your Turn</strong>
-                <small>Put your idea into your own words.</small>
-              </div>
+            <div className={styles.dailyQuestResponseBox}>
+              <textarea
+                id="daily-quest-answer"
+                className={styles.dailyQuestTextarea}
+                value={text}
+                onChange={(e) => {
+                  setText(e.target.value);
+                  if (guideStep < 3) setGuideStep(3);
+                }}
+                placeholder={copy.placeholder}
+              />
+              <VoiceCapture
+                prompt={dailyQuest.prompt}
+                currentValue={text}
+                onConfirm={(value) => {
+                  setText(value);
+                  setGuideStep(3);
+                }}
+                buttonLabel="Talk To YEP"
+                confirmLabel="Use As My Answer"
+              />
             </div>
-            <textarea
-              id="daily-quest-answer"
-              className={styles.dailyQuestTextarea}
-              value={text}
-              onChange={(e) => {
-                setText(e.target.value);
-                if (guideStep < 3) setGuideStep(3);
-              }}
-              placeholder={copy.placeholder}
-            />
-            <VoiceCapture
-              prompt={dailyQuest.prompt}
-              currentValue={text}
-              onConfirm={(value) => {
-                setText(value);
-                setGuideStep(3);
-              }}
-              buttonLabel="Talk To YEP"
-              confirmLabel="Use As My Answer"
-            />
-          </article>
 
-          <article className={styles.dailyQuestStep + ' ' + styles.dailyQuestFinish}>
-            <div className={styles.dailyQuestStepHead}>
-              <span className={styles.dailyQuestStepNumber}>3</span>
-              <CheckCircle2 size={22} aria-hidden="true" />
-              <div>
-                <strong>Finish & Save</strong>
-                <small>Save proof that you completed today's quest.</small>
+            {guideStep >= 4 && (
+              <button
+                className={styles.dailyQuestSubmit}
+                disabled={!text.trim()}
+                onClick={saveQuest}
+              >
+                {complete ? 'Update My Proof' : 'Finish & Save My Proof'}
+              </button>
+            )}
+
+            {complete && (
+              <div className={styles.dailyQuestSavedProof}>
+                <CheckCircle2 size={20} aria-hidden="true" />
+                <span>Daily Quest proof saved on this tablet.</span>
               </div>
-            </div>
-            <p>{expectations}</p>
-            <button
-              className={styles.dailyQuestSubmit}
-              disabled={!text.trim()}
-              onClick={saveQuest}
-            >
-              {complete ? 'Update Completed Quest' : copy.action}
-            </button>
-            <span className={styles.dailyQuestSaveState}>
-              {complete ? 'Quest saved on this tablet.' : 'Your answer stays on this tablet when you save it.'}
-            </span>
-          </article>
-        </div>
+            )}
+          </section>
+        )}
 
         <div className={styles.dailyQuestWorkbook}>
           <BookOpenCheck size={20} aria-hidden="true" />
           <div>
-            <strong>Workbook ↔ App</strong>
-            <span>Complete the matching Daily Quest page, then save the same core response here as proof of work.</span>
+            <strong>Workbook + App</strong>
+            <span>Use the workbook to think, write, and discuss. Use the app to see, interact, respond, and save proof.</span>
           </div>
         </div>
 
