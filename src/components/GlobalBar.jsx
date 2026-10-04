@@ -1,10 +1,10 @@
-import { Compass, ShieldCheck, Zap } from 'lucide-react';
+import { Compass, ShieldCheck } from 'lucide-react';
 import { useYEP } from '../context/YEPContext';
 import styles from './GlobalBar.module.css';
 
-/* Persistent status: active track + live XP + privacy access. */
+/* Persistent status: active track + privacy access. */
 export default function GlobalBar() {
-  const { track, xp, navigate } = useYEP();
+  const { track, navigate } = useYEP();
   return (
     <div className={styles.bar}>
       <div className={styles.track}>
@@ -16,11 +16,6 @@ export default function GlobalBar() {
         <ShieldCheck size={14} />
         <span>Privacy</span>
       </button>
-      <div className={styles.xp}>
-        <Zap size={14} color="#2979FF" fill="#2979FF" />
-        <span className={styles.xpVal}>{xp}</span>
-        <span className={styles.xpLabel}>XP</span>
-      </div>
     </div>
   );
 }
