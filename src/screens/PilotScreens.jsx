@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Sparkles, Lightbulb, Target, BriefcaseBusiness, Eye, PenLine, CheckCircle2, Flag, BookOpenCheck, FlaskConical, ScanFace } from 'lucide-react';
-import { getProgramContent, PILOT_BADGES } from '../data/pilotContent';
+import { getProgramContent } from '../data/pilotContent';
 import { MODES } from '../data/modes';
 import { useYEP } from '../context/YEPContext';
 import Shell from '../components/Shell';
@@ -274,7 +274,7 @@ export function WeeklyModule() {
           );
         })}
       </div>
-      <div className={styles.note}>{allDone ? 'Week 1 proof module complete. Identity Builder badge unlocked.' : 'Complete all three activities to finish this proof module.'}</div>
+      <div className={styles.note}>{allDone ? 'Week 1 proof module complete. Work saved on this tablet.' : 'Complete all three activities to finish this proof module.'}</div>
       <div className={styles.actions}><BackHome /></div>
     </Shell>
   );
@@ -353,30 +353,8 @@ export function MentorSpotlight() {
   );
 }
 
-export function Rewards() {
-  const { pilotBadges, mode } = useYEP();
-  return (
-    <Shell>
-      <ScreenHead eyebrow={`${MODES[mode]?.program || 'YEP'} · Rewards`} title="Proof Badge Log" sub="Badges are earned by completing real proof-of-concept actions. No purchase or cash value is attached in this test." />
-      <div className={styles.badgeGrid}>
-        {PILOT_BADGES.map((badge) => {
-          const unlocked = pilotBadges.includes(badge.id);
-          return (
-            <div key={badge.id} className={`${styles.badge} ${unlocked ? '' : styles.badgeLocked}`}>
-              <div className={styles.cardTitle}>{unlocked ? '✓ ' : '○ '}{badge.name}</div>
-              <div className={styles.cardText}>{badge.unlock}</div>
-              <span className={`${styles.status} ${unlocked ? styles.done : ''}`}>{unlocked ? 'Unlocked' : 'Locked'}</span>
-            </div>
-          );
-        })}
-      </div>
-      <div className={styles.actions}><BackHome /></div>
-    </Shell>
-  );
-}
-
 export function Profile() {
-  const { powerName, track, xp, mirrorResult, pilotBadges, pilotProgress, mode } = useYEP();
+  const { powerName, track, mirrorResult, pilotProgress, mode } = useYEP();
   const weeklyDone = pilotProgress.weeklyCompleted.length;
   const program = MODES[mode] || MODES.builder;
   const { weeklyModule } = getProgramContent(mode);
@@ -389,10 +367,8 @@ export function Profile() {
         <div className={styles.card}><div className={styles.label}>Age Pathway</div><div className={styles.value}>{program.label}</div></div>
         <div className={styles.card}><div className={styles.label}>Power Name</div><div className={styles.value}>{powerName || 'Not set'}</div></div>
         <div className={styles.card}><div className={styles.label}>Track</div><div className={styles.value}>{track?.name || 'Not set'}</div></div>
-        <div className={styles.card}><div className={styles.label}>Mirror XP</div><div className={styles.value}>{xp}</div></div>
         <div className={styles.card}><div className={styles.label}>Anchor</div><div className={styles.value}>{mirrorResult?.Anchor || 'Not completed'}</div></div>
         <div className={styles.card}><div className={styles.label}>S.T.E.M.Sin</div><div className={styles.value}>{pilotProgress.stemSinComplete ? 'Complete' : 'Open'}</div></div>
-        <div className={styles.card}><div className={styles.label}>Proof Badges</div><div className={styles.value}>{pilotBadges.length} / {PILOT_BADGES.length}</div></div>
         <div className={styles.card}><div className={styles.label}>Weekly Activities</div><div className={styles.value}>{weeklyDone} / {weeklyModule.activities.length}</div></div>
       </div>
       <div className={styles.actions}><BackHome /></div>
@@ -401,7 +377,7 @@ export function Profile() {
 }
 
 export function AdminReview() {
-  const { activeYouth, pilotProgress, pilotBadges, navigate, mode } = useYEP();
+  const { activeYouth, pilotProgress, navigate, mode } = useYEP();
   const program = MODES[mode] || MODES.builder;
   const { weeklyModule } = getProgramContent(mode);
   const weeklyComplete = pilotProgress.weeklyCompleted.length >= weeklyModule.activities.length;
@@ -418,10 +394,9 @@ export function AdminReview() {
         <div className={styles.card}><div className={styles.label}>S.T.E.M.Sin</div><div className={styles.value}>{pilotProgress.stemSinComplete ? 'Complete' : 'Open'}</div></div>
         <div className={styles.card}><div className={styles.label}>Boss Challenge</div><div className={styles.value}>{pilotProgress.bossComplete ? 'Complete' : 'Open'}</div></div>
         <div className={styles.card}><div className={styles.label}>Mentor Question</div><div className={styles.value}>{pilotProgress.mentorQuestion ? 'Saved' : 'Open'}</div></div>
-        <div className={styles.card}><div className={styles.label}>Badges</div><div className={styles.value}>{pilotBadges.length}</div></div>
         <div className={styles.card}><div className={styles.label}>Mirror / FINISHER Loop</div><div className={styles.value}>{activeYouth.reflectionSubmitted ? 'Complete' : 'Not complete'}</div></div>
       </div>
-      <div className={styles.note}>Proof standard: workbook entry → matching app action → saved progress → badge/status → admin review. YEP ages 7–17 and Y.A.E.P. ages 18–24 stay separate while sharing the same Process spine.</div>
+      <div className={styles.note}>Proof standard: workbook entry → matching app action → saved progress → facilitator/admin review. YEP ages 7–17 and Y.A.E.P. ages 18–24 stay separate while sharing the same Process spine.</div>
       <div className={styles.actions}>
         <button className={ui.btnPrimary} onClick={() => navigate('dashboard')}>Open Facilitator Demo</button>
         <BackHome />
