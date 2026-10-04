@@ -99,7 +99,6 @@ export default function Home() {
     exposureLog,
     navigate,
     pilotProgress,
-    pilotBadges,
     mirrorResult,
     mode,
   } = useYEP();
@@ -144,8 +143,12 @@ export default function Home() {
               <strong>{program.entrepreneurCue.replace('Entrepreneur skill: ', '')}</strong>
             </div>
             <div>
-              <span>PROOF SAVED</span>
-              <strong>{pilotBadges.length} / 3</strong>
+              <span>WORK SAVED</span>
+              <strong>{[
+                pilotProgress.dailyQuestComplete,
+                pilotProgress.stemSinComplete,
+                !!mirrorResult,
+              ].filter(Boolean).length} completed</strong>
             </div>
           </div>
 
@@ -356,8 +359,7 @@ export default function Home() {
           <HubCard icon={Sparkles} title="Weekly Module" text={`Run the ${weeklyModule.title} demo module.`} status={weeklyDone ? 'Complete' : `${pilotProgress.weeklyCompleted.length}/${weeklyModule.activities.length} Done`} done={weeklyDone} onClick={() => navigate('weeklyModule')} />
           <HubCard icon={Target} title="Boss Challenge" text={bossChallenge.prompt} status={pilotProgress.bossComplete ? 'Complete' : 'Open'} done={pilotProgress.bossComplete} onClick={() => navigate('bossChallenge')} />
           <HubCard icon={Users} title="Mentor Spotlight" text={mentorSpotlight.challenge} status={pilotProgress.mentorQuestion ? 'Question Saved' : 'Open'} done={!!pilotProgress.mentorQuestion} onClick={() => navigate('mentorSpotlight')} />
-          <HubCard icon={Sparkles} title="Rewards / Badges" text="See which demo badges were earned from completed actions." status={`${pilotBadges.length}/3 Unlocked`} done={pilotBadges.length === 3} onClick={() => navigate('rewards')} />
-          <HubCard icon={ScanFace} title="My Process / Profile" text="See your pathway, direction, Mirror result, FINISHER direction, completion status, badges, and Mirror XP." status="View" onClick={() => navigate('profile')} />
+          <HubCard icon={ScanFace} title="My Process / Profile" text="See your pathway, direction, Mirror result, FINISHER direction, completed work, and saved responses." status="View" onClick={() => navigate('profile')} />
           <HubCard icon={BookOpenCheck} title="Admin Review" text="Review the active tablet demo record and the proof actually saved on this device." status="Review" onClick={() => navigate('adminReview')} />
           <HubCard icon={Users} title="Unc's Operations Hub" text="Private leadership working guide for meeting prep, field notes, proof/sample log, and next moves." status="Internal Leadership" onClick={() => navigate('uncHub')} />
           <HubCard icon={RotateCcw} title="Reset Demo Participant" text="Clear this tablet's local demo participant and prepare a clean start for the next tester." status="Safety Gate" onClick={() => navigate('resetDemo')} />
