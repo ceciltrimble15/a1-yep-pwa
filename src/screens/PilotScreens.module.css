@@ -3610,3 +3610,58 @@ button.card:hover {
     grid-template-columns: 1fr;
   }
 }
+
+/* Foundation Daily Quest: one guided action at a time */
+.dailyQuestResponseStage {
+  display: grid;
+  gap: 14px;
+  padding: 20px;
+  border-radius: 22px;
+  border: 1px solid rgba(212,160,23,.24);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(42,78,175,.16), transparent 30%),
+    linear-gradient(145deg, #102958, #0A1D3E);
+}
+
+.dailyQuestResponseLead > span {
+  color: var(--gold-soft);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .14em;
+}
+
+.dailyQuestResponseLead h2 {
+  margin: 5px 0 4px;
+  color: var(--white);
+  font-size: clamp(23px, 3vw, 34px);
+  line-height: 1;
+}
+
+.dailyQuestResponseLead p {
+  margin: 0;
+  max-width: 720px;
+  color: var(--silver-light);
+  line-height: 1.45;
+}
+
+.dailyQuestResponseBox {
+  display: grid;
+  gap: 10px;
+}
+
+.dailyQuestSavedProof {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(212,160,23,.1);
+  border: 1px solid rgba(212,160,23,.28);
+  color: var(--silver-light);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.dailyQuestSavedProof svg {
+  color: var(--gold-soft);
+}
