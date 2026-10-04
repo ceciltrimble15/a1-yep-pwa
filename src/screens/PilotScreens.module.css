@@ -1889,3 +1889,102 @@ button.card:hover {
     height: 44px;
   }
 }
+
+
+/* === DAILY QUEST CONNECTED PROCESS RAIL === */
+.dailyQuestNextRail {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.4fr) repeat(4, minmax(130px, .7fr));
+  gap: 10px;
+  align-items: stretch;
+  padding: 12px;
+  border: 1px solid rgba(212,218,230,.15);
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 0% 50%, rgba(42,78,175,.16), transparent 28%),
+    linear-gradient(145deg, #102A5D, #09182F);
+  box-shadow: 0 16px 34px rgba(0,0,0,.16);
+}
+
+.dailyQuestNextIntro {
+  padding: 9px 12px;
+  align-self: center;
+}
+
+.dailyQuestNextIntro strong,
+.dailyQuestNextIntro span {
+  display: block;
+}
+
+.dailyQuestNextIntro strong {
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.dailyQuestNextIntro span {
+  margin-top: 4px;
+  color: var(--silver);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.dailyQuestNextButton,
+.dailyQuestNextCurrent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 54px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(212,218,230,.15);
+  background: rgba(255,255,255,.035);
+  color: var(--silver-light);
+  font-size: 11px;
+  font-weight: 900;
+  text-align: center;
+  cursor: pointer;
+}
+
+.dailyQuestNextButton:hover {
+  border-color: rgba(145,172,241,.42);
+  background: rgba(255,255,255,.055);
+}
+
+.dailyQuestNextCurrent {
+  border-color: rgba(122,224,255,.46);
+  background: linear-gradient(135deg, #1C77F0, #0B4EBA);
+  color: var(--white);
+  box-shadow: 0 10px 22px rgba(0,0,0,.16);
+}
+
+.dailyQuestNextCurrent svg,
+.dailyQuestNextButton svg {
+  flex: 0 0 auto;
+}
+
+.dailyQuestNextButton:last-child {
+  border-color: rgba(212,160,23,.36);
+  color: var(--gold-soft);
+}
+
+@media (max-width: 1180px) {
+  .dailyQuestNextRail {
+    grid-template-columns: repeat(4, minmax(120px, 1fr));
+  }
+
+  .dailyQuestNextIntro {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 720px) {
+  .dailyQuestNextRail {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dailyQuestNextIntro {
+    grid-column: 1 / -1;
+  }
+}
