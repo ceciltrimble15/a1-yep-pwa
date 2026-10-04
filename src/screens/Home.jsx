@@ -296,7 +296,7 @@ export default function Home() {
             number="04"
             title="FINISHER Mission"
             subtitle={mode === 'explorer' ? 'Finish your mission.' : mode === 'yaep' ? 'Convert reflection into measurable action.' : 'Turn reflection into action.'}
-            status={mirrorResult ? 'Mission ready' : 'Unlock through Mirror'}
+            status={mirrorResult ? 'Mission ready' : 'Complete Mirror first'}
             icon={Flag}
             tone="Gold"
             onClick={() => navigate(mirrorResult ? 'mission' : 'mirrorIntro')}
