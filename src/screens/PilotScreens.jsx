@@ -93,6 +93,58 @@ const VISUAL_SCENARIOS = {
   },
 };
 
+
+const STEM_LABS = {
+  explorer: {
+    eyebrow: 'PRACTICE LAB',
+    title: 'Make supplies easier to find',
+    scene: 'The art table has one mixed pile of supplies. Someone keeps stopping to ask where things belong.',
+    user: 'A learner who wants to find the right supply without waiting for help.',
+    tools: [
+      { icon: PackageOpen, label: 'Sorting Tray', detail: 'Put similar supplies into separate sections.', result: 'The mixed pile becomes three clear groups.' },
+      { icon: Eye, label: 'Picture Labels', detail: 'Add a simple picture to show what belongs where.', result: 'The practice bins become easier to recognize at a glance.' },
+      { icon: Wrench, label: 'Simple Holder', detail: 'Use a basic holder to keep rolling items in one place.', result: 'Loose items stop spreading across the practice table.' },
+    ],
+    predictions: ['Find things faster', 'Ask fewer questions', 'Keep the space organized'],
+  },
+  builder: {
+    eyebrow: 'TEST THE CHANGE',
+    title: 'Make a shared supply box easier to use',
+    scene: 'People open the same box, move things around, and lose time looking for what they need.',
+    user: 'A classmate or teammate trying to get one item quickly.',
+    tools: [
+      { icon: PackageOpen, label: 'Labeled Sections', detail: 'Give each item type a clear section.', result: 'The practice box changes from one mixed area into labeled groups.' },
+      { icon: CheckCircle2, label: 'Quick Checklist', detail: 'Show what should be in the box before and after use.', result: 'The practice check makes missing items easier to notice.' },
+      { icon: Clock3, label: 'Fast-Find Rule', detail: 'Put the most-used items where they are easiest to reach.', result: 'The practice path to common items becomes shorter.' },
+    ],
+    predictions: ['Reduce search time', 'Make the system clearer', 'Reduce missing items'],
+  },
+  leader: {
+    eyebrow: 'PROTOTYPE WITH EVIDENCE',
+    title: 'Stop club sign-ups from getting lost',
+    scene: 'A school club collects names in different places. Some people are counted twice and others disappear from the list.',
+    user: 'A club organizer who needs one clear view of who signed up.',
+    tools: [
+      { icon: Smartphone, label: 'Simple Form', detail: 'Use one sample form for every sign-up.', result: 'The practice sign-ups land in one consistent format.' },
+      { icon: CheckCircle2, label: 'Status Board', detail: 'Show who is new, confirmed, or still needs follow-up.', result: 'The practice list separates sign-ups by status.' },
+      { icon: MessageCircle, label: 'Reminder Step', detail: 'Add one follow-up reminder after the first sign-up.', result: 'The practice workflow now shows a clear next action.' },
+    ],
+    predictions: ['Reduce lost sign-ups', 'Make follow-up clearer', 'Improve completion time'],
+  },
+  yaep: {
+    eyebrow: 'TURN A TOOL INTO VALUE',
+    title: 'Stop estimate requests from disappearing',
+    scene: 'A service business gets requests through messages and calls. Busy staff can miss who needs a reply.',
+    user: 'A business owner who needs a reliable way to capture and follow up on requests.',
+    tools: [
+      { icon: Smartphone, label: 'Request Form', detail: 'Capture the same basic information every time.', result: 'The practice requests arrive in one consistent format.' },
+      { icon: Store, label: 'Request Tracker', detail: 'Put each request into a visible status.', result: 'The practice workflow now shows new, contacted, and completed requests.' },
+      { icon: MessageCircle, label: 'Follow-up Reminder', detail: 'Create a clear reminder when a request has no response.', result: 'The practice workflow surfaces an unanswered request instead of losing it.' },
+    ],
+    predictions: ['Reply faster', 'Lose fewer requests', 'Make follow-up easier to manage'],
+  },
+};
+
 function GuideAvatar() {
   return (
     <svg className={styles.guideAvatarArt} viewBox="0 0 120 120" role="img" aria-label="YEP guide avatar">
@@ -572,28 +624,238 @@ export function WeeklyModule() {
 }
 
 export function StemSinQuest() {
-  const { pilotProgress, completeStemSin, mode } = useYEP();
+  const { pilotProgress, completeStemSin, mode, navigate } = useYEP();
   const { stemSin } = getProgramContent(mode);
+  const lab = STEM_LABS[mode] || STEM_LABS.builder;
+  const savedToolIndex = pilotProgress.stemSinChoice
+    ? lab.tools.findIndex((tool) => tool.label === pilotProgress.stemSinChoice)
+    : -1;
   const [text, setText] = useState(pilotProgress.stemSinText);
+  const [selectedTool, setSelectedTool] = useState(savedToolIndex >= 0 ? savedToolIndex : null);
+  const [prediction, setPrediction] = useState(null);
+  const [demoRan, setDemoRan] = useState(pilotProgress.stemSinComplete);
+  const [guideStep, setGuideStep] = useState(pilotProgress.stemSinComplete ? 6 : 1);
+  const complete = pilotProgress.stemSinComplete;
+  const tool = selectedTool === null ? null : lab.tools[selectedTool];
+
+  const guidePrompt = complete
+    ? 'You saved your S.T.E.M.Sin proof. Now use what you learned when you look at your Mirror Results.'
+    : guideStep === 1
+      ? 'Look at the challenge. Choose one tool you would test first. There is not one perfect answer.'
+      : guideStep === 2
+        ? 'You chose ' + (tool?.label || 'a tool') + '. Before we test it, what do you predict it will improve?'
+        : guideStep === 3
+          ? 'Prediction locked: ' + (prediction || 'you expect a change') + '. Run the practice test and watch what changes.'
+          : guideStep === 4
+            ? 'The practice result is visible now. Do not just accept it. Explain what changed and what you would still need to test in real life.'
+            : guideStep === 5 && !text.trim()
+              ? 'Use your own words. What happened in the practice test, and what would you test or improve next?'
+              : 'Read your explanation back. If it matches what you saw, save it as your S.T.E.M.Sin proof.';
+
+  function hearGuide() {
+    if (typeof window === 'undefined' || !window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(guidePrompt);
+    utterance.rate = 0.95;
+    utterance.pitch = 1;
+    window.speechSynthesis.speak(utterance);
+  }
+
+  function chooseTool(index) {
+    if (complete) return;
+    setSelectedTool(index);
+    setPrediction(null);
+    setDemoRan(false);
+    setGuideStep(2);
+  }
+
+  function choosePrediction(value) {
+    if (complete) return;
+    setPrediction(value);
+    setGuideStep(3);
+  }
+
+  function advanceGuide() {
+    if (complete) {
+      navigate('mirrorIntro');
+      return;
+    }
+    if (guideStep === 3 && prediction) {
+      setDemoRan(true);
+      setGuideStep(4);
+      return;
+    }
+    if (guideStep === 4) {
+      setGuideStep(5);
+      window.setTimeout(() => document.getElementById('stem-sin-answer')?.focus(), 40);
+      return;
+    }
+    if (guideStep === 5 && text.trim()) saveProof();
+  }
+
+  function saveProof() {
+    if (!tool) return;
+    const saved = completeStemSin(text, tool.label);
+    if (saved) setGuideStep(6);
+  }
 
   return (
     <Shell>
-      <ScreenHead eyebrow={`${MODES[mode]?.program || 'YEP'} · S.T.E.M.Sin`} title={stemSin.title} sub={stemSin.prompt} />
-      <LaneGuidance />
-      <WorkbookCallout text="Use the workbook S.T.E.M.Sin page to think it through on paper, then record the tested idea here so the proof trail is visible on the tablet." />
-      <div className={styles.card}>
-        <div className={styles.label}>FINISHER Focus</div>
-        <div className={styles.value}>{stemSin.finisher}</div>
-        <p>{stemSin.challengeTitle}</p>
-      </div>
-      <textarea className={styles.textarea} value={text} onChange={(e) => setText(e.target.value)} placeholder="Describe the tool, user, problem, and result you would test..." />
-      <VoiceCapture prompt={stemSin.prompt} currentValue={text} onConfirm={setText} buttonLabel="Talk To YEP" confirmLabel="Use As My Answer" />
-      <div className={styles.actions}>
-        <button className={ui.btnPrimary} disabled={!text.trim()} onClick={() => completeStemSin(text)}>
-          {pilotProgress.stemSinComplete ? 'Update S.T.E.M.Sin Quest' : 'Complete S.T.E.M.Sin Quest'}
-        </button>
-        <BackHome />
-      </div>
+      <section className={styles.stemLabStage} data-lane={mode}>
+        <ScreenHead eyebrow={`${MODES[mode]?.program || 'YEP'} · S.T.E.M.Sin`} title={stemSin.title} sub={stemSin.challengeTitle} />
+
+        <YEPGuide
+          prompt={guidePrompt}
+          step={guideStep}
+          onHear={hearGuide}
+          actionLabel={
+            complete
+              ? 'Go To Mirror Results'
+              : guideStep === 3 && prediction
+                ? 'Run Practice Test'
+                : guideStep === 4
+                  ? 'Explain What Happened'
+                  : guideStep === 5 && text.trim()
+                    ? 'Save S.T.E.M.Sin Proof'
+                    : null
+          }
+          onAction={advanceGuide}
+        />
+
+        <div className={styles.stemLabFlow} aria-label="S.T.E.M.Sin visual learning flow">
+          <span data-active={selectedTool !== null}>1 · CHOOSE TOOL</span>
+          <i aria-hidden="true">→</i>
+          <span data-active={!!prediction}>2 · PREDICT</span>
+          <i aria-hidden="true">→</i>
+          <span data-active={demoRan}>3 · TEST</span>
+          <i aria-hidden="true">→</i>
+          <span data-active={guideStep >= 5}>4 · EXPLAIN</span>
+          <i aria-hidden="true">→</i>
+          <span data-active={complete}>5 · PROVE</span>
+        </div>
+
+        <section className={styles.stemLabScene} aria-label="S.T.E.M.Sin practice challenge">
+          <div className={styles.stemLabSceneIcon} aria-hidden="true"><FlaskConical size={34} /></div>
+          <div>
+            <span>{lab.eyebrow}</span>
+            <h2>{lab.title}</h2>
+            <p>{lab.scene}</p>
+            <small><strong>WHO THIS HELPS:</strong> {lab.user}</small>
+          </div>
+          <div className={styles.stemLabFocus}>
+            <span>FINISHER FOCUS</span>
+            <strong>{stemSin.finisher}</strong>
+          </div>
+        </section>
+
+        <section className={styles.stemLabTools} aria-label="Choose a tool to test">
+          <div className={styles.stemLabSectionHead}>
+            <span>STEP 1</span>
+            <h2>Which tool would you test first?</h2>
+          </div>
+          <div className={styles.stemLabToolGrid}>
+            {lab.tools.map(({ icon: Icon, label, detail }, index) => (
+              <button
+                type="button"
+                key={label}
+                className={selectedTool === index ? styles.stemLabToolSelected : styles.stemLabTool}
+                aria-pressed={selectedTool === index}
+                onClick={() => chooseTool(index)}
+                disabled={complete}
+              >
+                <Icon size={26} aria-hidden="true" />
+                <strong>{label}</strong>
+                <span>{detail}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {tool && !complete && (
+          <section className={styles.stemLabPrediction}>
+            <div className={styles.stemLabSectionHead}>
+              <span>STEP 2</span>
+              <h2>What do you predict will improve?</h2>
+            </div>
+            <div className={styles.stemLabPredictionGrid}>
+              {lab.predictions.map((item) => (
+                <button
+                  type="button"
+                  key={item}
+                  className={prediction === item ? styles.stemLabPredictionSelected : styles.stemLabPredictionButton}
+                  aria-pressed={prediction === item}
+                  onClick={() => choosePrediction(item)}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {demoRan && tool && (
+          <section className={styles.stemLabResult} aria-live="polite">
+            <div className={styles.stemLabResultBadge}><CheckCircle2 size={22} aria-hidden="true" /> PRACTICE RESULT</div>
+            <h2>{tool.label}</h2>
+            <p>{tool.result}</p>
+            <div>
+              <strong>Your prediction:</strong>
+              <span>{prediction || 'Saved proof from an earlier practice test.'}</span>
+            </div>
+            <small>This is a guided app practice result—not real-world evidence. A real test still requires the workbook/facilitator process and appropriate permission.</small>
+          </section>
+        )}
+
+        {(guideStep >= 5 || complete) && (
+          <section className={styles.stemLabExplain}>
+            <div className={styles.stemLabSectionHead}>
+              <span>STEP 4</span>
+              <h2>Explain what happened</h2>
+            </div>
+            <textarea
+              id="stem-sin-answer"
+              className={styles.dailyQuestTextarea}
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder="I tested... I noticed... Next I would..."
+            />
+            <VoiceCapture
+              prompt={stemSin.prompt}
+              currentValue={text}
+              onConfirm={(value) => {
+                setText(value);
+                setGuideStep(5);
+              }}
+              buttonLabel="Talk To YEP"
+              confirmLabel="Use As My Answer"
+            />
+            {!complete && (
+              <button
+                className={styles.stemLabSave}
+                disabled={!text.trim() || !tool}
+                onClick={saveProof}
+              >
+                Save S.T.E.M.Sin Proof
+              </button>
+            )}
+          </section>
+        )}
+
+        {complete && (
+          <section className={styles.stemLabComplete}>
+            <CheckCircle2 size={28} aria-hidden="true" />
+            <div>
+              <strong>S.T.E.M.Sin proof saved on this tablet.</strong>
+              <span>{pilotProgress.stemSinChoice ? `Tool tested: ${pilotProgress.stemSinChoice}` : 'Practice tool saved with this proof.'}</span>
+            </div>
+            <button type="button" onClick={() => navigate('mirrorIntro')}>Continue To Mirror Results <ChevronRight size={17} /></button>
+          </section>
+        )}
+
+        <WorkbookCallout text="Use the workbook S.T.E.M.Sin page for the real plan, discussion, and facilitator-supported test. The app demonstrates the thinking rhythm, then saves the youth's explanation as proof." />
+
+        <div className={styles.actions}><BackHome /></div>
+      </section>
     </Shell>
   );
 }
