@@ -2384,3 +2384,179 @@ button.card:hover {
     border-radius: 14px;
   }
 }
+
+
+/* === INTERACTIVE YEP GUIDE AVATAR === */
+.guidePanel {
+  display: grid;
+  grid-template-columns: 112px minmax(0,1fr);
+  gap: 14px;
+  align-items: stretch;
+  padding: 14px;
+  border-radius: 22px;
+  border: 1px solid rgba(212,160,23,.34);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(42,78,175,.18), transparent 34%),
+    linear-gradient(145deg, #102a5b, #08182f);
+  box-shadow: 0 16px 36px rgba(0,0,0,.18);
+}
+
+.guideAvatarWrap {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 7px;
+  padding: 9px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.035);
+  border: 1px solid rgba(212,218,230,.12);
+}
+
+.guideAvatarArt {
+  width: 86px;
+  height: 86px;
+  filter: drop-shadow(0 8px 18px rgba(0,0,0,.22));
+}
+
+.guideAvatarWrap span {
+  color: var(--gold-soft);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .14em;
+}
+
+.guideBubble {
+  position: relative;
+  display: grid;
+  align-content: center;
+  min-width: 0;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.055);
+  border: 1px solid rgba(212,218,230,.14);
+}
+
+.guideBubble::before {
+  content: '';
+  position: absolute;
+  left: -10px;
+  top: 36px;
+  width: 18px;
+  height: 18px;
+  transform: rotate(45deg);
+  background: #142d59;
+  border-left: 1px solid rgba(212,218,230,.14);
+  border-bottom: 1px solid rgba(212,218,230,.14);
+}
+
+.guideStep {
+  color: var(--gold-soft);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .14em;
+}
+
+.guideBubble p {
+  margin: 7px 0 0;
+  color: var(--white);
+  font-size: clamp(15px, 1.8vw, 19px);
+  line-height: 1.45;
+}
+
+.guideActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 13px;
+}
+
+.guideHear,
+.guideNext {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 44px;
+  padding: 9px 13px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.guideHear {
+  border: 1px solid rgba(212,218,230,.18);
+  background: rgba(255,255,255,.04);
+  color: var(--silver-light);
+}
+
+.guideNext {
+  border: 0;
+  background: var(--gold);
+  color: var(--navy);
+}
+
+.broadcastCallout,
+.broadcastCalloutSelected {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.broadcastCalloutSelected {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  gap: 9px;
+  align-items: center;
+  min-width: 0;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(212,160,23,.14);
+  border: 2px solid var(--gold);
+  color: var(--silver-light);
+  box-shadow: 0 0 0 3px rgba(212,160,23,.09);
+}
+
+.broadcastCalloutSelected svg {
+  color: var(--gold-soft);
+}
+
+.broadcastCalloutSelected strong,
+.broadcastCalloutSelected small {
+  display: block;
+}
+
+.broadcastCalloutSelected strong {
+  color: var(--white);
+  font-size: 12px;
+}
+
+.broadcastCalloutSelected small {
+  margin-top: 2px;
+  color: var(--silver-light);
+  font-size: 9px;
+}
+
+@media (max-width: 700px) {
+  .guidePanel {
+    grid-template-columns: 82px minmax(0,1fr);
+    padding: 10px;
+  }
+
+  .guideAvatarArt {
+    width: 62px;
+    height: 62px;
+  }
+
+  .guideAvatarWrap span {
+    font-size: 8px;
+  }
+
+  .guideBubble {
+    padding: 13px 14px;
+  }
+
+  .guideBubble::before {
+    top: 28px;
+  }
+}
