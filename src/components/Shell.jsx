@@ -81,6 +81,10 @@ export default function Shell({ children, showBar = true, showAudio = true, show
             })}
           </nav>
 
+          <div className={styles.railAvatar} aria-hidden="true">
+            <img src="/yep-guide-avatar-poc.png" alt="" />
+          </div>
+
           <div className={styles.railPath}>
             <span>ACTIVE PATHWAY</span>
             <strong>{program.program}</strong>
