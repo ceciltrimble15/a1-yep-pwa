@@ -1988,3 +1988,275 @@ button.card:hover {
     grid-column: 1 / -1;
   }
 }
+
+
+/* === DAILY QUEST VISUAL LEARNING SCENE === */
+.visualScenario {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(212,218,230,.18);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 88% 10%, rgba(42,78,175,.20), transparent 26%),
+    linear-gradient(145deg, #102A5B, #081A38);
+  box-shadow: 0 16px 36px rgba(0,0,0,.18);
+}
+
+.visualScenarioHeader {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  gap: 18px;
+  align-items: start;
+  padding: 20px 22px 16px;
+}
+
+.visualScenarioHeader span {
+  color: var(--gold-soft);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .16em;
+}
+
+.visualScenarioHeader h2 {
+  margin: 5px 0 7px;
+  color: var(--white);
+  font-size: clamp(26px, 3vw, 38px);
+  line-height: 1;
+}
+
+.visualScenarioHeader p {
+  margin: 0;
+  max-width: 760px;
+  color: var(--silver-light);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.visualScenarioCue {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  min-width: 72px;
+  padding: 12px 10px;
+  border-radius: 16px;
+  border: 1px solid rgba(212,160,23,.34);
+  background: rgba(212,160,23,.08);
+  color: var(--gold-soft);
+}
+
+.visualScenarioCue strong {
+  font-size: 9px;
+  letter-spacing: .12em;
+}
+
+.visualScenarioScene {
+  position: relative;
+  min-height: 250px;
+  margin: 0 18px;
+  overflow: hidden;
+  border-radius: 20px;
+  border: 1px solid rgba(212,218,230,.14);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.015)),
+    #0B2148;
+}
+
+.visualSceneBackdrop {
+  position: absolute;
+  inset: 0;
+  opacity: .9;
+}
+
+.visualSceneWall {
+  position: absolute;
+  inset: 0 0 34% 0;
+  background:
+    linear-gradient(90deg, transparent 49.6%, rgba(255,255,255,.06) 50%, transparent 50.4%),
+    linear-gradient(180deg, rgba(42,78,175,.18), rgba(255,255,255,.02));
+}
+
+.visualSceneTable {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: 16%;
+  height: 18%;
+  border-radius: 16px 16px 7px 7px;
+  background: linear-gradient(180deg, #2B4A75, #18345C);
+  box-shadow: 0 12px 28px rgba(0,0,0,.22);
+}
+
+.visualSceneBox {
+  position: absolute;
+  left: 14%;
+  bottom: 33%;
+  width: 19%;
+  height: 21%;
+  border-radius: 12px;
+  background:
+    linear-gradient(135deg, rgba(212,160,23,.38), rgba(212,160,23,.10)),
+    #354765;
+  border: 1px solid rgba(212,160,23,.34);
+  transform: rotate(-2deg);
+}
+
+.visualScenePersonOne,
+.visualScenePersonTwo {
+  position: absolute;
+  bottom: 31%;
+  width: 54px;
+  height: 84px;
+  border-radius: 26px 26px 18px 18px;
+  background: linear-gradient(180deg, #7693C8, #2A4EAF);
+  box-shadow: 0 8px 20px rgba(0,0,0,.18);
+}
+
+.visualScenePersonOne::before,
+.visualScenePersonTwo::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -28px;
+  width: 38px;
+  height: 38px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: #C8D6F5;
+}
+
+.visualScenePersonOne { right: 22%; }
+.visualScenePersonTwo { right: 9%; transform: scale(.88); }
+
+.visualScenarioItems {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 12px;
+  padding: 112px 16px 16px;
+}
+
+.visualScenarioItem {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 11px;
+  align-items: center;
+  min-width: 0;
+  min-height: 96px;
+  padding: 14px;
+  border-radius: 16px;
+  background: rgba(6,20,47,.88);
+  border: 1px solid rgba(212,218,230,.15);
+  backdrop-filter: blur(10px);
+}
+
+.visualScenarioItemIcon {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: rgba(42,78,175,.25);
+  color: #D7E1FF;
+}
+
+.visualScenarioItemIcon span {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--navy);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.visualScenarioItem strong,
+.visualScenarioItem small {
+  display: block;
+}
+
+.visualScenarioItem strong {
+  color: var(--white);
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.visualScenarioItem small {
+  margin-top: 4px;
+  color: var(--silver);
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.visualScenarioFooter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 18px 18px;
+  padding: 13px 15px;
+  border-radius: 14px;
+  background: rgba(212,160,23,.08);
+  border: 1px solid rgba(212,160,23,.28);
+  color: var(--gold-soft);
+}
+
+.visualScenarioFooter strong {
+  color: var(--white);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.visualScenario[data-lane='explorer'] .visualScenarioScene {
+  background:
+    radial-gradient(circle at 78% 20%, rgba(145,172,241,.17), transparent 28%),
+    linear-gradient(145deg, #173F7C, #0B2148);
+}
+
+.visualScenario[data-lane='yaep'] .visualScenarioScene {
+  background:
+    linear-gradient(90deg, rgba(212,160,23,.06), transparent 30%),
+    linear-gradient(145deg, #18233A, #0A1321);
+}
+
+@media (max-width: 900px) {
+  .visualScenarioItems {
+    grid-template-columns: 1fr;
+    padding-top: 36px;
+  }
+
+  .visualSceneBackdrop {
+    opacity: .32;
+  }
+
+  .visualScenarioScene {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 620px) {
+  .visualScenarioHeader {
+    grid-template-columns: 1fr;
+  }
+
+  .visualScenarioCue {
+    grid-template-columns: auto auto;
+    justify-content: start;
+    min-width: 0;
+  }
+
+  .visualScenarioScene {
+    margin: 0 12px;
+  }
+
+  .visualScenarioFooter {
+    margin-left: 12px;
+    margin-right: 12px;
+  }
+}
