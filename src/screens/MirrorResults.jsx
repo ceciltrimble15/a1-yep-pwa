@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Zap, Anchor as AnchorIcon, TrendingUp, Brain, Target, ArrowRight } from 'lucide-react';
-import { useYEP, XP } from '../context/YEPContext';
+import { Anchor as AnchorIcon, TrendingUp, Brain, Target, ArrowRight } from 'lucide-react';
+import { useYEP } from '../context/YEPContext';
 import { DIMENSIONS } from '../data/mirrorQuestions';
 import { anchorProfiles, edgeProfiles, styleProfiles } from '../data/mirrorProfiles';
 import Shell from '../components/Shell';
@@ -42,9 +42,6 @@ export default function MirrorResults() {
     return (
       <Shell>
         <div className={styles.reveal}>
-          <div className={styles.xpFlash}>
-            <Zap size={14} fill="#2979FF" /> +{XP.MIRROR} XP — MIRROR COMPLETE
-          </div>
           <div className={styles.revealEyebrow}>Your Mirror</div>
           <div className={styles.revealKicker}>
             <AnchorIcon size={14} /> Your Strength
