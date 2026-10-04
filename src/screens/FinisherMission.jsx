@@ -1,5 +1,5 @@
 import { Check, Flag, ArrowRight } from 'lucide-react';
-import { useYEP, XP } from '../context/YEPContext';
+import { useYEP } from '../context/YEPContext';
 import Shell from '../components/Shell';
 import styles from './FinisherMission.module.css';
 import ui from '../styles/ui.module.css';
@@ -26,7 +26,7 @@ export default function FinisherMission() {
 
       <div className={styles.letterTag}>
         <span className={styles.letterBadge}>{m.finisherLetter[0]}</span>
-        <span className={styles.letterText}>Unlocks: {m.finisherLetter}</span>
+        <span className={styles.letterText}>FINISHER: {m.finisherLetter}</span>
       </div>
 
       <div className={styles.approach}>
@@ -60,7 +60,7 @@ export default function FinisherMission() {
 
       <div className={styles.cta}>
         <button className={ui.btnPrimary} onClick={completeMission} disabled={!allDone}>
-          <Flag size={19} /> Mark Mission Complete · +{XP.MISSION} XP <ArrowRight size={19} />
+          <Flag size={19} /> Mark Mission Complete <ArrowRight size={19} />
         </button>
       </div>
     </Shell>
