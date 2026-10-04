@@ -161,10 +161,10 @@ export function YEPProvider({ children }) {
     });
   }
 
-  function completeStemSin(text) {
+  function completeStemSin(text, choice = '') {
     const cleaned = text.trim();
     if (!cleaned) return false;
-    setPilotProgress((p) => ({ ...p, stemSinText: cleaned, stemSinComplete: true }));
+    setPilotProgress((p) => ({ ...p, stemSinText: cleaned, stemSinChoice: choice || p.stemSinChoice || '', stemSinComplete: true }));
     return true;
   }
 
