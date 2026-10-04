@@ -317,7 +317,9 @@ export function DailyQuest() {
         ? 'You spotted "' + (selected?.label || 'a problem') + '." Good. Now ask yourself: who does this affect, and why does it matter?'
         : guideStep === 3 && !text.trim()
           ? 'Now build your idea. Use your own words or Talk To YEP. Tell me what you would try to make the problem better.'
-          : 'You have an idea. Read it back once, make sure it sounds like you, then finish and save your proof.';
+          : guideStep === 3
+            ? 'You have an idea. Read it back once and make sure it sounds like you. Then check it with me.'
+            : 'Your idea is ready. Finish and save it as your Daily Quest proof. After that, I will move you into S.T.E.M.Sin.';
 
   function hearGuide() {
     if (typeof window === 'undefined' || !window.speechSynthesis) return;
@@ -343,7 +345,11 @@ export function DailyQuest() {
       window.setTimeout(() => document.getElementById('daily-quest-answer')?.focus(), 40);
       return;
     }
-    if (guideStep === 3 && text.trim()) setGuideStep(4);
+    if (guideStep === 3 && text.trim()) {
+      setGuideStep(4);
+      return;
+    }
+    if (guideStep === 4 && text.trim()) saveQuest();
   }
 
   function saveQuest() {
@@ -401,7 +407,9 @@ export function DailyQuest() {
                 ? 'Build My Idea'
                 : guideStep === 3 && text.trim()
                   ? 'Check My Idea'
-                  : null
+                  : guideStep === 4 && text.trim()
+                    ? 'Finish & Save'
+                    : null
           }
           onAction={advanceGuide}
         />
