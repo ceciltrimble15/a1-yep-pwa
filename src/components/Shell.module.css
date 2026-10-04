@@ -279,6 +279,51 @@
   margin-top: 18px;
 }
 
+.railAvatar {
+  position: relative;
+  overflow: hidden;
+  height: 190px;
+  margin-top: 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(122,224,255,.26);
+  background:
+    radial-gradient(circle at 50% 12%, rgba(42,78,175,.26), transparent 38%),
+    linear-gradient(180deg, rgba(9,35,78,.94), rgba(5,19,43,.98));
+  box-shadow: 0 16px 34px rgba(0,0,0,.24), 0 0 0 1px rgba(42,78,175,.10);
+}
+
+.railAvatar::after {
+  content: 'YEP';
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: rgba(6,20,47,.84);
+  border: 1px solid rgba(212,160,23,.55);
+  color: var(--gold-soft);
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .14em;
+  box-shadow: 0 8px 20px rgba(0,0,0,.24);
+}
+
+.railAvatar img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: 50% 34%;
+  transform: scale(1.025);
+  animation: guideFloat 5.5s ease-in-out infinite;
+}
+
+@keyframes guideFloat {
+  0%, 100% { transform: scale(1.025) translateY(0); }
+  50% { transform: scale(1.04) translateY(-3px); }
+}
+
 .railButton,
 .railButtonActive {
   display: grid;
@@ -431,6 +476,23 @@
     display: none;
   }
 
+  .railAvatar {
+    height: 88px;
+    margin-top: 9px;
+    border-radius: 16px;
+  }
+
+  .railAvatar img {
+    object-position: 50% 31%;
+  }
+
+  .railAvatar::after {
+    left: 10px;
+    bottom: 10px;
+    padding: 5px 8px;
+    font-size: 8px;
+  }
+
   .railNav {
     grid-template-columns: repeat(4, minmax(0,1fr));
     gap: 7px;
@@ -447,5 +509,11 @@
     text-align: center;
     font-size: 9px;
     line-height: 1.15;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .railAvatar img {
+    animation: none;
   }
 }
