@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Send } from 'lucide-react';
 import { getProgramContent } from '../data/pilotContent';
-import { useYEP, XP } from '../context/YEPContext';
+import { useYEP } from '../context/YEPContext';
 import Shell from '../components/Shell';
 import VoiceCapture from '../components/VoiceCapture';
 import styles from './Reflection.module.css';
@@ -57,7 +57,7 @@ export default function Reflection() {
         onClick={() => submitReflection(text.trim())}
         disabled={!ready}
       >
-        <Send size={18} /> Submit Reflection · +{XP.REFLECTION} XP
+        <Send size={18} /> Submit Reflection
       </button>
     </Shell>
   );
