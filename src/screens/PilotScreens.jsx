@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Sparkles, Lightbulb, Target, BriefcaseBusiness, Eye, PenLine, CheckCircle2, Flag, BookOpenCheck } from 'lucide-react';
+import { Sparkles, Lightbulb, Target, BriefcaseBusiness, Eye, PenLine, CheckCircle2, Flag, BookOpenCheck, FlaskConical, ScanFace } from 'lucide-react';
 import { getProgramContent, PILOT_BADGES } from '../data/pilotContent';
 import { MODES } from '../data/modes';
 import { useYEP } from '../context/YEPContext';
@@ -86,7 +86,7 @@ function LaneGuidance() {
 }
 
 export function DailyQuest() {
-  const { pilotProgress, completeDailyQuest, mode } = useYEP();
+  const { pilotProgress, completeDailyQuest, mode, navigate } = useYEP();
   const { dailyQuest, instructions, example, expectations } = getProgramContent(mode);
   const copy = QUEST_LABELS[mode] || QUEST_LABELS.builder;
   const [text, setText] = useState(pilotProgress.dailyQuestText);
@@ -218,6 +218,29 @@ export function DailyQuest() {
             <span>Complete the matching Daily Quest page, then save the same core response here as proof of work.</span>
           </div>
         </div>
+
+        <nav className={styles.dailyQuestNextRail} aria-label="Continue through the YEP process">
+          <div className={styles.dailyQuestNextIntro}>
+            <strong>Keep moving through YEP</strong>
+            <span>Daily Quest is the first lane. Your next work stays connected.</span>
+          </div>
+          <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className={styles.dailyQuestNextCurrent}>
+            <Sparkles size={18} aria-hidden="true" />
+            <span>Daily Quest</span>
+          </button>
+          <button type="button" onClick={() => navigate('stemSin')} className={styles.dailyQuestNextButton}>
+            <FlaskConical size={18} aria-hidden="true" />
+            <span>S.T.E.M.Sin</span>
+          </button>
+          <button type="button" onClick={() => navigate('mirrorIntro')} className={styles.dailyQuestNextButton}>
+            <ScanFace size={18} aria-hidden="true" />
+            <span>Mirror Results</span>
+          </button>
+          <button type="button" onClick={() => navigate('mission')} className={styles.dailyQuestNextButton}>
+            <Flag size={18} aria-hidden="true" />
+            <span>FINISHER Mission</span>
+          </button>
+        </nav>
 
         <div className={styles.actions}>
           <BackHome />
