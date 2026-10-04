@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Sparkles, Lightbulb, Target, BriefcaseBusiness, Eye, PenLine, CheckCircle2, Flag, BookOpenCheck, FlaskConical, ScanFace, PackageOpen, Trash2, UsersRound, Clock3, Smartphone, MessageCircle, Store, Wrench } from 'lucide-react';
+import { Sparkles, Lightbulb, Target, BriefcaseBusiness, Eye, PenLine, CheckCircle2, Flag, BookOpenCheck, FlaskConical, ScanFace, PackageOpen, Trash2, UsersRound, Clock3, Smartphone, MessageCircle, Store, Wrench, Volume2, ChevronRight } from 'lucide-react';
 import { getProgramContent } from '../data/pilotContent';
 import { MODES } from '../data/modes';
 import { useYEP } from '../context/YEPContext';
@@ -93,7 +93,23 @@ const VISUAL_SCENARIOS = {
   },
 };
 
-function VisualScenario({ mode }) {
+function GuideAvatar() {
+  return (
+    <svg className={styles.guideAvatarArt} viewBox="0 0 120 120" role="img" aria-label="YEP guide avatar">
+      <circle cx="60" cy="60" r="56" fill="#0F2460" />
+      <path d="M24 103c8-21 22-31 36-31s28 10 36 31" fill="#2A4EAF" />
+      <circle cx="60" cy="52" r="28" fill="#70462F" />
+      <path d="M33 47c2-18 13-29 28-29 16 0 28 10 29 28-7-7-18-12-29-12-11 0-21 4-28 13Z" fill="#111827" />
+      <path d="M36 39c6-13 14-20 25-20 13 0 23 8 27 22-8-6-17-9-27-9-9 0-18 2-25 7Z" fill="#05070B" />
+      <circle cx="50" cy="53" r="2.5" fill="#111827" />
+      <circle cx="70" cy="53" r="2.5" fill="#111827" />
+      <path d="M52 66c5 4 11 4 16 0" fill="none" stroke="#2B1710" strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M41 88c12 8 26 8 38 0" fill="none" stroke="#D4A017" strokeWidth="4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function VisualScenario({ mode, selectedIndex, onSelect }) {
   const scenario = VISUAL_SCENARIOS[mode] || VISUAL_SCENARIOS.builder;
   return (
     <section className={styles.visualScenario} data-lane={mode} aria-label="Visual problem-finding example">
@@ -139,67 +155,62 @@ function VisualScenario({ mode }) {
           <rect x="55" y="70" width="270" height="140" rx="18" fill="#244f8f" opacity=".78" />
           <rect x="78" y="94" width="104" height="90" rx="12" fill="#d4dae6" opacity=".9" />
           <rect x="196" y="94" width="104" height="90" rx="12" fill="#b0b8c8" opacity=".56" />
-
           <rect x="382" y="192" width="260" height="42" rx="12" fill="#315b91" />
           <rect x="400" y="230" width="18" height="88" rx="9" fill="#203d69" />
           <rect x="605" y="230" width="18" height="88" rx="9" fill="#203d69" />
-
           <rect x="432" y="154" width="84" height="54" rx="10" fill="#d4a017" opacity=".82" />
           <rect x="495" y="144" width="92" height="63" rx="10" fill="#7d90b8" />
           <rect x="535" y="163" width="82" height="45" rx="10" fill="#a8b9dd" />
-
           <rect x="705" y="190" width="108" height="122" rx="16" fill="#1b3155" />
           <rect x="724" y="210" width="70" height="18" rx="9" fill="#6e86b4" />
           <rect x="724" y="239" width="70" height="18" rx="9" fill="#4f6794" />
           <rect x="724" y="268" width="70" height="18" rx="9" fill="#3e547d" />
-
           <circle cx="846" cy="167" r="30" fill="#c8d6f5" />
           <rect x="817" y="197" width="58" height="94" rx="24" fill="#2a4eaf" />
           <rect x="805" y="285" width="28" height="70" rx="14" fill="#1f3f78" />
           <rect x="859" y="285" width="28" height="70" rx="14" fill="#1f3f78" />
-
           <path d="M112 315 C136 294 167 294 193 315" fill="none" stroke="#8799bd" strokeWidth="10" strokeLinecap="round" />
           <path d="M114 329 C142 314 172 314 196 329" fill="none" stroke="#687da7" strokeWidth="8" strokeLinecap="round" />
           <circle cx="126" cy="340" r="9" fill="#b0b8c8" />
           <circle cx="153" cy="348" r="8" fill="#d4dae6" />
           <circle cx="181" cy="341" r="9" fill="#9aaacc" />
 
-          <g filter="url(#softGlow)">
+          <g filter="url(#softGlow)" opacity={selectedIndex === null || selectedIndex === 0 ? 1 : .3}>
             <circle cx="525" cy="176" r="58" fill="none" stroke="#d4a017" strokeWidth="7" />
             <circle cx="525" cy="176" r="46" fill="none" stroke="#d4a017" strokeOpacity=".35" strokeWidth="3" />
             <circle cx="525" cy="89" r="25" fill="#d4a017" />
             <text x="525" y="98" textAnchor="middle" fill="#0f2460" fontSize="26" fontWeight="900">1</text>
           </g>
-
-          <g filter="url(#softGlow)">
+          <g filter="url(#softGlow)" opacity={selectedIndex === null || selectedIndex === 1 ? 1 : .3}>
             <circle cx="154" cy="332" r="61" fill="none" stroke="#d4a017" strokeWidth="7" />
             <circle cx="154" cy="332" r="49" fill="none" stroke="#d4a017" strokeOpacity=".35" strokeWidth="3" />
             <circle cx="89" cy="270" r="25" fill="#d4a017" />
             <text x="89" y="279" textAnchor="middle" fill="#0f2460" fontSize="26" fontWeight="900">2</text>
           </g>
-
-          <g filter="url(#softGlow)">
+          <g filter="url(#softGlow)" opacity={selectedIndex === null || selectedIndex === 2 ? 1 : .3}>
             <circle cx="846" cy="244" r="76" fill="none" stroke="#d4a017" strokeWidth="7" />
             <circle cx="846" cy="244" r="64" fill="none" stroke="#d4a017" strokeOpacity=".35" strokeWidth="3" />
             <circle cx="915" cy="157" r="25" fill="#d4a017" />
             <text x="915" y="166" textAnchor="middle" fill="#0f2460" fontSize="26" fontWeight="900">3</text>
           </g>
-
-          <path d="M582 93 C650 61 732 61 805 100" fill="none" stroke="#d4a017" strokeWidth="3" strokeDasharray="10 10" opacity=".85" />
-          <path d="M214 283 C300 245 367 224 447 211" fill="none" stroke="#d4a017" strokeWidth="3" strokeDasharray="10 10" opacity=".85" />
-          <path d="M879 313 C905 334 924 349 944 370" fill="none" stroke="#d4a017" strokeWidth="3" strokeDasharray="10 10" opacity=".85" />
         </svg>
 
-        <div className={styles.broadcastOverlay} aria-label="Three things to notice in the visual scene">
+        <div className={styles.broadcastOverlay} aria-label="Choose something you notice in the visual scene">
           {scenario.items.map(({ icon: Icon, label, detail }, index) => (
-            <div key={label} className={styles.broadcastCallout}>
+            <button
+              type="button"
+              key={label}
+              className={selectedIndex === index ? styles.broadcastCalloutSelected : styles.broadcastCallout}
+              onClick={() => onSelect(index)}
+              aria-pressed={selectedIndex === index}
+            >
               <div className={styles.broadcastCalloutNumber}>{index + 1}</div>
               <Icon size={23} strokeWidth={2.15} aria-hidden="true" />
               <div>
                 <strong>{label}</strong>
                 <small>{detail}</small>
               </div>
-            </div>
+            </button>
           ))}
         </div>
 
@@ -217,6 +228,31 @@ function VisualScenario({ mode }) {
       <div className={styles.visualScenarioFooter}>
         <Lightbulb size={20} aria-hidden="true" />
         <strong>{scenario.footer}</strong>
+      </div>
+    </section>
+  );
+}
+
+function YEPGuide({ prompt, step, onHear, actionLabel, onAction }) {
+  return (
+    <section className={styles.guidePanel} aria-live="polite">
+      <div className={styles.guideAvatarWrap}>
+        <GuideAvatar />
+        <span>YEP GUIDE</span>
+      </div>
+      <div className={styles.guideBubble}>
+        <span className={styles.guideStep}>GUIDE STEP {step}</span>
+        <p>{prompt}</p>
+        <div className={styles.guideActions}>
+          <button type="button" className={styles.guideHear} onClick={onHear}>
+            <Volume2 size={17} aria-hidden="true" /> Hear Guide
+          </button>
+          {actionLabel && (
+            <button type="button" className={styles.guideNext} onClick={onAction}>
+              {actionLabel} <ChevronRight size={17} aria-hidden="true" />
+            </button>
+          )}
+        </div>
       </div>
     </section>
   );
@@ -265,9 +301,55 @@ export function DailyQuest() {
   const { pilotProgress, completeDailyQuest, mode, navigate } = useYEP();
   const { dailyQuest, instructions, example, expectations } = getProgramContent(mode);
   const copy = QUEST_LABELS[mode] || QUEST_LABELS.builder;
+  const scenario = VISUAL_SCENARIOS[mode] || VISUAL_SCENARIOS.builder;
   const [text, setText] = useState(pilotProgress.dailyQuestText);
+  const [selectedProblem, setSelectedProblem] = useState(null);
+  const [guideStep, setGuideStep] = useState(pilotProgress.dailyQuestComplete ? 4 : 1);
   const complete = pilotProgress.dailyQuestComplete;
   const program = MODES[mode] || MODES.builder;
+
+  const selected = selectedProblem === null ? null : scenario.items[selectedProblem];
+  const guidePrompt = complete
+    ? 'You finished this Daily Quest and saved your proof. Next, take that same problem-solving mindset into S.T.E.M.Sin.'
+    : guideStep === 1
+      ? 'Start by looking at the scene. Tap one numbered problem that catches your attention. I will move with you from there.'
+      : guideStep === 2
+        ? 'You spotted "' + (selected?.label || 'a problem') + '." Good. Now ask yourself: who does this affect, and why does it matter?'
+        : guideStep === 3 && !text.trim()
+          ? 'Now build your idea. Use your own words or Talk To YEP. Tell me what you would try to make the problem better.'
+          : 'You have an idea. Read it back once, make sure it sounds like you, then finish and save your proof.';
+
+  function hearGuide() {
+    if (typeof window === 'undefined' || !window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(guidePrompt);
+    utterance.rate = 0.95;
+    utterance.pitch = 1;
+    window.speechSynthesis.speak(utterance);
+  }
+
+  function chooseProblem(index) {
+    setSelectedProblem(index);
+    setGuideStep(2);
+  }
+
+  function advanceGuide() {
+    if (complete) {
+      navigate('stemSin');
+      return;
+    }
+    if (guideStep === 2) {
+      setGuideStep(3);
+      window.setTimeout(() => document.getElementById('daily-quest-answer')?.focus(), 40);
+      return;
+    }
+    if (guideStep === 3 && text.trim()) setGuideStep(4);
+  }
+
+  function saveQuest() {
+    const saved = completeDailyQuest(text);
+    if (saved) setGuideStep(4);
+  }
 
   return (
     <Shell>
@@ -308,6 +390,22 @@ export function DailyQuest() {
           </div>
         </div>
 
+        <YEPGuide
+          prompt={guidePrompt}
+          step={guideStep}
+          onHear={hearGuide}
+          actionLabel={
+            complete
+              ? 'Go To S.T.E.M.Sin'
+              : guideStep === 2
+                ? 'Build My Idea'
+                : guideStep === 3 && text.trim()
+                  ? 'Check My Idea'
+                  : null
+          }
+          onAction={advanceGuide}
+        />
+
         <div className={styles.dailyQuestPromptCard}>
           <div className={styles.dailyQuestPromptIcon} aria-hidden="true">
             <Lightbulb size={34} strokeWidth={2.1} />
@@ -323,7 +421,7 @@ export function DailyQuest() {
           </div>
         </div>
 
-        <VisualScenario mode={mode} />
+        <VisualScenario mode={mode} selectedIndex={selectedProblem} onSelect={chooseProblem} />
 
         <div className={styles.dailyQuestWorkbench}>
           <article className={styles.dailyQuestStep}>
@@ -335,7 +433,7 @@ export function DailyQuest() {
                 <small>See the problem before you solve it.</small>
               </div>
             </div>
-            <p>{instructions}</p>
+            <p>{selected ? selected.label + ': ' + selected.detail : instructions}</p>
             <div className={styles.dailyQuestExample}>
               <span>EXAMPLE</span>
               <strong>{example}</strong>
@@ -352,15 +450,22 @@ export function DailyQuest() {
               </div>
             </div>
             <textarea
+              id="daily-quest-answer"
               className={styles.dailyQuestTextarea}
               value={text}
-              onChange={(e) => setText(e.target.value)}
+              onChange={(e) => {
+                setText(e.target.value);
+                if (guideStep < 3) setGuideStep(3);
+              }}
               placeholder={copy.placeholder}
             />
             <VoiceCapture
               prompt={dailyQuest.prompt}
               currentValue={text}
-              onConfirm={setText}
+              onConfirm={(value) => {
+                setText(value);
+                setGuideStep(3);
+              }}
               buttonLabel="Talk To YEP"
               confirmLabel="Use As My Answer"
             />
@@ -379,7 +484,7 @@ export function DailyQuest() {
             <button
               className={styles.dailyQuestSubmit}
               disabled={!text.trim()}
-              onClick={() => completeDailyQuest(text)}
+              onClick={saveQuest}
             >
               {complete ? 'Update Completed Quest' : copy.action}
             </button>
