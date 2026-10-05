@@ -351,7 +351,7 @@ function LaneGuidance() {
 
 export function DailyQuest() {
   const { pilotProgress, completeDailyQuest, mode, navigate } = useYEP();
-  const { dailyQuest, instructions, example, expectations } = getProgramContent(mode);
+  const { dailyQuest } = getProgramContent(mode);
   const copy = QUEST_LABELS[mode] || QUEST_LABELS.builder;
   const scenario = VISUAL_SCENARIOS[mode] || VISUAL_SCENARIOS.builder;
   const [text, setText] = useState(pilotProgress.dailyQuestText);
@@ -466,24 +466,40 @@ export function DailyQuest() {
           onAction={advanceGuide}
         />
 
-        <div className={styles.dailyQuestPromptCard}>
-          <div className={styles.dailyQuestPromptIcon} aria-hidden="true">
-            <Lightbulb size={34} strokeWidth={2.1} />
-          </div>
-          <div className={styles.dailyQuestPromptCopy}>
-            <span>TODAY'S QUEST</span>
-            <h2>{dailyQuest.title}</h2>
-            <p>{dailyQuest.prompt}</p>
-          </div>
-          <div className={styles.dailyQuestFocus}>
-            <span>FINISHER FOCUS</span>
-            <strong>{dailyQuest.finisher}</strong>
-          </div>
-        </div>
+        {guideStep === 1 && (
+          <>
+            <div className={styles.dailyQuestPromptCard}>
+              <div className={styles.dailyQuestPromptIcon} aria-hidden="true">
+                <Lightbulb size={34} strokeWidth={2.1} />
+              </div>
+              <div className={styles.dailyQuestPromptCopy}>
+                <span>TODAY'S QUEST</span>
+                <h2>{dailyQuest.title}</h2>
+                <p>{dailyQuest.prompt}</p>
+              </div>
+              <div className={styles.dailyQuestFocus}>
+                <span>FINISHER FOCUS</span>
+                <strong>{dailyQuest.finisher}</strong>
+              </div>
+            </div>
 
-        <VisualScenario mode={mode} selectedIndex={selectedProblem} onSelect={chooseProblem} />
+            <VisualScenario mode={mode} selectedIndex={selectedProblem} onSelect={chooseProblem} />
+          </>
+        )}
 
-        {selected && (
+        {selected && guideStep === 2 && (
+          <section className={styles.dailyQuestWhoStage}>
+            <span>NOTICE</span>
+            <h2>Who does this affect?</h2>
+            <div className={styles.dailyQuestWhoChoices}>
+              <button type="button" onClick={() => setGuideStep(3)}>Me</button>
+              <button type="button" onClick={() => setGuideStep(3)}>Other people</button>
+              <button type="button" onClick={() => setGuideStep(3)}>Both</button>
+            </div>
+          </section>
+        )}
+
+        {selected && guideStep >= 3 && (
           <section className={styles.dailyQuestResponseStage}>
             <div className={styles.dailyQuestResponseLead}>
               <span>{guideStep >= 4 ? 'FINISH' : 'BUILD'}</span>
