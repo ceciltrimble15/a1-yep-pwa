@@ -3665,3 +3665,45 @@ button.card:hover {
 .dailyQuestSavedProof svg {
   color: var(--gold-soft);
 }
+
+.dailyQuestWhoStage {
+  display: grid;
+  gap: 14px;
+  padding: 22px;
+  border: 1px solid rgba(212,160,23,.28);
+  border-radius: 22px;
+  background: linear-gradient(145deg, #102958, #0A1D3E);
+}
+.dailyQuestWhoStage > span {
+  color: var(--gold-soft);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .14em;
+}
+.dailyQuestWhoStage h2 {
+  margin: 0;
+  color: var(--white);
+  font-size: clamp(25px, 4vw, 38px);
+}
+.dailyQuestWhoChoices {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.dailyQuestWhoChoices button {
+  min-height: 72px;
+  border: 1px solid rgba(212,160,23,.32);
+  border-radius: 18px;
+  background: rgba(20,54,111,.88);
+  color: var(--white);
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+.dailyQuestWhoChoices button:active {
+  transform: scale(.98);
+}
+@media (max-width: 640px) {
+  .dailyQuestWhoChoices { grid-template-columns: 1fr; }
+  .dailyQuestWhoChoices button { min-height: 62px; }
+}
