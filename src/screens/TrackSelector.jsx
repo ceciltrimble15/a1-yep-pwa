@@ -125,6 +125,7 @@ export default function TrackSelector() {
     if ((trackRequired && !selectedTrack) || !identity || !safeguardsAccepted) return;
     setMode(pathway);
     selectTrack(selectedTrack, '', identity);
+    if (pathway === 'explorer') navigate('myDirection');
   }
 
   return (
