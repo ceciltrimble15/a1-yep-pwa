@@ -52,14 +52,16 @@ const FOUNDATION_INTAKE = [
 
 function FoundationIntake({ directionProfile, saveDirectionProfile, setScreen, powerName }) {
   const firstIncomplete = FOUNDATION_INTAKE.findIndex(({ key }) => !directionProfile?.[key]);
-  const [step, setStep] = useState(firstIncomplete === -1 ? FOUNDATION_INTAKE.length : firstIncomplete);
+  const [step, setStep] = useState(
+    firstIncomplete === -1 ? FOUNDATION_INTAKE.length : firstIncomplete === 0 ? -1 : firstIncomplete
+  );
   const complete = step >= FOUNDATION_INTAKE.length;
-  const current = complete ? null : FOUNDATION_INTAKE[step];
+  const current = step >= 0 && !complete ? FOUNDATION_INTAKE[step] : null;
   const explorerName = powerName || 'Explorer';
 
   const guidePrompt = complete
     ? `Nice work, ${explorerName}. I know a little more about how you want to start. These answers can change as you learn. Now we can begin your first Daily Quest.`
-    : step === 0
+    : step === -1
       ? `Welcome, ${explorerName}. This is your first YEP check-in. I am not testing you. I am learning how you see things so the Process can meet you where you are.`
       : current?.prompt || '';
 
@@ -86,7 +88,7 @@ function FoundationIntake({ directionProfile, saveDirectionProfile, setScreen, p
           </div>
           <div>
             <span className={styles.foundationIntakeGuideLabel}>YOUR YEP GUIDE</span>
-            <h1>{complete ? `You are ready, ${explorerName}.` : step === 0 ? `Welcome, ${explorerName}.` : current.title}</h1>
+            <h1>{complete ? `You are ready, ${explorerName}.` : step === -1 ? `Welcome, ${explorerName}.` : current?.title}</h1>
             <p>{guidePrompt}</p>
           </div>
           <button type="button" className={styles.foundationIntakeHear} onClick={hearGuide}>
@@ -96,13 +98,13 @@ function FoundationIntake({ directionProfile, saveDirectionProfile, setScreen, p
 
         <div className={styles.foundationIntakeProgress} aria-label="First Check-In progress">
           {FOUNDATION_INTAKE.map(({ key }, index) => (
-            <span key={key} data-state={index < step ? 'done' : index === step ? 'active' : 'next'}>
+            <span key={key} data-state={step === -1 ? 'next' : index < step ? 'done' : index === step ? 'active' : 'next'}>
               {index + 1}
             </span>
           ))}
         </div>
 
-        {step === 0 && !directionProfile?.interest && (
+        {step === -1 && (
           <div className={styles.foundationIntakeWelcome}>
             <span>THIS IS NOT A TEST</span>
             <h2>YEP starts by learning about you.</h2>
