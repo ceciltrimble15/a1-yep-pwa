@@ -75,3 +75,12 @@
 }
 
 .cta { margin-top: 14px; }
+
+.step[aria-current="step"] {
+  border: 2px solid var(--electric);
+  box-shadow: 0 0 0 3px rgba(41, 121, 255, 0.18);
+}
+.step:focus-visible { outline: 3px solid var(--electric); outline-offset: 3px; }
+.objective,.approachText,.stepText { font-size: 20px; line-height: 1.5; }
+.step { min-height: 72px; padding: 20px; }
+.approachLabel,.stepsLabel { font-size: 15px; }

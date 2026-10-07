@@ -3524,7 +3524,7 @@ button.card:hover {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  min-height: 40px;
+  min-height: 44px;
   padding: 7px 12px;
   border-radius: 12px;
   border: 1px solid rgba(212,218,230,.15);
@@ -3707,3 +3707,56 @@ button.card:hover {
   .dailyQuestWhoChoices { grid-template-columns: 1fr; }
   .dailyQuestWhoChoices button { min-height: 62px; }
 }
+
+/* Tablet teaching view: readable instruction, then one activity. */
+.dailyQuestStage,.stemLabStage { gap: 18px; }
+.dailyQuestMasthead { grid-template-columns: 1fr; gap: 0; }
+.dailyQuestTitleBlock { padding: 0; border: 0; background: none; box-shadow: none; }
+.dailyQuestTitleBlock h1 { margin: 10px 0; font-size: clamp(26px,3vw,36px); line-height: 1.2; }
+.dailyQuestTitleBlock > p { font-size: 18px; }
+.dailyQuestBadge { font-size: 15px; }
+.dailyQuestPathway { margin-top: 10px; font-size: 16px; }
+.dailyQuestPathway small { font-size: 15px; }
+.questFlowCard,.dailyQuestPromptCard,.visualScenarioHeader,.visualScenarioFooter,.broadcastFlow,.dailyQuestNextRail { display: none; }
+.visualScenario { padding: 0; border: 0; background: transparent; }
+.broadcastScene { margin: 0; overflow: visible; border: 0; background: transparent; }
+.broadcastSceneArt { border-radius: 20px; max-height: 300px; background: #102c55; }
+.broadcastOverlay { position: static; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); padding: 16px 0 0; gap: 14px; background: transparent; }
+.broadcastCallout,.broadcastCalloutSelected { grid-template-columns: 36px minmax(0,1fr); min-height: 110px; padding: 18px; border: 2px solid #a7bfdf; background: #f3f7ff; color: #142b53; box-shadow: none; }
+.broadcastCallout > svg,.broadcastCalloutSelected > svg { display: none; }
+.broadcastCallout strong,.broadcastCalloutSelected strong { font-size: 20px; line-height: 1.25; color: #142b53; }
+.broadcastCallout small,.broadcastCalloutSelected small { font-size: 17px; line-height: 1.4; color: #3a5273; }
+.broadcastCalloutNumber { width: 34px; height: 34px; font-size: 18px; }
+.dailyQuestResponseLead h2,.dailyQuestWhoStage h2 { font-size: 28px; line-height: 1.2; }
+.dailyQuestResponseLead p,.dailyQuestWhoChoices button { font-size: 20px; line-height: 1.5; }
+.dailyQuestTextarea { min-height: 180px; font-size: 21px; line-height: 1.55; color: #10234b; background: #fff; border: 2px solid #91afd6; }
+.dailyQuestTextarea::placeholder { color: #536580; }
+.dailyQuestTextarea:focus { outline: 3px solid #ffd56c; outline-offset: 3px; }
+.dailyQuestSubmit,.stemLabSave { min-height: 60px; font-size: 20px; }
+.dailyQuestSavedProof,.draftNote { font-size: 17px; line-height: 1.5; color: #d8e6ff; }
+.dailyQuestWorkbook { padding: 14px 18px; }
+.dailyQuestWorkbook span { font-size: 16px; line-height: 1.5; }
+.stemLabStage .title { font-size: 32px; line-height: 1.2; }
+.stemLabStage .sub { font-size: 17px; line-height: 1.45; }
+.stemLabFlow { padding: 0; gap: 8px; flex-wrap: wrap; }
+.stemLabFlow span { font-size: 13px; }
+.stemLabScene { padding: 18px; grid-template-columns: auto minmax(0,1fr); }
+.stemLabScene p,.stemLabScene small { font-size: 18px; line-height: 1.5; }
+.stemLabScene h2,.stemLabSectionHead h2,.stemLabResult h2 { font-size: 26px; line-height: 1.25; }
+.stemLabFocus { display: none; }
+.stemLabTool,.stemLabToolSelected { min-height: 150px; padding: 20px; }
+.stemLabTool strong,.stemLabToolSelected strong { font-size: 21px; }
+.stemLabTool span,.stemLabToolSelected span { font-size: 18px; color: #d5e2f6; }
+.stemLabPredictionButton,.stemLabPredictionSelected { min-height: 72px; font-size: 20px; }
+.stemLabResult p { font-size: 21px; }
+.stemLabResult div,.stemLabResult small,.stemLabComplete span { font-size: 17px; }
+.stemLabComplete strong { font-size: 20px; }
+.stemLabComplete button { min-height: 58px; font-size: 18px; }
+@media (max-width: 1080px) { .broadcastOverlay,.stemLabToolGrid,.stemLabPredictionGrid { grid-template-columns: 1fr; } .broadcastCallout,.broadcastCalloutSelected { min-height: 84px; } }
+.pictureChoices { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; }
+.pictureChoice { position: relative; display: grid; align-content: start; gap: 12px; padding: 18px; border: 2px solid #98b4d8; border-radius: 20px; background: #f4f8ff; color: #142b53; text-align: left; }
+.pictureChoice strong { font-size: 23px; line-height: 1.25; }
+.pictureChoice > span:not(.pictureNumber) { font-size: 18px; line-height: 1.45; color: #3a5273; }
+.pictureNumber { position: absolute; top: 12px; left: 12px; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; color: #fff; background: #184ea7; font-size: 22px; font-weight: 900; z-index: 1; }
+.pictureChoice[aria-pressed='true'],.pictureChoice:focus-visible { outline: 4px solid #ffd56c; outline-offset: 3px; }
+@media (max-width: 900px) { .pictureChoices { grid-template-columns: 1fr; } .pictureChoice { grid-template-columns: 130px minmax(0,1fr); align-items: center; } .pictureChoice > svg { grid-row: span 2; } .pictureChoice strong { padding-top: 0; } }

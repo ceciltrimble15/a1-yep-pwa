@@ -4,6 +4,7 @@ import { useYEP } from '../context/YEPContext';
 import { DIMENSIONS } from '../data/mirrorQuestions';
 import { anchorProfiles, edgeProfiles, styleProfiles } from '../data/mirrorProfiles';
 import Shell from '../components/Shell';
+import YEPGuide from '../components/YEPGuide';
 import styles from './MirrorResults.module.css';
 import ui from '../styles/ui.module.css';
 
@@ -16,8 +17,8 @@ export default function MirrorResults() {
 
   if (!mirrorResult) {
     return (
-      <Shell>
-        <p style={{ color: 'var(--silver)' }}>No result yet. Face the Mirror first.</p>
+      <Shell showAudio={false}>
+        <YEPGuide step={1} prompt="Start the Mirror to see your strengths and choose a FINISHER mission. There are no right or wrong answers." actionLabel="Start My Mirror" onAction={() => navigate('mirrorIntro')} />
       </Shell>
     );
   }
@@ -28,6 +29,17 @@ export default function MirrorResults() {
   const style = styleProfiles[Style];
   const letterWord = currentMission ? currentMission.finisherLetter : '';
   const letterGlyph = letterWord ? letterWord[0] : '';
+  const prompts = {
+    1: `Your answers point to ${anchor.title} as a strength. Think of a moment when you used it. Next, we will look at something to practice.`,
+    2: `${edge.title} is an area to practice. This is a starting point for growth. Next, connect it to a FINISHER action.`,
+    3: currentMission ? `Your FINISHER focus is ${letterWord}. Your mission is ${currentMission.title}. Look over your full result before you begin.` : 'Review your full result, then return to the Mirror to choose a mission.',
+    4: currentMission ? `Bring your strength into ${currentMission.title}. Open the mission, do each step, and mark only the work you have actually done.` : 'Your result is saved. Start the Mirror when you are ready to choose a mission.',
+  };
+  const guide = <>
+    <YEPGuide title={['See your strength', 'Choose a growth area', 'Connect it to action', 'Your next mission'][step - 1]} example={step < 3 ? 'Think of one recent moment that fits this description. What did you do, and what would you practice next?' : currentMission?.activeApproach} step={`${step} OF 4`} prompt={prompts[step]} actionLabel={step < 4 ? ['See My Growth Area', 'See My FINISHER Focus', 'See Full Result'][step - 1] : (currentMission ? 'Open My FINISHER Mission' : 'Start My Mirror')} onAction={() => step < 4 ? setStep(step + 1) : navigate(currentMission ? 'mission' : 'mirrorIntro')} />
+    <button type="button" className={ui.btnGhost} onClick={() => navigate('mirrorIntro')}>Take a New Mirror</button>
+  </>;
+
 
   const Dots = ({ active }) => (
     <div className={styles.dots}>
@@ -40,7 +52,8 @@ export default function MirrorResults() {
   // ── Step 1 · Anchor Strength ──────────────────────────────
   if (step === 1) {
     return (
-      <Shell>
+      <Shell showAudio={false}>
+        {guide}
         <div className={styles.reveal}>
           <div className={styles.revealEyebrow}>Your Mirror</div>
           <div className={styles.revealKicker}>
@@ -60,7 +73,8 @@ export default function MirrorResults() {
   // ── Step 2 · Growth Edge ──────────────────────────────────
   if (step === 2) {
     return (
-      <Shell>
+      <Shell showAudio={false}>
+        {guide}
         <div className={styles.reveal}>
           <div className={styles.revealKicker}>
             <TrendingUp size={14} /> Your Growth Area
@@ -79,7 +93,8 @@ export default function MirrorResults() {
   // ── Step 3 · First FINISHER Focus ─────────────────────────
   if (step === 3) {
     return (
-      <Shell>
+      <Shell showAudio={false}>
+        {guide}
         <div className={styles.reveal}>
           <div className={styles.revealKicker}>
             <Target size={14} /> Your First FINISHER Focus
@@ -103,7 +118,8 @@ export default function MirrorResults() {
 
   // ── Step 4 · Full result card (identity first, chart below fold) ──
   return (
-    <Shell>
+    <Shell showAudio={false}>
+      {guide}
       <h1 className={styles.title}>
         The Mirror <em>Read You.</em>
       </h1>

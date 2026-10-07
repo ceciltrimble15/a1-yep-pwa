@@ -24,9 +24,10 @@ function isRailActive(screen, key) {
 }
 
 export default function Shell({ children, showBar = true, showAudio = true, showPathway = true }) {
-  const { mode, screen, navigate } = useYEP();
+  const { mode, screen, navigate, mirrorResult, pilotProgress, missionComplete, reflectionSubmitted } = useYEP();
   const program = MODES[mode] || MODES.builder;
   const audioTargetRef = useRef(null);
+  const savedSteps = { daily: pilotProgress.dailyQuestComplete, stem: pilotProgress.stemSinComplete, mirror: !!mirrorResult, finisher: missionComplete && reflectionSubmitted };
 
   return (
     <div className={styles.shell}>
@@ -63,19 +64,22 @@ export default function Shell({ children, showBar = true, showAudio = true, show
             </div>
           </div>
 
+          <button type="button" className={styles.homeButton} onClick={() => navigate('home')}>Program Home</button>
           <nav className={styles.railNav}>
-            {RAIL_ITEMS.map((item) => {
+            {RAIL_ITEMS.map((item, index) => {
               const Icon = item.icon;
               const active = isRailActive(screen, item.key);
               return (
                 <button
                   key={item.key}
                   type="button"
+                  aria-label={item.label}
+                  aria-current={active ? 'page' : undefined}
                   className={active ? styles.railButtonActive : styles.railButton}
-                  onClick={() => navigate(item.screen)}
+                  onClick={() => navigate(item.key === 'mirror' && mirrorResult ? 'results' : item.screen)}
                 >
-                  <Icon size={22} strokeWidth={2.25} aria-hidden="true" />
-                  <span>{item.label}</span>
+<b className={styles.railNumber} aria-hidden="true">{index + 1}</b>
+                  <span>{item.label}<small>{savedSteps[item.key] ? 'Saved' : active ? 'Current step' : 'Open'}</small></span>
                 </button>
               );
             })}
