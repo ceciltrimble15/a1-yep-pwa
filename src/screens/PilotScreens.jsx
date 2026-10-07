@@ -17,11 +17,11 @@ const LANE_ICONS = {
 
 const QUEST_LABELS = {
   explorer: {
-    kicker: "Today's Quest",
-    title: 'Look Around You',
-    helper: 'Look around. Real ideas start with real problems. Spot one, think about who it affects, and tell us one way you could help.',
-    placeholder: 'I see a problem with… I could help by…',
-    action: 'Finish My Quest',
+    kicker: 'Your First Quest',
+    title: 'A Better Lunch Line',
+    helper: 'Look at one real situation. Notice what is happening, think about who it affects, and choose one thing you would try.',
+    placeholder: 'I noticed… I would try…',
+    action: 'Finish My First Quest',
   },
   builder: {
     kicker: 'Daily Challenge',
@@ -48,15 +48,15 @@ const QUEST_LABELS = {
 
 const VISUAL_SCENARIOS = {
   explorer: {
-    eyebrow: 'LOOK AT THE SCENE',
+    eyebrow: 'LOOK AT THE LUNCH LINE',
     title: 'What do you notice?',
-    lead: 'You do not need the perfect answer. Start by seeing what is right in front of you.',
+    lead: 'There is no perfect answer. Start with one thing you can see.',
     items: [
-      { icon: PackageOpen, label: 'Supplies everywhere', detail: 'Things are hard to find.' },
-      { icon: Trash2, label: 'Trash is piling up', detail: 'The space gets harder to use.' },
-      { icon: UsersRound, label: 'Someone needs help', detail: 'A person is stuck or waiting.' },
+      { icon: Clock3, label: 'The line is long', detail: 'Students spend a lot of time waiting.' },
+      { icon: UsersRound, label: 'Everyone uses one spot', detail: 'One serving area can slow the whole line down.' },
+      { icon: Eye, label: 'The path is not clear', detail: 'It can be hard to know where to stand or go next.' },
     ],
-    footer: 'Pick one thing you notice. Who does it affect? What could make it better?',
+    footer: 'Notice one thing. Think about people. Then choose one move you would try.',
   },
   builder: {
     eyebrow: 'SEE THE PROBLEM',
@@ -93,6 +93,12 @@ const VISUAL_SCENARIOS = {
   },
 };
 
+
+const FOUNDATION_QUEST_IDEAS = [
+  ['Open a second line', 'Put quick items first', 'Let groups go at different times'],
+  ['Create two pick-up spots', 'Separate different food choices', 'Add a quick grab-and-go spot'],
+  ['Add floor arrows', 'Use simple picture signs', 'Have a helper show the next step'],
+];
 
 const STEM_LABS = {
   explorer: {
@@ -285,6 +291,87 @@ function VisualScenario({ mode, selectedIndex, onSelect }) {
   );
 }
 
+function FoundationQuestScene({ selectedIndex, onSelect }) {
+  const scenario = VISUAL_SCENARIOS.explorer;
+  return (
+    <section className={styles.foundationQuestScene} aria-label="A Better Lunch Line visual problem scene">
+      <div className={styles.foundationQuestSceneHead}>
+        <span>SEE IT</span>
+        <h2>Look at the lunch line.</h2>
+        <p>Tap one thing that catches your attention.</p>
+      </div>
+
+      <div className={styles.foundationLunchQuestArt}>
+        <svg viewBox="0 0 960 430" role="img" aria-label="Illustrated school cafeteria lunch line with three things to notice">
+          <defs>
+            <linearGradient id="lunchWall" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#66B9FF" />
+              <stop offset="100%" stopColor="#164E96" />
+            </linearGradient>
+            <linearGradient id="lunchFloor" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#D9E7F5" />
+              <stop offset="100%" stopColor="#A8BED8" />
+            </linearGradient>
+          </defs>
+          <rect width="960" height="430" rx="30" fill="url(#lunchWall)" />
+          <rect y="290" width="960" height="140" fill="url(#lunchFloor)" />
+          <rect x="630" y="95" width="250" height="170" rx="18" fill="#F7F9FF" />
+          <rect x="654" y="126" width="202" height="42" rx="10" fill="#D4A017" />
+          <text x="755" y="153" textAnchor="middle" fontSize="20" fontWeight="900" fill="#0F2460">CAFETERIA</text>
+          <rect x="660" y="188" width="190" height="46" rx="10" fill="#2A4EAF" />
+          <circle cx="805" cy="202" r="19" fill="#70462F" />
+          <rect x="787" y="218" width="36" height="48" rx="14" fill="#111827" />
+
+          <path d="M170 325 C255 292 374 292 470 324" fill="none" stroke="#F7F9FF" strokeWidth="10" strokeLinecap="round" opacity=".7" />
+          {[0,1,2,3,4,5].map((n) => {
+            const x = 150 + n * 82;
+            const y = 246 + (n % 2) * 10;
+            return (
+              <g key={n}>
+                <circle cx={x} cy={y} r="23" fill={n % 2 ? '#70462F' : '#9B6547'} />
+                <rect x={x-21} y={y+22} width="42" height="63" rx="17" fill={n % 3 === 0 ? '#0F2460' : n % 3 === 1 ? '#2A4EAF' : '#1A6D8E'} />
+              </g>
+            );
+          })}
+          <path d="M118 362 H560" stroke="#0F2460" strokeWidth="5" strokeDasharray="18 14" opacity=".55" />
+
+          <g opacity={selectedIndex === null || selectedIndex === 0 ? 1 : .32}>
+            <circle cx="315" cy="238" r="88" fill="none" stroke="#D4A017" strokeWidth="8" />
+            <circle cx="315" cy="110" r="26" fill="#D4A017" />
+            <text x="315" y="119" textAnchor="middle" fontSize="26" fontWeight="900" fill="#0F2460">1</text>
+          </g>
+          <g opacity={selectedIndex === null || selectedIndex === 1 ? 1 : .32}>
+            <circle cx="752" cy="190" r="106" fill="none" stroke="#D4A017" strokeWidth="8" />
+            <circle cx="875" cy="92" r="26" fill="#D4A017" />
+            <text x="875" y="101" textAnchor="middle" fontSize="26" fontWeight="900" fill="#0F2460">2</text>
+          </g>
+          <g opacity={selectedIndex === null || selectedIndex === 2 ? 1 : .32}>
+            <ellipse cx="350" cy="358" rx="248" ry="48" fill="none" stroke="#D4A017" strokeWidth="8" />
+            <circle cx="85" cy="358" r="26" fill="#D4A017" />
+            <text x="85" y="367" textAnchor="middle" fontSize="26" fontWeight="900" fill="#0F2460">3</text>
+          </g>
+        </svg>
+      </div>
+
+      <div className={styles.foundationQuestNoticeChoices}>
+        {scenario.items.map(({ icon: Icon, label, detail }, index) => (
+          <button
+            type="button"
+            key={label}
+            className={selectedIndex === index ? styles.foundationQuestNoticeSelected : undefined}
+            onClick={() => onSelect(index)}
+            aria-pressed={selectedIndex === index}
+          >
+            <span>{index + 1}</span>
+            <Icon size={22} aria-hidden="true" />
+            <div><strong>{label}</strong><small>{detail}</small></div>
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function YEPGuide({ prompt, step, onHear, actionLabel, onAction }) {
   return (
     <section className={styles.guidePanel} aria-live="polite">
@@ -356,12 +443,26 @@ export function DailyQuest() {
   const scenario = VISUAL_SCENARIOS[mode] || VISUAL_SCENARIOS.builder;
   const [text, setText] = useState(pilotProgress.dailyQuestText);
   const [selectedProblem, setSelectedProblem] = useState(null);
-  const [guideStep, setGuideStep] = useState(pilotProgress.dailyQuestComplete ? 4 : 1);
+  const [affectedBy, setAffectedBy] = useState('');
+  const [ideaChoice, setIdeaChoice] = useState('');
+  const [guideStep, setGuideStep] = useState(
+    pilotProgress.dailyQuestComplete ? (mode === 'explorer' ? 5 : 4) : 1
+  );
   const complete = pilotProgress.dailyQuestComplete;
   const program = MODES[mode] || MODES.builder;
 
   const selected = selectedProblem === null ? null : scenario.items[selectedProblem];
-  const guidePrompt = complete
+  const foundationGuidePrompt = complete
+    ? 'You finished your first YEP quest. You saw something, thought about people, chose a move, and finished. That is the Process starting to work.'
+    : guideStep === 1
+      ? 'Now that I know a little about you, let us try your first quest. Look at the lunch line and tap one thing that catches your attention.'
+      : guideStep === 2
+        ? 'You noticed "' + (selected?.label || 'something important') + '." Good. Who feels that problem?'
+        : guideStep === 3
+          ? 'Now choose one move you would try first. You are not looking for a perfect answer. You are practicing how to move from a problem to an idea.'
+          : 'Look at what you built: something you noticed, who it affects, and one move you would try. That is a real problem-solving step.';
+
+  const standardGuidePrompt = complete
     ? 'You finished this Daily Quest and saved your proof. Next, take that same problem-solving mindset into S.T.E.M.Sin.'
     : guideStep === 1
       ? 'Start by looking at the scene. Tap one numbered problem that catches your attention. I will move with you from there.'
@@ -372,6 +473,8 @@ export function DailyQuest() {
           : guideStep === 3
             ? 'You have an idea. Read it back once and make sure it sounds like you. Then check it with me.'
             : 'Your idea is ready. Finish and save it as your Daily Quest proof. After that, I will move you into S.T.E.M.Sin.';
+
+  const guidePrompt = mode === 'explorer' ? foundationGuidePrompt : standardGuidePrompt;
 
   function hearGuide() {
     if (typeof window === 'undefined' || !window.speechSynthesis) return;
@@ -384,7 +487,29 @@ export function DailyQuest() {
 
   function chooseProblem(index) {
     setSelectedProblem(index);
+    setAffectedBy('');
+    setIdeaChoice('');
     setGuideStep(2);
+  }
+
+  function chooseWho(value) {
+    setAffectedBy(value);
+    setGuideStep(3);
+  }
+
+  function chooseFoundationIdea(value) {
+    setIdeaChoice(value);
+    setGuideStep(4);
+  }
+
+  function saveFoundationQuest() {
+    if (!selected || !affectedBy || !ideaChoice) return;
+    const proof = `I noticed ${selected.label}. It affects ${affectedBy.toLowerCase()}. I would try: ${ideaChoice}.`;
+    const saved = completeDailyQuest(proof);
+    if (saved) {
+      setText(proof);
+      setGuideStep(5);
+    }
   }
 
   function advanceGuide() {
@@ -407,6 +532,112 @@ export function DailyQuest() {
   function saveQuest() {
     const saved = completeDailyQuest(text);
     if (saved) setGuideStep(4);
+  }
+
+  if (mode === 'explorer') {
+    const ideaOptions = selectedProblem === null ? [] : FOUNDATION_QUEST_IDEAS[selectedProblem] || [];
+    return (
+      <Shell>
+        <section className={styles.foundationQuestStage}>
+          <header className={styles.foundationQuestHeader}>
+            <div>
+              <span>YOUR FIRST DAILY QUEST</span>
+              <h1>A Better Lunch Line</h1>
+              <p>See it. Notice it. Choose a move. Finish.</p>
+            </div>
+            <div className={styles.foundationQuestMiniFlow} aria-label="First Daily Quest progress">
+              {['SEE', 'PEOPLE', 'IDEA', 'FINISH'].map((label, index) => (
+                <span key={label} data-state={guideStep > index + 1 || complete ? 'done' : guideStep === index + 1 ? 'active' : 'next'}>
+                  <b>{index + 1}</b>{label}
+                </span>
+              ))}
+            </div>
+          </header>
+
+          <YEPGuide
+            prompt={guidePrompt}
+            step={guideStep}
+            onHear={hearGuide}
+            actionLabel={complete ? 'Take Me To S.T.E.M.Sin' : null}
+            onAction={() => navigate('stemSin')}
+          />
+
+          {!complete && guideStep === 1 && (
+            <FoundationQuestScene selectedIndex={selectedProblem} onSelect={chooseProblem} />
+          )}
+
+          {!complete && guideStep === 2 && selected && (
+            <section className={styles.foundationQuestChoiceStage}>
+              <span>THINK ABOUT PEOPLE</span>
+              <h2>Who feels this problem?</h2>
+              <p>You noticed: <strong>{selected.label}</strong></p>
+              <div className={styles.foundationQuestBigChoices}>
+                {['Students waiting in line', 'Cafeteria workers', 'Both students and workers'].map((option) => (
+                  <button type="button" key={option} onClick={() => chooseWho(option)}>
+                    <UsersRound size={24} aria-hidden="true" />
+                    <strong>{option}</strong>
+                    <ChevronRight size={19} aria-hidden="true" />
+                  </button>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {!complete && guideStep === 3 && selected && (
+            <section className={styles.foundationQuestChoiceStage}>
+              <span>BUILD AN IDEA</span>
+              <h2>What would you try first?</h2>
+              <p>Pick one move. Later, you can test it and change it.</p>
+              <div className={styles.foundationQuestBigChoices}>
+                {ideaOptions.map((option) => (
+                  <button type="button" key={option} onClick={() => chooseFoundationIdea(option)}>
+                    <Lightbulb size={24} aria-hidden="true" />
+                    <strong>{option}</strong>
+                    <ChevronRight size={19} aria-hidden="true" />
+                  </button>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {!complete && guideStep === 4 && selected && (
+            <section className={styles.foundationQuestReview}>
+              <span>LOOK WHAT YOU BUILT</span>
+              <h2>Problem → People → Idea</h2>
+              <div className={styles.foundationQuestReviewGrid}>
+                <div><small>I NOTICED</small><strong>{selected.label}</strong></div>
+                <div><small>IT AFFECTS</small><strong>{affectedBy}</strong></div>
+                <div><small>I WOULD TRY</small><strong>{ideaChoice}</strong></div>
+              </div>
+              <p>You do not have to know if the idea works yet. The next part of YEP teaches you how to test and learn.</p>
+              <button type="button" className={styles.foundationQuestFinish} onClick={saveFoundationQuest}>
+                Finish My First Quest <CheckCircle2 size={20} />
+              </button>
+            </section>
+          )}
+
+          {complete && (
+            <section className={styles.foundationQuestComplete}>
+              <CheckCircle2 size={42} aria-hidden="true" />
+              <span>FIRST QUEST COMPLETE</span>
+              <h2>You moved from seeing a problem to choosing a move.</h2>
+              <p>{pilotProgress.dailyQuestText}</p>
+              <div className={styles.foundationQuestWin}>
+                <b>SEE</b><i>→</i><b>PEOPLE</b><i>→</i><b>IDEA</b><i>→</i><b>FINISH</b>
+              </div>
+              <button type="button" className={styles.foundationQuestFinish} onClick={() => navigate('stemSin')}>
+                Next: Test An Idea In S.T.E.M.Sin <ChevronRight size={20} />
+              </button>
+            </section>
+          )}
+
+          <footer className={styles.foundationQuestSupport}>
+            <BookOpenCheck size={18} aria-hidden="true" />
+            <span><strong>App:</strong> see + choose + experience. <strong>Workbook:</strong> think + write + discuss with support.</span>
+          </footer>
+        </section>
+      </Shell>
+    );
   }
 
   return (
