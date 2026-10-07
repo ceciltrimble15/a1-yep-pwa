@@ -715,7 +715,7 @@ export function StemSinQuest() {
                 : guideStep === 4
                   ? 'Explain What Happened'
                   : guideStep === 5 && text.trim()
-                    ? 'Save S.T.E.M.Sin Proof'
+                    ? 'Finish & Save My Proof'
                     : null
           }
           onAction={advanceGuide}
@@ -747,30 +747,30 @@ export function StemSinQuest() {
           </div>
         </section>
 
-        <section className={styles.stemLabTools} aria-label="Choose a tool to test">
-          <div className={styles.stemLabSectionHead}>
-            <span>STEP 1</span>
-            <h2>Which tool would you test first?</h2>
-          </div>
-          <div className={styles.stemLabToolGrid}>
-            {lab.tools.map(({ icon: Icon, label, detail }, index) => (
-              <button
-                type="button"
-                key={label}
-                className={selectedTool === index ? styles.stemLabToolSelected : styles.stemLabTool}
-                aria-pressed={selectedTool === index}
-                onClick={() => chooseTool(index)}
-                disabled={complete}
-              >
-                <Icon size={26} aria-hidden="true" />
-                <strong>{label}</strong>
-                <span>{detail}</span>
-              </button>
-            ))}
-          </div>
-        </section>
+        {guideStep === 1 && (
+          <section className={styles.stemLabTools} aria-label="Choose a tool to test">
+            <div className={styles.stemLabSectionHead}>
+              <span>STEP 1</span>
+              <h2>Which tool would you test first?</h2>
+            </div>
+            <div className={styles.stemLabToolGrid}>
+              {lab.tools.map(({ icon: Icon, label, detail }, index) => (
+                <button
+                  type="button"
+                  key={label}
+                  className={styles.stemLabTool}
+                  onClick={() => chooseTool(index)}
+                >
+                  <Icon size={26} aria-hidden="true" />
+                  <strong>{label}</strong>
+                  <span>{detail}</span>
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
 
-        {tool && !complete && (
+        {guideStep === 2 && tool && (
           <section className={styles.stemLabPrediction}>
             <div className={styles.stemLabSectionHead}>
               <span>STEP 2</span>
@@ -792,7 +792,16 @@ export function StemSinQuest() {
           </section>
         )}
 
-        {demoRan && tool && (
+        {guideStep === 3 && tool && prediction && (
+          <section className={styles.stemLabReadyStage}>
+            <span>READY TO TEST</span>
+            <h2>{tool.label}</h2>
+            <p>You predict: <strong>{prediction}</strong></p>
+            <small>Run the guided practice test, then look for what changes.</small>
+          </section>
+        )}
+
+        {guideStep === 4 && demoRan && tool && (
           <section className={styles.stemLabResult} aria-live="polite">
             <div className={styles.stemLabResultBadge}><CheckCircle2 size={22} aria-hidden="true" /> PRACTICE RESULT</div>
             <h2>{tool.label}</h2>
@@ -801,15 +810,15 @@ export function StemSinQuest() {
               <strong>Your prediction:</strong>
               <span>{prediction || 'Saved proof from an earlier practice test.'}</span>
             </div>
-            <small>This is a guided app practice result—not real-world evidence. A real test still requires the workbook/facilitator process and appropriate permission.</small>
+            <small>This is guided app practice. A real-world test still belongs in the workbook/facilitator process with appropriate permission.</small>
           </section>
         )}
 
-        {(guideStep >= 5 || complete) && (
+        {(guideStep === 5 || complete) && (
           <section className={styles.stemLabExplain}>
             <div className={styles.stemLabSectionHead}>
               <span>STEP 4</span>
-              <h2>Explain what happened</h2>
+              <h2>{complete ? 'Your saved explanation' : 'Explain what happened'}</h2>
             </div>
             <textarea
               id="stem-sin-answer"
@@ -817,24 +826,27 @@ export function StemSinQuest() {
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="I tested... I noticed... Next I would..."
+              disabled={complete}
             />
-            <VoiceCapture
-              prompt={stemSin.prompt}
-              currentValue={text}
-              onConfirm={(value) => {
-                setText(value);
-                setGuideStep(5);
-              }}
-              buttonLabel="Talk To YEP"
-              confirmLabel="Use As My Answer"
-            />
+            {!complete && (
+              <VoiceCapture
+                prompt={stemSin.prompt}
+                currentValue={text}
+                onConfirm={(value) => {
+                  setText(value);
+                  setGuideStep(5);
+                }}
+                buttonLabel="Talk To YEP"
+                confirmLabel="Use As My Answer"
+              />
+            )}
             {!complete && (
               <button
                 className={styles.stemLabSave}
                 disabled={!text.trim() || !tool}
                 onClick={saveProof}
               >
-                Save S.T.E.M.Sin Proof
+                Finish & Save My Proof
               </button>
             )}
           </section>
@@ -851,7 +863,7 @@ export function StemSinQuest() {
           </section>
         )}
 
-        <WorkbookCallout text="Use the workbook S.T.E.M.Sin page for the real plan, discussion, and facilitator-supported test. The app demonstrates the thinking rhythm, then saves the youth's explanation as proof." />
+        <WorkbookCallout text="Use the workbook to plan, write, and discuss the real test. Use the app to choose, predict, practice, explain, and save proof." />
 
         <div className={styles.actions}><BackHome /></div>
       </section>
