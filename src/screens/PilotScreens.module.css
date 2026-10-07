@@ -3742,3 +3742,225 @@ button.card:hover {
   .dailyQuestWhoChoices { grid-template-columns: 1fr; }
   .dailyQuestWhoChoices button { min-height: 62px; }
 }
+
+.foundationIntake {
+  display: grid;
+  gap: 18px;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.foundationIntakeGuide {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  padding: 22px;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(212,160,23,.16), transparent 35%),
+    linear-gradient(145deg, #102b5d, #081a36);
+  border: 1px solid rgba(212,160,23,.24);
+}
+
+.foundationIntakeGuideAvatar {
+  width: 84px;
+  height: 84px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #70462f;
+  border: 5px solid #d4a017;
+  box-shadow: inset 0 -18px 0 #0f2460;
+  color: #fff;
+  font-weight: 900;
+  font-size: 13px;
+}
+
+.foundationIntakeGuideLabel,
+.foundationIntakeQuestion > span,
+.foundationIntakeWelcome > span,
+.foundationIntakeReady > span,
+.foundationIntakeFooter > span {
+  color: var(--gold-soft);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+
+.foundationIntakeGuide h1,
+.foundationIntakeQuestion h2,
+.foundationIntakeWelcome h2,
+.foundationIntakeReady h2 {
+  margin: 5px 0 8px;
+  color: var(--white);
+}
+
+.foundationIntakeGuide p,
+.foundationIntakeQuestion p,
+.foundationIntakeWelcome p,
+.foundationIntakeReady p {
+  margin: 0;
+  color: var(--silver-light);
+  line-height: 1.55;
+}
+
+.foundationIntakeHear {
+  min-height: 46px;
+  padding: 0 16px;
+  border-radius: 14px;
+  color: var(--navy);
+  background: var(--gold);
+  border: 1px solid var(--gold);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.foundationIntakeProgress {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 8px;
+}
+
+.foundationIntakeProgress span {
+  min-height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  text-indent: -9999px;
+  background: rgba(212,218,230,.12);
+}
+
+.foundationIntakeProgress span[data-state="active"] {
+  background: var(--gold);
+}
+
+.foundationIntakeProgress span[data-state="done"] {
+  background: #2f7df5;
+}
+
+.foundationIntakeWelcome,
+.foundationIntakeQuestion,
+.foundationIntakeReady {
+  padding: 24px;
+  border-radius: 24px;
+  background: rgba(255,255,255,.025);
+  border: 1px solid rgba(212,218,230,.12);
+}
+
+.foundationIntakeRhythm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.foundationIntakeRhythm b {
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: #0b1d3a;
+  border: 1px solid rgba(212,218,230,.14);
+  color: var(--white);
+  font-size: 10px;
+  letter-spacing: .05em;
+}
+
+.foundationIntakeRhythm i {
+  color: var(--gold);
+  font-style: normal;
+}
+
+.foundationIntakeChoices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.foundationIntakeChoices button {
+  min-height: 74px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  text-align: left;
+  background: #0b1d3a;
+  border: 1px solid rgba(212,218,230,.14);
+  color: var(--white);
+  cursor: pointer;
+}
+
+.foundationIntakeChoices button:hover,
+.foundationIntakeChoices button:focus-visible {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(212,160,23,.08);
+}
+
+.foundationIntakeSnapshot {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.foundationIntakeSnapshot div {
+  padding: 14px;
+  border-radius: 16px;
+  background: #0b1d3a;
+  border: 1px solid rgba(212,218,230,.12);
+}
+
+.foundationIntakeSnapshot small {
+  display: block;
+  color: var(--gold-soft);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .1em;
+}
+
+.foundationIntakeSnapshot strong {
+  display: block;
+  margin-top: 5px;
+  color: var(--white);
+}
+
+.foundationIntakeFooter {
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(212,160,23,.07);
+  border: 1px solid rgba(212,160,23,.16);
+}
+
+.foundationIntakeFooter strong,
+.foundationIntakeFooter small {
+  display: block;
+}
+
+.foundationIntakeFooter strong {
+  margin-top: 4px;
+  color: var(--white);
+}
+
+.foundationIntakeFooter small {
+  margin-top: 4px;
+  color: var(--silver);
+}
+
+@media (max-width: 760px) {
+  .foundationIntakeGuide {
+    grid-template-columns: auto minmax(0,1fr);
+  }
+
+  .foundationIntakeHear {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .foundationIntakeChoices,
+  .foundationIntakeSnapshot {
+    grid-template-columns: 1fr;
+  }
+}
+
