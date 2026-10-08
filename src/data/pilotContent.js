@@ -227,11 +227,6 @@ export const PROGRAM_CONTENT = {
   }
 };
 
-export const PILOT_BADGES = [
-  { id: 'daily-quest', name: 'Quest Starter', unlock: 'Complete the Daily Quest' },
-  { id: 'weekly-module', name: 'Identity Builder', unlock: 'Complete all Week 1 activities' },
-  { id: 'boss-challenge', name: 'Boss Move', unlock: 'Complete the Boss Challenge' },
-];
 
 export function getProgramContent(mode) {
   return PROGRAM_CONTENT[mode] || PROGRAM_CONTENT[DEFAULT_MODE];

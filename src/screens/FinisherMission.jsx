@@ -1,13 +1,11 @@
-import { useState } from 'react';
 import { Check, Flag, ArrowRight } from 'lucide-react';
-import { useYEP, XP } from '../context/YEPContext';
+import { useYEP } from '../context/YEPContext';
 import Shell from '../components/Shell';
 import styles from './FinisherMission.module.css';
 import ui from '../styles/ui.module.css';
 
 export default function FinisherMission() {
-  const { currentMission, completeMission } = useYEP();
-  const [done, setDone] = useState({});
+  const { currentMission, missionStepsDone, toggleMissionStep, completeMission } = useYEP();
 
   if (!currentMission) {
     return (
@@ -18,11 +16,7 @@ export default function FinisherMission() {
   }
 
   const m = currentMission;
-  const allDone = m.steps.every((_, i) => done[i]);
-
-  function toggle(i) {
-    setDone((d) => ({ ...d, [i]: !d[i] }));
-  }
+  const allDone = m.steps.every((_, i) => missionStepsDone[i]);
 
   return (
     <Shell>
@@ -32,7 +26,7 @@ export default function FinisherMission() {
 
       <div className={styles.letterTag}>
         <span className={styles.letterBadge}>{m.finisherLetter[0]}</span>
-        <span className={styles.letterText}>Unlocks: {m.finisherLetter}</span>
+        <span className={styles.letterText}>FINISHER: {m.finisherLetter}</span>
       </div>
 
       <div className={styles.approach}>
@@ -43,12 +37,12 @@ export default function FinisherMission() {
       <div className={styles.stepsLabel}>Mission Steps</div>
       <div className={styles.steps}>
         {m.steps.map((step, i) => {
-          const isDone = !!done[i];
+          const isDone = !!missionStepsDone[i];
           return (
             <button
               key={i}
               className={`${styles.step} ${isDone ? styles.stepDone : ''}`}
-              onClick={() => toggle(i)}
+              onClick={() => toggleMissionStep(i)}
             >
               <span className={`${styles.check} ${isDone ? styles.checkDone : ''}`}>
                 {isDone && <Check size={15} strokeWidth={3} />}
@@ -66,7 +60,7 @@ export default function FinisherMission() {
 
       <div className={styles.cta}>
         <button className={ui.btnPrimary} onClick={completeMission} disabled={!allDone}>
-          <Flag size={19} /> Mark Mission Complete · +{XP.MISSION} XP <ArrowRight size={19} />
+          <Flag size={19} /> Mark Mission Complete <ArrowRight size={19} />
         </button>
       </div>
     </Shell>

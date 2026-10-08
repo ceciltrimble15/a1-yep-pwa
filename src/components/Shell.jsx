@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { Flag, FlaskConical, ScanFace, Sparkles } from 'lucide-react';
 import GlobalBar from './GlobalBar';
 import AudioGuide from './AudioGuide';
 import { useYEP } from '../context/YEPContext';
@@ -7,8 +8,23 @@ import styles from './Shell.module.css';
 
 const A1_LOGO = '/a1-suppliers-logo.png';
 
+const RAIL_ITEMS = [
+  { key: 'daily', label: 'Daily Quest', screen: 'dailyQuest', icon: Sparkles },
+  { key: 'stem', label: 'S.T.E.M.Sin', screen: 'stemSin', icon: FlaskConical },
+  { key: 'mirror', label: 'Mirror Results', screen: 'mirrorIntro', icon: ScanFace },
+  { key: 'finisher', label: 'FINISHER Mission', screen: 'mission', icon: Flag },
+];
+
+function isRailActive(screen, key) {
+  if (key === 'daily') return screen === 'dailyQuest';
+  if (key === 'stem') return screen === 'stemSin';
+  if (key === 'mirror') return ['mirrorIntro', 'mirror', 'results'].includes(screen);
+  if (key === 'finisher') return ['finisherFocus', 'mission', 'reflection', 'progress'].includes(screen);
+  return false;
+}
+
 export default function Shell({ children, showBar = true, showAudio = true, showPathway = true }) {
-  const { mode } = useYEP();
+  const { mode, screen, navigate } = useYEP();
   const program = MODES[mode] || MODES.builder;
   const audioTargetRef = useRef(null);
 
@@ -35,9 +51,54 @@ export default function Shell({ children, showBar = true, showAudio = true, show
           </div>
         )}
       </header>
-      {showBar && <div data-audio-skip="true"><GlobalBar /></div>}
-      {showAudio && <AudioGuide targetRef={audioTargetRef} />}
-      <main ref={audioTargetRef} className={styles.content}>{children}</main>
+
+      <div className={styles.appFrame}>
+        <aside className={styles.tabletRail} data-audio-skip="true" aria-label="YEP primary lanes">
+          <div className={styles.railBrand}>
+            <img src={A1_LOGO} alt="" />
+            <div>
+              <strong>A/1 Suppliers</strong>
+              <span>YEP</span>
+              <small>Young Entrepreneurs Process</small>
+            </div>
+          </div>
+
+          <nav className={styles.railNav}>
+            {RAIL_ITEMS.map((item) => {
+              const Icon = item.icon;
+              const active = isRailActive(screen, item.key);
+              return (
+                <button
+                  key={item.key}
+                  type="button"
+                  className={active ? styles.railButtonActive : styles.railButton}
+                  onClick={() => navigate(item.screen)}
+                >
+                  <Icon size={22} strokeWidth={2.25} aria-hidden="true" />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+
+          <div className={styles.railPath}>
+            <span>ACTIVE PATHWAY</span>
+            <strong>{program.program}</strong>
+            <small>{program.label} · Ages {program.ageRange}</small>
+          </div>
+
+          <div className={styles.railClose}>
+            <strong>Same core process.</strong>
+            <span>Try → Solve → Reflect → Finish</span>
+          </div>
+        </aside>
+
+        <div className={styles.mainColumn}>
+          {showBar && <div data-audio-skip="true"><GlobalBar /></div>}
+          {showAudio && <AudioGuide targetRef={audioTargetRef} />}
+          <main ref={audioTargetRef} className={styles.content}>{children}</main>
+        </div>
+      </div>
     </div>
   );
 }

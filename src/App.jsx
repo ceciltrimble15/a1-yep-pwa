@@ -18,8 +18,7 @@ import {
   DailyQuest,
   StemSinQuest,
   BossChallenge,
-  MentorSpotlight,
-  Rewards,
+  MentorSpotlight
 } from './screens/PilotScreens';
 import {
   DemoWeeklyModule,
@@ -42,7 +41,6 @@ const SCREENS = {
   stemSin: StemSinQuest,
   bossChallenge: BossChallenge,
   mentorSpotlight: MentorSpotlight,
-  rewards: Rewards,
   profile: DemoProfile,
   adminReview: DemoAdminReview,
   resetDemo: ResetDemo,
