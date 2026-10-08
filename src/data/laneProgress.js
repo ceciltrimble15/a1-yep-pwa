@@ -1,7 +1,7 @@
 import { DEFAULT_MODE, isValidMode } from './modes.js';
 
 export const EMPTY_PILOT_PROGRESS = {
-  dailyQuestText: '', dailyQuestComplete: false, weeklyCompleted: [],
+  dailyQuestText: '', dailyQuestQuestId: null, dailyQuestComplete: false, weeklyCompleted: [],
   stemSinText: '', stemSinChoice: '', stemSinComplete: false, bossText: '', bossComplete: false,
   dailyQuestChoiceProof: null, dailyQuestEvidenceType: '', stemSinChoiceProof: null, stemSinEvidenceType: '',
   mentorQuestion: '', mirrorDraft: null, dailyQuestDraft: null, stemSinDraft: null,

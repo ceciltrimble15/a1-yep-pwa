@@ -2,16 +2,22 @@ import { ArrowRight, BookOpenCheck, Compass, Flag, ShieldCheck, Sparkles, Target
 import { useYEP } from '../context/YEPContext';
 import { MODES } from '../data/modes';
 import { getProgramContent } from '../data/pilotContent';
+import { hasLegacyFoundationQuest, LEGACY_FOUNDATION_QUEST } from '../data/foundationQuest';
 import Shell from '../components/Shell';
 import YEPGuide from '../components/YEPGuide';
 import styles from './Home.module.css';
 
 export default function Home() {
-  const { mode, powerName, pilotProgress, mirrorResult, currentMission, missionComplete, reflectionSubmitted, navigate } = useYEP();
+  const { mode, powerName, directionProfile, pilotProgress, mirrorResult, currentMission, missionComplete, reflectionSubmitted, navigate } = useYEP();
   const program = MODES[mode] || MODES.builder;
   const content = getProgramContent(mode);
-  const next = !pilotProgress.dailyQuestComplete
-    ? { step: 1, title: content.dailyQuest.title, prompt: content.dailyQuest.prompt, example: content.example, action: 'Continue Daily Quest', screen: 'dailyQuest' }
+  const legacyFoundation = mode === 'explorer' && hasLegacyFoundationQuest(pilotProgress);
+  const dailyContent = legacyFoundation ? LEGACY_FOUNDATION_QUEST : content.dailyQuest;
+  const needsFirstCheckIn = !legacyFoundation && mode === 'explorer' && !['interest', 'strength', 'learning', 'goal'].every((key) => directionProfile?.[key]) && !pilotProgress.dailyQuestComplete && pilotProgress.dailyQuestDraft?.selectedProblem == null && !pilotProgress.dailyQuestDraft?.text;
+  const next = needsFirstCheckIn
+    ? { step: 'WELCOME', title: 'Your first YEP check-in', prompt: 'Choose what catches your attention, a strength, how you like to learn, and something you want to try. Your answers can change as you grow.', action: 'Continue My First Check-In', screen: 'myDirection' }
+    : !pilotProgress.dailyQuestComplete
+    ? { step: 1, title: dailyContent.title, prompt: dailyContent.prompt, example: dailyContent.example || content.example, action: 'Continue Daily Quest', screen: 'dailyQuest' }
     : !pilotProgress.stemSinComplete
       ? { step: 2, title: content.stemSin.challengeTitle, prompt: content.stemSin.prompt, example: content.example, action: 'Continue S.T.E.M.Sin', screen: 'stemSin' }
       : !mirrorResult

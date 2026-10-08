@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react';
-import { Compass, Lightbulb, Network, BadgeDollarSign, Cpu, Shuffle, ArrowLeft, Target } from 'lucide-react';
+import { Compass, Lightbulb, Network, BadgeDollarSign, Cpu, Shuffle, ArrowLeft, ArrowRight, Target } from 'lucide-react';
 import { useYEP } from '../context/YEPContext';
 import { MODES } from '../data/modes';
 import { EXPOSURE_WORLDS, getDirectionGuide } from '../data/directionGuidance';
 import Shell from '../components/Shell';
 import VoiceCapture from '../components/VoiceCapture';
+import YEPGuide from '../components/YEPGuide';
 import styles from './PilotScreens.module.css';
 import ui from '../styles/ui.module.css';
 
@@ -19,6 +20,138 @@ function GuideCard({ icon: Icon, title, children }) {
   );
 }
 
+const FOUNDATION_INTAKE = [
+  {
+    key: 'interest',
+    eyebrow: 'FIRST CHECK-IN · 1 OF 4',
+    title: 'What pulls your attention?',
+    prompt: 'There is no wrong answer. Tap the kind of thing you want to explore first.',
+    options: ['Building things', 'Helping people', 'Technology + games', 'Art + design', 'Money + business', 'Solving problems'],
+  },
+  {
+    key: 'strength',
+    eyebrow: 'FIRST CHECK-IN · 2 OF 4',
+    title: 'What feels like a strength?',
+    prompt: 'Pick the one that sounds most like you today. You can grow every one of these.',
+    options: ['I notice things', 'I make things', 'I explain ideas', 'I help people', 'I keep trying', 'I organize things'],
+  },
+  {
+    key: 'learning',
+    eyebrow: 'FIRST CHECK-IN · 3 OF 4',
+    title: 'How do you like to learn?',
+    prompt: 'Choose the way that usually helps something click for you.',
+    options: ['Seeing it', 'Hearing it', 'Trying it', 'Doing it with someone'],
+  },
+  {
+    key: 'goal',
+    eyebrow: 'FIRST CHECK-IN · 4 OF 4',
+    title: 'What do you want to do first?',
+    prompt: 'This is just a starting direction, not a permanent choice.',
+    options: ['Build something', 'Solve a problem', 'Learn a new skill', 'Help somebody', 'Make money from an idea', 'Learn what I am good at'],
+  },
+];
+
+function FoundationIntake({ directionProfile, saveDirectionProfile, setScreen, powerName }) {
+  const firstIncomplete = FOUNDATION_INTAKE.findIndex(({ key }) => !directionProfile?.[key]);
+  const [step, setStep] = useState(
+    firstIncomplete === -1 ? FOUNDATION_INTAKE.length : firstIncomplete === 0 ? -1 : firstIncomplete
+  );
+  const complete = step >= FOUNDATION_INTAKE.length;
+  const current = step >= 0 && !complete ? FOUNDATION_INTAKE[step] : null;
+  const explorerName = powerName || 'Explorer';
+
+  const guidePrompt = complete
+    ? `Nice work, ${explorerName}. I know a little more about how you want to start. These answers can change as you learn. Now we can begin your first Daily Quest.`
+    : step === -1
+      ? `Welcome, ${explorerName}. This is your first YEP check-in. I am not testing you. I am learning how you see things so the Process can meet you where you are.`
+      : current?.prompt || '';
+
+  function choose(value) {
+    if (!current) return;
+    saveDirectionProfile({ [current.key]: value });
+    setStep((currentStep) => currentStep + 1);
+  }
+
+  return (
+    <Shell showAudio={false}>
+      <section className={styles.foundationIntake}>
+        <YEPGuide
+          title={complete ? `You are ready, ${explorerName}.` : step === -1 ? `Welcome, ${explorerName}.` : current?.title}
+          prompt={guidePrompt}
+          step={step === -1 ? 'WELCOME' : complete ? 'SAVED' : `${step + 1} OF 4`}
+          narration={current ? `You can choose: ${current.options.join('. ')}.` : ''}
+        />
+
+        <div className={styles.foundationIntakeProgress} aria-label="First Check-In progress">
+          {FOUNDATION_INTAKE.map(({ key }, index) => (
+            <span key={key} data-state={step === -1 ? 'next' : index < step ? 'done' : index === step ? 'active' : 'next'}>
+              {index + 1}
+            </span>
+          ))}
+        </div>
+
+        {step === -1 && (
+          <div className={styles.foundationIntakeWelcome}>
+            <span>THIS IS NOT A TEST</span>
+            <h2>YEP starts by learning about you.</h2>
+            <p>You will see real situations, hear the Guide, make choices, try ideas, reflect on what happened, and finish something you can be proud of.</p>
+            <div className={styles.foundationIntakeRhythm} aria-label="YEP learning rhythm">
+              <b>SEE IT</b><i>→</i><b>UNDERSTAND IT</b><i>→</i><b>TRY IT</b><i>→</i><b>REFLECT</b><i>→</i><b>FINISH</b>
+            </div>
+            <button type="button" className={ui.btnPrimary} onClick={() => setStep(0)}>
+              Start My First Check-In
+            </button>
+          </div>
+        )}
+
+        {!complete && current && (
+          <div className={styles.foundationIntakeQuestion}>
+            <span>{current.eyebrow}</span>
+            <h2>{current.title}</h2>
+            <p>{current.prompt}</p>
+            <div className={styles.foundationIntakeChoices} aria-label="First check-in choices">
+              {current.options.map((option) => (
+                <button type="button" key={option} aria-pressed={directionProfile?.[current.key] === option} onClick={() => choose(option)}>
+                  <strong>{option}</strong>
+                  <ArrowRight size={18} aria-hidden="true" />
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {complete && (
+          <div className={styles.foundationIntakeReady}>
+            <span>YOUR STARTING SNAPSHOT</span>
+            <h2>This is where we begin — not where you have to stay.</h2>
+            <div className={styles.foundationIntakeSnapshot}>
+              <div><small>INTEREST</small><strong>{directionProfile?.interest || 'Still exploring'}</strong></div>
+              <div><small>STRENGTH</small><strong>{directionProfile?.strength || 'Still exploring'}</strong></div>
+              <div><small>LEARNING</small><strong>{directionProfile?.learning || 'Still exploring'}</strong></div>
+              <div><small>FIRST GOAL</small><strong>{directionProfile?.goal || 'Still exploring'}</strong></div>
+            </div>
+            <p>Nothing here locks you in. YEP will keep exposing you to new choices so you can learn what fits, what does not, and what you want to try next.</p>
+            <div className={styles.actions}>
+              <button type="button" className={ui.btnPrimary} onClick={() => setScreen('dailyQuest')}>
+                Start My First Daily Quest <ArrowRight size={18} />
+              </button>
+              <button type="button" className={ui.btnGhost} onClick={() => setStep(0)}>
+                Review My Check-In
+              </button>
+            </div>
+          </div>
+        )}
+
+        <div className={styles.foundationIntakeFooter}>
+          <span>FIRST CHECK-IN</span>
+          <strong>Interest → Strength → Learning → Goal → First Quest</strong>
+          <small>The Mirror comes later. This first check-in only gives YEP a starting point.</small>
+        </div>
+      </section>
+    </Shell>
+  );
+}
+
 const REACTIONS = [
   { id: 'curious', label: 'I am curious' },
   { id: 'try', label: 'I want to try this' },
@@ -26,7 +159,7 @@ const REACTIONS = [
 ];
 
 export default function MyDirection() {
-  const { directionProfile, exposureLog, saveDirectionProfile, saveExposureReaction, mode, setScreen } = useYEP();
+  const { directionProfile, exposureLog, saveDirectionProfile, saveExposureReaction, mode, setScreen, powerName } = useYEP();
   const [interest, setInterest] = useState(directionProfile.interest || '');
   const [why, setWhy] = useState(directionProfile.why || '');
   const [saved, setSaved] = useState(false);
@@ -43,6 +176,17 @@ export default function MyDirection() {
       : `Pick one world that makes you curious. You do not need to know your future. Your job is just to explore one door.`;
     return { curious, wantToTry, notNow, priority, nextMove };
   }, [exposureLog]);
+
+  if (mode === 'explorer') {
+    return (
+      <FoundationIntake
+        directionProfile={directionProfile}
+        saveDirectionProfile={saveDirectionProfile}
+        setScreen={setScreen}
+        powerName={powerName}
+      />
+    );
+  }
 
   function save() {
     saveDirectionProfile({ interest: interest.trim(), why: why.trim() });

@@ -4,6 +4,9 @@ import { act, create } from 'react-test-renderer';
 import { YEPProvider, useYEP } from '../src/context/YEPContext';
 import { DailyQuest, StemSinQuest } from '../src/screens/PilotScreens';
 import Home from '../src/screens/Home';
+import MyDirection from '../src/screens/MyDirection';
+import TrackSelector from '../src/screens/TrackSelector';
+import { FOUNDATION_QUEST_ID, FOUNDATION_QUEST } from '../src/data/foundationQuest';
 import VoiceCapture from '../src/components/VoiceCapture';
 import YEPGuide from '../src/components/YEPGuide';
 import PictureExample from '../src/components/LearningPicture';
@@ -212,21 +215,23 @@ for (const mode of modes) {
   assert.equal(api.pilotProgress.dailyQuestComplete, false, 'viewing an example is not a submitted response');
   const problems = view.root.findByProps({ 'aria-label': 'Choose the problem you notice' }).findAllByType('button');
   act(() => problems[0].props.onClick());
-  click('Both');
+  click(mode === 'explorer' ? 'Both students and workers' : 'Both');
   const actions = view.root.findByProps({ 'aria-label': 'Choose a change to try' }).findAllByType('button');
   act(() => actions[0].props.onClick());
-  click('Review My Choices');
-  click('Finish & Save');
+  if (mode === 'explorer') click('Finish My First Quest');
+  else { click('Review My Choices'); click('Finish & Save'); }
   assert.equal(api.pilotProgress.dailyQuestText, '');
   assert.equal(api.pilotProgress.dailyQuestEvidenceType, 'choices');
   assert.ok(api.pilotProgress.dailyQuestChoiceProof.problem);
   assert.equal(api.reflectionSubmitted, false);
   mount(DailyQuest);
+  if (mode === 'explorer') { click('Review My Response'); click('Back One Step'); }
   assert.equal(view.root.findByProps({ id: 'daily-quest-answer' }).props.value, '');
   const revised = view.root.findByProps({ 'aria-label': 'Choose a change to try' }).findAllByType('button')[1];
+  const revisedLabel = text(revised).trim();
   act(() => revised.props.onClick());
   click('Update My Proof');
-  assert.equal(api.pilotProgress.dailyQuestChoiceProof.action, text(revised));
+  assert.equal(api.pilotProgress.dailyQuestChoiceProof.action, revisedLabel);
   mount(DemoAdminReview);
   assert.ok(JSON.stringify(view.toJSON()).includes('No written explanation was provided.'));
   mount(StemSinQuest);
@@ -253,7 +258,7 @@ for (const mode of modes) {
 const pictureKinds = { explorer: ['supplies','labels','holder'], builder: ['supplies','checklist','reach'], leader: ['form','status','reminder'], yaep: ['form','status','reminder'] };
 for (const mode of modes) {
   mount(DailyQuest, { mode });
-  assert.equal(view.root.findByType(YEPGuide).props.pictureKind, ['explorer','builder'].includes(mode) ? 'supplies' : 'workflow', 'unselected Daily picture matches the lane example');
+  assert.equal(view.root.findByType(YEPGuide).props.pictureKind, mode === 'explorer' ? 'waiting' : mode === 'builder' ? 'supplies' : 'workflow', 'unselected Daily picture matches the lane example');
   for (let index = 0; index < 3; index++) {
     mount(StemSinQuest, { mode });
     const options = view.root.findByProps({ 'aria-label': 'Choose a tool to test' }).findAllByType('button');
@@ -263,5 +268,69 @@ for (const mode of modes) {
     assert.ok(view.root.findAllByType(PictureExample).some((picture) => picture.props.kind === pictureKinds[mode][index]), 'each selected tool has its matching illustration');
   }
 }
+// Incoming Foundation entry has no entrepreneur-track gate, and the check-in persists one response at a time.
+mount(TrackSelector, { mode: 'explorer', screen: 'track' });
+enter('powerName', 'Sample Explorer');
+act(() => view.root.findByProps({ type: 'checkbox' }).props.onChange({ target: { checked: true } }));
+click('Start My YEP Introduction');
+assert.equal(api.track, null);
+assert.equal(api.screen, 'myDirection');
+mount(MyDirection);
+click('Start My First Check-In');
+click('Hear it');
+assert.ok(spoken.includes('Building things') && spoken.includes('Solving problems'), 'intake narration includes actual choices');
+click('Building things');
+assert.equal(api.directionProfile.interest, 'Building things');
+mount(Home);
+assert.equal(buttons('Continue My First Check-In').length, 1);
+mount(MyDirection);
+assert.ok(JSON.stringify(view.toJSON()).includes('What feels like a strength?'));
+click('I keep trying');
+click('Trying it');
+click('Help somebody');
+assert.deepEqual({ strength: api.directionProfile.strength, learning: api.directionProfile.learning, goal: api.directionProfile.goal }, { strength: 'I keep trying', learning: 'Trying it', goal: 'Help somebody' });
+click('Start My First Daily Quest');
+assert.equal(api.screen, 'dailyQuest');
+mount(DailyQuest);
+assert.ok(JSON.stringify(view.toJSON()).includes(FOUNDATION_QUEST.title));
+assert.equal(api.pilotProgress.dailyQuestComplete, false);
+click(/The line is long/);
+mount(DailyQuest);
+assert.ok(JSON.stringify(view.toJSON()).includes('Who feels this problem?'));
+click('Both students and workers');
+enter('daily-quest-answer', 'I would try a picture menu while we wait.');
+mount(DailyQuest);
+assert.equal(view.root.findByProps({ id: 'daily-quest-answer' }).props.value, 'I would try a picture menu while we wait.');
+click('Review My Own Idea');
+click('Finish My First Quest');
+assert.equal(api.pilotProgress.dailyQuestQuestId, FOUNDATION_QUEST_ID);
+assert.equal(api.pilotProgress.dailyQuestEvidenceType, 'words_and_choices');
+assert.equal(api.pilotProgress.dailyQuestText, 'I would try a picture menu while we wait.');
+assert.equal(api.pilotProgress.dailyQuestChoiceProof.action, 'Own written idea');
+assert.equal(api.mirrorResult, null);
+assert.equal(api.reflectionSubmitted, false);
+mount(DailyQuest);
+click('Review My Response');
+enter('daily-quest-answer', 'Temporary edit');
+enter('daily-quest-answer', 'I would try a picture menu while we wait.');
+assert.equal(api.pilotProgress.dailyQuestDraft, null, 'new Foundation edit/revert discards stale draft');
+mount(DailyQuest);
+assert.ok(JSON.stringify(view.toJSON()).includes('I would try a picture menu while we wait.'));
+// Do not relabel an older PR9 Foundation draft or proof as the lunch-line quest.
+const oldDraft = { text: 'A tray keeps crayons together.', selectedProblem: 0, who: 'Both', tryChoice: 'Put things in order', guideStep: 3 };
+mount(DailyQuest, { mode: 'explorer', screen: 'dailyQuest', pilotProgress: { dailyQuestDraft: oldDraft } });
+assert.ok(JSON.stringify(view.toJSON()).includes('Little Problem Finder'));
+assert.ok(!JSON.stringify(view.toJSON()).includes('A Better Lunch Line'));
+assert.equal(view.root.findByProps({ id: 'daily-quest-answer' }).props.value, oldDraft.text);
+mount(Home);
+assert.equal(view.root.findByType(YEPGuide).props.title, 'Little Problem Finder');
+mount(DailyQuest);
+click('Review My Idea');
+click('Finish & Save');
+assert.equal(api.pilotProgress.dailyQuestQuestId, null);
+assert.equal(api.pilotProgress.dailyQuestChoiceProof.problem, 'Supplies everywhere');
+mount(DailyQuest);
+assert.ok(JSON.stringify(view.toJSON()).includes('Little Problem Finder'));
+assert.equal(api.pilotProgress.dailyQuestText, oldDraft.text);
 act(() => view.unmount());
 console.log('Tablet regression checks passed: four-lane proof reentry and navigation; guided Daily/STEM/Mirror/FINISHER flow; saved proof editing; draft recovery/isolation; mission/reflection reset and guards; honest status; XP removal; youth voice lock; reset cancellation.');

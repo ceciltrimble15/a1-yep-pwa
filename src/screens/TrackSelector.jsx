@@ -119,11 +119,13 @@ export default function TrackSelector() {
   const [safeguardsAccepted, setSafeguardsAccepted] = useState(false);
 
   function start() {
-    const selectedTrack = TRACKS.find((t) => t.id === picked);
+    const selectedTrack = TRACKS.find((t) => t.id === picked) || null;
     const identity = powerName.trim();
-    if (!selectedTrack || !identity || !safeguardsAccepted) return;
+    const trackRequired = pathway !== 'explorer';
+    if ((trackRequired && !selectedTrack) || !identity || !safeguardsAccepted) return;
     setMode(pathway);
     selectTrack(selectedTrack, '', identity);
+    if (pathway === 'explorer') navigate('myDirection');
   }
 
   return (
@@ -277,26 +279,39 @@ export default function TrackSelector() {
         </div>
       </div>
 
-      <div className={styles.tracksLabel}>Choose Your Entrepreneur Track</div>
-      <div className={styles.tracks}>
-        {TRACKS.map((t) => {
-          const Icon = t.icon;
-          const sel = picked === t.id;
-          return (
-            <button key={t.id} className={`${styles.track} ${sel ? styles.selected : ''}`} onClick={() => setPicked(t.id)}>
-              <span className={styles.tIcon}>{sel ? <Check size={24} /> : <Icon size={24} />}</span>
-              <span className={styles.tMeta}>
-                <span className={styles.tName}>{t.name}</span>
-                <span className={styles.tDesc}>{t.desc}</span>
-              </span>
-            </button>
-          );
-        })}
-      </div>
+      {pathway !== 'explorer' ? (
+        <>
+          <div className={styles.tracksLabel}>Choose Your Entrepreneur Track</div>
+          <div className={styles.tracks}>
+            {TRACKS.map((t) => {
+              const Icon = t.icon;
+              const sel = picked === t.id;
+              return (
+                <button key={t.id} className={`${styles.track} ${sel ? styles.selected : ''}`} onClick={() => setPicked(t.id)}>
+                  <span className={styles.tIcon}>{sel ? <Check size={24} /> : <Icon size={24} />}</span>
+                  <span className={styles.tMeta}>
+                    <span className={styles.tName}>{t.name}</span>
+                    <span className={styles.tDesc}>{t.desc}</span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </>
+      ) : (
+        <div className={styles.a1Rule}>
+          <strong>FOUNDATION START</strong>
+          <span>No business track yet. First we learn what catches your attention, what feels strong, how you learn, and what you want to try.</span>
+        </div>
+      )}
 
       <div className={styles.footer}>
-        <button className={ui.btnPrimary} onClick={start} disabled={!picked || !powerName.trim() || !safeguardsAccepted}>
-          Enter The Process <ArrowRight size={22} />
+        <button
+          className={ui.btnPrimary}
+          onClick={start}
+          disabled={(pathway !== 'explorer' && !picked) || !powerName.trim() || !safeguardsAccepted}
+        >
+          {pathway === 'explorer' ? 'Start My YEP Introduction' : 'Enter The Process'} <ArrowRight size={22} />
         </button>
       </div>
     </div>

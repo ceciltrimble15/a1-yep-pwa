@@ -168,11 +168,11 @@ export function YEPProvider({ children }) {
     setScreen('progress');
   }
 
-  function completeDailyQuest(text, choiceProof = null) {
+  function completeDailyQuest(text, choiceProof = null, questId = null) {
     const cleaned = text.trim();
     const choices = choiceProof?.problem && choiceProof?.who && choiceProof?.action ? choiceProof : null;
     if (!cleaned && !choices) return false;
-    setPilotProgress((p) => ({ ...p, dailyQuestText: cleaned, dailyQuestComplete: true, dailyQuestDraft: null, dailyQuestChoiceProof: choices, dailyQuestEvidenceType: cleaned ? (choices ? 'words_and_choices' : 'written') : 'choices' }));
+    setPilotProgress((p) => ({ ...p, dailyQuestText: cleaned, dailyQuestComplete: true, dailyQuestDraft: null, dailyQuestQuestId: questId || p.dailyQuestQuestId || null, dailyQuestChoiceProof: choices, dailyQuestEvidenceType: cleaned ? (choices ? 'words_and_choices' : 'written') : 'choices' }));
     return true;
   }
 

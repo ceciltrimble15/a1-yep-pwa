@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Sparkles, Lightbulb, Target, BriefcaseBusiness, Eye, PenLine, CheckCircle2, Flag, BookOpenCheck, FlaskConical, ScanFace, PackageOpen, Trash2, UsersRound, Clock3, Smartphone, MessageCircle, Store, Wrench, Volume2, ChevronRight } from 'lucide-react';
 import { getProgramContent } from '../data/pilotContent';
+import { hasLegacyFoundationQuest, LEGACY_FOUNDATION_QUEST } from '../data/foundationQuest';
+import FoundationDailyQuest from './FoundationDailyQuest';
 import { MODES } from '../data/modes';
 import { useYEP } from '../context/YEPContext';
 import Shell from '../components/Shell';
@@ -210,8 +212,14 @@ function LaneGuidance() {
 }
 
 export function DailyQuest() {
+  const { mode, pilotProgress } = useYEP();
+  if (mode !== 'explorer') return <StandardDailyQuest />;
+  return hasLegacyFoundationQuest(pilotProgress) ? <StandardDailyQuest legacyFoundation /> : <FoundationDailyQuest />;
+}
+
+function StandardDailyQuest({ legacyFoundation = false }) {
   const { pilotProgress, completeDailyQuest, saveLessonDraft, mode, navigate, mirrorResult } = useYEP();
-  const { dailyQuest } = getProgramContent(mode);
+  const dailyQuest = legacyFoundation ? LEGACY_FOUNDATION_QUEST : getProgramContent(mode).dailyQuest;
   const copy = QUEST_LABELS[mode] || QUEST_LABELS.builder;
   const scenario = VISUAL_SCENARIOS[mode] || VISUAL_SCENARIOS.builder;
   const draft = pilotProgress.dailyQuestDraft;
@@ -671,6 +679,14 @@ export function StemSinQuest() {
                 </button>
               ))}
             </div>
+          </section>
+        )}
+
+        {guideStep === 3 && tool && prediction && (
+          <section className={styles.stemLabReadyStage}>
+            <span>READY TO EXPLORE</span><h2>{tool.label}</h2>
+            <p>You predict: <strong>{prediction}</strong></p>
+            <small>Show the guided example, then look for what changes. This is not a measured real-world test.</small>
           </section>
         )}
 
