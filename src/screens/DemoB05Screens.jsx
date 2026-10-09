@@ -1,6 +1,7 @@
 import { useYEP } from '../context/YEPContext';
 import { getProgramContent } from '../data/pilotContent';
 import { MODES } from '../data/modes';
+import { proofDescription, proofStatus } from '../data/proofEvidence';
 import Shell from '../components/Shell';
 import styles from './PilotScreens.module.css';
 import ui from '../styles/ui.module.css';
@@ -115,11 +116,11 @@ export function DemoProfile() {
         <StatusCard label="Mirror Anchor" value={mirrorResult?.Anchor || 'Not completed'} />
         <StatusCard label="Mirror Growth Edge" value={mirrorResult?.Edge || 'Not completed'} />
         <StatusCard label="Learning Style" value={mirrorResult?.Style || 'Not completed'} />
-        <StatusCard label="Assigned FINISHER Direction" value={finisherLetter || mirrorResult?.Edge || 'Not assigned'} />
+        <StatusCard label="Assigned FINISHER Direction" value={currentMission?.finisherLetter || finisherLetter || 'Not assigned'} />
         <StatusCard label="FINISHER Mission" value={currentMission ? `${missionComplete ? 'Complete' : 'Assigned'} — ${currentMission.title}` : 'Not assigned'} />
-        <StatusCard label="Daily Quest" value={pilotProgress.dailyQuestComplete ? 'Complete' : 'Open'} />
+        <StatusCard label="Daily Quest" value={proofStatus(pilotProgress, 'dailyQuest')} />
         <StatusCard label="Week 1" value={`${weeklyDone} / ${weeklyModule.activities.length} complete`} />
-        <StatusCard label="S.T.E.M.Sin" value={pilotProgress.stemSinComplete ? 'Complete' : 'Open'} />
+        <StatusCard label="S.T.E.M.Sin" value={proofStatus(pilotProgress, 'stemSin')} />
         <StatusCard label="Boss Challenge" value={pilotProgress.bossComplete ? 'Complete' : 'Open'} />
         <StatusCard label="Mentor Question" value={pilotProgress.mentorQuestion ? 'Saved' : 'Open'} />
         <StatusCard label="Reflection" value={reflectionSubmitted ? 'Submitted' : 'Open'} />
@@ -164,20 +165,20 @@ export function DemoAdminReview() {
         <StatusCard label="Mirror Anchor" value={mirrorResult?.Anchor || 'Not completed'} />
         <StatusCard label="Growth Edge" value={mirrorResult?.Edge || 'Not completed'} />
         <StatusCard label="Learning Style" value={mirrorResult?.Style || 'Not completed'} />
-        <StatusCard label="Assigned FINISHER Direction" value={finisherLetter || mirrorResult?.Edge || 'Not assigned'} />
+        <StatusCard label="Assigned FINISHER Direction" value={currentMission?.finisherLetter || finisherLetter || 'Not assigned'} />
         <StatusCard label="FINISHER Mission" value={currentMission ? `${missionComplete ? 'Complete' : 'Assigned'} — ${currentMission.title}` : 'Not assigned'} />
         <StatusCard label="Reflection" value={reflectionSubmitted ? 'Submitted' : 'Open'} />
       </div>
 
       <div className={styles.stack}>
-        <ProofCard label="Daily Quest Proof" status={pilotProgress.dailyQuestComplete ? 'Complete' : 'Open'} text={pilotProgress.dailyQuestText} />
-        <ProofCard label="S.T.E.M.Sin Proof" status={pilotProgress.stemSinComplete ? 'Complete' : 'Open'} text={pilotProgress.stemSinText} />
+        <ProofCard label="Daily Quest Proof" status={proofStatus(pilotProgress, 'dailyQuest')} text={proofDescription(pilotProgress, 'dailyQuest')} />
+        <ProofCard label="S.T.E.M.Sin Proof" status={proofStatus(pilotProgress, 'stemSin')} text={proofDescription(pilotProgress, 'stemSin')} />
         <ProofCard label="Boss Challenge Proof" status={pilotProgress.bossComplete ? 'Complete' : 'Open'} text={pilotProgress.bossText} />
         <ProofCard label="Mentor Question Proof" status={pilotProgress.mentorQuestion ? 'Saved' : 'Open'} text={pilotProgress.mentorQuestion} />
       </div>
 
       <div className={styles.note}>
-        Week 1 currently stores completion IDs, not the participant's full written workbook responses. This demo shows only evidence actually persisted by the tablet.
+        Week 1 currently stores completion IDs, not the participant's full written workbook responses. This demo shows only evidence actually persisted by the tablet. Picture/tap choices record a selected response, not a written explanation, assessment, or proof of mastery.
       </div>
       <div className={styles.note}>Admin Review answers one question: <strong>Show me the evidence behind what this participant completed.</strong></div>
       <div className={styles.actions}>

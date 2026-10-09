@@ -1,6 +1,7 @@
 // REV 3: developmental pilot copy; final workbook copy remains held.
 // Legacy mode IDs remain stable for saved sessions and links.
 import { DEFAULT_MODE } from './modes.js';
+import { FOUNDATION_QUEST } from './foundationQuest';
 
 export const STEM_SIN_LABEL = 'S.T.E.M.Sin Technology + Problem-Solving Quest';
 
@@ -9,12 +10,7 @@ export const PROGRAM_CONTENT = {
     "instructions": "Notice something small. Draw or tell your idea, then save a short answer with a trusted adult if you need help.",
     "example": "Crayons keep rolling off the table. A folded-paper tray could hold them.",
     "expectations": "Name who you help. Count the materials you use. Practice with pretend money and an adult; no selling is required.",
-    "dailyQuest": {
-      "id": "explorer-daily",
-      "title": "Little Problem Finder",
-      "prompt": "Find one small problem you can see. Who needs help? Tell or write one thing you could try.",
-      "finisher": "Focus"
-    },
+    "dailyQuest": FOUNDATION_QUEST,
     "weeklyModule": {
       "id": "explorer-week-1",
       "title": "Week 1 — I Can Help",

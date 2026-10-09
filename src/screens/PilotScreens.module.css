@@ -2763,41 +2763,6 @@ button.card:hover {
   border: 1px solid var(--gold);
 }
 
-.stemLabReadyStage {
-  padding: 20px;
-  border-radius: 20px;
-  text-align: center;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(212,160,23,.14), transparent 40%),
-    #0b1d3a;
-  border: 1px solid rgba(212,160,23,.28);
-}
-
-.stemLabReadyStage > span {
-  color: var(--gold-soft);
-  font-size: 9px;
-  font-weight: 900;
-  letter-spacing: .13em;
-}
-
-.stemLabReadyStage h2 {
-  margin: 6px 0 8px;
-  color: var(--white);
-}
-
-.stemLabReadyStage p {
-  margin: 0;
-  color: var(--silver-light);
-  line-height: 1.5;
-}
-
-.stemLabReadyStage small {
-  display: block;
-  margin-top: 8px;
-  color: var(--silver);
-  line-height: 1.45;
-}
-
 .stemLabResult {
   padding: 18px;
   border-radius: 20px;
@@ -3559,7 +3524,7 @@ button.card:hover {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  min-height: 40px;
+  min-height: 44px;
   padding: 7px 12px;
   border-radius: 12px;
   border: 1px solid rgba(212,218,230,.15);
@@ -3742,6 +3707,61 @@ button.card:hover {
   .dailyQuestWhoChoices { grid-template-columns: 1fr; }
   .dailyQuestWhoChoices button { min-height: 62px; }
 }
+
+/* Tablet teaching view: readable instruction, then one activity. */
+.dailyQuestStage,.stemLabStage { gap: 18px; }
+.dailyQuestMasthead { grid-template-columns: 1fr; gap: 0; }
+.dailyQuestTitleBlock { padding: 0; border: 0; background: none; box-shadow: none; }
+.dailyQuestTitleBlock h1 { margin: 10px 0; font-size: clamp(26px,3vw,36px); line-height: 1.2; }
+.dailyQuestTitleBlock > p { font-size: 18px; }
+.dailyQuestBadge { font-size: 15px; }
+.dailyQuestPathway { margin-top: 10px; font-size: 16px; }
+.dailyQuestPathway small { font-size: 15px; }
+.questFlowCard,.dailyQuestPromptCard,.visualScenarioHeader,.visualScenarioFooter,.broadcastFlow,.dailyQuestNextRail { display: none; }
+.visualScenario { padding: 0; border: 0; background: transparent; }
+.broadcastScene { margin: 0; overflow: visible; border: 0; background: transparent; }
+.broadcastSceneArt { border-radius: 20px; max-height: 300px; background: #102c55; }
+.broadcastOverlay { position: static; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); padding: 16px 0 0; gap: 14px; background: transparent; }
+.broadcastCallout,.broadcastCalloutSelected { grid-template-columns: 36px minmax(0,1fr); min-height: 110px; padding: 18px; border: 2px solid #a7bfdf; background: #f3f7ff; color: #142b53; box-shadow: none; }
+.broadcastCallout > svg,.broadcastCalloutSelected > svg { display: none; }
+.broadcastCallout strong,.broadcastCalloutSelected strong { font-size: 20px; line-height: 1.25; color: #142b53; }
+.broadcastCallout small,.broadcastCalloutSelected small { font-size: 17px; line-height: 1.4; color: #3a5273; }
+.broadcastCalloutNumber { width: 34px; height: 34px; font-size: 18px; }
+.dailyQuestResponseLead h2,.dailyQuestWhoStage h2 { font-size: 28px; line-height: 1.2; }
+.dailyQuestResponseLead p,.dailyQuestWhoChoices button { font-size: 20px; line-height: 1.5; }
+.dailyQuestTextarea { min-height: 180px; font-size: 21px; line-height: 1.55; color: #10234b; background: #fff; border: 2px solid #91afd6; }
+.dailyQuestTextarea::placeholder { color: #536580; }
+.dailyQuestTextarea:focus { outline: 3px solid #ffd56c; outline-offset: 3px; }
+.dailyQuestSubmit,.stemLabSave { min-height: 60px; font-size: 20px; }
+.dailyQuestSavedProof,.draftNote { font-size: 17px; line-height: 1.5; color: #d8e6ff; }
+.dailyQuestWorkbook { padding: 14px 18px; }
+.dailyQuestWorkbook span { font-size: 16px; line-height: 1.5; }
+.stemLabStage .title { font-size: 32px; line-height: 1.2; }
+.stemLabStage .sub { font-size: 17px; line-height: 1.45; }
+.stemLabFlow { padding: 0; gap: 8px; flex-wrap: wrap; }
+.stemLabFlow span { font-size: 13px; }
+.stemLabScene { padding: 18px; grid-template-columns: auto minmax(0,1fr); }
+.stemLabScene p,.stemLabScene small { font-size: 18px; line-height: 1.5; }
+.stemLabScene h2,.stemLabSectionHead h2,.stemLabResult h2 { font-size: 26px; line-height: 1.25; }
+.stemLabFocus { display: none; }
+.stemLabTool,.stemLabToolSelected { min-height: 150px; padding: 20px; }
+.stemLabTool strong,.stemLabToolSelected strong { font-size: 21px; }
+.stemLabTool span,.stemLabToolSelected span { font-size: 18px; color: #d5e2f6; }
+.stemLabPredictionButton,.stemLabPredictionSelected { min-height: 72px; font-size: 20px; }
+.stemLabResult p { font-size: 21px; }
+.stemLabResult div,.stemLabResult small,.stemLabComplete span { font-size: 17px; }
+.stemLabComplete strong { font-size: 20px; }
+.stemLabComplete button { min-height: 58px; font-size: 18px; }
+@media (max-width: 1080px) { .broadcastOverlay,.stemLabToolGrid,.stemLabPredictionGrid { grid-template-columns: 1fr; } .broadcastCallout,.broadcastCalloutSelected { min-height: 84px; } }
+.pictureChoices { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; }
+.pictureChoice { position: relative; display: grid; align-content: start; gap: 12px; padding: 18px; border: 2px solid #98b4d8; border-radius: 20px; background: #f4f8ff; color: #142b53; text-align: left; }
+.pictureChoice strong { font-size: 23px; line-height: 1.25; }
+.pictureChoice > span:not(.pictureNumber) { font-size: 18px; line-height: 1.45; color: #3a5273; }
+.pictureNumber { position: absolute; top: 12px; left: 12px; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; color: #fff; background: #184ea7; font-size: 22px; font-weight: 900; z-index: 1; }
+.pictureChoice[aria-pressed='true'],.pictureChoice:focus-visible { outline: 4px solid #ffd56c; outline-offset: 3px; }
+@media (max-width: 900px) { .pictureChoices { grid-template-columns: 1fr; } .pictureChoice { grid-template-columns: 130px minmax(0,1fr); align-items: center; } .pictureChoice > svg { grid-row: span 2; } .pictureChoice strong { padding-top: 0; } }
+
+/* Incoming PR7 Foundation check-in and illustrated first quest. */
 
 .foundationIntake {
   display: grid;
@@ -4264,4 +4284,245 @@ button.card:hover {
   .foundationQuestReviewGrid {
     grid-template-columns: 1fr;
   }
+}
+
+.foundationIntakeChoices button,.foundationQuestBigChoices button { min-height: 68px; font-size: 19px; line-height: 1.4; }
+.foundationIntakeQuestion p,.foundationIntakeReady p,.foundationQuestReview p,.foundationQuestComplete p { font-size: 18px; line-height: 1.5; }
+.foundationQuestReviewGrid small { font-size: 14px; }
+.foundationQuestReviewGrid strong { font-size: 19px; line-height: 1.35; }
+.foundationQuestChoiceStage .dailyQuestTextarea { margin-top: 8px; }
+
+.stemLabReadyStage {
+  padding: 20px;
+  border-radius: 20px;
+  text-align: center;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(212,160,23,.14), transparent 40%),
+    #0b1d3a;
+  border: 1px solid rgba(212,160,23,.28);
+}
+
+.stemLabReadyStage > span {
+  color: var(--gold-soft);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .13em;
+}
+
+.stemLabReadyStage h2 {
+  margin: 6px 0 8px;
+  color: var(--white);
+}
+
+.stemLabReadyStage p {
+  margin: 0;
+  color: var(--silver-light);
+  line-height: 1.5;
+}
+
+.stemLabReadyStage small {
+  display: block;
+  margin-top: 8px;
+  color: var(--silver);
+  line-height: 1.45;
+}
+
+
+.stemLabReadyStage p,.stemLabReadyStage small { font-size: 18px; line-height: 1.5; }
+
+
+/* Foundation Daily Quest: interactive visual scene */
+.foundationLunchQuestArt {
+  position: relative;
+  box-shadow: 0 18px 42px rgba(2,8,20,.28);
+}
+.foundationLunchQuestArt::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 24%;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent, rgba(4,13,29,.18));
+}
+.foundationQuestHotspots {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.foundationQuestHotspots button {
+  position: absolute;
+  z-index: 2;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 46px;
+  max-width: 220px;
+  padding: 8px 12px 8px 8px;
+  border-radius: 999px;
+  border: 2px solid rgba(245,201,74,.95);
+  background: rgba(7,21,42,.92);
+  color: #F7F9FF;
+  box-shadow: 0 10px 22px rgba(2,8,20,.28);
+  cursor: pointer;
+  text-align: left;
+}
+.foundationQuestHotspots button span {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 29px;
+  height: 29px;
+  border-radius: 50%;
+  background: #F5C94A;
+  color: #0B1D3A;
+  font-weight: 900;
+}
+.foundationQuestHotspots button strong {
+  font-size: 13px;
+  line-height: 1.2;
+}
+.foundationQuestHotspots button[data-index='0'] { left: 5%; bottom: 28%; }
+.foundationQuestHotspots button[data-index='1'] { right: 4%; top: 13%; }
+.foundationQuestHotspots button[data-index='2'] { left: 10%; bottom: 4%; }
+.foundationQuestHotspots button[data-selected='true'] {
+  transform: scale(1.05);
+  background: #F5C94A;
+  color: #0B1D3A;
+  border-color: #fff2bd;
+}
+.foundationQuestHotspots button[data-selected='true'] span {
+  background: #0B1D3A;
+  color: #F5C94A;
+}
+.foundationQuestHotspots button:focus-visible {
+  outline: 4px solid #fff;
+  outline-offset: 3px;
+}
+.foundationQuestNoticeChoices {
+  margin-top: 14px;
+}
+.foundationQuestNoticeChoices button {
+  transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+.foundationQuestNoticeChoices button:hover {
+  transform: translateY(-2px);
+}
+@media (max-width: 760px) {
+  .foundationQuestHotspots button {
+    max-width: 170px;
+    min-height: 40px;
+    padding: 6px 9px 6px 6px;
+  }
+  .foundationQuestHotspots button span {
+    width: 25px;
+    height: 25px;
+    font-size: 13px;
+  }
+  .foundationQuestHotspots button strong {
+    font-size: 11px;
+  }
+  .foundationQuestHotspots button[data-index='0'] { left: 3%; bottom: 30%; }
+  .foundationQuestHotspots button[data-index='1'] { right: 3%; top: 12%; }
+  .foundationQuestHotspots button[data-index='2'] { left: 5%; bottom: 3%; }
+}
+
+/* S.T.E.M.Sin illustrated lab: one Foundation tool in view at a time. */
+.stemLabToolExplorer {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+  gap: 16px;
+}
+.stemLabToolExplorerVisual,.stemLabToolExplorerChoice,.stemLabBeforeCue {
+  min-width: 0;
+  border-radius: 20px;
+  border: 1px solid rgba(212,160,23,.28);
+  padding: 18px;
+  background: #0d2448;
+}
+.stemLabToolExplorerVisual > span,.stemLabToolExplorerChoice > span,.stemLabBeforeCue span {
+  display: block;
+  margin-bottom: 12px;
+  color: #ffdb75;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .07em;
+}
+.stemLabToolExplorerVisual svg,.stemLabBeforeCue svg {
+  border-radius: 16px;
+}
+.stemLabToolExplorerTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #ffdb75;
+}
+.stemLabToolExplorerTitle h3 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(23px,3vw,34px);
+}
+.stemLabToolExplorerChoice p {
+  color: #eef3ff;
+  font-size: clamp(17px,2vw,21px);
+  line-height: 1.5;
+}
+.stemLabToolExplorerControls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 18px 0 14px;
+}
+.stemLabToolExplorerControls button,.stemLabChooseTool {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 56px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 850;
+  cursor: pointer;
+}
+.stemLabToolExplorerControls button {
+  color: #fff;
+  background: #163b76;
+  border: 1px solid rgba(255,255,255,.3);
+}
+.stemLabChooseTool {
+  width: 100%;
+  color: #142644;
+  background: #f4cb59;
+  border: 0;
+}
+.stemLabFlipArrow { transform: rotate(180deg); }
+.stemLabBeforeCue {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) minmax(0,1.15fr);
+  align-items: center;
+  gap: 16px;
+}
+.stemLabBeforeCue strong {
+  display: block;
+  color: #fff;
+  font-size: clamp(20px,2.5vw,29px);
+}
+.stemLabBeforeCue small {
+  display: block;
+  margin-top: 10px;
+  color: #dae5fb;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.stemLabComparison {
+  margin: 14px 0;
+  padding: 8px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.06);
+}
+@media (max-width: 720px) {
+  .stemLabToolExplorer,.stemLabBeforeCue { grid-template-columns: minmax(0,1fr); }
+  .stemLabToolExplorerControls button { flex: 1; }
 }

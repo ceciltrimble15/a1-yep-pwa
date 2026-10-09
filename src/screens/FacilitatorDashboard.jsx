@@ -15,7 +15,7 @@ function StatusChip({ ok, label }) {
 export default function FacilitatorDashboard() {
   const { demoYouth, navigate } = useYEP();
 
-  const cohortXp = demoYouth.reduce((sum, y) => sum + (y.xp || 0), 0);
+  const missionsDone = demoYouth.filter((y) => y.missionComplete).length;
   const finishers = demoYouth.filter((y) => y.missionComplete && y.reflectionSubmitted).length;
 
   return (
@@ -36,14 +36,14 @@ export default function FacilitatorDashboard() {
           <div className={styles.statLabel}>Finishers</div>
         </div>
         <div className={styles.stat}>
-          <div className={styles.statNum}>{cohortXp}</div>
-          <div className={styles.statLabel}>Demo XP</div>
+          <div className={styles.statNum}>{missionsDone}</div>
+          <div className={styles.statLabel}>Missions marked done</div>
         </div>
       </div>
 
       <div className={styles.list}>
         {demoYouth.map((y) => {
-          const full = y.xp >= 150;
+          const full = y.missionComplete && y.reflectionSubmitted;
           const hasLetter = y.finisherLetter && y.finisherLetter !== '—';
           return (
             <div key={y.id} className={`${styles.card} ${y.isActive ? styles.active : ''}`}>
@@ -57,7 +57,7 @@ export default function FacilitatorDashboard() {
                 </div>
                 <span className={styles.liveTag}>{y.isActive ? 'Pilot' : 'Sample'}</span>
                 <span className={`${styles.xpBadge} ${full ? styles.xpBadgeGold : ''}`}>
-                  {y.xp} XP
+                  {full ? 'Mission + reflection saved' : 'In progress'}
                 </span>
               </div>
 

@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test:rev3": "node scripts/rev3-check.mjs"
+    "test:rev3": "node scripts/rev3-check.mjs",
+    "test:tablet": "node scripts/tablet-check.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.456.0",
@@ -16,6 +17,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.1",
+    "react-test-renderer": "18.3.1",
     "vite": "^5.4.10",
     "vite-plugin-pwa": "^0.21.1"
   }

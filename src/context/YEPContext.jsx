@@ -115,7 +115,18 @@ export function YEPProvider({ children }) {
     });
   }
 
+  function saveLessonDraft(kind, draft) {
+    if (!['dailyQuest', 'stemSin'].includes(kind)) return;
+    setPilotProgress((progress) => ({ ...progress, [`${kind}Draft`]: draft }));
+  }
+
+  function saveMirrorDraft(draft) {
+    setPilotProgress((progress) => ({ ...progress, mirrorDraft: draft }));
+  }
+
   function submitMirror(answers) {
+    if (!mirrorQuestions.every((question) => [1, 2, 3, 4].includes(answers[question.id]))) return;
+    saveMirrorDraft(null);
     const { scores, anchor, edge, style } = scoreMirror(answers);
     const mission = getMission(edge, style);
     setMirrorScores(scores);
@@ -123,15 +134,24 @@ export function YEPProvider({ children }) {
     setCurrentMission(mission);
     setMissionStepsDone({});
     setMissionComplete(false);
+    setReflection('');
+    setReflectionSubmitted(false);
+    setFinisherLetter('');
     setScreen('results');
   }
 
   function toggleMissionStep(index) {
-    if (!Number.isInteger(index) || index < 0) return;
+    if (!currentMission || !Number.isInteger(index) || index < 0 || index >= currentMission.steps.length) return;
+    if (missionStepsDone[index] && missionComplete) {
+      setMissionComplete(false);
+      setReflectionSubmitted(false);
+      setFinisherLetter('');
+    }
     setMissionStepsDone((current) => ({ ...current, [index]: !current[index] }));
   }
 
   function completeMission() {
+    if (!currentMission || !currentMission.steps.every((_, index) => missionStepsDone[index])) return;
     if (!missionComplete) {
       setMissionComplete(true);
       if (currentMission) setFinisherLetter(currentMission.finisherLetter);
@@ -140,17 +160,19 @@ export function YEPProvider({ children }) {
   }
 
   function submitReflection(text) {
-    setReflection(text);
+    if (!missionComplete || !currentMission || text.trim().length < 12) return;
+    setReflection(text.trim());
     if (!reflectionSubmitted) {
       setReflectionSubmitted(true);
     }
     setScreen('progress');
   }
 
-  function completeDailyQuest(text) {
+  function completeDailyQuest(text, choiceProof = null, questId = null) {
     const cleaned = text.trim();
-    if (!cleaned) return false;
-    setPilotProgress((p) => ({ ...p, dailyQuestText: cleaned, dailyQuestComplete: true }));
+    const choices = choiceProof?.problem && choiceProof?.who && choiceProof?.action ? choiceProof : null;
+    if (!cleaned && !choices) return false;
+    setPilotProgress((p) => ({ ...p, dailyQuestText: cleaned, dailyQuestComplete: true, dailyQuestDraft: null, dailyQuestQuestId: questId || p.dailyQuestQuestId || null, dailyQuestChoiceProof: choices, dailyQuestEvidenceType: cleaned ? (choices ? 'words_and_choices' : 'written') : 'choices' }));
     return true;
   }
 
@@ -161,10 +183,11 @@ export function YEPProvider({ children }) {
     });
   }
 
-  function completeStemSin(text, choice = '') {
+  function completeStemSin(text, choice = '', choiceProof = null) {
     const cleaned = text.trim();
-    if (!cleaned) return false;
-    setPilotProgress((p) => ({ ...p, stemSinText: cleaned, stemSinChoice: choice || p.stemSinChoice || '', stemSinComplete: true }));
+    const choices = choice && choiceProof?.prediction && choiceProof?.nextTest ? { tool: choice, ...choiceProof } : null;
+    if (!cleaned && !choices) return false;
+    setPilotProgress((p) => ({ ...p, stemSinText: cleaned, stemSinDraft: null, stemSinChoice: choice || p.stemSinChoice || '', stemSinComplete: true, stemSinChoiceProof: choices, stemSinEvidenceType: cleaned ? (choices ? 'words_and_choices' : 'written') : 'choices' }));
     return true;
   }
 
@@ -233,7 +256,7 @@ export function YEPProvider({ children }) {
   const value = {
     screen, track, youthName, powerName, directionProfile, exposureLog, mirrorScores, mirrorResult, currentMission,
     missionStepsDone, missionComplete, reflection, reflectionSubmitted, finisherLetter, mode,
-    pilotProgress, demoYouth, activeYouth, selectTrack, saveDirectionProfile, saveExposureReaction, submitMirror,
+    pilotProgress, demoYouth, activeYouth, selectTrack, saveDirectionProfile, saveExposureReaction, saveLessonDraft, saveMirrorDraft, submitMirror,
     toggleMissionStep, completeMission, submitReflection, completeDailyQuest, toggleWeeklyActivity,
     completeStemSin, completeBossChallenge, saveMentorQuestion, navigate, setScreen,
     setMode, resetSession,

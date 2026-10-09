@@ -1,4 +1,5 @@
 import { useYEP } from '../context/YEPContext';
+import { proofDescription, proofStatus } from '../data/proofEvidence';
 import { getProgramContent } from '../data/pilotContent';
 import Shell from '../components/Shell';
 import styles from './PilotScreens.module.css';
@@ -14,13 +15,13 @@ export default function FinisherFocus() {
       <div className={styles.stack}>
         <section className={styles.card}>
           <h2>Daily Quest → {dailyQuest.finisher}</h2>
-          <p>{pilotProgress.dailyQuestComplete ? 'Complete' : 'Not completed'}</p>
-          <p>{pilotProgress.dailyQuestText || 'No Daily Quest response saved yet.'}</p>
+          <p>{proofStatus(pilotProgress, 'dailyQuest')}</p>
+          <p>{proofDescription(pilotProgress, 'dailyQuest') || 'No Daily Quest response saved yet.'}</p>
         </section>
         <section className={styles.card}>
           <h2>S.T.E.M.Sin → {stemSin.finisher}</h2>
-          <p>{pilotProgress.stemSinComplete ? 'Complete' : 'Not completed'}</p>
-          <p>{pilotProgress.stemSinText || 'No S.T.E.M.Sin response saved yet.'}</p>
+          <p>{proofStatus(pilotProgress, 'stemSin')}</p>
+          <p>{proofDescription(pilotProgress, 'stemSin') || 'No S.T.E.M.Sin response saved yet.'}</p>
         </section>
         <section className={styles.card}>
           <h2>Mirror Growth Edge / assigned FINISHER direction</h2>

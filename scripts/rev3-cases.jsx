@@ -4,6 +4,8 @@ import { PROGRAM_CONTENT, getProgramContent, STEM_SIN_LABEL } from '../src/data/
 import { migrateLaneProgress } from '../src/data/laneProgress';
 import { YEPProvider } from '../src/context/YEPContext';
 import FinisherFocus from '../src/screens/FinisherFocus';
+import MyDirection from '../src/screens/MyDirection';
+import { FOUNDATION_QUEST, FOUNDATION_QUEST_ID } from '../src/data/foundationQuest';
 import { DailyQuest, WeeklyModule, StemSinQuest, BossChallenge, MentorSpotlight } from '../src/screens/PilotScreens';
 import Reflection from '../src/screens/Reflection';
 import { getMission } from '../src/data/missions';
@@ -28,6 +30,12 @@ for (const mode of modes) {
   }
   assert.ok(render(StemSinQuest).includes(STEM_SIN_LABEL));
 }
+saved = { mode: 'explorer' };
+assert.equal(getProgramContent('explorer').dailyQuest.id, FOUNDATION_QUEST_ID);
+assert.equal(getProgramContent('explorer').dailyQuest.title, 'A Better Lunch Line');
+assert.ok(render(DailyQuest).includes(FOUNDATION_QUEST.title));
+assert.ok(render(DailyQuest).includes('Illustrated school cafeteria with a long lunch line'), 'Foundation scene remains present and accessible');
+assert.ok(render(MyDirection).includes('Start My First Check-In'));
 const legacy = {mode:'builder',pilotProgress:{dailyQuestText:'Legacy proof',dailyQuestComplete:true,weeklyCompleted:['why']}};
 const migrated = migrateLaneProgress(legacy);
 assert.equal(migrated.builder.dailyQuestText,'Legacy proof');

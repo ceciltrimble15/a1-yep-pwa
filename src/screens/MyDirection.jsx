@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react';
-import { Compass, Lightbulb, Network, BadgeDollarSign, Cpu, Shuffle, ArrowLeft, Target } from 'lucide-react';
+import { Compass, Lightbulb, Network, BadgeDollarSign, Cpu, Shuffle, ArrowLeft, ArrowRight, Target } from 'lucide-react';
 import { useYEP } from '../context/YEPContext';
 import { MODES } from '../data/modes';
 import { EXPOSURE_WORLDS, getDirectionGuide } from '../data/directionGuidance';
 import Shell from '../components/Shell';
 import VoiceCapture from '../components/VoiceCapture';
+import YEPGuide from '../components/YEPGuide';
 import styles from './PilotScreens.module.css';
 import ui from '../styles/ui.module.css';
 
@@ -65,14 +66,6 @@ function FoundationIntake({ directionProfile, saveDirectionProfile, setScreen, p
       ? `Welcome, ${explorerName}. This is your first YEP check-in. I am not testing you. I am learning how you see things so the Process can meet you where you are.`
       : current?.prompt || '';
 
-  function hearGuide() {
-    if (typeof window === 'undefined' || !window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(guidePrompt);
-    utterance.rate = 0.94;
-    window.speechSynthesis.speak(utterance);
-  }
-
   function choose(value) {
     if (!current) return;
     saveDirectionProfile({ [current.key]: value });
@@ -80,21 +73,14 @@ function FoundationIntake({ directionProfile, saveDirectionProfile, setScreen, p
   }
 
   return (
-    <Shell>
+    <Shell showAudio={false}>
       <section className={styles.foundationIntake}>
-        <div className={styles.foundationIntakeGuide}>
-          <div className={styles.foundationIntakeGuideAvatar} aria-hidden="true">
-            <span>YEP</span>
-          </div>
-          <div>
-            <span className={styles.foundationIntakeGuideLabel}>YOUR YEP GUIDE</span>
-            <h1>{complete ? `You are ready, ${explorerName}.` : step === -1 ? `Welcome, ${explorerName}.` : current?.title}</h1>
-            <p>{guidePrompt}</p>
-          </div>
-          <button type="button" className={styles.foundationIntakeHear} onClick={hearGuide}>
-            Hear Guide
-          </button>
-        </div>
+        <YEPGuide
+          title={complete ? `You are ready, ${explorerName}.` : step === -1 ? `Welcome, ${explorerName}.` : current?.title}
+          prompt={guidePrompt}
+          step={step === -1 ? 'WELCOME' : complete ? 'SAVED' : `${step + 1} OF 4`}
+          narration={current ? `You can choose: ${current.options.join('. ')}.` : ''}
+        />
 
         <div className={styles.foundationIntakeProgress} aria-label="First Check-In progress">
           {FOUNDATION_INTAKE.map(({ key }, index) => (
@@ -123,9 +109,9 @@ function FoundationIntake({ directionProfile, saveDirectionProfile, setScreen, p
             <span>{current.eyebrow}</span>
             <h2>{current.title}</h2>
             <p>{current.prompt}</p>
-            <div className={styles.foundationIntakeChoices}>
+            <div className={styles.foundationIntakeChoices} aria-label="First check-in choices">
               {current.options.map((option) => (
-                <button type="button" key={option} onClick={() => choose(option)}>
+                <button type="button" key={option} aria-pressed={directionProfile?.[current.key] === option} onClick={() => choose(option)}>
                   <strong>{option}</strong>
                   <ArrowRight size={18} aria-hidden="true" />
                 </button>
@@ -180,17 +166,6 @@ export default function MyDirection() {
   const program = MODES[mode] || MODES.builder;
   const guide = useMemo(() => getDirectionGuide(interest, mode), [interest, mode]);
 
-  if (mode === 'explorer') {
-    return (
-      <FoundationIntake
-        directionProfile={directionProfile}
-        saveDirectionProfile={saveDirectionProfile}
-        setScreen={setScreen}
-        powerName={powerName}
-      />
-    );
-  }
-
   const exposureSnapshot = useMemo(() => {
     const curious = exposureLog.filter((entry) => entry.reaction === 'curious');
     const wantToTry = exposureLog.filter((entry) => entry.reaction === 'try');
@@ -201,6 +176,17 @@ export default function MyDirection() {
       : `Pick one world that makes you curious. You do not need to know your future. Your job is just to explore one door.`;
     return { curious, wantToTry, notNow, priority, nextMove };
   }, [exposureLog]);
+
+  if (mode === 'explorer') {
+    return (
+      <FoundationIntake
+        directionProfile={directionProfile}
+        saveDirectionProfile={saveDirectionProfile}
+        setScreen={setScreen}
+        powerName={powerName}
+      />
+    );
+  }
 
   function save() {
     saveDirectionProfile({ interest: interest.trim(), why: why.trim() });

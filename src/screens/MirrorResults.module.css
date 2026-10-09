@@ -148,3 +148,6 @@
 .mObjective { font-size: 13.5px; color: #DCE7FF; }
 
 .cta { margin-top: 16px; }
+.reveal { min-height: 0; padding: 24px 0; }
+.revealValue { color: #b9d7ff; font-size: clamp(34px,4vw,48px); line-height: 1.1; }
+.revealQuote,.rLine,.mObjective { font-size: 20px; line-height: 1.5; }

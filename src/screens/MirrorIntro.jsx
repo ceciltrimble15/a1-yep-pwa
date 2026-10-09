@@ -54,7 +54,7 @@ const COPY = {
 };
 
 export default function MirrorIntro() {
-  const { navigate, mode } = useYEP();
+  const { navigate, mode, mirrorResult } = useYEP();
   const program = MODES[mode] || MODES.builder;
   const copy = COPY[mode] || COPY.builder;
 
@@ -93,6 +93,12 @@ export default function MirrorIntro() {
           <div className={styles.motto}>Always Forward. Never Back.</div>
         </div>
 
+        {mirrorResult && (
+          <>
+            <button className={ui.btnGhost} onClick={() => navigate('results')}>View Saved Mirror Results</button>
+            <p className={styles.sub}>Completing a new Mirror replaces your current mission, mission steps, and reflection. View your saved result to continue your existing work.</p>
+          </>
+        )}
         <button className={ui.btnPrimary} onClick={() => navigate('mirror')}>
           <ScanFace size={20} /> {copy.button} <ArrowRight size={20} />
         </button>

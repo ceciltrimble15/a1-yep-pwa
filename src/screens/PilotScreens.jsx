@@ -1,10 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Sparkles, Lightbulb, Target, BriefcaseBusiness, Eye, PenLine, CheckCircle2, Flag, BookOpenCheck, FlaskConical, ScanFace, PackageOpen, Trash2, UsersRound, Clock3, Smartphone, MessageCircle, Store, Wrench, Volume2, ChevronRight } from 'lucide-react';
 import { getProgramContent } from '../data/pilotContent';
+import { hasLegacyFoundationQuest, LEGACY_FOUNDATION_QUEST } from '../data/foundationQuest';
+import FoundationDailyQuest from './FoundationDailyQuest';
 import { MODES } from '../data/modes';
 import { useYEP } from '../context/YEPContext';
 import Shell from '../components/Shell';
 import VoiceCapture from '../components/VoiceCapture';
+import YEPGuide from '../components/YEPGuide';
+import PictureExample, { LearningPicture } from '../components/LearningPicture';
 import styles from './PilotScreens.module.css';
 import ui from '../styles/ui.module.css';
 
@@ -17,11 +21,11 @@ const LANE_ICONS = {
 
 const QUEST_LABELS = {
   explorer: {
-    kicker: 'Your First Quest',
-    title: 'A Better Lunch Line',
-    helper: 'Look at one real situation. Notice what is happening, think about who it affects, and choose one thing you would try.',
-    placeholder: 'I noticed… I would try…',
-    action: 'Finish My First Quest',
+    kicker: "Today's Quest",
+    title: 'Look Around You',
+    helper: 'Look around. Real ideas start with real problems. Spot one, think about who it affects, and tell us one way you could help.',
+    placeholder: 'I see a problem with… I could help by…',
+    action: 'Finish My Quest',
   },
   builder: {
     kicker: 'Daily Challenge',
@@ -48,15 +52,15 @@ const QUEST_LABELS = {
 
 const VISUAL_SCENARIOS = {
   explorer: {
-    eyebrow: 'LOOK AT THE LUNCH LINE',
+    eyebrow: 'LOOK AT THE SCENE',
     title: 'What do you notice?',
-    lead: 'There is no perfect answer. Start with one thing you can see.',
+    lead: 'You do not need the perfect answer. Start by seeing what is right in front of you.',
     items: [
-      { icon: Clock3, label: 'The line is long', detail: 'Students spend a lot of time waiting.' },
-      { icon: UsersRound, label: 'Everyone uses one spot', detail: 'One serving area can slow the whole line down.' },
-      { icon: Eye, label: 'The path is not clear', detail: 'It can be hard to know where to stand or go next.' },
+      { icon: PackageOpen, label: 'Supplies everywhere', detail: 'Things are hard to find.' },
+      { icon: Trash2, label: 'Trash is piling up', detail: 'The space gets harder to use.' },
+      { icon: UsersRound, label: 'Someone needs help', detail: 'A person is stuck or waiting.' },
     ],
-    footer: 'Notice one thing. Think about people. Then choose one move you would try.',
+    footer: 'Pick one thing you notice. Who does it affect? What could make it better?',
   },
   builder: {
     eyebrow: 'SEE THE PROBLEM',
@@ -93,12 +97,6 @@ const VISUAL_SCENARIOS = {
   },
 };
 
-
-const FOUNDATION_QUEST_IDEAS = [
-  ['Open a second line', 'Put quick items first', 'Let groups go at different times'],
-  ['Create two pick-up spots', 'Separate different food choices', 'Add a quick grab-and-go spot'],
-  ['Add floor arrows', 'Use simple picture signs', 'Have a helper show the next step'],
-];
 
 const STEM_LABS = {
   explorer: {
@@ -151,250 +149,27 @@ const STEM_LABS = {
   },
 };
 
-function GuideAvatar() {
-  return (
-    <svg className={styles.guideAvatarArt} viewBox="0 0 120 120" role="img" aria-label="YEP guide avatar">
-      <circle cx="60" cy="60" r="56" fill="#0F2460" />
-      <path d="M24 103c8-21 22-31 36-31s28 10 36 31" fill="#2A4EAF" />
-      <circle cx="60" cy="52" r="28" fill="#70462F" />
-      <path d="M33 47c2-18 13-29 28-29 16 0 28 10 29 28-7-7-18-12-29-12-11 0-21 4-28 13Z" fill="#111827" />
-      <path d="M36 39c6-13 14-20 25-20 13 0 23 8 27 22-8-6-17-9-27-9-9 0-18 2-25 7Z" fill="#05070B" />
-      <circle cx="50" cy="53" r="2.5" fill="#111827" />
-      <circle cx="70" cy="53" r="2.5" fill="#111827" />
-      <path d="M52 66c5 4 11 4 16 0" fill="none" stroke="#2B1710" strokeWidth="2.5" strokeLinecap="round" />
-      <path d="M41 88c12 8 26 8 38 0" fill="none" stroke="#D4A017" strokeWidth="4" strokeLinecap="round" />
-    </svg>
-  );
-}
+const IDEA_CHOICES = {
+  explorer: ['Put things in order', 'Show a helpful step', 'Make taking turns easier'],
+  builder: ['Organize the materials', 'Make directions clearer', 'Make waiting easier'],
+  leader: ['Try a small prototype', 'Ask the people affected', 'Compare two approaches'],
+  yaep: ['Test a clearer workflow', 'Ask the customer', 'Compare time or cost'],
+};
+const LAB_PICTURES = { explorer: ['supplies', 'labels', 'holder'], builder: ['supplies', 'checklist', 'reach'], leader: ['form', 'status', 'reminder'], yaep: ['form', 'status', 'reminder'] };
+const IDEA_KINDS = ['supplies', 'help', 'waiting'];
+const NEXT_TESTS = ['Try it with a person', 'Compare before and after', 'Change the tool'];
+
+const SCENE_KINDS = { explorer: ['supplies', 'trash', 'help'], builder: ['waiting', 'supplies', 'help'], leader: ['help', 'waiting', 'workaround'], yaep: ['help', 'workflow', 'waiting'] };
 
 function VisualScenario({ mode, selectedIndex, onSelect }) {
   const scenario = VISUAL_SCENARIOS[mode] || VISUAL_SCENARIOS.builder;
-  return (
-    <section className={styles.visualScenario} data-lane={mode} aria-label="Visual problem-finding example">
-      <div className={styles.visualScenarioHeader}>
-        <div>
-          <span>{scenario.eyebrow}</span>
-          <h2>{scenario.title}</h2>
-          <p>{scenario.lead}</p>
-        </div>
-        <div className={styles.visualScenarioCue} aria-hidden="true">
-          <Eye size={28} strokeWidth={2.1} />
-          <strong>SEE IT</strong>
-        </div>
-      </div>
-
-      <div className={styles.broadcastScene}>
-        <svg
-          className={styles.broadcastSceneArt}
-          viewBox="0 0 1000 430"
-          role="img"
-          aria-label="Illustrated community workspace with three numbered problem areas to notice"
-        >
-          <defs>
-            <linearGradient id="sceneBg" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#173f7c" />
-              <stop offset="100%" stopColor="#081a38" />
-            </linearGradient>
-            <linearGradient id="sceneFloor" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#18345c" />
-              <stop offset="100%" stopColor="#0d2346" />
-            </linearGradient>
-            <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="5" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
-
-          <rect x="0" y="0" width="1000" height="430" rx="28" fill="url(#sceneBg)" />
-          <rect x="0" y="285" width="1000" height="145" fill="url(#sceneFloor)" />
-          <rect x="55" y="70" width="270" height="140" rx="18" fill="#244f8f" opacity=".78" />
-          <rect x="78" y="94" width="104" height="90" rx="12" fill="#d4dae6" opacity=".9" />
-          <rect x="196" y="94" width="104" height="90" rx="12" fill="#b0b8c8" opacity=".56" />
-          <rect x="382" y="192" width="260" height="42" rx="12" fill="#315b91" />
-          <rect x="400" y="230" width="18" height="88" rx="9" fill="#203d69" />
-          <rect x="605" y="230" width="18" height="88" rx="9" fill="#203d69" />
-          <rect x="432" y="154" width="84" height="54" rx="10" fill="#d4a017" opacity=".82" />
-          <rect x="495" y="144" width="92" height="63" rx="10" fill="#7d90b8" />
-          <rect x="535" y="163" width="82" height="45" rx="10" fill="#a8b9dd" />
-          <rect x="705" y="190" width="108" height="122" rx="16" fill="#1b3155" />
-          <rect x="724" y="210" width="70" height="18" rx="9" fill="#6e86b4" />
-          <rect x="724" y="239" width="70" height="18" rx="9" fill="#4f6794" />
-          <rect x="724" y="268" width="70" height="18" rx="9" fill="#3e547d" />
-          <circle cx="846" cy="167" r="30" fill="#c8d6f5" />
-          <rect x="817" y="197" width="58" height="94" rx="24" fill="#2a4eaf" />
-          <rect x="805" y="285" width="28" height="70" rx="14" fill="#1f3f78" />
-          <rect x="859" y="285" width="28" height="70" rx="14" fill="#1f3f78" />
-          <path d="M112 315 C136 294 167 294 193 315" fill="none" stroke="#8799bd" strokeWidth="10" strokeLinecap="round" />
-          <path d="M114 329 C142 314 172 314 196 329" fill="none" stroke="#687da7" strokeWidth="8" strokeLinecap="round" />
-          <circle cx="126" cy="340" r="9" fill="#b0b8c8" />
-          <circle cx="153" cy="348" r="8" fill="#d4dae6" />
-          <circle cx="181" cy="341" r="9" fill="#9aaacc" />
-
-          <g filter="url(#softGlow)" opacity={selectedIndex === null || selectedIndex === 0 ? 1 : .3}>
-            <circle cx="525" cy="176" r="58" fill="none" stroke="#d4a017" strokeWidth="7" />
-            <circle cx="525" cy="176" r="46" fill="none" stroke="#d4a017" strokeOpacity=".35" strokeWidth="3" />
-            <circle cx="525" cy="89" r="25" fill="#d4a017" />
-            <text x="525" y="98" textAnchor="middle" fill="#0f2460" fontSize="26" fontWeight="900">1</text>
-          </g>
-          <g filter="url(#softGlow)" opacity={selectedIndex === null || selectedIndex === 1 ? 1 : .3}>
-            <circle cx="154" cy="332" r="61" fill="none" stroke="#d4a017" strokeWidth="7" />
-            <circle cx="154" cy="332" r="49" fill="none" stroke="#d4a017" strokeOpacity=".35" strokeWidth="3" />
-            <circle cx="89" cy="270" r="25" fill="#d4a017" />
-            <text x="89" y="279" textAnchor="middle" fill="#0f2460" fontSize="26" fontWeight="900">2</text>
-          </g>
-          <g filter="url(#softGlow)" opacity={selectedIndex === null || selectedIndex === 2 ? 1 : .3}>
-            <circle cx="846" cy="244" r="76" fill="none" stroke="#d4a017" strokeWidth="7" />
-            <circle cx="846" cy="244" r="64" fill="none" stroke="#d4a017" strokeOpacity=".35" strokeWidth="3" />
-            <circle cx="915" cy="157" r="25" fill="#d4a017" />
-            <text x="915" y="166" textAnchor="middle" fill="#0f2460" fontSize="26" fontWeight="900">3</text>
-          </g>
-        </svg>
-
-        <div className={styles.broadcastOverlay} aria-label="Choose something you notice in the visual scene">
-          {scenario.items.map(({ icon: Icon, label, detail }, index) => (
-            <button
-              type="button"
-              key={label}
-              className={selectedIndex === index ? styles.broadcastCalloutSelected : styles.broadcastCallout}
-              onClick={() => onSelect(index)}
-              aria-pressed={selectedIndex === index}
-            >
-              <div className={styles.broadcastCalloutNumber}>{index + 1}</div>
-              <Icon size={23} strokeWidth={2.15} aria-hidden="true" />
-              <div>
-                <strong>{label}</strong>
-                <small>{detail}</small>
-              </div>
-            </button>
-          ))}
-        </div>
-
-        <div className={styles.broadcastFlow} aria-label="How to read the scene">
-          <span>SEE</span>
-          <i aria-hidden="true">→</i>
-          <span>NOTICE</span>
-          <i aria-hidden="true">→</i>
-          <span>WHO IT AFFECTS</span>
-          <i aria-hidden="true">→</i>
-          <span>IDEA</span>
-        </div>
-      </div>
-
-      <div className={styles.visualScenarioFooter}>
-        <Lightbulb size={20} aria-hidden="true" />
-        <strong>{scenario.footer}</strong>
-      </div>
-    </section>
-  );
-}
-
-function FoundationQuestScene({ selectedIndex, onSelect }) {
-  const scenario = VISUAL_SCENARIOS.explorer;
-  return (
-    <section className={styles.foundationQuestScene} aria-label="A Better Lunch Line visual problem scene">
-      <div className={styles.foundationQuestSceneHead}>
-        <span>SEE IT</span>
-        <h2>Look at the lunch line.</h2>
-        <p>Tap one thing that catches your attention.</p>
-      </div>
-
-      <div className={styles.foundationLunchQuestArt}>
-        <svg viewBox="0 0 960 430" role="img" aria-label="Illustrated school cafeteria lunch line with three things to notice">
-          <defs>
-            <linearGradient id="lunchWall" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#66B9FF" />
-              <stop offset="100%" stopColor="#164E96" />
-            </linearGradient>
-            <linearGradient id="lunchFloor" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#D9E7F5" />
-              <stop offset="100%" stopColor="#A8BED8" />
-            </linearGradient>
-          </defs>
-          <rect width="960" height="430" rx="30" fill="url(#lunchWall)" />
-          <rect y="290" width="960" height="140" fill="url(#lunchFloor)" />
-          <rect x="630" y="95" width="250" height="170" rx="18" fill="#F7F9FF" />
-          <rect x="654" y="126" width="202" height="42" rx="10" fill="#D4A017" />
-          <text x="755" y="153" textAnchor="middle" fontSize="20" fontWeight="900" fill="#0F2460">CAFETERIA</text>
-          <rect x="660" y="188" width="190" height="46" rx="10" fill="#2A4EAF" />
-          <circle cx="805" cy="202" r="19" fill="#70462F" />
-          <rect x="787" y="218" width="36" height="48" rx="14" fill="#111827" />
-
-          <path d="M170 325 C255 292 374 292 470 324" fill="none" stroke="#F7F9FF" strokeWidth="10" strokeLinecap="round" opacity=".7" />
-          {[0,1,2,3,4,5].map((n) => {
-            const x = 150 + n * 82;
-            const y = 246 + (n % 2) * 10;
-            return (
-              <g key={n}>
-                <circle cx={x} cy={y} r="23" fill={n % 2 ? '#70462F' : '#9B6547'} />
-                <rect x={x-21} y={y+22} width="42" height="63" rx="17" fill={n % 3 === 0 ? '#0F2460' : n % 3 === 1 ? '#2A4EAF' : '#1A6D8E'} />
-              </g>
-            );
-          })}
-          <path d="M118 362 H560" stroke="#0F2460" strokeWidth="5" strokeDasharray="18 14" opacity=".55" />
-
-          <g opacity={selectedIndex === null || selectedIndex === 0 ? 1 : .32}>
-            <circle cx="315" cy="238" r="88" fill="none" stroke="#D4A017" strokeWidth="8" />
-            <circle cx="315" cy="110" r="26" fill="#D4A017" />
-            <text x="315" y="119" textAnchor="middle" fontSize="26" fontWeight="900" fill="#0F2460">1</text>
-          </g>
-          <g opacity={selectedIndex === null || selectedIndex === 1 ? 1 : .32}>
-            <circle cx="752" cy="190" r="106" fill="none" stroke="#D4A017" strokeWidth="8" />
-            <circle cx="875" cy="92" r="26" fill="#D4A017" />
-            <text x="875" y="101" textAnchor="middle" fontSize="26" fontWeight="900" fill="#0F2460">2</text>
-          </g>
-          <g opacity={selectedIndex === null || selectedIndex === 2 ? 1 : .32}>
-            <ellipse cx="350" cy="358" rx="248" ry="48" fill="none" stroke="#D4A017" strokeWidth="8" />
-            <circle cx="85" cy="358" r="26" fill="#D4A017" />
-            <text x="85" y="367" textAnchor="middle" fontSize="26" fontWeight="900" fill="#0F2460">3</text>
-          </g>
-        </svg>
-      </div>
-
-      <div className={styles.foundationQuestNoticeChoices}>
-        {scenario.items.map(({ icon: Icon, label, detail }, index) => (
-          <button
-            type="button"
-            key={label}
-            className={selectedIndex === index ? styles.foundationQuestNoticeSelected : undefined}
-            onClick={() => onSelect(index)}
-            aria-pressed={selectedIndex === index}
-          >
-            <span>{index + 1}</span>
-            <Icon size={22} aria-hidden="true" />
-            <div><strong>{label}</strong><small>{detail}</small></div>
-          </button>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function YEPGuide({ prompt, step, onHear, actionLabel, onAction }) {
-  return (
-    <section className={styles.guidePanel} aria-live="polite">
-      <div className={styles.guideAvatarWrap}>
-        <GuideAvatar />
-        <span>YEP GUIDE</span>
-      </div>
-      <div className={styles.guideBubble}>
-        <span className={styles.guideStep}>GUIDE STEP {step}</span>
-        <p>{prompt}</p>
-        <div className={styles.guideActions}>
-          <button type="button" className={styles.guideHear} onClick={onHear}>
-            <Volume2 size={17} aria-hidden="true" /> Hear Guide
-          </button>
-          {actionLabel && (
-            <button type="button" className={styles.guideNext} onClick={onAction}>
-              {actionLabel} <ChevronRight size={17} aria-hidden="true" />
-            </button>
-          )}
-        </div>
-      </div>
-    </section>
-  );
+  return <section className={styles.pictureChoices} aria-label="Choose the problem you notice">
+    {scenario.items.map(({ label, detail }, index) => <button type="button" key={label} className={styles.pictureChoice} aria-pressed={selectedIndex === index} onClick={() => onSelect(index)}>
+      <span className={styles.pictureNumber}>{index + 1}</span>
+      <LearningPicture kind={SCENE_KINDS[mode][index]} label={label} />
+      <strong>{label}</strong><span>{detail}</span>
+    </button>)}
+  </section>;
 }
 
 function ScreenHead({ eyebrow, title, sub }) {
@@ -437,79 +212,48 @@ function LaneGuidance() {
 }
 
 export function DailyQuest() {
-  const { pilotProgress, completeDailyQuest, mode, navigate } = useYEP();
-  const { dailyQuest } = getProgramContent(mode);
+  const { mode, pilotProgress } = useYEP();
+  if (mode !== 'explorer') return <StandardDailyQuest />;
+  return hasLegacyFoundationQuest(pilotProgress) ? <StandardDailyQuest legacyFoundation /> : <FoundationDailyQuest />;
+}
+
+function StandardDailyQuest({ legacyFoundation = false }) {
+  const { pilotProgress, completeDailyQuest, saveLessonDraft, mode, navigate, mirrorResult } = useYEP();
+  const dailyQuest = legacyFoundation ? LEGACY_FOUNDATION_QUEST : getProgramContent(mode).dailyQuest;
   const copy = QUEST_LABELS[mode] || QUEST_LABELS.builder;
   const scenario = VISUAL_SCENARIOS[mode] || VISUAL_SCENARIOS.builder;
-  const [text, setText] = useState(pilotProgress.dailyQuestText);
-  const [selectedProblem, setSelectedProblem] = useState(null);
-  const [affectedBy, setAffectedBy] = useState('');
-  const [ideaChoice, setIdeaChoice] = useState('');
-  const [guideStep, setGuideStep] = useState(
-    pilotProgress.dailyQuestComplete ? (mode === 'explorer' ? 5 : 4) : 1
-  );
+  const draft = pilotProgress.dailyQuestDraft;
+  const [text, setText] = useState(draft?.text ?? pilotProgress.dailyQuestText);
+  const [selectedProblem, setSelectedProblem] = useState(draft?.selectedProblem ?? (pilotProgress.dailyQuestChoiceProof ? scenario.items.findIndex((item) => item.label === pilotProgress.dailyQuestChoiceProof.problem) : null));
+  const [who, setWho] = useState(draft?.who || pilotProgress.dailyQuestChoiceProof?.who || '');
+  const [tryChoice, setTryChoice] = useState(draft?.tryChoice || pilotProgress.dailyQuestChoiceProof?.action || '');
+  const [guideStep, setGuideStep] = useState(draft?.guideStep || (pilotProgress.dailyQuestComplete ? 4 : 1));
   const complete = pilotProgress.dailyQuestComplete;
   const program = MODES[mode] || MODES.builder;
 
-  const selected = selectedProblem === null ? null : scenario.items[selectedProblem];
-  const foundationGuidePrompt = complete
-    ? 'You finished your first YEP quest. You saw something, thought about people, chose a move, and finished. That is the Process starting to work.'
-    : guideStep === 1
-      ? 'Now that I know a little about you, let us try your first quest. Look at the lunch line and tap one thing that catches your attention.'
-      : guideStep === 2
-        ? 'You noticed "' + (selected?.label || 'something important') + '." Good. Who feels that problem?'
-        : guideStep === 3
-          ? 'Now choose one move you would try first. You are not looking for a perfect answer. You are practicing how to move from a problem to an idea.'
-          : 'Look at what you built: something you noticed, who it affects, and one move you would try. That is a real problem-solving step.';
+  useEffect(() => {
+    if (!complete || text !== pilotProgress.dailyQuestText || tryChoice !== (pilotProgress.dailyQuestChoiceProof?.action || '')) saveLessonDraft('dailyQuest', { text, selectedProblem, who, tryChoice, guideStep });
+    else if (pilotProgress.dailyQuestDraft) saveLessonDraft('dailyQuest', null);
+  }, [text, selectedProblem, who, tryChoice, guideStep, complete, pilotProgress.dailyQuestText, pilotProgress.dailyQuestChoiceProof?.action]);
 
-  const standardGuidePrompt = complete
-    ? 'You finished this Daily Quest and saved your proof. Next, take that same problem-solving mindset into S.T.E.M.Sin.'
+  const selected = selectedProblem === null ? null : scenario.items[selectedProblem];
+  const canSave = !!text.trim() || !!(selected && who && tryChoice);
+  const guidePrompt = complete
+    ? 'Your response is saved on this tablet. You can review your choices, add your own words, or continue to S.T.E.M.Sin.'
     : guideStep === 1
-      ? 'Start by looking at the scene. Tap one numbered problem that catches your attention. I will move with you from there.'
+      ? 'A useful idea starts with someone having a problem. Look at the scene, then tap one problem you notice below it.'
       : guideStep === 2
         ? 'You spotted "' + (selected?.label || 'a problem') + '." Good. Now ask yourself: who does this affect, and why does it matter?'
         : guideStep === 3 && !text.trim()
-          ? 'Now build your idea. Use your own words or Talk To YEP. Tell me what you would try to make the problem better.'
+          ? 'Choose a change you would try to help someone. You can add your own words if you want. There is more than one useful idea.'
           : guideStep === 3
-            ? 'You have an idea. Read it back once and make sure it sounds like you. Then check it with me.'
+            ? 'You have an idea. Read it back once and make sure it sounds like you. Then review your own idea.'
             : 'Your idea is ready. Finish and save it as your Daily Quest proof. After that, I will move you into S.T.E.M.Sin.';
-
-  const guidePrompt = mode === 'explorer' ? foundationGuidePrompt : standardGuidePrompt;
-
-  function hearGuide() {
-    if (typeof window === 'undefined' || !window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(guidePrompt);
-    utterance.rate = 0.95;
-    utterance.pitch = 1;
-    window.speechSynthesis.speak(utterance);
-  }
 
   function chooseProblem(index) {
     setSelectedProblem(index);
-    setAffectedBy('');
-    setIdeaChoice('');
+    setWho('');
     setGuideStep(2);
-  }
-
-  function chooseWho(value) {
-    setAffectedBy(value);
-    setGuideStep(3);
-  }
-
-  function chooseFoundationIdea(value) {
-    setIdeaChoice(value);
-    setGuideStep(4);
-  }
-
-  function saveFoundationQuest() {
-    if (!selected || !affectedBy || !ideaChoice) return;
-    const proof = `I noticed ${selected.label}. It affects ${affectedBy.toLowerCase()}. I would try: ${ideaChoice}.`;
-    const saved = completeDailyQuest(proof);
-    if (saved) {
-      setText(proof);
-      setGuideStep(5);
-    }
   }
 
   function advanceGuide() {
@@ -517,131 +261,26 @@ export function DailyQuest() {
       navigate('stemSin');
       return;
     }
+    if (guideStep === 1) { document.getElementById('daily-quest-scene')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+    if (guideStep === 3 && !canSave) { document.getElementById('daily-idea-choices')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
     if (guideStep === 2) {
-      setGuideStep(3);
-      window.setTimeout(() => document.getElementById('daily-quest-answer')?.focus(), 40);
+      document.getElementById('daily-quest-who')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
-    if (guideStep === 3 && text.trim()) {
+    if (guideStep === 3 && canSave) {
       setGuideStep(4);
       return;
     }
-    if (guideStep === 4 && text.trim()) saveQuest();
+    if (guideStep === 4 && canSave) saveQuest();
   }
 
   function saveQuest() {
-    const saved = completeDailyQuest(text);
+    const saved = completeDailyQuest(text, selected && who && tryChoice ? { problem: selected.label, who, action: tryChoice } : null);
     if (saved) setGuideStep(4);
   }
 
-  if (mode === 'explorer') {
-    const ideaOptions = selectedProblem === null ? [] : FOUNDATION_QUEST_IDEAS[selectedProblem] || [];
-    return (
-      <Shell>
-        <section className={styles.foundationQuestStage}>
-          <header className={styles.foundationQuestHeader}>
-            <div>
-              <span>YOUR FIRST DAILY QUEST</span>
-              <h1>A Better Lunch Line</h1>
-              <p>See it. Notice it. Choose a move. Finish.</p>
-            </div>
-            <div className={styles.foundationQuestMiniFlow} aria-label="First Daily Quest progress">
-              {['SEE', 'PEOPLE', 'IDEA', 'FINISH'].map((label, index) => (
-                <span key={label} data-state={guideStep > index + 1 || complete ? 'done' : guideStep === index + 1 ? 'active' : 'next'}>
-                  <b>{index + 1}</b>{label}
-                </span>
-              ))}
-            </div>
-          </header>
-
-          <YEPGuide
-            prompt={guidePrompt}
-            step={guideStep}
-            onHear={hearGuide}
-            actionLabel={complete ? 'Take Me To S.T.E.M.Sin' : null}
-            onAction={() => navigate('stemSin')}
-          />
-
-          {!complete && guideStep === 1 && (
-            <FoundationQuestScene selectedIndex={selectedProblem} onSelect={chooseProblem} />
-          )}
-
-          {!complete && guideStep === 2 && selected && (
-            <section className={styles.foundationQuestChoiceStage}>
-              <span>THINK ABOUT PEOPLE</span>
-              <h2>Who feels this problem?</h2>
-              <p>You noticed: <strong>{selected.label}</strong></p>
-              <div className={styles.foundationQuestBigChoices}>
-                {['Students waiting in line', 'Cafeteria workers', 'Both students and workers'].map((option) => (
-                  <button type="button" key={option} onClick={() => chooseWho(option)}>
-                    <UsersRound size={24} aria-hidden="true" />
-                    <strong>{option}</strong>
-                    <ChevronRight size={19} aria-hidden="true" />
-                  </button>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {!complete && guideStep === 3 && selected && (
-            <section className={styles.foundationQuestChoiceStage}>
-              <span>BUILD AN IDEA</span>
-              <h2>What would you try first?</h2>
-              <p>Pick one move. Later, you can test it and change it.</p>
-              <div className={styles.foundationQuestBigChoices}>
-                {ideaOptions.map((option) => (
-                  <button type="button" key={option} onClick={() => chooseFoundationIdea(option)}>
-                    <Lightbulb size={24} aria-hidden="true" />
-                    <strong>{option}</strong>
-                    <ChevronRight size={19} aria-hidden="true" />
-                  </button>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {!complete && guideStep === 4 && selected && (
-            <section className={styles.foundationQuestReview}>
-              <span>LOOK WHAT YOU BUILT</span>
-              <h2>Problem → People → Idea</h2>
-              <div className={styles.foundationQuestReviewGrid}>
-                <div><small>I NOTICED</small><strong>{selected.label}</strong></div>
-                <div><small>IT AFFECTS</small><strong>{affectedBy}</strong></div>
-                <div><small>I WOULD TRY</small><strong>{ideaChoice}</strong></div>
-              </div>
-              <p>You do not have to know if the idea works yet. The next part of YEP teaches you how to test and learn.</p>
-              <button type="button" className={styles.foundationQuestFinish} onClick={saveFoundationQuest}>
-                Finish My First Quest <CheckCircle2 size={20} />
-              </button>
-            </section>
-          )}
-
-          {complete && (
-            <section className={styles.foundationQuestComplete}>
-              <CheckCircle2 size={42} aria-hidden="true" />
-              <span>FIRST QUEST COMPLETE</span>
-              <h2>You moved from seeing a problem to choosing a move.</h2>
-              <p>{pilotProgress.dailyQuestText}</p>
-              <div className={styles.foundationQuestWin}>
-                <b>SEE</b><i>→</i><b>PEOPLE</b><i>→</i><b>IDEA</b><i>→</i><b>FINISH</b>
-              </div>
-              <button type="button" className={styles.foundationQuestFinish} onClick={() => navigate('stemSin')}>
-                Next: Test An Idea In S.T.E.M.Sin <ChevronRight size={20} />
-              </button>
-            </section>
-          )}
-
-          <footer className={styles.foundationQuestSupport}>
-            <BookOpenCheck size={18} aria-hidden="true" />
-            <span><strong>App:</strong> see + choose + experience. <strong>Workbook:</strong> think + write + discuss with support.</span>
-          </footer>
-        </section>
-      </Shell>
-    );
-  }
-
   return (
-    <Shell>
+    <Shell showAudio={false}>
       <section className={styles.dailyQuestStage} data-lane={mode}>
         <div className={styles.dailyQuestMasthead}>
           <div className={styles.dailyQuestTitleBlock}>
@@ -649,8 +288,8 @@ export function DailyQuest() {
               <Flag size={18} aria-hidden="true" />
               Daily Quest
             </div>
-            <h1>{copy.title}</h1>
-            <p>{copy.helper}</p>
+            <h1>{dailyQuest.title}</h1>
+            <p>See the problem. Try an idea. Save your work.</p>
             <div className={styles.dailyQuestPathway}>
               <span>{program.program}</span>
               <b>{program.tier}</b>
@@ -681,16 +320,19 @@ export function DailyQuest() {
 
         <YEPGuide
           prompt={guidePrompt}
+          title={complete ? 'Your idea is saved' : ['Look at the scene', 'Who needs help?', 'Try your idea', 'Read it back'][guideStep - 1]}
+          example={selected ? `You noticed: ${selected.label}. ${selected.detail} Try one small change, then look again to see what happens. Your idea can be different from the pictured example.` : getProgramContent(mode).example}
+          pictureKind={selectedProblem === null ? (mode === 'explorer' || mode === 'builder' ? 'supplies' : 'workflow') : SCENE_KINDS[mode][selectedProblem]}
+          narration={guideStep === 1 ? scenario.items.map((item, index) => `Picture ${index + 1}: ${item.label}. ${item.detail}`).join(' ') : guideStep === 2 ? 'Choose Me, Other people, or Both.' : guideStep >= 3 ? `You can choose: ${IDEA_CHOICES[mode].join('. ')}. Your own words are optional.` : ''}
           step={guideStep}
-          onHear={hearGuide}
           actionLabel={
             complete
               ? 'Go To S.T.E.M.Sin'
               : guideStep === 2
-                ? 'Build My Idea'
-                : guideStep === 3 && text.trim()
-                  ? 'Check My Idea'
-                  : guideStep === 4 && text.trim()
+                ? 'Choose who needs help'
+                : guideStep === 3 && canSave
+                  ? (text.trim() ? 'Review My Idea' : 'Review My Choices')
+                  : guideStep === 4 && canSave
                     ? 'Finish & Save'
                     : null
           }
@@ -714,23 +356,25 @@ export function DailyQuest() {
               </div>
             </div>
 
-            <VisualScenario mode={mode} selectedIndex={selectedProblem} onSelect={chooseProblem} />
+            <div id="daily-quest-scene"><VisualScenario mode={mode} selectedIndex={selectedProblem} onSelect={chooseProblem} /></div>
           </>
         )}
 
+        {!complete && guideStep > 1 && <button type="button" className={ui.btnGhost} onClick={() => setGuideStep(1)}>Choose another problem</button>}
+
         {selected && guideStep === 2 && (
-          <section className={styles.dailyQuestWhoStage}>
+          <section id="daily-quest-who" className={styles.dailyQuestWhoStage}>
             <span>NOTICE</span>
             <h2>Who does this affect?</h2>
             <div className={styles.dailyQuestWhoChoices}>
-              <button type="button" onClick={() => setGuideStep(3)}>Me</button>
-              <button type="button" onClick={() => setGuideStep(3)}>Other people</button>
-              <button type="button" onClick={() => setGuideStep(3)}>Both</button>
+              <button type="button" onClick={() => { setWho('Me'); setGuideStep(3); }}>Me</button>
+              <button type="button" onClick={() => { setWho('Other people'); setGuideStep(3); }}>Other people</button>
+              <button type="button" onClick={() => { setWho('Both'); setGuideStep(3); }}>Both</button>
             </div>
           </section>
         )}
 
-        {selected && guideStep >= 3 && (
+        {(complete || (selected && guideStep >= 3)) && (
           <section className={styles.dailyQuestResponseStage}>
             <div className={styles.dailyQuestResponseLead}>
               <span>{guideStep >= 4 ? 'FINISH' : 'BUILD'}</span>
@@ -738,13 +382,18 @@ export function DailyQuest() {
               <p>
                 {guideStep >= 4
                   ? 'When it sounds right, save it as your proof and keep moving.'
-                  : selected.label + ' — ' + selected.detail}
+                  : selected ? selected.label + ' — ' + selected.detail : 'Review your saved idea in your own words.'}
               </p>
             </div>
 
+            <div id="daily-idea-choices" className={styles.pictureChoices} aria-label="Choose a change to try">
+              {IDEA_CHOICES[mode].map((choice, index) => <button type="button" key={choice} className={styles.pictureChoice} aria-pressed={tryChoice === choice} onClick={() => setTryChoice(choice)}><LearningPicture kind={IDEA_KINDS[index]} changed label={choice} /><strong>{choice}</strong></button>)}
+            </div>
+            <p className={styles.draftNote}>Choose an action, or describe your own idea. The app saves exactly what you choose; it does not grade your understanding. You can ask your facilitator for help.</p>
             <div className={styles.dailyQuestResponseBox}>
               <textarea
                 id="daily-quest-answer"
+                aria-label="Daily Quest answer, optional when picture choices are complete"
                 className={styles.dailyQuestTextarea}
                 value={text}
                 onChange={(e) => {
@@ -753,12 +402,14 @@ export function DailyQuest() {
                 }}
                 placeholder={copy.placeholder}
               />
+              {complete && text !== pilotProgress.dailyQuestText && <p className={styles.draftNote}>Your changes are kept as a draft. Tap Update My Proof to replace the finished answer.</p>}
+              {!complete && <p className={styles.draftNote}>Your draft is kept on this tablet as you go. Save your idea when you are ready.</p>}
               <VoiceCapture
                 prompt={dailyQuest.prompt}
                 currentValue={text}
                 onConfirm={(value) => {
                   setText(value);
-                  setGuideStep(3);
+                  setGuideStep(complete ? 4 : 3);
                 }}
                 buttonLabel="Talk To YEP"
                 confirmLabel="Use As My Answer"
@@ -768,17 +419,18 @@ export function DailyQuest() {
             {guideStep >= 4 && (
               <button
                 className={styles.dailyQuestSubmit}
-                disabled={!text.trim()}
+                disabled={!canSave}
                 onClick={saveQuest}
               >
                 {complete ? 'Update My Proof' : 'Finish & Save My Proof'}
               </button>
             )}
 
+            {complete && <p className={styles.draftNote}>Show your idea to a nearby peer or facilitator. Who could it help, and what small test would you try together?</p>}
             {complete && (
               <div className={styles.dailyQuestSavedProof}>
                 <CheckCircle2 size={20} aria-hidden="true" />
-                <span>Daily Quest proof saved on this tablet.</span>
+                <span>{pilotProgress.dailyQuestEvidenceType === 'choices' ? 'Picture choices saved on this tablet. No written answer was provided.' : 'Daily Quest response saved on this tablet.'}{pilotProgress.dailyQuestChoiceProof && ` Problem: ${pilotProgress.dailyQuestChoiceProof.problem}. Who: ${pilotProgress.dailyQuestChoiceProof.who}. Action: ${pilotProgress.dailyQuestChoiceProof.action}.`}</span>
               </div>
             )}
           </section>
@@ -805,7 +457,7 @@ export function DailyQuest() {
             <FlaskConical size={18} aria-hidden="true" />
             <span>S.T.E.M.Sin</span>
           </button>
-          <button type="button" onClick={() => navigate('mirrorIntro')} className={styles.dailyQuestNextButton}>
+          <button type="button" onClick={() => navigate(mirrorResult ? 'results' : 'mirrorIntro')} className={styles.dailyQuestNextButton}>
             <ScanFace size={18} aria-hidden="true" />
             <span>Mirror Results</span>
           </button>
@@ -854,46 +506,49 @@ export function WeeklyModule() {
 }
 
 export function StemSinQuest() {
-  const { pilotProgress, completeStemSin, mode, navigate } = useYEP();
+  const { pilotProgress, completeStemSin, saveLessonDraft, mode, navigate, mirrorResult } = useYEP();
   const { stemSin } = getProgramContent(mode);
   const lab = STEM_LABS[mode] || STEM_LABS.builder;
   const savedToolIndex = pilotProgress.stemSinChoice
     ? lab.tools.findIndex((tool) => tool.label === pilotProgress.stemSinChoice)
     : -1;
-  const [text, setText] = useState(pilotProgress.stemSinText);
-  const [selectedTool, setSelectedTool] = useState(savedToolIndex >= 0 ? savedToolIndex : null);
-  const [prediction, setPrediction] = useState(null);
-  const [demoRan, setDemoRan] = useState(pilotProgress.stemSinComplete);
-  const [guideStep, setGuideStep] = useState(pilotProgress.stemSinComplete ? 6 : 1);
+  const draft = pilotProgress.stemSinDraft;
+  const [text, setText] = useState(draft?.text ?? pilotProgress.stemSinText);
+  const [selectedTool, setSelectedTool] = useState(draft?.selectedTool ?? (savedToolIndex >= 0 ? savedToolIndex : null));
+  const [prediction, setPrediction] = useState(draft?.prediction ?? pilotProgress.stemSinChoiceProof?.prediction ?? null);
+  const [nextTest, setNextTest] = useState(draft?.nextTest || pilotProgress.stemSinChoiceProof?.nextTest || '');
+  const [demoRan, setDemoRan] = useState(draft?.demoRan ?? pilotProgress.stemSinComplete);
+  const [guideStep, setGuideStep] = useState(draft?.guideStep || (pilotProgress.stemSinComplete ? 6 : 1));
+  // Browsing Foundation tools is not a choice until the learner taps "Try this tool".
+  const [previewToolIndex, setPreviewToolIndex] = useState(Math.max(0, draft?.selectedTool ?? savedToolIndex));
   const complete = pilotProgress.stemSinComplete;
   const tool = selectedTool === null ? null : lab.tools[selectedTool];
+  useEffect(() => {
+    if (!complete || text !== pilotProgress.stemSinText || nextTest !== (pilotProgress.stemSinChoiceProof?.nextTest || '')) saveLessonDraft('stemSin', { text, selectedTool, prediction, nextTest, demoRan, guideStep });
+    else if (pilotProgress.stemSinDraft) saveLessonDraft('stemSin', null);
+  }, [text, selectedTool, prediction, nextTest, demoRan, guideStep, complete, pilotProgress.stemSinText, pilotProgress.stemSinChoiceProof?.nextTest]);
 
+  const canSave = !!text.trim() || !!(tool && prediction && nextTest);
   const guidePrompt = complete
     ? 'You saved your S.T.E.M.Sin proof. Now use what you learned when you look at your Mirror Results.'
     : guideStep === 1
-      ? 'Look at the challenge. Choose one tool you would test first. There is not one perfect answer.'
+      ? (mode === 'explorer'
+          ? 'Look at this tool and the problem picture. Tap Next tool to look at another, or Try this tool when you are ready.'
+          : 'Look at the challenge. Choose one tool you would test first. There is not one perfect answer.')
       : guideStep === 2
         ? 'You chose ' + (tool?.label || 'a tool') + '. Before we test it, what do you predict it will improve?'
         : guideStep === 3
-          ? 'Prediction locked: ' + (prediction || 'you expect a change') + '. Run the practice test and watch what changes.'
+          ? 'Prediction locked: ' + (prediction || 'you expect a change') + '. Show the example and look for what changes.'
           : guideStep === 4
-            ? 'The practice result is visible now. Do not just accept it. Explain what changed and what you would still need to test in real life.'
+            ? 'Compare the before picture with one possible change. What is different? This is an illustration, not a result from a real person.'
             : guideStep === 5 && !text.trim()
-              ? 'Use your own words. What happened in the practice test, and what would you test or improve next?'
+              ? 'What would you try next? Choose a next test, or explain your own idea. Adding your own words is optional.'
               : 'Read your explanation back. If it matches what you saw, save it as your S.T.E.M.Sin proof.';
-
-  function hearGuide() {
-    if (typeof window === 'undefined' || !window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(guidePrompt);
-    utterance.rate = 0.95;
-    utterance.pitch = 1;
-    window.speechSynthesis.speak(utterance);
-  }
 
   function chooseTool(index) {
     if (complete) return;
     setSelectedTool(index);
+    setPreviewToolIndex(index);
     setPrediction(null);
     setDemoRan(false);
     setGuideStep(2);
@@ -907,9 +562,11 @@ export function StemSinQuest() {
 
   function advanceGuide() {
     if (complete) {
-      navigate('mirrorIntro');
+      navigate(mirrorResult ? 'results' : 'mirrorIntro');
       return;
     }
+    if (guideStep <= 2) { document.getElementById(guideStep === 1 ? 'stem-tools' : 'stem-prediction')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+    if (guideStep === 5 && !canSave) { document.getElementById('stem-next-test')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
     if (guideStep === 3 && prediction) {
       setDemoRan(true);
       setGuideStep(4);
@@ -920,37 +577,56 @@ export function StemSinQuest() {
       window.setTimeout(() => document.getElementById('stem-sin-answer')?.focus(), 40);
       return;
     }
-    if (guideStep === 5 && text.trim()) saveProof();
+    if (guideStep === 5 && canSave) saveProof();
   }
 
   function saveProof() {
-    if (!tool) return;
-    const saved = completeStemSin(text, tool.label);
+    if (!tool && !complete) return;
+    const saved = completeStemSin(text, tool?.label || pilotProgress.stemSinChoice || '', prediction && nextTest ? { prediction, nextTest } : null);
     if (saved) setGuideStep(6);
   }
 
   return (
-    <Shell>
+    <Shell showAudio={false}>
       <section className={styles.stemLabStage} data-lane={mode}>
-        <ScreenHead eyebrow={`${MODES[mode]?.program || 'YEP'} · S.T.E.M.Sin`} title={stemSin.title} sub={stemSin.challengeTitle} />
+        <ScreenHead eyebrow={`${MODES[mode]?.program || 'YEP'} · S.T.E.M.Sin`} title={stemSin.challengeTitle} sub={stemSin.title} />
 
         <YEPGuide
           prompt={guidePrompt}
+          title={complete ? 'Your practice is saved' : ['Choose one tool', 'Make a prediction', 'Try the practice test', 'Notice what changed', 'Explain it your way'][guideStep - 1]}
+          pictureKind={demoRan && tool ? LAB_PICTURES[mode][selectedTool] : guideStep === 1 ? LAB_PICTURES[mode][mode === 'explorer' ? previewToolIndex : 0] : tool ? LAB_PICTURES[mode][selectedTool] : undefined}
+          beforeOnly={!demoRan}
+          narration={guideStep === 1
+            ? (mode === 'explorer'
+                ? `Tool ${previewToolIndex + 1} of ${lab.tools.length}: ${lab.tools[previewToolIndex].label}. ${lab.tools[previewToolIndex].detail}`
+                : lab.tools.map((item, index) => `Tool ${index + 1}: ${item.label}. ${item.detail}`).join(' '))
+            : guideStep === 2 ? `Choose a prediction: ${lab.predictions.join('. ')}.`
+            : guideStep === 5 ? `Choose a next test: ${NEXT_TESTS.join('. ')}. Your own words are optional.`
+            : demoRan && tool ? `${tool.result} This is an illustrated example, not measured real-world evidence.` : ''}
+          example={demoRan && tool
+            ? `${tool.result} In a real test, you would still need to check whether that change helps the person.`
+            : guideStep === 1 && mode === 'explorer'
+              ? `${lab.tools[previewToolIndex].detail} This is one possible tool to try. Look at the starting problem first.`
+              : tool ? `${tool.detail} Think about what you predict before you reveal a possible change.`
+              : 'Look at the starting problem. Choose a tool, make a prediction, and only then reveal one possible change.'}
           step={guideStep}
-          onHear={hearGuide}
           actionLabel={
             complete
-              ? 'Go To Mirror Results'
+              ? (mirrorResult ? 'Go To Mirror Results' : 'Start My Mirror')
               : guideStep === 3 && prediction
-                ? 'Run Practice Test'
+                ? 'Show What Changes'
                 : guideStep === 4
                   ? 'Explain What Happened'
-                  : guideStep === 5 && text.trim()
-                    ? 'Finish & Save My Proof'
+                  : guideStep === 5 && canSave
+                    ? 'Save S.T.E.M.Sin Proof'
                     : null
           }
           onAction={advanceGuide}
         />
+
+        {!complete && guideStep > 1 && <button type="button" className={ui.btnGhost} onClick={() => { setGuideStep(1); setPrediction(null); setDemoRan(false); }}>Choose a different tool</button>}
+
+        {!complete && tool && guideStep > 2 && <button type="button" className={ui.btnGhost} onClick={() => { setGuideStep(2); setDemoRan(false); }}>Change prediction</button>}
 
         <div className={styles.stemLabFlow} aria-label="S.T.E.M.Sin visual learning flow">
           <span data-active={selectedTool !== null}>1 · CHOOSE TOOL</span>
@@ -964,7 +640,7 @@ export function StemSinQuest() {
           <span data-active={complete}>5 · PROVE</span>
         </div>
 
-        <section className={styles.stemLabScene} aria-label="S.T.E.M.Sin practice challenge">
+        {guideStep === 1 && <section className={styles.stemLabScene} aria-label="S.T.E.M.Sin practice challenge">
           <div className={styles.stemLabSceneIcon} aria-hidden="true"><FlaskConical size={34} /></div>
           <div>
             <span>{lab.eyebrow}</span>
@@ -976,21 +652,52 @@ export function StemSinQuest() {
             <span>FINISHER FOCUS</span>
             <strong>{stemSin.finisher}</strong>
           </div>
-        </section>
+        </section>}
 
-        {guideStep === 1 && (
-          <section className={styles.stemLabTools} aria-label="Choose a tool to test">
-            <div className={styles.stemLabSectionHead}>
-              <span>STEP 1</span>
-              <h2>Which tool would you test first?</h2>
+        {guideStep === 1 && <section id="stem-tools" className={styles.stemLabTools} aria-label="Choose a tool to test">
+          <div className={styles.stemLabSectionHead}>
+            <span>STEP 1</span>
+            <h2>Which tool would you test first?</h2>
+          </div>
+          {mode === 'explorer' ? (
+            <div className={styles.stemLabToolExplorer} aria-label="Browse one tool at a time">
+              <div className={styles.stemLabToolExplorerVisual}>
+                <span>BEFORE · THE PROBLEM</span>
+                <LearningPicture
+                  kind={LAB_PICTURES[mode][previewToolIndex]}
+                  label={`Starting art-table problem for ${lab.tools[previewToolIndex].label}`}
+                />
+              </div>
+              <div className={styles.stemLabToolExplorerChoice}>
+                <span>TOOL {previewToolIndex + 1} OF {lab.tools.length}</span>
+                <div className={styles.stemLabToolExplorerTitle}>
+                  {(() => { const Icon = lab.tools[previewToolIndex].icon; return <Icon size={34} aria-hidden="true" />; })()}
+                  <h3>{lab.tools[previewToolIndex].label}</h3>
+                </div>
+                <p>{lab.tools[previewToolIndex].detail}</p>
+                <div className={styles.stemLabToolExplorerControls}>
+                  <button type="button" aria-label="Previous tool" onClick={() => setPreviewToolIndex((value) => (value - 1 + lab.tools.length) % lab.tools.length)}>
+                    <ChevronRight className={styles.stemLabFlipArrow} size={21} aria-hidden="true" /> Previous
+                  </button>
+                  <button type="button" aria-label="Next tool" onClick={() => setPreviewToolIndex((value) => (value + 1) % lab.tools.length)}>
+                    Next tool <ChevronRight size={21} aria-hidden="true" />
+                  </button>
+                </div>
+                <button type="button" className={styles.stemLabChooseTool} onClick={() => chooseTool(previewToolIndex)}>
+                  Try {lab.tools[previewToolIndex].label} <ChevronRight size={22} aria-hidden="true" />
+                </button>
+              </div>
             </div>
+          ) : (
             <div className={styles.stemLabToolGrid}>
               {lab.tools.map(({ icon: Icon, label, detail }, index) => (
                 <button
                   type="button"
                   key={label}
-                  className={styles.stemLabTool}
+                  className={selectedTool === index ? styles.stemLabToolSelected : styles.stemLabTool}
+                  aria-pressed={selectedTool === index}
                   onClick={() => chooseTool(index)}
+                  disabled={complete}
                 >
                   <Icon size={26} aria-hidden="true" />
                   <strong>{label}</strong>
@@ -998,11 +705,18 @@ export function StemSinQuest() {
                 </button>
               ))}
             </div>
-          </section>
+          )}
+        </section>}
+
+        {tool && (guideStep === 2 || guideStep === 3) && (
+          <div className={styles.stemLabBeforeCue} aria-label="Picture before the practice test">
+            <div><span>BEFORE · LOOK CLOSELY</span><strong>{lab.title}</strong><small>What needs to change for {lab.user.toLowerCase()}</small></div>
+            <LearningPicture kind={LAB_PICTURES[mode][selectedTool]} label="Illustrated situation before using the tool" />
+          </div>
         )}
 
-        {guideStep === 2 && tool && (
-          <section className={styles.stemLabPrediction}>
+        {tool && !complete && guideStep === 2 && (
+          <section id="stem-prediction" className={styles.stemLabPrediction}>
             <div className={styles.stemLabSectionHead}>
               <span>STEP 2</span>
               <h2>What do you predict will improve?</h2>
@@ -1025,59 +739,62 @@ export function StemSinQuest() {
 
         {guideStep === 3 && tool && prediction && (
           <section className={styles.stemLabReadyStage}>
-            <span>READY TO TEST</span>
-            <h2>{tool.label}</h2>
+            <span>READY TO EXPLORE</span><h2>{tool.label}</h2>
             <p>You predict: <strong>{prediction}</strong></p>
-            <small>Run the guided practice test, then look for what changes.</small>
+            <small>Show the guided example, then look for what changes. This is not a measured real-world test.</small>
           </section>
         )}
 
-        {guideStep === 4 && demoRan && tool && (
+        {demoRan && tool && !complete && (
           <section className={styles.stemLabResult} aria-live="polite">
-            <div className={styles.stemLabResultBadge}><CheckCircle2 size={22} aria-hidden="true" /> PRACTICE RESULT</div>
-            <h2>{tool.label}</h2>
-            <p>{tool.result}</p>
+            <div className={styles.stemLabResultBadge}><Eye size={22} aria-hidden="true" /> ILLUSTRATED PRACTICE</div>
+            <h2>Before → One possible change</h2>
+            <div className={styles.stemLabComparison}>
+              <PictureExample kind={LAB_PICTURES[mode][selectedTool]} />
+            </div>
+            <p><strong>{tool.label}:</strong> {tool.result}</p>
             <div>
               <strong>Your prediction:</strong>
               <span>{prediction || 'Saved proof from an earlier practice test.'}</span>
             </div>
-            <small>This is guided app practice. A real-world test still belongs in the workbook/facilitator process with appropriate permission.</small>
+            <small>This is a guided app practice result—not real-world evidence. A real test still requires the workbook/facilitator process and appropriate permission.</small>
           </section>
         )}
 
-        {(guideStep === 5 || complete) && (
+        {(guideStep >= 5 || complete) && (
           <section className={styles.stemLabExplain}>
             <div className={styles.stemLabSectionHead}>
               <span>STEP 4</span>
-              <h2>{complete ? 'Your saved explanation' : 'Explain what happened'}</h2>
+              <h2>Explain what happened</h2>
             </div>
+            <div id="stem-next-test" className={styles.stemLabPredictionGrid} aria-label="Choose your next test">{NEXT_TESTS.map((choice) => <button type="button" key={choice} className={nextTest === choice ? styles.stemLabPredictionSelected : styles.stemLabPredictionButton} aria-pressed={nextTest === choice} onClick={() => setNextTest(choice)}>{choice}</button>)}</div>
             <textarea
               id="stem-sin-answer"
+              aria-label="S.T.E.M.Sin explanation, optional when choices are complete"
               className={styles.dailyQuestTextarea}
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="I tested... I noticed... Next I would..."
-              disabled={complete}
             />
-            {!complete && (
-              <VoiceCapture
-                prompt={stemSin.prompt}
-                currentValue={text}
-                onConfirm={(value) => {
-                  setText(value);
-                  setGuideStep(5);
-                }}
-                buttonLabel="Talk To YEP"
-                confirmLabel="Use As My Answer"
-              />
-            )}
-            {!complete && (
+            {complete && text !== pilotProgress.stemSinText && <p className={styles.draftNote}>Your changes are kept as a draft. Tap Update S.T.E.M.Sin Proof to replace the finished answer.</p>}
+            {!complete && <p className={styles.draftNote}>Your practice and draft are kept on this tablet as you go.</p>}
+            <VoiceCapture
+              prompt={stemSin.prompt}
+              currentValue={text}
+              onConfirm={(value) => {
+                setText(value);
+                setGuideStep(5);
+              }}
+              buttonLabel="Talk To YEP"
+              confirmLabel="Use As My Answer"
+            />
+            {(tool || complete) && (
               <button
                 className={styles.stemLabSave}
-                disabled={!text.trim() || !tool}
+                disabled={!canSave || (!tool && !complete)}
                 onClick={saveProof}
               >
-                Finish & Save My Proof
+                {complete ? 'Update S.T.E.M.Sin Proof' : 'Save S.T.E.M.Sin Proof'}
               </button>
             )}
           </section>
@@ -1087,14 +804,16 @@ export function StemSinQuest() {
           <section className={styles.stemLabComplete}>
             <CheckCircle2 size={28} aria-hidden="true" />
             <div>
-              <strong>S.T.E.M.Sin proof saved on this tablet.</strong>
-              <span>{pilotProgress.stemSinChoice ? `Tool tested: ${pilotProgress.stemSinChoice}` : 'Practice tool saved with this proof.'}</span>
+              <strong>{pilotProgress.stemSinEvidenceType === 'choices' ? 'Choice response saved. No written explanation was provided.' : 'S.T.E.M.Sin response saved on this tablet.'}</strong>
+              {pilotProgress.stemSinChoiceProof && <span>Prediction: {pilotProgress.stemSinChoiceProof.prediction}. Next test: {pilotProgress.stemSinChoiceProof.nextTest}.</span>}
+              <span>{pilotProgress.stemSinChoice ? `Tool tested: ${pilotProgress.stemSinChoice}` : 'Saved explanation; no tool was recorded in this earlier session.'}</span>
             </div>
-            <button type="button" onClick={() => navigate('mirrorIntro')}>Continue To Mirror Results <ChevronRight size={17} /></button>
+            <button type="button" onClick={() => navigate(mirrorResult ? 'results' : 'mirrorIntro')}>{mirrorResult ? 'Continue To Mirror Results' : 'Start My Mirror'} <ChevronRight size={17} /></button>
           </section>
         )}
 
-        <WorkbookCallout text="Use the workbook to plan, write, and discuss the real test. Use the app to choose, predict, practice, explain, and save proof." />
+        {complete && <p className={styles.draftNote}>Talk through your next test with a peer or facilitator. A real person's need is what makes the idea useful.</p>}
+        <WorkbookCallout text="Use the workbook S.T.E.M.Sin page for the real plan, discussion, and facilitator-supported test. The app demonstrates the thinking rhythm, then saves the youth's explanation as proof." />
 
         <div className={styles.actions}><BackHome /></div>
       </section>

@@ -53,11 +53,11 @@ const LANE_HEADLINES = {
 };
 
 export default function MirrorAssessment() {
-  const { submitMirror, mode } = useYEP();
+  const { submitMirror, saveMirrorDraft, pilotProgress, mode } = useYEP();
   const questions = getMirrorQuestions(mode);
   const scale = getMirrorScale(mode);
-  const [answers, setAnswers] = useState({});
-  const [step, setStep] = useState(0);
+  const [answers, setAnswers] = useState(pilotProgress.mirrorDraft?.answers || {});
+  const [step, setStep] = useState(() => Math.min(questions.length - 1, Math.max(0, pilotProgress.mirrorDraft?.step || 0)));
   const [cue, setCue] = useState(null);
 
   const q = questions[step];
@@ -70,7 +70,14 @@ export default function MirrorAssessment() {
   const program = MODES[mode] || MODES.builder;
 
   function choose(value) {
-    setAnswers((a) => ({ ...a, [q.id]: value }));
+    const nextAnswers = { ...answers, [q.id]: value };
+    setAnswers(nextAnswers);
+    saveMirrorDraft({ answers: nextAnswers, step });
+  }
+
+  function moveTo(nextStep) {
+    setStep(nextStep);
+    saveMirrorDraft({ answers, step: nextStep });
   }
 
   function next() {
@@ -80,13 +87,13 @@ export default function MirrorAssessment() {
     } else if (cueSet[step]) {
       setCue(cueSet[step]);
     } else {
-      setStep((s) => s + 1);
+      moveTo(step + 1);
     }
   }
 
   function continueFromCue() {
     setCue(null);
-    setStep((s) => s + 1);
+    moveTo(step + 1);
   }
 
   if (cue) {
@@ -135,6 +142,7 @@ export default function MirrorAssessment() {
               <button
                 key={s.value}
                 className={`${styles.opt} ${active ? styles.optActive : ''}`}
+                aria-pressed={active}
                 onClick={() => choose(s.value)}
               >
                 {s.label}
@@ -146,7 +154,7 @@ export default function MirrorAssessment() {
 
         <div className={styles.nav}>
           {step > 0 && (
-            <button className={styles.back} onClick={() => setStep((s) => s - 1)} aria-label="Previous question">
+            <button className={styles.back} onClick={() => moveTo(step - 1)} aria-label="Previous question">
               <ArrowLeft size={18} />
             </button>
           )}

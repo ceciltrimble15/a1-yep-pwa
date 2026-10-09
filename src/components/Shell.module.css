@@ -449,3 +449,13 @@
     line-height: 1.15;
   }
 }
+
+/* Keep the learning route legible and free space for the activity. */
+.railButton,.railButtonActive { min-height: 72px; font-size: 18px; padding: 14px 10px; }
+.railButton small,.railButtonActive small { display: block; margin-top: 5px; font-size: 14px; color: #c2d8f8; }
+.railNumber { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #e4efff; color: #123164; font-size: 18px; }
+.homeButton { margin-top: 16px; padding: 12px; min-height: 54px; width: 100%; border-radius: 12px; color: #fff; background: #234b80; border: 1px solid #7ea2d7; font-size: 18px; font-weight: 800; }
+.railPath small { font-size: 15px; line-height: 1.4; }
+.content { padding-top: 18px; }
+@media (min-width: 761px) and (max-width: 1050px) { .appFrame { grid-template-columns: 180px minmax(0,1fr); } .content { padding-left: 20px; padding-right: 20px; } }
+@media (max-width: 760px) { .railButton,.railButtonActive { font-size: 15px; min-height: 76px; padding: 10px 6px; } .railButton small,.railButtonActive small { font-size: 12px; } .homeButton { margin: 0 0 8px; min-height: 46px; } }

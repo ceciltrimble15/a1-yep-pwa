@@ -6,7 +6,7 @@ import styles from './Progress.module.css';
 import ui from '../styles/ui.module.css';
 
 export default function Progress() {
-  const { mirrorResult, missionComplete, reflectionSubmitted, finisherLetter, navigate, resetSession } =
+  const { mirrorResult, missionComplete, reflectionSubmitted, finisherLetter, navigate } =
     useYEP();
 
   const done = !!mirrorResult && missionComplete && reflectionSubmitted;
@@ -30,7 +30,7 @@ export default function Progress() {
         {done ? (
           <>
             <div className={styles.completeTag}>
-              <CheckCircle2 size={16} /> Session Complete
+              <CheckCircle2 size={16} /> Mirror + Mission Complete
             </div>
             <h1 className={styles.title}>
               You <em>Finished.</em>
@@ -48,7 +48,7 @@ export default function Progress() {
       </div>
 
       <div className={styles.breakdown}>
-        <div className={styles.bLabel}>Process Completion</div>
+        <div className={styles.bLabel}>Mirror + Mission Progress</div>
         {rows.map((row) => {
           const Icon = row.icon;
           return (
@@ -74,7 +74,7 @@ export default function Progress() {
         <button className={ui.btnPrimary} onClick={() => navigate('dashboard')}>
           <Users size={19} /> Facilitator Dashboard
         </button>
-        <button className={ui.btnGhost} onClick={resetSession}>
+        <button className={ui.btnGhost} onClick={() => navigate('resetDemo')}>
           <RotateCcw size={16} style={{ verticalAlign: '-3px', marginRight: 6 }} /> Start A New Session
         </button>
       </div>
