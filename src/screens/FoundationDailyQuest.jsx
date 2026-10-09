@@ -20,55 +20,131 @@ function FoundationQuestScene({ selectedIndex, onSelect }) {
       </div>
 
       <div className={styles.foundationLunchQuestArt}>
-        <svg viewBox="0 0 960 430" role="img" aria-label="Illustrated school cafeteria lunch line with three things to notice">
+        <svg viewBox="0 0 1120 560" role="img" aria-label="Illustrated school cafeteria with a long lunch line, one crowded serving spot, and an unclear walking path">
           <defs>
             <linearGradient id="lunchWall" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#66B9FF" />
-              <stop offset="100%" stopColor="#164E96" />
+              <stop offset="0%" stopColor="#7FD0FF" />
+              <stop offset="58%" stopColor="#4D8ED8" />
+              <stop offset="100%" stopColor="#214B92" />
             </linearGradient>
             <linearGradient id="lunchFloor" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#D9E7F5" />
-              <stop offset="100%" stopColor="#A8BED8" />
+              <stop offset="0%" stopColor="#E8F0F7" />
+              <stop offset="100%" stopColor="#B8C9D8" />
             </linearGradient>
+            <linearGradient id="counterTop" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#F3D26C" />
+              <stop offset="100%" stopColor="#D4A017" />
+            </linearGradient>
+            <filter id="hotspotGlow" x="-30%" y="-30%" width="160%" height="160%">
+              <feDropShadow dx="0" dy="4" stdDeviation="5" floodColor="#07152A" floodOpacity=".35" />
+            </filter>
           </defs>
-          <rect width="960" height="430" rx="30" fill="url(#lunchWall)" />
-          <rect y="290" width="960" height="140" fill="url(#lunchFloor)" />
-          <rect x="630" y="95" width="250" height="170" rx="18" fill="#F7F9FF" />
-          <rect x="654" y="126" width="202" height="42" rx="10" fill="#D4A017" />
-          <text x="755" y="153" textAnchor="middle" fontSize="20" fontWeight="900" fill="#0F2460">CAFETERIA</text>
-          <rect x="660" y="188" width="190" height="46" rx="10" fill="#2A4EAF" />
-          <circle cx="805" cy="202" r="19" fill="#70462F" />
-          <rect x="787" y="218" width="36" height="48" rx="14" fill="#111827" />
 
-          <path d="M170 325 C255 292 374 292 470 324" fill="none" stroke="#F7F9FF" strokeWidth="10" strokeLinecap="round" opacity=".7" />
-          {[0,1,2,3,4,5].map((n) => {
-            const x = 150 + n * 82;
-            const y = 246 + (n % 2) * 10;
-            return (
-              <g key={n}>
-                <circle cx={x} cy={y} r="23" fill={n % 2 ? '#70462F' : '#9B6547'} />
-                <rect x={x-21} y={y+22} width="42" height="63" rx="17" fill={n % 3 === 0 ? '#0F2460' : n % 3 === 1 ? '#2A4EAF' : '#1A6D8E'} />
-              </g>
-            );
-          })}
-          <path d="M118 362 H560" stroke="#0F2460" strokeWidth="5" strokeDasharray="18 14" opacity=".55" />
+          <rect width="1120" height="560" rx="32" fill="url(#lunchWall)" />
+          <rect y="354" width="1120" height="206" fill="url(#lunchFloor)" />
 
-          <g opacity={selectedIndex === null || selectedIndex === 0 ? 1 : .32}>
-            <circle cx="315" cy="238" r="88" fill="none" stroke="#D4A017" strokeWidth="8" />
-            <circle cx="315" cy="110" r="26" fill="#D4A017" />
-            <text x="315" y="119" textAnchor="middle" fontSize="26" fontWeight="900" fill="#0F2460">1</text>
+          <rect x="58" y="58" width="260" height="118" rx="18" fill="#DDF3FF" opacity=".9" />
+          <rect x="78" y="76" width="100" height="82" rx="10" fill="#91D3FF" />
+          <rect x="195" y="76" width="102" height="82" rx="10" fill="#91D3FF" />
+          <path d="M188 76V158" stroke="#5B8AB8" strokeWidth="6" />
+
+          <rect x="420" y="48" width="300" height="102" rx="18" fill="#102B5D" opacity=".92" />
+          <text x="570" y="83" textAnchor="middle" fontSize="22" fontWeight="900" fill="#F5C94A">TODAY'S LUNCH</text>
+          <text x="570" y="113" textAnchor="middle" fontSize="17" fontWeight="700" fill="#F7F9FF">Hot lunch · Fruit · Milk</text>
+          <text x="570" y="137" textAnchor="middle" fontSize="14" fontWeight="700" fill="#C9D8EF">Pick up → Pay → Go</text>
+
+          <rect x="760" y="92" width="306" height="244" rx="24" fill="#F7F9FF" />
+          <rect x="778" y="112" width="270" height="48" rx="12" fill="url(#counterTop)" />
+          <text x="913" y="143" textAnchor="middle" fontSize="19" fontWeight="900" fill="#0B1D3A">SERVING COUNTER</text>
+          <rect x="790" y="200" width="250" height="92" rx="16" fill="#315FAE" />
+          <rect x="814" y="185" width="52" height="32" rx="8" fill="#F6F7FB" />
+          <rect x="882" y="185" width="52" height="32" rx="8" fill="#F6F7FB" />
+          <rect x="950" y="185" width="52" height="32" rx="8" fill="#F6F7FB" />
+
+          <g>
+            <circle cx="850" cy="198" r="20" fill="#70462F" />
+            <path d="M829 193c2-14 10-23 21-23 12 0 21 9 22 23-6-5-13-8-22-8-8 0-15 3-21 8Z" fill="#111827" />
+            <rect x="828" y="217" width="44" height="58" rx="15" fill="#102B5D" />
+            <path d="M838 245h24" stroke="#F5C94A" strokeWidth="5" strokeLinecap="round" />
           </g>
-          <g opacity={selectedIndex === null || selectedIndex === 1 ? 1 : .32}>
-            <circle cx="752" cy="190" r="106" fill="none" stroke="#D4A017" strokeWidth="8" />
-            <circle cx="875" cy="92" r="26" fill="#D4A017" />
-            <text x="875" y="101" textAnchor="middle" fontSize="26" fontWeight="900" fill="#0F2460">2</text>
+          <g>
+            <circle cx="990" cy="198" r="20" fill="#8E5D3E" />
+            <path d="M969 193c2-14 10-23 21-23 12 0 21 9 22 23-6-5-13-8-22-8-8 0-15 3-21 8Z" fill="#1A1A1A" />
+            <rect x="968" y="217" width="44" height="58" rx="15" fill="#2E7D6C" />
           </g>
-          <g opacity={selectedIndex === null || selectedIndex === 2 ? 1 : .32}>
-            <ellipse cx="350" cy="358" rx="248" ry="48" fill="none" stroke="#D4A017" strokeWidth="8" />
-            <circle cx="85" cy="358" r="26" fill="#D4A017" />
-            <text x="85" y="367" textAnchor="middle" fontSize="26" fontWeight="900" fill="#0F2460">3</text>
+
+          <rect x="728" y="314" width="348" height="28" rx="12" fill="#D4A017" />
+          <rect x="748" y="342" width="308" height="18" rx="8" fill="#173E86" opacity=".7" />
+
+          <g opacity=".96">
+            <ellipse cx="694" cy="376" rx="46" ry="18" fill="#8096A9" opacity=".3" />
+            <ellipse cx="585" cy="407" rx="46" ry="18" fill="#8096A9" opacity=".3" />
+            <ellipse cx="468" cy="433" rx="46" ry="18" fill="#8096A9" opacity=".3" />
+            <ellipse cx="350" cy="458" rx="46" ry="18" fill="#8096A9" opacity=".3" />
+            <ellipse cx="238" cy="476" rx="46" ry="18" fill="#8096A9" opacity=".3" />
+            <ellipse cx="136" cy="493" rx="46" ry="18" fill="#8096A9" opacity=".3" />
           </g>
+
+          {[
+            { x: 700, y: 308, skin: '#8B593C', shirt: '#173E86', hair: '#090B10' },
+            { x: 590, y: 338, skin: '#70462F', shirt: '#C0593F', hair: '#111827' },
+            { x: 472, y: 365, skin: '#9B6547', shirt: '#2A7D6A', hair: '#1A1A1A' },
+            { x: 355, y: 390, skin: '#6E432E', shirt: '#734AA0', hair: '#090B10' },
+            { x: 242, y: 408, skin: '#8B593C', shirt: '#D19A27', hair: '#111827' },
+            { x: 140, y: 425, skin: '#70462F', shirt: '#315FAE', hair: '#090B10' },
+          ].map((p, index) => (
+            <g key={index}>
+              <circle cx={p.x} cy={p.y} r="24" fill={p.skin} />
+              <path d={`M${p.x-24} ${p.y-7}c3-17 12-27 24-27s22 10 24 27c-7-6-15-9-24-9s-17 3-24 9Z`} fill={p.hair} />
+              <rect x={p.x-23} y={p.y+22} width="46" height="72" rx="17" fill={p.shirt} />
+              <rect x={p.x-27} y={p.y+47} width="54" height="9" rx="4" fill="#F7F9FF" opacity=".8" />
+              <rect x={p.x-18} y={p.y+35} width="36" height="22" rx="5" fill="#D7E1EC" />
+            </g>
+          ))}
+
+          <path d="M98 510 C235 470 356 469 482 432 C596 399 679 377 742 349" fill="none" stroke="#173E86" strokeWidth="6" strokeDasharray="18 18" opacity=".4" />
+          <path d="M122 520 C295 535 414 502 526 468" fill="none" stroke="#D4A017" strokeWidth="8" strokeDasharray="18 16" opacity=".62" />
+          <path d="M286 522 C394 486 486 481 585 436" fill="none" stroke="#D4A017" strokeWidth="8" strokeDasharray="18 16" opacity=".48" />
+          <path d="M510 514 C564 470 628 443 694 420" fill="none" stroke="#D4A017" strokeWidth="8" strokeDasharray="18 16" opacity=".36" />
+
+          <g opacity={selectedIndex == null || selectedIndex === 0 ? 1 : .22} filter="url(#hotspotGlow)">
+            <ellipse cx="407" cy="413" rx="332" ry="116" fill="none" stroke="#F5C94A" strokeWidth="9" />
+            <circle cx="104" cy="308" r="30" fill="#F5C94A" />
+            <text x="104" y="318" textAnchor="middle" fontSize="28" fontWeight="900" fill="#0B1D3A">1</text>
+          </g>
+
+          <g opacity={selectedIndex == null || selectedIndex === 1 ? 1 : .22} filter="url(#hotspotGlow)">
+            <rect x="752" y="76" width="330" height="286" rx="34" fill="none" stroke="#F5C94A" strokeWidth="9" />
+            <circle cx="1030" cy="68" r="30" fill="#F5C94A" />
+            <text x="1030" y="78" textAnchor="middle" fontSize="28" fontWeight="900" fill="#0B1D3A">2</text>
+          </g>
+
+          <g opacity={selectedIndex == null || selectedIndex === 2 ? 1 : .22} filter="url(#hotspotGlow)">
+            <path d="M84 510 C273 469 447 519 631 423" fill="none" stroke="#F5C94A" strokeWidth="12" strokeLinecap="round" strokeDasharray="20 18" />
+            <circle cx="86" cy="520" r="30" fill="#F5C94A" />
+            <text x="86" y="530" textAnchor="middle" fontSize="28" fontWeight="900" fill="#0B1D3A">3</text>
+          </g>
+
+          <rect x="70" y="202" width="256" height="80" rx="18" fill="#0B1D3A" opacity=".9" />
+          <text x="92" y="232" fontSize="16" fontWeight="900" fill="#F5C94A">LOOK CLOSELY</text>
+          <text x="92" y="258" fontSize="17" fontWeight="800" fill="#F7F9FF">Where is the slowdown?</text>
         </svg>
+
+        <div className={styles.foundationQuestHotspots} aria-label="Tap a highlighted part of the scene">
+          {FOUNDATION_SCENARIO.items.map((item, index) => (
+            <button
+              type="button"
+              key={item.label}
+              data-index={index}
+              data-selected={selectedIndex === index ? 'true' : 'false'}
+              aria-label={`Problem ${index + 1}: ${item.label}. ${item.detail}`}
+              onClick={() => onSelect(index)}
+            >
+              <span>{index + 1}</span>
+              <strong>{item.label}</strong>
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className={styles.foundationQuestNoticeChoices} aria-label="Choose the problem you notice">
