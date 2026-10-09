@@ -235,8 +235,11 @@ for (const mode of modes) {
   mount(DemoAdminReview);
   assert.ok(JSON.stringify(view.toJSON()).includes('No written explanation was provided.'));
   mount(StemSinQuest);
-  const tools = view.root.findByProps({ 'aria-label': 'Choose a tool to test' }).findAllByType('button');
-  act(() => tools[0].props.onClick());
+  if (mode === 'explorer') click('Try Sorting Tray');
+  else {
+    const tools = view.root.findByProps({ 'aria-label': 'Choose a tool to test' }).findAllByType('button');
+    act(() => tools[0].props.onClick());
+  }
   const predictions = view.root.findByProps({ id: 'stem-prediction' }).findAllByType('button');
   act(() => predictions[0].props.onClick());
   click('Show What Changes');
@@ -261,13 +264,35 @@ for (const mode of modes) {
   assert.equal(view.root.findByType(YEPGuide).props.pictureKind, mode === 'explorer' ? 'waiting' : mode === 'builder' ? 'supplies' : 'workflow', 'unselected Daily picture matches the lane example');
   for (let index = 0; index < 3; index++) {
     mount(StemSinQuest, { mode });
-    const options = view.root.findByProps({ 'aria-label': 'Choose a tool to test' }).findAllByType('button');
-    act(() => options[index].props.onClick());
+    if (mode === 'explorer') {
+      for (let step = 0; step < index; step++) click('Next tool');
+      click(`Try ${['Sorting Tray','Picture Labels','Simple Holder'][index]}`);
+    } else {
+      const options = view.root.findByProps({ 'aria-label': 'Choose a tool to test' }).findAllByType('button');
+      act(() => options[index].props.onClick());
+    }
     click('Show me');
     assert.equal(view.root.findByType(YEPGuide).props.pictureKind, pictureKinds[mode][index]);
-    assert.ok(view.root.findAllByType(PictureExample).some((picture) => picture.props.kind === pictureKinds[mode][index]), 'each selected tool has its matching illustration');
+    if (mode === 'explorer') {
+      assert.equal(view.root.findAllByType(PictureExample).length, 0, 'Foundation guide does not reveal outcome before prediction');
+      const before = view.root.findByProps({ 'aria-label': 'Picture before the practice test' });
+      assert.ok(before, 'Foundation can inspect the problem illustration before the test');
+    } else {
+      assert.equal(view.root.findAllByType(PictureExample).length, 0, 'guide example must not spoil the practice result before prediction');
+    }
   }
 }
+// Foundation tool browsing alone does not choose a tool or create proof.
+mount(StemSinQuest, { mode: 'explorer' });
+click('Next tool');
+assert.equal(api.pilotProgress.stemSinComplete, false);
+assert.equal(api.pilotProgress.stemSinDraft.selectedTool, null);
+click('Try Picture Labels');
+click('Find things faster');
+assert.equal(view.root.findAllByType(PictureExample).length, 0, 'prediction comes before the illustrated change');
+click('Show What Changes');
+assert.ok(view.root.findAllByType(PictureExample).length > 0, 'reveal before/after after prediction');
+assert.equal(api.pilotProgress.stemSinComplete, false, 'viewing a practice comparison is not saved learner proof');
 // Incoming Foundation entry has no entrepreneur-track gate, and the check-in persists one response at a time.
 mount(TrackSelector, { mode: 'explorer', screen: 'track' });
 enter('powerName', 'Sample Explorer');
