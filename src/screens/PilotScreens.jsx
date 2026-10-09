@@ -594,7 +594,8 @@ export function StemSinQuest() {
         <YEPGuide
           prompt={guidePrompt}
           title={complete ? 'Your practice is saved' : ['Choose one tool', 'Make a prediction', 'Try the practice test', 'Notice what changed', 'Explain it your way'][guideStep - 1]}
-          pictureKind={demoRan && tool ? LAB_PICTURES[mode][selectedTool] : undefined}
+          pictureKind={demoRan && tool ? LAB_PICTURES[mode][selectedTool] : guideStep === 1 ? LAB_PICTURES[mode][mode === 'explorer' ? previewToolIndex : 0] : tool ? LAB_PICTURES[mode][selectedTool] : undefined}
+          beforeOnly={!demoRan}
           narration={guideStep === 1
             ? (mode === 'explorer'
                 ? `Tool ${previewToolIndex + 1} of ${lab.tools.length}: ${lab.tools[previewToolIndex].label}. ${lab.tools[previewToolIndex].detail}`
