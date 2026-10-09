@@ -272,7 +272,7 @@ for (const mode of modes) {
       act(() => options[index].props.onClick());
     }
     click('Show me');
-    assert.equal(view.root.findByType(YEPGuide).props.pictureKind, pictureKinds[mode][index]);
+    assert.equal(view.root.findByType(YEPGuide).props.pictureKind, undefined, 'guide does not expose the illustrated result before prediction');
     if (mode === 'explorer') {
       assert.equal(view.root.findAllByType(PictureExample).length, 0, 'Foundation guide does not reveal outcome before prediction');
       const before = view.root.findByProps({ 'aria-label': 'Picture before the practice test' });
@@ -280,6 +280,10 @@ for (const mode of modes) {
     } else {
       assert.equal(view.root.findAllByType(PictureExample).length, 0, 'guide example must not spoil the practice result before prediction');
     }
+    const predictionButtons = view.root.findByProps({ id: 'stem-prediction' }).findAllByType('button');
+    act(() => predictionButtons[0].props.onClick());
+    click('Show What Changes');
+    assert.ok(view.root.findAllByType(PictureExample).some((picture) => picture.props.kind === pictureKinds[mode][index]), 'the selected tool shows its matching before/after illustration only after prediction');
   }
 }
 // Foundation tool browsing alone does not choose a tool or create proof.
