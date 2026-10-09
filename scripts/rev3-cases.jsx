@@ -34,7 +34,7 @@ saved = { mode: 'explorer' };
 assert.equal(getProgramContent('explorer').dailyQuest.id, FOUNDATION_QUEST_ID);
 assert.equal(getProgramContent('explorer').dailyQuest.title, 'A Better Lunch Line');
 assert.ok(render(DailyQuest).includes(FOUNDATION_QUEST.title));
-assert.ok(render(DailyQuest).includes('Illustrated school cafeteria lunch line'));
+assert.ok(render(DailyQuest).includes('Illustrated school cafeteria with a long lunch line'), 'Foundation scene remains present and accessible');
 assert.ok(render(MyDirection).includes('Start My First Check-In'));
 const legacy = {mode:'builder',pilotProgress:{dailyQuestText:'Legacy proof',dailyQuestComplete:true,weeklyCompleted:['why']}};
 const migrated = migrateLaneProgress(legacy);
