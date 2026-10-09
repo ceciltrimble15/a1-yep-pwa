@@ -519,6 +519,8 @@ export function StemSinQuest() {
   const [nextTest, setNextTest] = useState(draft?.nextTest || pilotProgress.stemSinChoiceProof?.nextTest || '');
   const [demoRan, setDemoRan] = useState(draft?.demoRan ?? pilotProgress.stemSinComplete);
   const [guideStep, setGuideStep] = useState(draft?.guideStep || (pilotProgress.stemSinComplete ? 6 : 1));
+  // Browsing Foundation tools is not a choice until the learner taps "Try this tool".
+  const [previewToolIndex, setPreviewToolIndex] = useState(Math.max(0, draft?.selectedTool ?? savedToolIndex));
   const complete = pilotProgress.stemSinComplete;
   const tool = selectedTool === null ? null : lab.tools[selectedTool];
   useEffect(() => {
@@ -530,13 +532,15 @@ export function StemSinQuest() {
   const guidePrompt = complete
     ? 'You saved your S.T.E.M.Sin proof. Now use what you learned when you look at your Mirror Results.'
     : guideStep === 1
-      ? 'Look at the challenge. Choose one tool you would test first. There is not one perfect answer.'
+      ? (mode === 'explorer'
+          ? 'Look at this tool and the problem picture. Tap Next tool to look at another, or Try this tool when you are ready.'
+          : 'Look at the challenge. Choose one tool you would test first. There is not one perfect answer.')
       : guideStep === 2
         ? 'You chose ' + (tool?.label || 'a tool') + '. Before we test it, what do you predict it will improve?'
         : guideStep === 3
           ? 'Prediction locked: ' + (prediction || 'you expect a change') + '. Show the example and look for what changes.'
           : guideStep === 4
-            ? 'The practice result is visible now. Do not just accept it. Explain what changed and what you would still need to test in real life.'
+            ? 'Compare the before picture with one possible change. What is different? This is an illustration, not a result from a real person.'
             : guideStep === 5 && !text.trim()
               ? 'What would you try next? Choose a next test, or explain your own idea. Adding your own words is optional.'
               : 'Read your explanation back. If it matches what you saw, save it as your S.T.E.M.Sin proof.';
@@ -544,6 +548,7 @@ export function StemSinQuest() {
   function chooseTool(index) {
     if (complete) return;
     setSelectedTool(index);
+    setPreviewToolIndex(index);
     setPrediction(null);
     setDemoRan(false);
     setGuideStep(2);
@@ -589,9 +594,20 @@ export function StemSinQuest() {
         <YEPGuide
           prompt={guidePrompt}
           title={complete ? 'Your practice is saved' : ['Choose one tool', 'Make a prediction', 'Try the practice test', 'Notice what changed', 'Explain it your way'][guideStep - 1]}
-          pictureKind={LAB_PICTURES[mode][selectedTool ?? 0]}
-          narration={guideStep === 1 ? lab.tools.map((item, index) => `Tool ${index + 1}: ${item.label}. ${item.detail}`).join(' ') : guideStep === 2 ? `Choose a prediction: ${lab.predictions.join('. ')}.` : guideStep === 5 ? `Choose a next test: ${NEXT_TESTS.join('. ')}. Your own words are optional.` : demoRan && tool ? `${tool.result} This is an illustrated example, not measured real-world evidence.` : ''}
-          example={tool ? `${tool.detail} ${tool.result} In a real test, you would still need to check whether that change helps the person.` : `${lab.tools[0].detail} That is one possible tool to try. You can choose another.`}
+          pictureKind={demoRan && tool ? LAB_PICTURES[mode][selectedTool] : undefined}
+          narration={guideStep === 1
+            ? (mode === 'explorer'
+                ? `Tool ${previewToolIndex + 1} of ${lab.tools.length}: ${lab.tools[previewToolIndex].label}. ${lab.tools[previewToolIndex].detail}`
+                : lab.tools.map((item, index) => `Tool ${index + 1}: ${item.label}. ${item.detail}`).join(' '))
+            : guideStep === 2 ? `Choose a prediction: ${lab.predictions.join('. ')}.`
+            : guideStep === 5 ? `Choose a next test: ${NEXT_TESTS.join('. ')}. Your own words are optional.`
+            : demoRan && tool ? `${tool.result} This is an illustrated example, not measured real-world evidence.` : ''}
+          example={demoRan && tool
+            ? `${tool.result} In a real test, you would still need to check whether that change helps the person.`
+            : guideStep === 1 && mode === 'explorer'
+              ? `${lab.tools[previewToolIndex].detail} This is one possible tool to try. Look at the starting problem first.`
+              : tool ? `${tool.detail} Think about what you predict before you reveal a possible change.`
+              : 'Look at the starting problem. Choose a tool, make a prediction, and only then reveal one possible change.'}
           step={guideStep}
           actionLabel={
             complete
@@ -623,7 +639,7 @@ export function StemSinQuest() {
           <span data-active={complete}>5 · PROVE</span>
         </div>
 
-        <section className={styles.stemLabScene} aria-label="S.T.E.M.Sin practice challenge">
+        {guideStep === 1 && <section className={styles.stemLabScene} aria-label="S.T.E.M.Sin practice challenge">
           <div className={styles.stemLabSceneIcon} aria-hidden="true"><FlaskConical size={34} /></div>
           <div>
             <span>{lab.eyebrow}</span>
@@ -635,30 +651,68 @@ export function StemSinQuest() {
             <span>FINISHER FOCUS</span>
             <strong>{stemSin.finisher}</strong>
           </div>
-        </section>
+        </section>}
 
         {guideStep === 1 && <section id="stem-tools" className={styles.stemLabTools} aria-label="Choose a tool to test">
           <div className={styles.stemLabSectionHead}>
             <span>STEP 1</span>
             <h2>Which tool would you test first?</h2>
           </div>
-          <div className={styles.stemLabToolGrid}>
-            {lab.tools.map(({ icon: Icon, label, detail }, index) => (
-              <button
-                type="button"
-                key={label}
-                className={selectedTool === index ? styles.stemLabToolSelected : styles.stemLabTool}
-                aria-pressed={selectedTool === index}
-                onClick={() => chooseTool(index)}
-                disabled={complete}
-              >
-                <Icon size={26} aria-hidden="true" />
-                <strong>{label}</strong>
-                <span>{detail}</span>
-              </button>
-            ))}
-          </div>
+          {mode === 'explorer' ? (
+            <div className={styles.stemLabToolExplorer} aria-label="Browse one tool at a time">
+              <div className={styles.stemLabToolExplorerVisual}>
+                <span>BEFORE · THE PROBLEM</span>
+                <LearningPicture
+                  kind={LAB_PICTURES[mode][previewToolIndex]}
+                  label={`Starting art-table problem for ${lab.tools[previewToolIndex].label}`}
+                />
+              </div>
+              <div className={styles.stemLabToolExplorerChoice}>
+                <span>TOOL {previewToolIndex + 1} OF {lab.tools.length}</span>
+                <div className={styles.stemLabToolExplorerTitle}>
+                  {(() => { const Icon = lab.tools[previewToolIndex].icon; return <Icon size={34} aria-hidden="true" />; })()}
+                  <h3>{lab.tools[previewToolIndex].label}</h3>
+                </div>
+                <p>{lab.tools[previewToolIndex].detail}</p>
+                <div className={styles.stemLabToolExplorerControls}>
+                  <button type="button" aria-label="Previous tool" onClick={() => setPreviewToolIndex((value) => (value - 1 + lab.tools.length) % lab.tools.length)}>
+                    <ChevronRight className={styles.stemLabFlipArrow} size={21} aria-hidden="true" /> Previous
+                  </button>
+                  <button type="button" aria-label="Next tool" onClick={() => setPreviewToolIndex((value) => (value + 1) % lab.tools.length)}>
+                    Next tool <ChevronRight size={21} aria-hidden="true" />
+                  </button>
+                </div>
+                <button type="button" className={styles.stemLabChooseTool} onClick={() => chooseTool(previewToolIndex)}>
+                  Try {lab.tools[previewToolIndex].label} <ChevronRight size={22} aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className={styles.stemLabToolGrid}>
+              {lab.tools.map(({ icon: Icon, label, detail }, index) => (
+                <button
+                  type="button"
+                  key={label}
+                  className={selectedTool === index ? styles.stemLabToolSelected : styles.stemLabTool}
+                  aria-pressed={selectedTool === index}
+                  onClick={() => chooseTool(index)}
+                  disabled={complete}
+                >
+                  <Icon size={26} aria-hidden="true" />
+                  <strong>{label}</strong>
+                  <span>{detail}</span>
+                </button>
+              ))}
+            </div>
+          )}
         </section>}
+
+        {tool && (guideStep === 2 || guideStep === 3) && (
+          <div className={styles.stemLabBeforeCue} aria-label="Picture before the practice test">
+            <div><span>BEFORE · LOOK CLOSELY</span><strong>{lab.title}</strong><small>What needs to change for {lab.user.toLowerCase()}</small></div>
+            <LearningPicture kind={LAB_PICTURES[mode][selectedTool]} label="Illustrated situation before using the tool" />
+          </div>
+        )}
 
         {tool && !complete && guideStep === 2 && (
           <section id="stem-prediction" className={styles.stemLabPrediction}>
@@ -690,12 +744,14 @@ export function StemSinQuest() {
           </section>
         )}
 
-        {demoRan && tool && (
+        {demoRan && tool && !complete && (
           <section className={styles.stemLabResult} aria-live="polite">
-            <div className={styles.stemLabResultBadge}><CheckCircle2 size={22} aria-hidden="true" /> PRACTICE RESULT</div>
-            <h2>{tool.label}</h2>
-            <PictureExample kind={LAB_PICTURES[mode][selectedTool ?? 0]} />
-            <p>{tool.result}</p>
+            <div className={styles.stemLabResultBadge}><Eye size={22} aria-hidden="true" /> ILLUSTRATED PRACTICE</div>
+            <h2>Before → One possible change</h2>
+            <div className={styles.stemLabComparison}>
+              <PictureExample kind={LAB_PICTURES[mode][selectedTool]} />
+            </div>
+            <p><strong>{tool.label}:</strong> {tool.result}</p>
             <div>
               <strong>Your prediction:</strong>
               <span>{prediction || 'Saved proof from an earlier practice test.'}</span>
