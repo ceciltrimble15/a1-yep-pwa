@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Volume2, ChevronRight, Eye, Square } from 'lucide-react';
 import { useYEP } from '../context/YEPContext';
 import { MODES } from '../data/modes';
-import PictureExample from './LearningPicture';
+import PictureExample, { LearningPicture } from './LearningPicture';
 import styles from './YEPGuide.module.css';
 
 function GuideAvatar() {
@@ -44,7 +44,7 @@ function GuideAvatar() {
   );
 }
 
-export default function YEPGuide({ prompt, step, title = 'One step at a time', example, pictureKind, narration = '', actionLabel, onAction, onTry }) {
+export default function YEPGuide({ prompt, step, title = 'One step at a time', example, pictureKind, beforeOnly = false, narration = '', actionLabel, onAction, onTry }) {
   const { mode } = useYEP();
   const program = MODES[mode] || MODES.builder;
   const supported = typeof window !== 'undefined' && 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
@@ -92,7 +92,7 @@ export default function YEPGuide({ prompt, step, title = 'One step at a time', e
         </div>
         {!supported && <p className={styles.hint}>Read-aloud is unavailable here. The guide text and examples still work.</p>}
         {audioError && <p className={styles.hint} role="status">{audioError}</p>}
-        {showExample && <div className={styles.example} aria-label="Guide example"><span>ONE EXAMPLE</span>{pictureKind && <PictureExample kind={pictureKind} />}<p>{example}</p><small>Use this to understand the step. Your own idea can be different.</small></div>}
+        {showExample && <div className={styles.example} aria-label="Guide example"><span>ONE EXAMPLE</span>{pictureKind && (beforeOnly ? <LearningPicture kind={pictureKind} label="Illustrated starting challenge, before any solution is tested" /> : <PictureExample kind={pictureKind} />)}<p>{example}</p><small>Use this to understand the step. Your own idea can be different.</small></div>}
       </div>
     </section>
   );
