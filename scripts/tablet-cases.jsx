@@ -272,7 +272,8 @@ for (const mode of modes) {
       act(() => options[index].props.onClick());
     }
     click('Show me');
-    assert.equal(view.root.findByType(YEPGuide).props.pictureKind, undefined, 'guide does not expose the illustrated result before prediction');
+    assert.equal(view.root.findByType(YEPGuide).props.pictureKind, pictureKinds[mode][index], 'guide shows the correct starting problem');
+    assert.equal(view.root.findByType(YEPGuide).props.beforeOnly, true, 'guide does not expose a possible change before prediction');
     if (mode === 'explorer') {
       assert.equal(view.root.findAllByType(PictureExample).length, 0, 'Foundation guide does not reveal outcome before prediction');
       const before = view.root.findByProps({ 'aria-label': 'Picture before the practice test' });
