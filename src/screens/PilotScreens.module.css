@@ -4426,3 +4426,103 @@ button.card:hover {
   .foundationQuestHotspots button[data-index='1'] { right: 3%; top: 12%; }
   .foundationQuestHotspots button[data-index='2'] { left: 5%; bottom: 3%; }
 }
+
+/* S.T.E.M.Sin illustrated lab: one Foundation tool in view at a time. */
+.stemLabToolExplorer {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+  gap: 16px;
+}
+.stemLabToolExplorerVisual,.stemLabToolExplorerChoice,.stemLabBeforeCue {
+  min-width: 0;
+  border-radius: 20px;
+  border: 1px solid rgba(212,160,23,.28);
+  padding: 18px;
+  background: #0d2448;
+}
+.stemLabToolExplorerVisual > span,.stemLabToolExplorerChoice > span,.stemLabBeforeCue span {
+  display: block;
+  margin-bottom: 12px;
+  color: #ffdb75;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .07em;
+}
+.stemLabToolExplorerVisual svg,.stemLabBeforeCue svg {
+  border-radius: 16px;
+}
+.stemLabToolExplorerTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #ffdb75;
+}
+.stemLabToolExplorerTitle h3 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(23px,3vw,34px);
+}
+.stemLabToolExplorerChoice p {
+  color: #eef3ff;
+  font-size: clamp(17px,2vw,21px);
+  line-height: 1.5;
+}
+.stemLabToolExplorerControls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 18px 0 14px;
+}
+.stemLabToolExplorerControls button,.stemLabChooseTool {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 56px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 850;
+  cursor: pointer;
+}
+.stemLabToolExplorerControls button {
+  color: #fff;
+  background: #163b76;
+  border: 1px solid rgba(255,255,255,.3);
+}
+.stemLabChooseTool {
+  width: 100%;
+  color: #142644;
+  background: #f4cb59;
+  border: 0;
+}
+.stemLabFlipArrow { transform: rotate(180deg); }
+.stemLabBeforeCue {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) minmax(0,1.15fr);
+  align-items: center;
+  gap: 16px;
+}
+.stemLabBeforeCue strong {
+  display: block;
+  color: #fff;
+  font-size: clamp(20px,2.5vw,29px);
+}
+.stemLabBeforeCue small {
+  display: block;
+  margin-top: 10px;
+  color: #dae5fb;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.stemLabComparison {
+  margin: 14px 0;
+  padding: 8px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.06);
+}
+@media (max-width: 720px) {
+  .stemLabToolExplorer,.stemLabBeforeCue { grid-template-columns: minmax(0,1fr); }
+  .stemLabToolExplorerControls button { flex: 1; }
+}
