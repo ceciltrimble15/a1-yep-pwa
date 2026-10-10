@@ -23,14 +23,14 @@ function isRailActive(screen, key) {
   return false;
 }
 
-export default function Shell({ children, showBar = true, showAudio = true, showPathway = true }) {
+export default function Shell({ children, showBar = true, showAudio = true, showPathway = true, visualHome = false }) {
   const { mode, screen, navigate, mirrorResult, pilotProgress, missionComplete, reflectionSubmitted } = useYEP();
   const program = MODES[mode] || MODES.builder;
   const audioTargetRef = useRef(null);
   const savedSteps = { daily: pilotProgress.dailyQuestComplete, stem: pilotProgress.stemSinComplete, mirror: !!mirrorResult, finisher: missionComplete && reflectionSubmitted };
 
   return (
-    <div className={styles.shell}>
+    <div className={`${styles.shell} ${visualHome ? styles.visualHome : ''}`}>
       <header className={styles.header} data-audio-skip="true">
         <div className={styles.brand}>
           <img className={styles.mark} src={A1_LOGO} alt="A/1 Suppliers" />
