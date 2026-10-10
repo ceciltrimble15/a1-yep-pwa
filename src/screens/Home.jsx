@@ -56,9 +56,12 @@ export default function Home() {
       <div className={styles.dashboard} data-lane={mode}>
         <section className={styles.welcome} aria-label="YEP welcome">
           <div className={styles.welcomeCopy}>
-            <span className={styles.welcomeEyebrow}>{welcome.eyebrow} · {program.tier} · AGES {program.ageRange}</span>
-            <h1>{powerName ? `Hey, ${powerName}!` : welcome.title}</h1>
-            <p>{welcome.sub}</p>
+            <span className={styles.welcomeEyebrow}>A/1 SUPPLIERS PRESENTS · {program.tier} · AGES {program.ageRange}</span>
+            <h1 className={styles.welcomeYEP}>YEP<span className={styles.welcomeYEPAccent} aria-hidden="true">.</span></h1>
+            <div className={styles.welcomeFullName}>YOUNG ENTREPRENEURS PROCESS</div>
+            <p className={styles.welcomePromise}>Build Your Mind. Build Your Future.</p>
+            <h2 className={styles.welcomeGreeting}>{powerName ? `Hey, ${powerName}!` : welcome.title}</h2>
+            <p className={styles.welcomeHelper}>{welcome.sub}</p>
             <button type="button" className={styles.welcomeAction} onClick={() => navigate(next.screen)}>
               {next.action} <ArrowRight size={22} aria-hidden="true"/>
             </button>
