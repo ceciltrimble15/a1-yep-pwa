@@ -57,7 +57,7 @@ export default function Home() {
         <section className={styles.welcome} aria-label="YEP welcome">
           <div className={styles.welcomeCopy}>
             <span className={styles.welcomeEyebrow}>{welcome.eyebrow} · {program.tier} · AGES {program.ageRange}</span>
-            <h1>{powerName ? \`Hey, \${powerName}!\` : welcome.title}</h1>
+            <h1>{powerName ? `Hey, ${powerName}!` : welcome.title}</h1>
             <p>{welcome.sub}</p>
             <button type="button" className={styles.welcomeAction} onClick={() => navigate(next.screen)}>
               {next.action} <ArrowRight size={22} aria-hidden="true"/>
@@ -106,11 +106,11 @@ export default function Home() {
 
         <div className={styles.laneGrid} aria-label="The four YEP learning lanes">
           {lanes.map(({ id, icon: Icon, title, tagline, prompt, picture, screen, done }, index) => (
-            <button type="button" key={id} className={styles.laneCard} data-kind={id} onClick={() => navigate(screen)} aria-label={\`\${title}. \${prompt}\`}>
-              <span className={styles.laneTop}><Icon size={27} aria-hidden="true"/><strong>{done ? 'WORK SAVED' : \`EXPLORE \${index + 1}\`}</strong></span>
+            <button type="button" key={id} className={styles.laneCard} data-kind={id} onClick={() => navigate(screen)} aria-label={`${title}. ${prompt}`}>
+              <span className={styles.laneTop}><Icon size={27} aria-hidden="true"/><strong>{done ? 'WORK SAVED' : `EXPLORE ${index + 1}`}</strong></span>
               <span className={styles.laneTitle}>{title}</span>
               <span className={styles.laneTagline}>{tagline}</span>
-              <span className={styles.lanePicture}><LearningPicture kind={picture} label={\`Illustrated \${title} learning scene\`} /></span>
+              <span className={styles.lanePicture}><LearningPicture kind={picture} label={`Illustrated ${title} learning scene`} /></span>
               <span className={styles.laneBottom}><b>{prompt}</b><span><ArrowUpRight size={24} aria-hidden="true"/></span></span>
             </button>
           ))}
