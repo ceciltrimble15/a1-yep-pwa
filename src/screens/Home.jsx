@@ -118,7 +118,7 @@ export default function Home() {
 
         <div className={styles.guideSection}>
           <div className={styles.guideLabel}><Volume2 size={20} aria-hidden="true"/><strong>YOUR YEP GUIDE</strong><span>Here when you need help.</span></div>
-          <YEPGuide step={next.step} title={next.title} prompt={next.prompt} example={next.example} actionLabel={next.action} onAction={() => navigate(next.screen)} />
+          <YEPGuide bright step={next.step} title={next.title} prompt={next.prompt} example={next.example} actionLabel={next.action} onAction={() => navigate(next.screen)} />
         </div>
 
         <p className={styles.saved}>Your practice work is saved on this tablet. This is a demonstration, not a shared student record.</p>
