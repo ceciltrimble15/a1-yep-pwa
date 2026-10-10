@@ -62,3 +62,62 @@
 @media (max-width:720px) { .welcome { grid-template-columns:minmax(0,1fr); } .welcomeCopy {padding:26px;} .welcomeArt {min-height:230px;max-height:250px;} .laneGrid {grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;} .laneTitle {font-size:20px;} .laneTagline {font-size:13px;min-height:60px;} .laneBottom {font-size:12px;} .laneTop {padding:12px 12px 0;} .laneTitle,.laneTagline {padding-left:12px;padding-right:12px;} .sectionIntro p {font-size:14px;} }
 @media (max-width:420px) { .laneGrid {grid-template-columns:1fr;} .laneCard {max-width:none;} .lanePicture svg {max-height:170px!important;} }
 @media (prefers-reduced-motion: reduce) { .laneCard { transition:none; } .laneCard:hover { transform:none; } }
+
+
+/* CEO-locked hero signature: parent attribution, then YEP as the first impression. */
+.welcomeCopy { isolation:isolate; }
+.welcomeYEP {
+  position:relative;
+  isolation:isolate;
+  margin: 8px 0 0 !important;
+  color:#0B479F !important;
+  font-size:clamp(90px,11vw,156px) !important;
+  letter-spacing:-.095em !important;
+  font-weight:950;
+  line-height:.88 !important;
+  text-shadow:0 4px 0 rgba(255,255,255,.55);
+}
+.welcomeYEP::before {
+  content:'';
+  position:absolute;
+  z-index:-1;
+  inset:10% -8% -10% -10%;
+  border-radius:60% 46% 56% 48%;
+  background:radial-gradient(ellipse at 35% 30%,rgba(255,255,255,.9),rgba(255,255,255,.25) 63%,transparent 73%);
+}
+.welcomeYEPAccent { color:#EEA21F; }
+.welcomeFullName {
+  margin:11px 0 0;
+  color:#22578B;
+  font-size:clamp(12px,1.45vw,18px);
+  letter-spacing:.085em;
+  font-weight:950;
+}
+.welcomePromise {
+  max-width:30ch !important;
+  margin:13px 0 0 !important;
+  color:#104279 !important;
+  font-size:clamp(23px,2.8vw,34px) !important;
+  font-weight:950 !important;
+  line-height:1.18 !important;
+}
+.welcomeGreeting {
+  margin:20px 0 3px;
+  color:#164A86;
+  font-size:clamp(17px,1.65vw,22px);
+  font-weight:850;
+}
+.welcomeHelper {
+  color:#345C82 !important;
+  font-size:clamp(15px,1.5vw,18px) !important;
+  font-weight:650 !important;
+}
+.welcome { min-height:405px; }
+.welcomeArt { min-height:405px; }
+.welcomeAction { margin-top:19px; }
+@media (max-width:720px) {
+  .welcomeYEP { font-size:clamp(83px,21vw,125px) !important; }
+  .welcome { min-height:0; }
+  .welcomeArt { min-height:210px; }
+  .welcomeEyebrow { font-size:10px; }
+}
