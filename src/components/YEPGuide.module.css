@@ -53,3 +53,13 @@
 .panel[data-lane='leader'] { border-color: #c1adf3; }
 .panel[data-lane='yaep'] { border-color: #dfbd79; }
 @media (max-width: 720px) { .panel { grid-template-columns: 1fr; gap: 14px; } .identity { flex-direction: row; text-align: left; } .guideAvatarArt { width: 76px; height: 76px; } .identity strong { display: inline; margin-right: 8px; } .identity small { display: inline; } .actions button { flex: 1 1 145px; } .actions .try { flex-basis: 100%; } }
+
+
+/* Homepage-specific light guide: never change lesson guide contrast. */
+.panel.bright[data-lane='explorer'] { background:linear-gradient(140deg,#fdfefe,#eaf5ff); color:#10234b; border-color:#c5dbf7; box-shadow:0 10px 28px rgba(18,67,119,.12); }
+.panel.bright[data-lane='explorer'] .identity span,.panel.bright[data-lane='explorer'] .identity strong,.panel.bright[data-lane='explorer'] .identity small,.panel.bright[data-lane='explorer'] .teaching h2,.panel.bright[data-lane='explorer'] .prompt { color:#10234b; }
+.panel.bright[data-lane='explorer'] .identity span { color:#1556a8; }
+.panel.bright[data-lane='explorer'] .explain { background:#fff;color:#18457d;border-color:#b5cee7; }
+.panel.bright[data-lane='explorer'] .try { background:#1d61c4;color:#fff;border-color:#1d61c4; }
+.panel.bright[data-lane='explorer'] .example { background:#e8f3ff;border-left-color:#2176d2; }
+.panel.bright[data-lane='explorer'] .example span,.panel.bright[data-lane='explorer'] .example p,.panel.bright[data-lane='explorer'] .example small,.panel.bright[data-lane='explorer'] .hint { color:#203c67; }
