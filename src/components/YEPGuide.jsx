@@ -44,7 +44,7 @@ function GuideAvatar() {
   );
 }
 
-export default function YEPGuide({ prompt, step, title = 'One step at a time', example, pictureKind, beforeOnly = false, narration = '', actionLabel, onAction, onTry }) {
+export default function YEPGuide({ prompt, step, title = 'One step at a time', example, pictureKind, beforeOnly = false, narration = '', actionLabel, onAction, onTry, bright = false }) {
   const { mode } = useYEP();
   const program = MODES[mode] || MODES.builder;
   const supported = typeof window !== 'undefined' && 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
@@ -77,7 +77,7 @@ export default function YEPGuide({ prompt, step, title = 'One step at a time', e
   }
 
   return (
-    <section className={styles.panel} data-lane={mode} aria-label="YEP lesson guide">
+    <section className={`${styles.panel} ${bright ? styles.bright : ''}`} data-lane={mode} aria-label="YEP lesson guide">
       <div className={styles.identity}>
         <GuideAvatar />
         <div><span>YOUR YEP GUIDE</span><strong>{program.tier}</strong><small>Step {step}</small></div>
