@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { Flag, FlaskConical, ScanFace, Sparkles } from 'lucide-react';
 import GlobalBar from './GlobalBar';
 import AudioGuide from './AudioGuide';
+import VisualVocabulary from './VisualVocabulary';
 import { useYEP } from '../context/YEPContext';
 import { MODES } from '../data/modes';
 import styles from './Shell.module.css';
@@ -100,7 +101,10 @@ export default function Shell({ children, showBar = true, showAudio = true, show
         <div className={styles.mainColumn}>
           {showBar && <div data-audio-skip="true"><GlobalBar /></div>}
           {showAudio && <AudioGuide targetRef={audioTargetRef} />}
-          <main ref={audioTargetRef} className={styles.content}>{children}</main>
+          <main ref={audioTargetRef} className={styles.content}>
+            <VisualVocabulary mode={mode} screen={screen} />
+            {children}
+          </main>
         </div>
       </div>
     </div>
