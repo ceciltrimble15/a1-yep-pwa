@@ -21,7 +21,7 @@ export const VISUAL_VOCABULARY = {
     mission: { word: 'FOLLOW-THROUGH', meaning: 'Carrying out an agreed step and checking the result.', beat: 'Set the goal. Take the step. Check what worked and what comes next.', example: 'Complete one agreed test and explain what happened.', picture: 'reach' },
   },
   yaep: {
-    dailyQuest: { word: 'DEMAND', meaning: 'A customer's willingness and ability to obtain a product or service.', beat: 'Hear the need. Test the claim. Interest and sales are not the same.', example: 'Questions about a service suggest interest; paid orders give stronger evidence.', picture: 'waiting' },
+    dailyQuest: { word: 'DEMAND', meaning: "A customer's willingness and ability to obtain a product or service.", beat: 'Hear the need. Test the claim. Interest and sales are not the same.', example: 'Questions about a service suggest interest; paid orders give stronger evidence.', picture: 'waiting' },
     stemSin: { word: 'WORKFLOW', meaning: 'The ordered steps people follow to complete a task.', beat: 'Map the step. Find the delay. Test a simpler, better way.', example: 'Map what happens from a customer request to a reply.', picture: 'workflow' },
     mirror: { word: 'TRADE-OFF', meaning: 'What you give up when you choose one option over another.', beat: 'Compare the cost. Compare the gain. Explain the choice and what remains.', example: 'A faster reply system may cost more to operate.', picture: 'status' },
     mission: { word: 'EXECUTE', meaning: 'Carry out a plan with real actions and verify what happened.', beat: 'Make the plan. Do the task. Check the outcome. Questions? Ask.', example: 'Test a sample customer follow-up step and record the actual result.', picture: 'reach' },
