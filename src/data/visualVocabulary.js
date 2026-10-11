@@ -11,7 +11,7 @@ export const VISUAL_VOCABULARY = {
   builder: {
     dailyQuest: { word: 'PROBLEM', meaning: 'Something that makes a task harder or leaves a need unmet.', beat: 'Spot the snag. Name the need. A useful idea starts with what you see.', example: 'Waiting too long to find a supply can be a problem.', picture: 'waiting' },
     stemSin: { word: 'PROTOTYPE', meaning: 'An early version of an idea that you can test and improve.', beat: 'Build a little. Test a lot. Change your plan with what you have got.', example: 'Try a labeled supply box as a prototype.', picture: 'labels' },
-    mirror: { word: 'EVIDENCE', meaning: 'What you saw, heard, or recorded that helps explain what happened.', beat: 'Do not just guess. Look and see. What is your evidence telling thee?', example: 'A note about what worked is evidence, not a made-up score.', picture: 'help' },
+    mirror: { word: 'EVIDENCE', meaning: 'What you saw, heard, or recorded that helps explain what happened.', beat: 'Do not just guess. Look and see. Check the proof before you agree.', example: 'A note about what worked is evidence, not a made-up score.', picture: 'help' },
     mission: { word: 'ACTION', meaning: 'A real step you take toward your goal.', beat: 'Make your plan. Take your turn. Try one step and tell what you learn.', example: 'Action means doing the step, not just choosing it on the tablet.', picture: 'reach' },
   },
   leader: {
