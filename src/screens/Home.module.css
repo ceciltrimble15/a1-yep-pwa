@@ -121,3 +121,7 @@
   .welcomeArt { min-height:210px; }
   .welcomeEyebrow { font-size:10px; }
 }
+
+/* Full brand signature on bright dashboard while preserving all four lanes. */
+.heroBrandMark{display:block;width:min(100%,560px);height:auto;min-height:170px;margin:0 0 2px;filter:drop-shadow(0 8px 10px #1e54832b)}
+@media(max-width:720px){.heroBrandMark{min-height:140px;max-width:440px}}
