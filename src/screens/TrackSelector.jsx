@@ -20,6 +20,7 @@ import {
   Flag,
 } from 'lucide-react';
 import { useYEP } from '../context/YEPContext';
+import YEPBrandMark from '../components/YEPBrandMark';
 import { MODES } from '../data/modes';
 import styles from './TrackSelector.module.css';
 import ui from '../styles/ui.module.css';
@@ -130,6 +131,7 @@ export default function TrackSelector() {
 
   return (
     <div className={styles.wrap}>
+      <section className={styles.openingIdentity} aria-label="A/1 Suppliers presents YEP"><YEPBrandMark className={styles.openingLogo} /><p className={styles.openingCue}>SEE IT · HEAR IT · TRY IT · BUILD IT</p></section>
       <section className={styles.brandHero}>
         <img className={styles.logo} src={A1_LOGO} alt="A/1 Suppliers" />
         <div className={styles.introCopy}>
