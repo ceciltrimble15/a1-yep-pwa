@@ -8,6 +8,7 @@ import { useYEP } from '../context/YEPContext';
 import Shell from '../components/Shell';
 import VoiceCapture from '../components/VoiceCapture';
 import YEPGuide from '../components/YEPGuide';
+import { foundationTeacherStep } from '../data/foundationTeacher';
 import PictureExample, { LearningPicture } from '../components/LearningPicture';
 import styles from './PilotScreens.module.css';
 import ui from '../styles/ui.module.css';
@@ -319,6 +320,7 @@ function StandardDailyQuest({ legacyFoundation = false }) {
         </div>
 
         <YEPGuide
+          teacher={mode === 'explorer' ? foundationTeacherStep('stemSin', guideStep) : null}
           prompt={guidePrompt}
           title={complete ? 'Your idea is saved' : ['Look at the scene', 'Who needs help?', 'Try your idea', 'Read it back'][guideStep - 1]}
           example={selected ? `You noticed: ${selected.label}. ${selected.detail} Try one small change, then look again to see what happens. Your idea can be different from the pictured example.` : getProgramContent(mode).example}
@@ -738,7 +740,7 @@ export function StemSinQuest() {
         )}
 
         {guideStep === 3 && tool && prediction && (
-          <section className={styles.stemLabReadyStage}>
+          <section id="stem-ready" className={styles.stemLabReadyStage}>
             <span>READY TO EXPLORE</span><h2>{tool.label}</h2>
             <p>You predict: <strong>{prediction}</strong></p>
             <small>Show the guided example, then look for what changes. This is not a measured real-world test.</small>
@@ -746,7 +748,7 @@ export function StemSinQuest() {
         )}
 
         {demoRan && tool && !complete && (
-          <section className={styles.stemLabResult} aria-live="polite">
+          <section id="stem-result" className={styles.stemLabResult} aria-live="polite">
             <div className={styles.stemLabResultBadge}><Eye size={22} aria-hidden="true" /> ILLUSTRATED PRACTICE</div>
             <h2>Before → One possible change</h2>
             <div className={styles.stemLabComparison}>
@@ -801,7 +803,7 @@ export function StemSinQuest() {
         )}
 
         {complete && (
-          <section className={styles.stemLabComplete}>
+          <section id="stem-complete" className={styles.stemLabComplete}>
             <CheckCircle2 size={28} aria-hidden="true" />
             <div>
               <strong>{pilotProgress.stemSinEvidenceType === 'choices' ? 'Choice response saved. No written explanation was provided.' : 'S.T.E.M.Sin response saved on this tablet.'}</strong>
