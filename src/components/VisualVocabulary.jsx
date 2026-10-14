@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Volume2, Square, BookOpenText } from 'lucide-react';
-import { LearningPicture } from './LearningPicture';
+import VisualTeachingScene from './VisualTeachingScene';
 import { getVisualVocabulary } from '../data/visualVocabulary';
 import styles from './VisualVocabulary.module.css';
 
@@ -63,7 +63,7 @@ export default function VisualVocabulary({ mode, screen }) {
           <p className={styles.sample}><strong>For example:</strong> {card.example}</p>
         </div>
         <div className={styles.picture}>
-          <LearningPicture kind={card.picture} label={`Illustrated example for the word ${card.word}`} />
+          <VisualTeachingScene kind={card.picture} label={`Illustrated example for the word ${card.word}`} />
         </div>
       </div>
       <div className={styles.rhythm}>
@@ -74,7 +74,7 @@ export default function VisualVocabulary({ mode, screen }) {
         {supported && <button className={styles.listen} type="button" onClick={speak}
           aria-label={speaking ? 'Stop vocabulary audio' : `Hear the word ${card.word}, its meaning, and the rhythm`}>
           {speaking ? <Square size={20} aria-hidden="true" /> : <Volume2 size={22} aria-hidden="true" />}
-          {speaking ? 'Stop' : 'Hear it'}
+          {speaking ? 'Stop word audio' : 'Hear this word'}
         </button>}
       </div>
       {!supported && <p className={styles.support}>Read aloud together: audio is not supported in this browser.</p>}
