@@ -8,6 +8,8 @@ import VoiceCapture from '../components/VoiceCapture';
 import YEPGuide from '../components/YEPGuide';
 import styles from './PilotScreens.module.css';
 import ui from '../styles/ui.module.css';
+import visuals from './FoundationChoiceVisuals.module.css';
+import { LearningPicture } from '../components/LearningPicture';
 
 function GuideCard({ icon: Icon, title, children }) {
   return (
@@ -19,6 +21,31 @@ function GuideCard({ icon: Icon, title, children }) {
     </div>
   );
 }
+
+const FOUNDATION_VISUALS = {
+  'Building things': { picture: 'supplies', accent: 'blue', tag: 'MAKE', caption: 'Make a useful tool, model, or place.' },
+  'Helping people': { picture: 'reach', accent: 'teal', tag: 'HELP', caption: 'Notice what somebody needs.' },
+  'Technology + games': { picture: 'workflow', accent: 'purple', tag: 'EXPLORE', caption: 'See how tools and systems work.' },
+  'Art + design': { picture: 'labels', accent: 'orange', tag: 'CREATE', caption: 'Use color and shape to share an idea.' },
+  'Money + business': { picture: 'form', accent: 'green', tag: 'BUILD VALUE', caption: 'Make an idea useful to someone.' },
+  'Solving problems': { picture: 'checklist', accent: 'blue', tag: 'SOLVE', caption: 'Spot a snag. Try a better way.' },
+  'I notice things': { picture: 'status', accent: 'blue', tag: 'NOTICE', caption: 'You catch details other people miss.' },
+  'I make things': { picture: 'supplies', accent: 'orange', tag: 'MAKE', caption: 'You like turning an idea into something real.' },
+  'I explain ideas': { picture: 'form', accent: 'purple', tag: 'EXPLAIN', caption: 'You help people understand what you see.' },
+  'I help people': { picture: 'reach', accent: 'teal', tag: 'HELP', caption: 'You look for ways to support somebody.' },
+  'I keep trying': { picture: 'reach', accent: 'green', tag: 'KEEP GOING', caption: 'You stay with a challenge and try again.' },
+  'I organize things': { picture: 'labels', accent: 'blue', tag: 'ORGANIZE', caption: 'You help put steps and supplies in order.' },
+  'Seeing it': { picture: 'labels', accent: 'blue', tag: 'LOOK', caption: 'Pictures and examples help it click.' },
+  'Hearing it': { picture: 'reminder', accent: 'purple', tag: 'LISTEN', caption: 'Words and sounds help it make sense.' },
+  'Trying it': { picture: 'workflow', accent: 'orange', tag: 'TRY', caption: 'You learn by testing it yourself.' },
+  'Doing it with someone': { picture: 'waiting', accent: 'teal', tag: 'TOGETHER', caption: 'You learn by working alongside somebody.' },
+  'Build something': { picture: 'supplies', accent: 'orange', tag: 'BUILD', caption: 'Turn an idea into something you can show.' },
+  'Solve a problem': { picture: 'checklist', accent: 'blue', tag: 'SOLVE', caption: 'Find what is getting in the way.' },
+  'Learn a new skill': { picture: 'workflow', accent: 'purple', tag: 'LEARN', caption: 'Practice a step you have not tried before.' },
+  'Help somebody': { picture: 'reach', accent: 'teal', tag: 'HELP', caption: 'Use what you know to support someone.' },
+  'Make money from an idea': { picture: 'form', accent: 'green', tag: 'BUSINESS', caption: 'Find a customer problem worth solving.' },
+  'Learn what I am good at': { picture: 'status', accent: 'blue', tag: 'DISCOVER', caption: 'Try things and notice what fits you.' },
+};
 
 const FOUNDATION_INTAKE = [
   {
@@ -109,13 +136,30 @@ function FoundationIntake({ directionProfile, saveDirectionProfile, setScreen, p
             <span>{current.eyebrow}</span>
             <h2>{current.title}</h2>
             <p>{current.prompt}</p>
-            <div className={styles.foundationIntakeChoices} aria-label="First check-in choices">
-              {current.options.map((option) => (
-                <button type="button" key={option} aria-pressed={directionProfile?.[current.key] === option} onClick={() => choose(option)}>
-                  <strong>{option}</strong>
-                  <ArrowRight size={18} aria-hidden="true" />
-                </button>
-              ))}
+            <div className={`${styles.foundationIntakeChoices} ${visuals.choices}`} aria-label="First check-in choices">
+              {current.options.map((option) => {
+                const visual = FOUNDATION_VISUALS[option] || { picture: 'checklist', accent: 'blue', tag: 'EXPLORE', caption: 'Choose what you want to learn more about.' };
+                return (
+                  <button
+                    type="button"
+                    key={option}
+                    className={visuals.choice}
+                    data-art={visual.accent}
+                    aria-pressed={directionProfile?.[current.key] === option}
+                    onClick={() => choose(option)}
+                  >
+                    <span className={visuals.picture}>
+                      <LearningPicture kind={visual.picture} label={`Illustrated example: ${option}`} />
+                      <span className={visuals.pictureTag}>{visual.tag}</span>
+                    </span>
+                    <span className={visuals.copy}>
+                      <strong>{option}</strong>
+                      <small>{visual.caption}</small>
+                    </span>
+                    <span className={visuals.arrow} aria-hidden="true"><ArrowRight size={18} /></span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
