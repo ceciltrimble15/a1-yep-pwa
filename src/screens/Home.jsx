@@ -5,7 +5,6 @@ import { getProgramContent } from '../data/pilotContent';
 import { hasLegacyFoundationQuest, LEGACY_FOUNDATION_QUEST } from '../data/foundationQuest';
 import Shell from '../components/Shell';
 import YEPGuide from '../components/YEPGuide';
-import YEPBrandMark from '../components/YEPBrandMark';
 import { LearningPicture } from '../components/LearningPicture';
 import styles from './Home.module.css';
 
@@ -58,7 +57,10 @@ export default function Home() {
         <section className={styles.welcome} aria-label="YEP welcome">
           <div className={styles.welcomeCopy}>
             <span className={styles.welcomeEyebrow}>{program.tier} · AGES {program.ageRange}</span>
-            <YEPBrandMark className={styles.heroBrandMark} />
+            <img src="/a1-suppliers-logo.png" alt="A/1 Suppliers official logo" className={styles.officialA1Logo} />
+            <h1 className={styles.welcomeYEP}>YEP</h1>
+            <div className={styles.welcomeFullName}>YOUNG ENTREPRENEURS PROCESS</div>
+            <p className={styles.welcomePromise}>Build Your Mind. Build Your Future.</p>
             <h2 className={styles.welcomeGreeting}>{powerName ? `Hey, ${powerName}!` : welcome.title}</h2>
             <p className={styles.welcomeHelper}>{welcome.sub}</p>
             <button type="button" className={styles.welcomeAction} onClick={() => navigate(next.screen)}>
