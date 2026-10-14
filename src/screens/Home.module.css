@@ -128,3 +128,6 @@
 
 /* Existing approved A/1 logo, not a generated substitute. YEP wordmark remains text until official artwork is verified. */
 .officialA1Logo{display:block;width:clamp(75px,10vw,116px);height:auto;max-height:116px;object-fit:contain;margin:12px 0 3px;filter:drop-shadow(0 5px 8px #244f7a22)}
+
+/* Visually hidden accessible title; the branded YEP mark is the visible heading. */
+.srOnly { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
