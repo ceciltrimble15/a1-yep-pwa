@@ -125,3 +125,6 @@
 /* Full brand signature on bright dashboard while preserving all four lanes. */
 .heroBrandMark{display:block;width:min(100%,560px);height:auto;min-height:170px;margin:0 0 2px;filter:drop-shadow(0 8px 10px #1e54832b)}
 @media(max-width:720px){.heroBrandMark{min-height:140px;max-width:440px}}
+
+/* Existing approved A/1 logo, not a generated substitute. YEP wordmark remains text until official artwork is verified. */
+.officialA1Logo{display:block;width:clamp(75px,10vw,116px);height:auto;max-height:116px;object-fit:contain;margin:12px 0 3px;filter:drop-shadow(0 5px 8px #244f7a22)}
