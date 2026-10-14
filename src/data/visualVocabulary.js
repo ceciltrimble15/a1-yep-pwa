@@ -3,9 +3,9 @@
 // This is presentational support only: words, definitions and chants are not scored or saved.
 export const VISUAL_VOCABULARY = {
   explorer: {
-    dailyQuest: { word: 'NOTICE', meaning: 'Look closely and spot something worth thinking about.', beat: 'Look around. Slow it down. Notice what is all around.', example: 'Notice the pencils rolling off the table.', picture: 'supplies' },
-    stemSin: { word: 'SORT', meaning: 'Put things in groups so they are easier to find.', beat: 'Sort it here. Sort it there. Put the things where they belong with care.', example: 'Sort markers and crayons into separate groups.', picture: 'supplies' },
-    mirror: { word: 'REFLECT', meaning: 'Think back about what you did and what you learned.', beat: 'Look back. Think it through. What did you learn? What might you do?', example: 'Reflect on the problem you chose.', picture: 'help' },
+    dailyQuest: { word: 'NOTICE', meaning: 'Look closely and spot something worth thinking about.', beat: 'Look around. Slow it down. Notice what is all around.', example: 'Notice the pencils rolling off the table.', picture: 'notice' },
+    stemSin: { word: 'SORT', meaning: 'Put things in groups so they are easier to find.', beat: 'Sort it here. Sort it there. Put the things where they belong with care.', example: 'Sort markers and crayons into separate groups.', picture: 'sort' },
+    mirror: { word: 'REFLECT', meaning: 'Think back about what you did and what you learned.', beat: 'Look back. Think it through. What did you learn? What might you do?', example: 'Reflect on the problem you chose.', picture: 'reflect' },
     mission: { word: 'FINISH', meaning: 'Follow through on a step and say what you really did.', beat: 'Make a plan. Try your best. Check your work. Then take a rest.', example: 'Finish by checking off a step you actually tried.', picture: 'reach' },
   },
   builder: {
