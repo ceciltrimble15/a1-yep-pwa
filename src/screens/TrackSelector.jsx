@@ -22,6 +22,7 @@ import {
 import { useYEP } from '../context/YEPContext';
 import { MODES } from '../data/modes';
 import styles from './TrackSelector.module.css';
+import YEPBrandMark from '../components/YEPBrandMark';
 import ui from '../styles/ui.module.css';
 
 const A1_LOGO = '/a1-suppliers-logo.png';
@@ -130,6 +131,10 @@ export default function TrackSelector() {
 
   return (
     <div className={styles.wrap}>
+      <section className={styles.openingIdentity} aria-label="Welcome to the Young Entrepreneurs Process">
+        <YEPBrandMark className={styles.openingLogo} />
+        <p className={styles.openingCue}>SEE IT · HEAR IT · TRY IT · BUILD IT</p>
+      </section>
       <section className={styles.brandHero}>
         <img className={styles.logo} src={A1_LOGO} alt="A/1 Suppliers" />
         <div className={styles.introCopy}>
