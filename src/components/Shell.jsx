@@ -80,7 +80,7 @@ export default function Shell({ children, showBar = true, showAudio = true, show
                   onClick={() => navigate(item.key === 'mirror' && mirrorResult ? 'results' : item.screen)}
                 >
 <b className={styles.railNumber} aria-hidden="true">{index + 1}</b>
-                  <span>{item.label}<small>{savedSteps[item.key] ? 'Saved' : active ? 'Current step' : 'Open'}</small></span>
+                  <span>{item.label}<small>{savedSteps[item.key] ? 'Saved work' : active ? 'You are here' : 'Explore'}</small></span>
                 </button>
               );
             })}
@@ -89,7 +89,7 @@ export default function Shell({ children, showBar = true, showAudio = true, show
           <div className={styles.railPath}>
             <span>ACTIVE PATHWAY</span>
             <strong>{program.program}</strong>
-            <small>{program.label} · Ages {program.ageRange}</small>
+            <small>{program.label}</small>
           </div>
 
           <div className={styles.railClose}>
