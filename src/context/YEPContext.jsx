@@ -1,7 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { DIMENSIONS, mirrorQuestions } from '../data/mirrorQuestions';
-import { dimensionToStyle } from '../data/mirrorProfiles';
-import { getMission } from '../data/missions';
+import { REFLECTION_PROMPTS, getExposureMissions } from '../data/exposureProcess';
 import { demoYouth as baseDemoYouth } from '../data/demoYouth';
 import { DEFAULT_MODE, isValidMode } from '../data/modes';
 import { EMPTY_PILOT_PROGRESS, migrateLaneProgress } from '../data/laneProgress';
@@ -37,46 +35,30 @@ function resolveInitialMode(savedMode) {
   return isValidMode(savedMode) ? savedMode : DEFAULT_MODE;
 }
 
-function scoreMirror(answers) {
-  const scores = {};
-  DIMENSIONS.forEach((d) => (scores[d] = 0));
-  mirrorQuestions.forEach((q) => {
-    scores[q.dimension] += answers[q.id] || 0;
-  });
-
-  let anchor = DIMENSIONS[0];
-  let edge = DIMENSIONS[0];
-  DIMENSIONS.forEach((d) => {
-    if (scores[d] > scores[anchor]) anchor = d;
-    if (scores[d] < scores[edge]) edge = d;
-  });
-
-  if (edge === anchor) {
-    const alt = DIMENSIONS.find((d) => d !== anchor);
-    if (alt) edge = alt;
-  }
-
-  const style = dimensionToStyle[anchor] || 'Hands-On';
-  return { scores, anchor, edge, style };
-}
 
 export function YEPProvider({ children }) {
   const [saved] = useState(loadSession);
+  // Earlier POC records used unvalidated style labels and assigned adult missions.
+  // Migrate only those Mirror/mission fields; preserve Daily Quest and S.T.E.M.Sin work.
+  const savedMode = resolveInitialMode(saved.mode);
+  const compatibleMirror = saved.mirrorResult?.kind === 'exposure-reflection-v1' && saved.mirrorResult?.mode === savedMode;
+  const validMissionIds = getExposureMissions(savedMode).map((item) => item.id);
+  const compatibleMission = compatibleMirror && validMissionIds.includes(saved.currentMission?.id);
   const [screen, setScreen] = useState(saved.screen ?? 'track');
   const [track, setTrack] = useState(saved.track ?? null);
   const [youthName, setYouthName] = useState(saved.youthName ?? '');
   const [powerName, setPowerName] = useState(saved.powerName ?? '');
   const [directionProfile, setDirectionProfile] = useState(saved.directionProfile ?? { interest: '', why: '' });
   const [exposureLog, setExposureLog] = useState(Array.isArray(saved.exposureLog) ? saved.exposureLog : []);
-  const [mirrorScores, setMirrorScores] = useState(saved.mirrorScores ?? null);
-  const [mirrorResult, setMirrorResult] = useState(saved.mirrorResult ?? null);
-  const [currentMission, setCurrentMission] = useState(saved.currentMission ?? null);
-  const [missionStepsDone, setMissionStepsDone] = useState(saved.missionStepsDone ?? {});
-  const [missionComplete, setMissionComplete] = useState(saved.missionComplete ?? false);
-  const [reflection, setReflection] = useState(saved.reflection ?? '');
-  const [reflectionSubmitted, setReflectionSubmitted] = useState(saved.reflectionSubmitted ?? false);
-  const [finisherLetter, setFinisherLetter] = useState(saved.finisherLetter ?? '');
-  const [mode, setModeState] = useState(() => resolveInitialMode(saved.mode));
+  const [mirrorScores, setMirrorScores] = useState(null);
+  const [mirrorResult, setMirrorResult] = useState(compatibleMirror ? saved.mirrorResult : null);
+  const [currentMission, setCurrentMission] = useState(compatibleMission ? getExposureMissions(savedMode).find((m) => m.id === saved.currentMission.id) : null);
+  const [missionStepsDone, setMissionStepsDone] = useState(compatibleMission ? (saved.missionStepsDone ?? {}) : {});
+  const [missionComplete, setMissionComplete] = useState(compatibleMission ? !!saved.missionComplete : false);
+  const [reflection, setReflection] = useState(compatibleMission ? (saved.reflection ?? '') : '');
+  const [reflectionSubmitted, setReflectionSubmitted] = useState(compatibleMission ? !!saved.reflectionSubmitted : false);
+  const [finisherLetter, setFinisherLetter] = useState(compatibleMission ? (saved.finisherLetter ?? '') : '');
+  const [mode, setModeState] = useState(savedMode);
   const [laneProgress, setLaneProgress] = useState(() => migrateLaneProgress(saved));
   const pilotProgress = laneProgress[mode] || EMPTY_PILOT_PROGRESS;
 
@@ -125,19 +107,34 @@ export function YEPProvider({ children }) {
   }
 
   function submitMirror(answers) {
-    if (!mirrorQuestions.every((question) => [1, 2, 3, 4].includes(answers[question.id]))) return;
+    if (!REFLECTION_PROMPTS.every((prompt) => Number.isInteger(answers[prompt.id])
+      && answers[prompt.id] >= 0 && answers[prompt.id] < prompt.options.length)) return false;
     saveMirrorDraft(null);
-    const { scores, anchor, edge, style } = scoreMirror(answers);
-    const mission = getMission(edge, style);
-    setMirrorScores(scores);
-    setMirrorResult({ Anchor: anchor, Edge: edge, Style: style, Focus: mission ? mission.focus : '', MissionID: mission ? mission.id : null });
-    setCurrentMission(mission);
+    setMirrorScores(null);
+    setMirrorResult({ kind: 'exposure-reflection-v1', mode, answers });
+    setCurrentMission(null);
     setMissionStepsDone({});
     setMissionComplete(false);
     setReflection('');
     setReflectionSubmitted(false);
     setFinisherLetter('');
     setScreen('results');
+    return true;
+  }
+
+  function selectMission(id) {
+    const next = getExposureMissions(mode).find((mission) => mission.id === id);
+    if (!next) return false;
+    if (currentMission?.id !== next.id || currentMission.mode !== mode) {
+      setMissionStepsDone({});
+      setMissionComplete(false);
+      setReflection('');
+      setReflectionSubmitted(false);
+      setFinisherLetter('');
+    }
+    setCurrentMission(next);
+    setScreen('mission');
+    return true;
   }
 
   function toggleMissionStep(index) {
@@ -207,7 +204,17 @@ export function YEPProvider({ children }) {
   }
 
   function setMode(next) {
-    if (isValidMode(next)) setModeState(next);
+    if (!isValidMode(next) || next === mode) return;
+    // Never carry a mission from an older pathway into Foundation or another age band.
+    setModeState(next);
+    setMirrorScores(null);
+    setMirrorResult(null);
+    setCurrentMission(null);
+    setMissionStepsDone({});
+    setMissionComplete(false);
+    setReflection('');
+    setReflectionSubmitted(false);
+    setFinisherLetter('');
   }
 
   function resetSession() {
@@ -240,9 +247,9 @@ export function YEPProvider({ children }) {
     directionInterest: directionProfile.interest || '—',
     directionWhy: directionProfile.why || '',
     exposureCount: exposureLog.length,
-    anchor: mirrorResult ? mirrorResult.Anchor : '—',
-    edge: mirrorResult ? mirrorResult.Edge : '—',
-    style: mirrorResult ? mirrorResult.Style : '—',
+    checkIn: mirrorResult ? 'Self-reported reflection saved' : 'Not yet',
+    nextStep: currentMission ? currentMission.title : 'Not chosen',
+    evidence: missionComplete ? 'Steps marked by participant (unverified)' : 'No steps completed',
     finisherLetter: finisherLetter || '—',
     missionTitle: currentMission ? currentMission.title : '—',
     missionComplete,
@@ -256,7 +263,7 @@ export function YEPProvider({ children }) {
   const value = {
     screen, track, youthName, powerName, directionProfile, exposureLog, mirrorScores, mirrorResult, currentMission,
     missionStepsDone, missionComplete, reflection, reflectionSubmitted, finisherLetter, mode,
-    pilotProgress, demoYouth, activeYouth, selectTrack, saveDirectionProfile, saveExposureReaction, saveLessonDraft, saveMirrorDraft, submitMirror,
+    pilotProgress, demoYouth, activeYouth, selectTrack, saveDirectionProfile, saveExposureReaction, saveLessonDraft, saveMirrorDraft, submitMirror, selectMission,
     toggleMissionStep, completeMission, submitReflection, completeDailyQuest, toggleWeeklyActivity,
     completeStemSin, completeBossChallenge, saveMentorQuestion, navigate, setScreen,
     setMode, resetSession,
