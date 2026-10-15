@@ -1,6 +1,5 @@
 import { ScanFace, Clock, ShieldCheck, Compass, ArrowRight, Sparkles } from 'lucide-react';
 import { useYEP } from '../context/YEPContext';
-import { DIMENSIONS } from '../data/mirrorQuestions';
 import { MODES } from '../data/modes';
 import Shell from '../components/Shell';
 import styles from './MirrorIntro.module.css';
@@ -21,33 +20,33 @@ const COPY = {
   builder: {
     eyebrow: 'Before You Start',
     title: 'Check Your Growth',
-    lede: 'The Mirror helps you see what is strong and what needs more reps.',
+    lede: 'The Mirror helps you explore what interested you today.',
     sub: 'No perfect answers. Give the answer that is most true right now.',
     rule1: ['About two minutes.', 'One question at a time.'],
     rule2: ['Be honest.', 'This is for growth, not a grade.'],
-    rule3: ['Use the read.', 'Your answers point to the next challenge.'],
+    rule3: ['Follow your interest.', 'Your answers point to the next challenge.'],
     ready: 'Ready?',
     button: 'Take The Mirror',
   },
   leader: {
     eyebrow: 'Before You Start',
     title: 'The Mirror',
-    lede: 'Read where you are before you decide where to go next.',
+    lede: 'Reflect on what you noticed before you choose your next experience.',
     sub: 'Do not perform for the score. Give the most accurate answer you can.',
     rule1: ['About two minutes.', 'One question at a time.'],
     rule2: ['Be honest.', 'This is for you, not a grade.'],
-    rule3: ['Use the evidence.', 'Every answer helps sharpen your next move.'],
+    rule3: ['Use the evidence.', 'Your answers help you choose what to explore.'],
     ready: 'Ready?',
     button: 'Take The Mirror',
   },
   yaep: {
     eyebrow: 'Current Position',
     title: 'The Mirror',
-    lede: 'Assess your current strengths, gaps, and next move.',
-    sub: 'Treat this as a short self-audit. Accuracy matters more than looking good.',
+    lede: 'Reflect on the experience that interested you and choose a next step.',
+    sub: 'This is a check-in, not a test, score or prediction about you.',
     rule1: ['About two minutes.', 'One question at a time.'],
     rule2: ['Be accurate.', 'This is development data, not a grade.'],
-    rule3: ['Act on the read.', 'Use the result to choose an accountable next step.'],
+    rule3: ['Choose your next step.', 'Use the result to choose an accountable next step.'],
     ready: 'Ready?',
     button: 'Begin Assessment',
   },
@@ -68,9 +67,9 @@ export default function MirrorIntro() {
         <p className={styles.lede}>{copy.lede}</p>
         <p className={styles.sub}>{copy.sub}</p>
 
-        <div className={styles.dimsLabel}>Six Areas We Look At</div>
+        <div className={styles.dimsLabel}>What Today's Mirror Is About</div>
         <div className={styles.dims}>
-          {DIMENSIONS.map((d) => <span key={d} className={styles.chip}>{d}</span>)}
+          {['What caught your attention', 'What you explored', 'What interests you', 'What support you want'].map((d) => <span key={d} className={styles.chip}>{d}</span>)}
         </div>
 
         <div className={styles.rules}>
@@ -96,7 +95,7 @@ export default function MirrorIntro() {
         {mirrorResult && (
           <>
             <button className={ui.btnGhost} onClick={() => navigate('results')}>View Saved Mirror Results</button>
-            <p className={styles.sub}>Completing a new Mirror replaces your current mission, mission steps, and reflection. View your saved result to continue your existing work.</p>
+            <p className={styles.sub}>Starting a new check-in resets your selected FINISHER practice. Your other saved lane work stays. View your saved result to continue your existing work.</p>
           </>
         )}
         <button className={ui.btnPrimary} onClick={() => navigate('mirror')}>

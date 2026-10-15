@@ -612,3 +612,9 @@
     margin-bottom: 10px;
   }
 }
+
+/* Open-once YEP branded identity; remains above pathway entry and demo safeguards. */
+.openingIdentity{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px 16px 14px;margin:0 auto 18px;max-width:840px;width:100%;border-radius:26px;background:radial-gradient(ellipse at 50% 36%,#f0faff,#b7e6ff 75%,#8dcdfa);border:3px solid #f5c944;box-shadow:0 14px 35px #0005}
+.openingLogo{width:min(100%,640px);height:auto;display:block}
+.openingCue{margin:4px 0 0;color:#143f77;font-weight:900;font-size:clamp(12px,2vw,18px);letter-spacing:.11em;text-align:center}
+@media(max-width:640px){.openingIdentity{padding:10px 7px;margin-bottom:12px}.openingCue{font-size:10px}}

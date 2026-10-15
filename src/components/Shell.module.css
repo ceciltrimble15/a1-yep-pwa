@@ -459,3 +459,10 @@
 .content { padding-top: 18px; }
 @media (min-width: 761px) and (max-width: 1050px) { .appFrame { grid-template-columns: 180px minmax(0,1fr); } .content { padding-left: 20px; padding-right: 20px; } }
 @media (max-width: 760px) { .railButton,.railButtonActive { font-size: 15px; min-height: 76px; padding: 10px 6px; } .railButton small,.railButtonActive small { font-size: 12px; } .homeButton { margin: 0 0 8px; min-height: 46px; } }
+
+
+/* Bright visual dashboard is scoped to Home; learning lanes keep their existing styles. */
+.visualHome { background: linear-gradient(180deg,#d9edff 0%,#eff8ff 45%,#eaf5ff 100%); }
+.visualHome .content { width:100%;max-width:none;min-height:calc(100dvh - 88px);padding:24px clamp(16px,3vw,38px) 100px; background:linear-gradient(180deg,#f5fbff,#eaf5ff); }
+.visualHome .mainColumn { background:#f1f8ff; }
+@media (max-width:760px) { .visualHome .content { padding:18px 12px 90px; } }

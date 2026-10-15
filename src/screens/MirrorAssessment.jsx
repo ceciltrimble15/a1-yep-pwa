@@ -1,170 +1,49 @@
 import { useState } from 'react';
-import { ArrowRight, ArrowLeft, Sparkles, Lightbulb, Target, BriefcaseBusiness } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
 import { useYEP } from '../context/YEPContext';
-import { getMirrorQuestions, getMirrorScale } from '../data/mirrorQuestions';
-import { MODES } from '../data/modes';
+import { REFLECTION_PROMPTS } from '../data/exposureProcess';
 import Shell from '../components/Shell';
-import styles from './MirrorAssessment.module.css';
 import ui from '../styles/ui.module.css';
-
-const CUES = {
-  explorer: {
-    3: { title: 'You’re Doing Great', text: 'Keep going. Just pick what feels true for you.' },
-    7: { title: 'Almost There', text: 'A few more and you get to see how you are growing.' },
-  },
-  builder: {
-    3: { title: 'Good Work', text: 'Keep moving. Be real with your answers.' },
-    7: { title: 'You’re Close', text: 'Finish strong and check your growth.' },
-  },
-  leader: {
-    3: { title: "You're Getting Closer", text: 'Keep going.' },
-    7: { title: 'Halfway Was Behind You', text: 'Finish strong.' },
-  },
-  yaep: {
-    3: { title: "You're Getting Closer", text: 'Keep going.' },
-    7: { title: 'Halfway Was Behind You', text: 'Finish strong.' },
-  },
-};
-
-const LANE_ICONS = {
-  explorer: Sparkles,
-  builder: Lightbulb,
-  leader: Target,
-  yaep: BriefcaseBusiness,
-};
-
-const LANE_HEADLINES = {
-  explorer: {
-    title: "Let's See How You're Growing",
-    helper: 'There are no wrong answers. Pick what feels true for you.',
-  },
-  builder: {
-    title: 'Check Your Growth',
-    helper: 'Be real. This helps you see what you are building and what to work on next.',
-  },
-  leader: {
-    title: 'Read Where You Are',
-    helper: 'Answer honestly so the next move is based on something real.',
-  },
-  yaep: {
-    title: 'Assess Your Current Position',
-    helper: 'Use the Mirror to identify strengths, gaps, and your next accountable move.',
-  },
-};
 
 export default function MirrorAssessment() {
   const { submitMirror, saveMirrorDraft, pilotProgress, mode } = useYEP();
-  const questions = getMirrorQuestions(mode);
-  const scale = getMirrorScale(mode);
-  const [answers, setAnswers] = useState(pilotProgress.mirrorDraft?.answers || {});
-  const [step, setStep] = useState(() => Math.min(questions.length - 1, Math.max(0, pilotProgress.mirrorDraft?.step || 0)));
-  const [cue, setCue] = useState(null);
+  const saved = pilotProgress.mirrorDraft;
+  const [answers, setAnswers] = useState(saved?.answers || {});
+  const [step, setStep] = useState(Math.max(0, Math.min(REFLECTION_PROMPTS.length - 1, saved?.step || 0)));
+  const prompt = REFLECTION_PROMPTS[step];
+  const selected = answers[prompt.id];
 
-  const q = questions[step];
-  const total = questions.length;
-  const isLast = step === total - 1;
-  const current = answers[q.id];
-  const LaneIcon = LANE_ICONS[mode] || Lightbulb;
-  const headline = LANE_HEADLINES[mode] || LANE_HEADLINES.builder;
-  const cueSet = CUES[mode] || CUES.builder;
-  const program = MODES[mode] || MODES.builder;
-
-  function choose(value) {
-    const nextAnswers = { ...answers, [q.id]: value };
-    setAnswers(nextAnswers);
-    saveMirrorDraft({ answers: nextAnswers, step });
+  function choose(index) {
+    const next = { ...answers, [prompt.id]: index };
+    setAnswers(next);
+    saveMirrorDraft({ answers: next, step });
   }
-
-  function moveTo(nextStep) {
+  function move(nextStep) {
     setStep(nextStep);
     saveMirrorDraft({ answers, step: nextStep });
   }
-
-  function next() {
-    if (!current) return;
-    if (isLast) {
-      submitMirror(answers);
-    } else if (cueSet[step]) {
-      setCue(cueSet[step]);
-    } else {
-      moveTo(step + 1);
-    }
-  }
-
-  function continueFromCue() {
-    setCue(null);
-    moveTo(step + 1);
-  }
-
-  if (cue) {
-    return (
-      <Shell>
-        <div className={styles.laneWrap} data-lane={mode}>
-          <div className={styles.cue}>
-            <div className={styles.laneBadge}><LaneIcon size={18} /> {program.tier} · Ages {program.ageRange}</div>
-            <div className={styles.cueMark}>{step + 1} / {total}</div>
-            <h2 className={styles.cueTitle}>{cue.title}</h2>
-            <p className={styles.cueText}>{cue.text}</p>
-            <button className={ui.btnPrimary} onClick={continueFromCue}>
-              Keep Going <ArrowRight size={20} />
-            </button>
-          </div>
-        </div>
-      </Shell>
-    );
-  }
-
-  return (
-    <Shell>
-      <div className={styles.laneWrap} data-lane={mode}>
-        <div className={styles.mirrorHero}>
-          <div className={styles.laneBadge}><LaneIcon size={18} /> {program.tier} · Ages {program.ageRange}</div>
-          <h1 className={styles.heroTitle}>{headline.title}</h1>
-          <p className={styles.heroHelper}>{headline.helper}</p>
-        </div>
-
-        <div className={styles.progressWrap}>
-          <div className={styles.progressTop}>
-            <span className={styles.dim}>{q.dimension}</span>
-            <span className={styles.count}>{step + 1} / {total}</span>
-          </div>
-          <div className={styles.bar}>
-            <div className={styles.fill} style={{ width: `${((step + 1) / total) * 100}%` }} />
-          </div>
-        </div>
-
-        <h2 key={q.id} className={styles.question}>{q.text}</h2>
-
-        <div className={styles.options}>
-          {scale.map((s) => {
-            const active = current === s.value;
-            return (
-              <button
-                key={s.value}
-                className={`${styles.opt} ${active ? styles.optActive : ''}`}
-                aria-pressed={active}
-                onClick={() => choose(s.value)}
-              >
-                {s.label}
-                <span className={`${styles.dot} ${active ? styles.dotActive : ''}`} />
-              </button>
-            );
-          })}
-        </div>
-
-        <div className={styles.nav}>
-          {step > 0 && (
-            <button className={styles.back} onClick={() => moveTo(step - 1)} aria-label="Previous question">
-              <ArrowLeft size={18} />
-            </button>
-          )}
-          <div className={styles.next}>
-            <button className={ui.btnPrimary} onClick={next} disabled={!current}>
-              {isLast ? 'See My Result' : 'Next'} <ArrowRight size={20} />
-            </button>
-          </div>
+  return <Shell>
+    <section data-lane={mode} style={{maxWidth:740, margin:'0 auto',padding:'12px 0 42px'}}>
+      <p style={{fontWeight:800,letterSpacing:'.1em',color:'var(--electric)'}}>MIRROR · TODAY'S CHECK-IN</p>
+      <h1 style={{fontSize:'clamp(30px,5vw,46px)',lineHeight:1.1,margin:'14px 0'}}>Your experience. Your voice.</h1>
+      <p style={{fontSize:19,lineHeight:1.5,marginBottom:24}}>No labels. No grades. There is no one right answer. Your interests can change.</p>
+      <div style={{borderRadius:20,border:'1px solid var(--line-strong)',background:'var(--panel)',padding:'clamp(16px,4vw,28px)'}}>
+        <p style={{fontWeight:800,marginBottom:14}}>QUESTION {step+1} OF {REFLECTION_PROMPTS.length}</p>
+        <h2 style={{fontSize:'clamp(23px,4vw,34px)',lineHeight:1.25,marginBottom:22}}>{prompt.heading}</h2>
+        <div style={{display:'grid',gap:12}}>
+          {prompt.options.map((option,index)=><button type="button" key={option} aria-pressed={selected===index} onClick={()=>choose(index)}
+            style={{textAlign:'left',width:'100%',minHeight:65,padding:'18px 20px',fontSize:19,lineHeight:1.4,borderRadius:16,border:selected===index?'3px solid var(--electric)':'2px solid var(--line-strong)',background:selected===index?'var(--panel-2)':'var(--panel)',color:'var(--text)',fontWeight:selected===index?800:500}}>
+              {selected===index?'✓  ':''}{option}
+            </button>)}
         </div>
       </div>
-    </Shell>
-  );
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:12,marginTop:22,flexWrap:'wrap'}}>
+        {step>0?<button type="button" className={ui.btnGhost} onClick={()=>move(step-1)}><ArrowLeft size={18}/> Back</button>:<span/>}
+        <button type="button" className={ui.btnPrimary} disabled={selected===undefined} onClick={()=>step===REFLECTION_PROMPTS.length-1?submitMirror(answers):move(step+1)}>
+          {step===REFLECTION_PROMPTS.length-1?'Save My Check-In':'Next Question'} <ArrowRight size={18}/>
+        </button>
+      </div>
+      <p style={{marginTop:20,fontSize:15,opacity:.8}}><Sparkles size={16} style={{display:'inline'}}/> Your answers are a reflection of today, not a diagnosis or prediction.</p>
+    </section>
+  </Shell>;
 }

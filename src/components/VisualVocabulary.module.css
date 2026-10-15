@@ -1,0 +1,33 @@
+/* YEP visual literacy: meaningful word > plain definition > picture > rhythmic recall. */
+.card {
+  margin: 0 0 24px;
+  padding: clamp(15px,2.2vw,24px);
+  border: 2px solid #b9dafa;
+  border-radius: 24px;
+  color: #102c57;
+  background: linear-gradient(125deg,#ffffff 0%,#eefaff 56%,#dcefff 100%);
+  box-shadow: 0 12px 30px rgba(0,25,75,.15);
+}
+.card[data-lane='explorer'] { border-color:#63cfc5; background:linear-gradient(120deg,#fffaf0,#e5faf7); }
+.card[data-lane='leader'] { border-color:#c4b5f9; background:linear-gradient(120deg,#fff,#f4eeff); }
+.card[data-lane='yaep'] { border-color:#dcc58e; background:linear-gradient(120deg,#fff,#f9f1de); }
+.titleRow { display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center; }
+.kicker { display:inline-flex;align-items:center;gap:8px; font-size:14px; font-weight:950;letter-spacing:.045em;color:#23569f; }
+.readTag { color:#4d6285;font-size:11px;letter-spacing:.08em;font-weight:850; }
+.lesson { display:grid;grid-template-columns:minmax(0,1.25fr) minmax(155px,.75fr);gap:18px;align-items:center;margin-top:12px; }
+.definition { min-width:0; }
+.word { color:#146ac3;font-size:clamp(36px,5.6vw,68px);letter-spacing:-.035em;line-height:1.05;overflow-wrap:anywhere; }
+.equals { color:#f0a51c; }
+.meaning { margin:9px 0 0; font-size:clamp(20px,2.4vw,26px);line-height:1.32;color:#153862;font-weight:800;max-width:38ch; }
+.sample { margin-top:12px;font-size:16px;line-height:1.45;color:#36516f; }
+.sample strong { color:#183764; }
+.picture { overflow:hidden;min-width:0;border-radius:17px;border:2px solid rgba(78,143,199,.3);background:#dcefff; }
+.picture svg { display:block; }
+.rhythm { display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-top:18px;padding:15px 18px;border-radius:16px;background:#d9efff;border-left:6px solid #e7ad37; }
+.beatLabel { display:block;color:#315894;font-size:12px;font-weight:950;letter-spacing:.06em; }
+.rhythm p { margin:5px 0 0;font-size:clamp(17px,2vw,22px);line-height:1.35;font-weight:850;color:#183c70; }
+.listen { display:inline-flex;align-items:center;justify-content:center;gap:10px;flex:0 0 auto;min-height:52px;padding:12px 18px;border-radius:13px;background:#1557bb;color:#fff;font-size:17px;font-weight:900; }
+.listen:focus-visible {outline:4px solid #eeaa25;outline-offset:3px;}
+.support {margin-top:10px;font-size:14px;color:#31577d;}
+@media (max-width:720px) { .card {margin-bottom:17px;padding:15px;} .lesson {grid-template-columns:1fr;} .picture {max-width:300px;} .word {font-size:clamp(34px,9vw,55px);} .rhythm {padding:13px; } .readTag {font-size:10px;} }
+@media (prefers-reduced-motion:reduce) { .listen {transition:none;} }

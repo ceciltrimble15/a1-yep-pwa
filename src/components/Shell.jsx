@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { Flag, FlaskConical, ScanFace, Sparkles } from 'lucide-react';
 import GlobalBar from './GlobalBar';
 import AudioGuide from './AudioGuide';
+import VisualVocabulary from './VisualVocabulary';
 import { useYEP } from '../context/YEPContext';
 import { MODES } from '../data/modes';
 import styles from './Shell.module.css';
@@ -23,14 +24,14 @@ function isRailActive(screen, key) {
   return false;
 }
 
-export default function Shell({ children, showBar = true, showAudio = true, showPathway = true }) {
+export default function Shell({ children, showBar = true, showAudio = true, showPathway = true, visualHome = false }) {
   const { mode, screen, navigate, mirrorResult, pilotProgress, missionComplete, reflectionSubmitted } = useYEP();
   const program = MODES[mode] || MODES.builder;
   const audioTargetRef = useRef(null);
   const savedSteps = { daily: pilotProgress.dailyQuestComplete, stem: pilotProgress.stemSinComplete, mirror: !!mirrorResult, finisher: missionComplete && reflectionSubmitted };
 
   return (
-    <div className={styles.shell}>
+    <div className={`${styles.shell} ${visualHome ? styles.visualHome : ''}`}>
       <header className={styles.header} data-audio-skip="true">
         <div className={styles.brand}>
           <img className={styles.mark} src={A1_LOGO} alt="A/1 Suppliers" />
@@ -79,7 +80,7 @@ export default function Shell({ children, showBar = true, showAudio = true, show
                   onClick={() => navigate(item.key === 'mirror' && mirrorResult ? 'results' : item.screen)}
                 >
 <b className={styles.railNumber} aria-hidden="true">{index + 1}</b>
-                  <span>{item.label}<small>{savedSteps[item.key] ? 'Saved' : active ? 'Current step' : 'Open'}</small></span>
+                  <span>{item.label}<small>{savedSteps[item.key] ? 'Saved work' : active ? 'You are here' : 'Explore'}</small></span>
                 </button>
               );
             })}
@@ -88,7 +89,7 @@ export default function Shell({ children, showBar = true, showAudio = true, show
           <div className={styles.railPath}>
             <span>ACTIVE PATHWAY</span>
             <strong>{program.program}</strong>
-            <small>{program.label} · Ages {program.ageRange}</small>
+            <small>{program.label}</small>
           </div>
 
           <div className={styles.railClose}>
@@ -100,7 +101,10 @@ export default function Shell({ children, showBar = true, showAudio = true, show
         <div className={styles.mainColumn}>
           {showBar && <div data-audio-skip="true"><GlobalBar /></div>}
           {showAudio && <AudioGuide targetRef={audioTargetRef} />}
-          <main ref={audioTargetRef} className={styles.content}>{children}</main>
+          <main ref={audioTargetRef} className={styles.content}>
+            <VisualVocabulary mode={mode} screen={screen} />
+            {children}
+          </main>
         </div>
       </div>
     </div>

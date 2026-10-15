@@ -5,6 +5,7 @@ import { FOUNDATION_QUEST, FOUNDATION_QUEST_ID, FOUNDATION_SCENARIO, FOUNDATION_
 import { proofDescription } from '../data/proofEvidence';
 import Shell from '../components/Shell';
 import YEPGuide from '../components/YEPGuide';
+import { foundationTeacherStep } from '../data/foundationTeacher';
 import VoiceCapture from '../components/VoiceCapture';
 import styles from './PilotScreens.module.css';
 import ui from '../styles/ui.module.css';
@@ -217,19 +218,19 @@ export default function FoundationDailyQuest() {
           {['SEE', 'PEOPLE', 'IDEA', 'FINISH'].map((label, index) => <span key={label} data-state={step > index + 1 ? 'done' : step === index + 1 ? 'active' : 'next'}><b>{index + 1}</b>{label}</span>)}
         </div>
       </header>
-      <YEPGuide title={step === 5 ? 'Your response is saved' : ['See the lunch line', 'Think about people', 'Choose a move', 'Review your response'][step - 1]}
+      <YEPGuide teacher={foundationTeacherStep('dailyQuest', step)} title={step === 5 ? 'Your response is saved' : ['See the lunch line', 'Think about people', 'Choose a move', 'Review your response'][step - 1]}
         prompt={prompts[step]} step={step === 5 ? 'SAVED' : `${step} OF 4`} narration={narration}
         example={selected ? `One possible move is: ${ideas[0]}. Discuss it with a facilitator and ask permission before a real test. You can choose a different idea.` : FOUNDATION_QUEST.example}
         pictureKind={selectedProblem === 2 ? 'help' : 'waiting'}
         actionLabel={step === 5 ? 'Go To S.T.E.M.Sin' : undefined}
         onAction={step === 5 ? () => navigate('stemSin') : undefined} />
 
-      {step === 1 && <FoundationQuestScene selectedIndex={selectedProblem} onSelect={chooseProblem} />}
-      {step === 2 && <section className={styles.foundationQuestChoiceStage}>
+      {step === 1 && <div id="foundation-lunch-scene"><FoundationQuestScene selectedIndex={selectedProblem} onSelect={chooseProblem} /></div>}
+      {step === 2 && <section id="foundation-people" className={styles.foundationQuestChoiceStage}>
         <span>THINK ABOUT PEOPLE</span><h2>Who feels this problem?</h2><p>You noticed: <strong>{selected?.label}</strong></p>
         <div className={styles.foundationQuestBigChoices} aria-label="Choose who is affected">{FOUNDATION_PEOPLE.map((option) => <button type="button" key={option} aria-pressed={who === option} onClick={() => chooseWho(option)}><UsersRound size={24} /><strong>{option}</strong><ChevronRight size={19} /></button>)}</div>
       </section>}
-      {step === 3 && <section className={styles.foundationQuestChoiceStage}>
+      {step === 3 && <section id="foundation-ideas" className={styles.foundationQuestChoiceStage}>
         <span>BUILD AN IDEA</span><h2>What would you try first?</h2><p>Pick one move, or describe your own. Later, you can test it and change it.</p>
         <div className={styles.foundationQuestBigChoices} aria-label="Choose a change to try">{ideas.map((option) => <button type="button" key={option} aria-pressed={idea === option} onClick={() => chooseIdea(option)}><Lightbulb size={24} /><strong>{option}</strong><ChevronRight size={19} /></button>)}</div>
         <label htmlFor="daily-quest-answer">Your own idea, optional</label>
@@ -237,7 +238,7 @@ export default function FoundationDailyQuest() {
         <VoiceCapture prompt={FOUNDATION_QUEST.prompt} currentValue={text} onConfirm={setText} />
         <button type="button" className={ui.btnGhost} disabled={!text.trim()} onClick={useOwnIdea}>Review My Own Idea</button>
       </section>}
-      {step === 4 && <section className={styles.foundationQuestReview}>
+      {step === 4 && <section id="foundation-review" className={styles.foundationQuestReview}>
         <span>YOUR CHOICES</span><h2>Problem → People → Idea</h2>
         <div className={styles.foundationQuestReviewGrid}>
           <div><small>I NOTICED</small><strong>{selected?.label}</strong></div>
@@ -250,7 +251,7 @@ export default function FoundationDailyQuest() {
         <p>{text.trim() ? 'Your own words and selected choices will be saved.' : 'Only your selected choices will be saved. No written explanation or mastery claim is created.'}</p>
         <button type="button" className={styles.foundationQuestFinish} disabled={!canSave || (idea === 'Own written idea' && !text.trim())} onClick={save}>{complete ? 'Update My Proof' : 'Finish My First Quest'}<CheckCircle2 size={20} /></button>
       </section>}
-      {step === 5 && <section className={styles.foundationQuestComplete}>
+      {step === 5 && <section id="foundation-complete" className={styles.foundationQuestComplete}>
         <CheckCircle2 size={42} /><span>RESPONSE SAVED</span><h2>You chose a move to try.</h2><p>{proofDescription(pilotProgress, 'dailyQuest')}</p>
         <p>A selected idea is a starting point, not evidence that it works. Discuss who it could help and what you would test next.</p>
         <button type="button" className={ui.btnGhost} onClick={() => setStep(4)}>Review My Response</button>

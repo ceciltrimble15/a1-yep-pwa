@@ -44,7 +44,7 @@ function GuideAvatar() {
   );
 }
 
-export default function YEPGuide({ prompt, step, title = 'One step at a time', example, pictureKind, beforeOnly = false, narration = '', actionLabel, onAction, onTry }) {
+export default function YEPGuide({ prompt, step, title = 'One step at a time', example, pictureKind, beforeOnly = false, narration = '', actionLabel, onAction, onTry, bright = false, teacher = null }) {
   const { mode } = useYEP();
   const program = MODES[mode] || MODES.builder;
   const supported = typeof window !== 'undefined' && 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
@@ -59,12 +59,20 @@ export default function YEPGuide({ prompt, step, title = 'One step at a time', e
     return () => { if (supported) window.speechSynthesis.cancel(); };
   }, [prompt, supported]);
 
+  function pointToLesson() {
+    if (!teacher?.focusId) return;
+    const target = document.getElementById(teacher.focusId);
+    target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    target?.classList.add('yep-teacher-focus');
+    window.setTimeout(() => target?.classList.remove('yep-teacher-focus'), 2400);
+  }
+
   function hearGuide() {
     if (!supported) return;
     if (speaking) { window.speechSynthesis.cancel(); setSpeaking(false); return; }
     setAudioError('');
     window.speechSynthesis.cancel();
-    const explanation = `${prompt} ${narration} ${showExample && example ? `Here is one example. ${example} Your own idea can be different.` : ''}`;
+    const explanation = teacher ? `${teacher.speech} ${teacher.question}` : `${prompt} ${narration} ${showExample && example ? `Here is one example. ${example} Your own idea can be different.` : ''}`;
     const utterance = new window.SpeechSynthesisUtterance(explanation);
     utterance.rate = mode === 'explorer' ? 0.85 : 0.95;
     utterance.onend = () => setSpeaking(false);
@@ -77,17 +85,19 @@ export default function YEPGuide({ prompt, step, title = 'One step at a time', e
   }
 
   return (
-    <section className={styles.panel} data-lane={mode} aria-label="YEP lesson guide">
+    <section className={`${styles.panel} ${bright ? styles.bright : ''}`} data-lane={mode} aria-label="YEP lesson guide">
       <div className={styles.identity}>
         <GuideAvatar />
         <div><span>YOUR YEP GUIDE</span><strong>{program.tier}</strong><small>Step {step}</small></div>
       </div>
       <div className={styles.teaching}>
         <h2>{title}</h2>
-        <p className={styles.prompt} aria-live="polite">{prompt}</p>
+        <p className={styles.prompt} aria-live="polite">{teacher ? teacher.speech : prompt}</p>
+        {teacher && <div className={styles.teacherQuestion}><strong>YOUR TURN</strong><p>{teacher.question}</p></div>}
         <div className={styles.actions}>
+          {teacher && <button type="button" className={styles.explain} onClick={pointToLesson}><Eye size={23} aria-hidden="true" /> Show where to tap</button>}
           {example && <button type="button" className={styles.explain} aria-expanded={showExample} onClick={() => setShowExample(!showExample)}><Eye size={23} aria-hidden="true" />{showExample ? 'Hide example' : 'Show me'}</button>}
-          {supported && <button type="button" className={styles.explain} onClick={hearGuide}>{speaking ? <Square size={22} aria-hidden="true" /> : <Volume2 size={23} aria-hidden="true" />}{speaking ? 'Stop audio' : 'Hear it'}</button>}
+          {supported && <button type="button" className={styles.explain} onClick={hearGuide}>{speaking ? <Square size={22} aria-hidden="true" /> : <Volume2 size={23} aria-hidden="true" />}{speaking ? 'Stop lesson audio' : teacher ? 'Hear my lesson' : 'Hear it'}</button>}
           {(onAction || onTry) && <button type="button" className={styles.try} onClick={onAction || onTry}>{actionLabel || 'Try it'}<ChevronRight size={24} aria-hidden="true" /></button>}
         </div>
         {!supported && <p className={styles.hint}>Read-aloud is unavailable here. The guide text and examples still work.</p>}
