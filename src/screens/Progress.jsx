@@ -13,7 +13,7 @@ export default function Progress() {
 
   const rows = [
     { name: 'Completed The Mirror', icon: ScanFace, done: !!mirrorResult },
-    { name: 'Completed FINISHER Mission', icon: Flag, done: missionComplete },
+    { name: 'FINISHER checklist marked (self-reported)', icon: Flag, done: missionComplete },
     { name: 'Submitted Reflection', icon: Send, done: reflectionSubmitted },
   ];
 
@@ -30,19 +30,19 @@ export default function Progress() {
         {done ? (
           <>
             <div className={styles.completeTag}>
-              <CheckCircle2 size={16} /> Mirror + Mission Complete
+              <CheckCircle2 size={16} /> Mirror + Practice Check-In Saved
             </div>
             <h1 className={styles.title}>
-              You <em>Finished.</em>
+              You <em>Reflected.</em>
             </h1>
             <p className={styles.sub}>
-              You completed the Mirror, finished the mission, and submitted your reflection. That work is saved on this tablet.
+              You saved your check-in, marked your practice checklist, and submitted a reflection. This is not verification of a real-world business activity.
             </p>
           </>
         ) : (
           <>
             <h1 className={styles.title}>Keep Going.</h1>
-            <p className={styles.sub}>Finish the remaining real steps in your Process.</p>
+            <p className={styles.sub}>Finish the remaining app check-in steps in your Process.</p>
           </>
         )}
       </div>
