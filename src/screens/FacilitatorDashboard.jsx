@@ -33,11 +33,11 @@ export default function FacilitatorDashboard() {
         </div>
         <div className={styles.stat}>
           <div className={styles.statNum}>{finishers}</div>
-          <div className={styles.statLabel}>Finishers</div>
+          <div className={styles.statLabel}>Reflections saved</div>
         </div>
         <div className={styles.stat}>
           <div className={styles.statNum}>{missionsDone}</div>
-          <div className={styles.statLabel}>Missions marked done</div>
+          <div className={styles.statLabel}>Practice checklists marked</div>
         </div>
       </div>
 
@@ -63,16 +63,16 @@ export default function FacilitatorDashboard() {
 
               <div className={styles.grid}>
                 <div className={styles.cell}>
-                  <div className={styles.cLabel}>Anchor</div>
-                  <div className={styles.cVal}>{y.anchor}</div>
+                  <div className={styles.cLabel}>Reflection</div>
+                  <div className={styles.cVal}>{y.isActive ? y.checkIn : 'Sample record'}</div>
                 </div>
                 <div className={styles.cell}>
-                  <div className={styles.cLabel}>Edge</div>
-                  <div className={styles.cVal}>{y.edge}</div>
+                  <div className={styles.cLabel}>Chosen Step</div>
+                  <div className={styles.cVal}>{y.isActive ? y.nextStep : 'Sample record'}</div>
                 </div>
                 <div className={styles.cell}>
-                  <div className={styles.cLabel}>Style</div>
-                  <div className={styles.cVal}>{y.style}</div>
+                  <div className={styles.cLabel}>Evidence</div>
+                  <div className={styles.cVal}>{y.isActive ? y.evidence : 'Sample only'}</div>
                 </div>
               </div>
 
