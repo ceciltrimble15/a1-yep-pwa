@@ -24,6 +24,7 @@ export default function AudioGuide({ targetRef, label = 'Listen To This Screen' 
   const [status, setStatus] = useState('idle');
   const [rateIndex, setRateIndex] = useState(1);
   const [lastText, setLastText] = useState('');
+  const [audioError, setAudioError] = useState('');
 
   useEffect(() => () => {
     if (supported) window.speechSynthesis.cancel();
@@ -33,6 +34,7 @@ export default function AudioGuide({ targetRef, label = 'Listen To This Screen' 
     if (!supported) return;
     const readable = text || getReadableText(targetRef?.current);
     if (!readable) return;
+    setAudioError('');
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(readable);
     utterance.rate = RATES[rateIndex];
@@ -40,7 +42,12 @@ export default function AudioGuide({ targetRef, label = 'Listen To This Screen' 
     utterance.volume = 1;
     utterance.onstart = () => setStatus('speaking');
     utterance.onend = () => setStatus('idle');
-    utterance.onerror = () => setStatus('idle');
+    utterance.onerror = (event) => {
+      setStatus('idle');
+      if (!['canceled', 'interrupted'].includes(event.error)) {
+        setAudioError('Audio could not play. Read the screen or ask a facilitator to read with you.');
+      }
+    };
     setLastText(readable);
     window.speechSynthesis.speak(utterance);
   }
@@ -95,6 +102,7 @@ export default function AudioGuide({ targetRef, label = 'Listen To This Screen' 
         <button type="button" className={styles.control} onClick={stop} disabled={!isActive} aria-label="Stop audio"><Square size={14} fill="currentColor" /> <span>Stop</span></button>
         <button type="button" className={styles.rate} onClick={changeRate} aria-label={`Audio speed ${RATES[rateIndex]} times. Tap to change.`}><Gauge size={16} /> {RATES[rateIndex]}x</button>
       </div>
+      {audioError && <p className={styles.error} role="status">{audioError}</p>}
     </div>
   );
 }

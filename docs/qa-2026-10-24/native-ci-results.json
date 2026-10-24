@@ -1,0 +1,55 @@
+{
+  "runtimeCommit": "00fb19c6f41562abbf027ccb64765dff4d307d9f",
+  "runUrl": "https://github.com/ceciltrimble15/a1-yep-pwa/actions/runs/40119306491",
+  "engine": "Native Playwright Chromium 151.0.7922.34",
+  "conclusion": "success",
+  "physicalTablets": "NOT TESTED",
+  "hostedInteractions": "BLOCKED BY PREVIEW SIGN-IN",
+  "audiblePlayback": "NOT VERIFIED",
+  "jobs": [
+    {
+      "name": "build (tablet-landscape)",
+      "conclusion": "success",
+      "url": "https://github.com/ceciltrimble15/a1-yep-pwa/actions/runs/40119306491/job/120947157930",
+      "flowLogLines": [
+        "2026-10-24T18:08:56.5974540Z PASS tablet-landscape/explorer",
+        "2026-10-24T18:08:59.8805779Z PASS tablet-landscape/builder",
+        "2026-10-24T18:09:03.4805845Z PASS tablet-landscape/leader",
+        "2026-10-24T18:09:07.6330448Z PASS tablet-landscape/yaep"
+      ]
+    },
+    {
+      "name": "build (desktop)",
+      "conclusion": "success",
+      "url": "https://github.com/ceciltrimble15/a1-yep-pwa/actions/runs/40119306491/job/120947158131",
+      "flowLogLines": [
+        "2026-10-24T18:08:58.2872025Z PASS desktop/explorer",
+        "2026-10-24T18:09:02.4772039Z PASS desktop/builder",
+        "2026-10-24T18:09:06.4541200Z PASS desktop/leader",
+        "2026-10-24T18:09:10.2708932Z PASS desktop/yaep"
+      ]
+    },
+    {
+      "name": "build (tablet-portrait)",
+      "conclusion": "success",
+      "url": "https://github.com/ceciltrimble15/a1-yep-pwa/actions/runs/40119306491/job/120947158140",
+      "flowLogLines": [
+        "2026-10-24T18:08:56.2184937Z PASS tablet-portrait/explorer",
+        "2026-10-24T18:08:59.7549410Z PASS tablet-portrait/builder",
+        "2026-10-24T18:09:03.8572201Z PASS tablet-portrait/leader",
+        "2026-10-24T18:09:07.9382670Z PASS tablet-portrait/yaep"
+      ]
+    },
+    {
+      "name": "build (phone)",
+      "conclusion": "success",
+      "url": "https://github.com/ceciltrimble15/a1-yep-pwa/actions/runs/40119306491/job/120947158157",
+      "flowLogLines": [
+        "2026-10-24T18:08:50.8800749Z PASS phone/explorer",
+        "2026-10-24T18:08:53.7776682Z PASS phone/builder",
+        "2026-10-24T18:08:56.8290067Z PASS phone/leader",
+        "2026-10-24T18:08:59.8788862Z PASS phone/yaep"
+      ]
+    }
+  ]
+}

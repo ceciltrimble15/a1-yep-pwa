@@ -38,7 +38,9 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  min-height: 36px;
+  min-height: 44px;
+  min-width: 44px;
+  justify-content: center;
   padding: 6px 11px;
   border: 1px solid rgba(212,160,23,.42);
   border-radius: 999px;

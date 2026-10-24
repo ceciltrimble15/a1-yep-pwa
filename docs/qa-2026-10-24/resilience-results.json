@@ -1,0 +1,356 @@
+[
+  {
+    "check": "home card copy and actions contrast against gradient endpoints at four viewports",
+    "status": "PASS",
+    "minimumRatio": 4.78,
+    "measurements": [
+      {
+        "viewport": "1366x900",
+        "card": "daily",
+        "ratio": 5.88
+      },
+      {
+        "viewport": "1366x900",
+        "card": "daily",
+        "ratio": 7.99
+      },
+      {
+        "viewport": "1366x900",
+        "card": "daily",
+        "ratio": 5.88
+      },
+      {
+        "viewport": "1366x900",
+        "card": "daily",
+        "ratio": 7.99
+      },
+      {
+        "viewport": "1366x900",
+        "card": "stem",
+        "ratio": 4.78
+      },
+      {
+        "viewport": "1366x900",
+        "card": "stem",
+        "ratio": 7.71
+      },
+      {
+        "viewport": "1366x900",
+        "card": "stem",
+        "ratio": 4.78
+      },
+      {
+        "viewport": "1366x900",
+        "card": "stem",
+        "ratio": 7.71
+      },
+      {
+        "viewport": "1366x900",
+        "card": "mirror",
+        "ratio": 4.89
+      },
+      {
+        "viewport": "1366x900",
+        "card": "mirror",
+        "ratio": 7.37
+      },
+      {
+        "viewport": "1366x900",
+        "card": "mirror",
+        "ratio": 4.89
+      },
+      {
+        "viewport": "1366x900",
+        "card": "mirror",
+        "ratio": 7.37
+      },
+      {
+        "viewport": "1366x900",
+        "card": "finisher",
+        "ratio": 5.77
+      },
+      {
+        "viewport": "1366x900",
+        "card": "finisher",
+        "ratio": 7.33
+      },
+      {
+        "viewport": "1366x900",
+        "card": "finisher",
+        "ratio": 5.77
+      },
+      {
+        "viewport": "1366x900",
+        "card": "finisher",
+        "ratio": 7.33
+      },
+      {
+        "viewport": "390x844",
+        "card": "daily",
+        "ratio": 5.88
+      },
+      {
+        "viewport": "390x844",
+        "card": "daily",
+        "ratio": 7.99
+      },
+      {
+        "viewport": "390x844",
+        "card": "daily",
+        "ratio": 5.88
+      },
+      {
+        "viewport": "390x844",
+        "card": "daily",
+        "ratio": 7.99
+      },
+      {
+        "viewport": "390x844",
+        "card": "stem",
+        "ratio": 4.78
+      },
+      {
+        "viewport": "390x844",
+        "card": "stem",
+        "ratio": 7.71
+      },
+      {
+        "viewport": "390x844",
+        "card": "stem",
+        "ratio": 4.78
+      },
+      {
+        "viewport": "390x844",
+        "card": "stem",
+        "ratio": 7.71
+      },
+      {
+        "viewport": "390x844",
+        "card": "mirror",
+        "ratio": 4.89
+      },
+      {
+        "viewport": "390x844",
+        "card": "mirror",
+        "ratio": 7.37
+      },
+      {
+        "viewport": "390x844",
+        "card": "mirror",
+        "ratio": 4.89
+      },
+      {
+        "viewport": "390x844",
+        "card": "mirror",
+        "ratio": 7.37
+      },
+      {
+        "viewport": "390x844",
+        "card": "finisher",
+        "ratio": 5.77
+      },
+      {
+        "viewport": "390x844",
+        "card": "finisher",
+        "ratio": 7.33
+      },
+      {
+        "viewport": "390x844",
+        "card": "finisher",
+        "ratio": 5.77
+      },
+      {
+        "viewport": "390x844",
+        "card": "finisher",
+        "ratio": 7.33
+      },
+      {
+        "viewport": "768x1024",
+        "card": "daily",
+        "ratio": 5.88
+      },
+      {
+        "viewport": "768x1024",
+        "card": "daily",
+        "ratio": 7.99
+      },
+      {
+        "viewport": "768x1024",
+        "card": "daily",
+        "ratio": 5.88
+      },
+      {
+        "viewport": "768x1024",
+        "card": "daily",
+        "ratio": 7.99
+      },
+      {
+        "viewport": "768x1024",
+        "card": "stem",
+        "ratio": 4.78
+      },
+      {
+        "viewport": "768x1024",
+        "card": "stem",
+        "ratio": 7.71
+      },
+      {
+        "viewport": "768x1024",
+        "card": "stem",
+        "ratio": 4.78
+      },
+      {
+        "viewport": "768x1024",
+        "card": "stem",
+        "ratio": 7.71
+      },
+      {
+        "viewport": "768x1024",
+        "card": "mirror",
+        "ratio": 4.89
+      },
+      {
+        "viewport": "768x1024",
+        "card": "mirror",
+        "ratio": 7.37
+      },
+      {
+        "viewport": "768x1024",
+        "card": "mirror",
+        "ratio": 4.89
+      },
+      {
+        "viewport": "768x1024",
+        "card": "mirror",
+        "ratio": 7.37
+      },
+      {
+        "viewport": "768x1024",
+        "card": "finisher",
+        "ratio": 5.77
+      },
+      {
+        "viewport": "768x1024",
+        "card": "finisher",
+        "ratio": 7.33
+      },
+      {
+        "viewport": "768x1024",
+        "card": "finisher",
+        "ratio": 5.77
+      },
+      {
+        "viewport": "768x1024",
+        "card": "finisher",
+        "ratio": 7.33
+      },
+      {
+        "viewport": "1024x768",
+        "card": "daily",
+        "ratio": 5.88
+      },
+      {
+        "viewport": "1024x768",
+        "card": "daily",
+        "ratio": 7.99
+      },
+      {
+        "viewport": "1024x768",
+        "card": "daily",
+        "ratio": 5.88
+      },
+      {
+        "viewport": "1024x768",
+        "card": "daily",
+        "ratio": 7.99
+      },
+      {
+        "viewport": "1024x768",
+        "card": "stem",
+        "ratio": 4.78
+      },
+      {
+        "viewport": "1024x768",
+        "card": "stem",
+        "ratio": 7.71
+      },
+      {
+        "viewport": "1024x768",
+        "card": "stem",
+        "ratio": 4.78
+      },
+      {
+        "viewport": "1024x768",
+        "card": "stem",
+        "ratio": 7.71
+      },
+      {
+        "viewport": "1024x768",
+        "card": "mirror",
+        "ratio": 4.89
+      },
+      {
+        "viewport": "1024x768",
+        "card": "mirror",
+        "ratio": 7.37
+      },
+      {
+        "viewport": "1024x768",
+        "card": "mirror",
+        "ratio": 4.89
+      },
+      {
+        "viewport": "1024x768",
+        "card": "mirror",
+        "ratio": 7.37
+      },
+      {
+        "viewport": "1024x768",
+        "card": "finisher",
+        "ratio": 5.77
+      },
+      {
+        "viewport": "1024x768",
+        "card": "finisher",
+        "ratio": 7.33
+      },
+      {
+        "viewport": "1024x768",
+        "card": "finisher",
+        "ratio": 5.77
+      },
+      {
+        "viewport": "1024x768",
+        "card": "finisher",
+        "ratio": 7.33
+      }
+    ]
+  },
+  {
+    "check": "real browser speech API",
+    "observed": "A/1 AUDIO GUIDE\nHear the Process\nLISTEN TO THIS SCREEN\nPause\nReplay\nStop\n1x\n\nAudio could not play. Read the screen or ask a facilitator to read with you.",
+    "audiblePlayback": "NOT VERIFIED"
+  },
+  {
+    "check": "audio play/pause/resume/replay/stop/speed, lesson and vocabulary controls, error fallback, cancellation on navigation",
+    "status": "PASS",
+    "method": "browser with deterministic speech API double; not audible playback"
+  },
+  {
+    "check": "unsupported speech fallback",
+    "status": "PASS"
+  },
+  {
+    "check": "storage quota/blocked write warning",
+    "status": "PASS"
+  },
+  {
+    "check": "chosen FINISHER action and checklist survive refresh before Mirror",
+    "status": "PASS"
+  },
+  {
+    "check": "warm cached offline reload and home navigation",
+    "status": "PASS",
+    "limitation": "first visit requires a connection; physical offline/audio acceptance pending"
+  }
+]

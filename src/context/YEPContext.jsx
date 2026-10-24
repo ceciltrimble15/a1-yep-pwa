@@ -38,12 +38,15 @@ function resolveInitialMode(savedMode) {
 
 export function YEPProvider({ children }) {
   const [saved] = useState(loadSession);
+  const [storageError, setStorageError] = useState(false);
   // Earlier POC records used unvalidated style labels and assigned adult missions.
   // Migrate only those Mirror/mission fields; preserve Daily Quest and S.T.E.M.Sin work.
   const savedMode = resolveInitialMode(saved.mode);
   const compatibleMirror = saved.mirrorResult?.kind === 'exposure-reflection-v1' && saved.mirrorResult?.mode === savedMode;
   const validMissionIds = getExposureMissions(savedMode).map((item) => item.id);
-  const compatibleMission = compatibleMirror && validMissionIds.includes(saved.currentMission?.id);
+  // Learners can choose a current, age-appropriate action before taking a Mirror.
+  // Restore that action independently; retired or cross-pathway missions stay excluded.
+  const compatibleMission = saved.currentMission?.mode === savedMode && validMissionIds.includes(saved.currentMission?.id);
   const [screen, setScreen] = useState(saved.screen ?? 'track');
   const [track, setTrack] = useState(saved.track ?? null);
   const [youthName, setYouthName] = useState(saved.youthName ?? '');
@@ -72,8 +75,9 @@ export function YEPProvider({ children }) {
         screen, track, youthName, powerName, directionProfile, exposureLog, mirrorScores, mirrorResult, currentMission,
         missionStepsDone, missionComplete, reflection, reflectionSubmitted, finisherLetter, mode, pilotProgress, laneProgress,
       }));
+      setStorageError(false);
     } catch {
-      /* storage blocked/full */
+      setStorageError(true);
     }
   }, [screen, track, youthName, powerName, directionProfile, exposureLog, mirrorScores, mirrorResult, currentMission,
     missionStepsDone, missionComplete, reflection, reflectionSubmitted, finisherLetter, mode, pilotProgress, laneProgress]);
@@ -269,7 +273,10 @@ export function YEPProvider({ children }) {
     setMode, resetSession,
   };
 
-  return <YEPContext.Provider value={value}>{children}</YEPContext.Provider>;
+  return <YEPContext.Provider value={value}>
+    {storageError && <p className="yep-storage-warning" role="alert">This browser could not save your latest work. Keep this page open and ask a facilitator for help. Refreshing or closing it may lose your changes, even if a lesson says “saved.”</p>}
+    {children}
+  </YEPContext.Provider>;
 }
 
 export function useYEP() {

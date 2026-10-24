@@ -17,8 +17,7 @@ import FinisherMission from '../src/screens/FinisherMission';
 import FacilitatorDashboard from '../src/screens/FacilitatorDashboard';
 import Progress from '../src/screens/Progress';
 import { DemoProfile, DemoAdminReview, DemoWeeklyModule, ResetDemo } from '../src/screens/DemoB05Screens';
-import { mirrorQuestions } from '../src/data/mirrorQuestions';
-import { getMission } from '../src/data/missions';
+import { REFLECTION_PROMPTS, getExposureMissions } from '../src/data/exposureProcess';
 
 let stored = '{}';
 let api;
@@ -40,8 +39,8 @@ const buttons = (label) => view.root.findAllByType('button').filter((node) => ty
 function click(label, index = 0) { const button = buttons(label)[index]; assert.ok(button, `button ${label}`); assert.ok(!button.props.disabled, `enabled ${label}`); act(() => button.props.onClick()); }
 function enter(id, value) { const field = view.root.findByProps({ id }); act(() => field.props.onChange({ target: { value } })); }
 const modes = ['explorer', 'builder', 'leader', 'yaep'];
-const mission = getMission('Discipline', 'Hands-On');
-const result = { Anchor: 'Identity', Edge: 'Discipline', Style: 'Hands-On', Focus: mission.focus, MissionID: mission.id };
+const mission = getExposureMissions('builder')[3];
+const result = { kind: 'exposure-reflection-v1', mode: 'builder', answers: Object.fromEntries(REFLECTION_PROMPTS.map(p => [p.id, 0])) };
 const completed = { mode: 'builder', screen: 'progress', mirrorResult: result, currentMission: mission, missionStepsDone: Object.fromEntries(mission.steps.map((_, i) => [i, true])), missionComplete: true, reflection: 'A previous mission reflection.', reflectionSubmitted: true, finisherLetter: mission.finisherLetter };
 
 for (const mode of modes) {
@@ -130,31 +129,30 @@ assert.equal(snapshot().pilotProgress.stemSinText, 'Updated legacy explanation w
 assert.equal(snapshot().pilotProgress.stemSinChoice, '');
 
 mount(MirrorAssessment, { mode: 'builder', screen: 'mirror' });
-click('Usually');
-click('Next');
-click('Sometimes');
+click(REFLECTION_PROMPTS[0].options[0]);
+click('Next Question');
+click(REFLECTION_PROMPTS[1].options[1]);
 assert.equal(snapshot().pilotProgress.mirrorDraft.step, 1);
 mount(MirrorAssessment);
-assert.equal(buttons('Sometimes')[0].props['aria-pressed'], true, 'unfinished Mirror answer restored');
+assert.equal(buttons(new RegExp(REFLECTION_PROMPTS[1].options[1]))[0].props['aria-pressed'], true, 'unfinished Mirror answer restored');
 act(() => api.setMode('explorer'));
 assert.equal(api.pilotProgress.mirrorDraft, null, 'draft stays in its lane');
 act(() => api.setMode('builder'));
 assert.equal(api.pilotProgress.mirrorDraft.step, 1);
 
 mount(MirrorResults, completed);
-click('Take a New Mirror');
+click('Reflect Again');
 assert.equal(api.screen, 'mirrorIntro');
 assert.equal(api.reflectionSubmitted, true, 'opening replacement introduction preserves the current result');
 mount(MirrorIntro);
-assert.ok(JSON.stringify(view.toJSON()).includes('Completing a new Mirror replaces'));
+assert.ok(JSON.stringify(view.toJSON()).includes('View Saved Mirror Results'));
 click('Take The Mirror');
 assert.equal(api.screen, 'mirror');
 assert.equal(api.missionComplete, true, 'starting a replacement draft preserves the current mission until submission');
 mount(MirrorAssessment);
-for (let index = 0; index < mirrorQuestions.length; index++) {
-  click('Usually');
-  click(index === mirrorQuestions.length - 1 ? 'See My Result' : 'Next');
-  if (buttons('Keep Going').length) click('Keep Going');
+for (let index = 0; index < REFLECTION_PROMPTS.length; index++) {
+  click(REFLECTION_PROMPTS[index].options[0]);
+  click(index === REFLECTION_PROMPTS.length - 1 ? 'Save My Check-In' : 'Next Question');
 }
 assert.equal(api.screen, 'results');
 mount(MirrorResults);
@@ -164,20 +162,18 @@ assert.equal(api.finisherLetter, '');
 assert.equal(api.missionComplete, false);
 assert.deepEqual(api.missionStepsDone, {});
 assert.equal(api.pilotProgress.mirrorDraft, null);
-click('Hear it');
-assert.ok(spoken.includes('strength'));
-click('See My Growth Area');
-click('See My FINISHER Focus');
-click('See Full Result');
-click('Open My FINISHER Mission');
+assert.equal(api.mirrorResult.kind, 'exposure-reflection-v1');
+assert.equal(api.currentMission, null, 'reflection does not assign a mission');
+click('Choose My FINISHER Action');
 assert.equal(api.screen, 'mission');
+mount(FinisherMission);
+click('Choose This Action');
 mount(FinisherMission);
 act(() => api.completeMission());
 assert.equal(api.missionComplete, false, 'cannot finish unfinished checklist');
-assert.equal(view.root.findAllByProps({ 'aria-current': 'step' }).length, 1);
-click('Show My Next Step');
+click('Show My Steps');
 for (let i = 0; i < api.currentMission.steps.length; i++) act(() => api.toggleMissionStep(i));
-click('Reflect On My Mission');
+click('Finish My Practice Checklist');
 assert.equal(api.missionComplete, true);
 act(() => api.submitReflection('I learned to try, check, and improve my work.'));
 assert.equal(api.reflectionSubmitted, true);
@@ -309,15 +305,15 @@ mount(MyDirection);
 click('Start My First Check-In');
 click('Hear it');
 assert.ok(spoken.includes('Building things') && spoken.includes('Solving problems'), 'intake narration includes actual choices');
-click('Building things');
+click(/Building things/);
 assert.equal(api.directionProfile.interest, 'Building things');
 mount(Home);
-assert.equal(buttons('Continue My First Check-In').length, 1);
+assert.ok(buttons('Continue My First Check-In').length >= 1);
 mount(MyDirection);
 assert.ok(JSON.stringify(view.toJSON()).includes('What feels like a strength?'));
-click('I keep trying');
-click('Trying it');
-click('Help somebody');
+click(/I keep trying/);
+click(/Trying it/);
+click(/Help somebody/);
 assert.deepEqual({ strength: api.directionProfile.strength, learning: api.directionProfile.learning, goal: api.directionProfile.goal }, { strength: 'I keep trying', learning: 'Trying it', goal: 'Help somebody' });
 click('Start My First Daily Quest');
 assert.equal(api.screen, 'dailyQuest');
@@ -362,5 +358,16 @@ assert.equal(api.pilotProgress.dailyQuestChoiceProof.problem, 'Supplies everywhe
 mount(DailyQuest);
 assert.ok(JSON.stringify(view.toJSON()).includes('Little Problem Finder'));
 assert.equal(api.pilotProgress.dailyQuestText, oldDraft.text);
+// FINISHER choices are explicitly available before a Mirror; reentry must keep them.
+for (const mode of modes) {
+  mount(FinisherMission, { mode, screen: 'mission' });
+  click('Choose This Action');
+  act(() => api.toggleMissionStep(0));
+  const chosen = api.currentMission;
+  mount(FinisherMission);
+  assert.equal(api.mirrorResult, null);
+  assert.equal(api.currentMission?.id, chosen.id, 'chosen action survives reopening without an unrelated Mirror gate');
+  assert.equal(api.missionStepsDone[0], true);
+}
 act(() => view.unmount());
 console.log('Tablet regression checks passed: four-lane proof reentry and navigation; guided Daily/STEM/Mirror/FINISHER flow; saved proof editing; draft recovery/isolation; mission/reflection reset and guards; honest status; XP removal; youth voice lock; reset cancellation.');

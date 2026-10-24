@@ -65,6 +65,17 @@ h1, h2, h3, h4 {
 
 p { margin: 0; line-height: 1.55; }
 
+.yep-storage-warning {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 16px 20px;
+  background: #fff0ba;
+  color: #241b06;
+  font-size: 17px;
+  font-weight: 750;
+}
+
 button {
   font-family: var(--font-display);
   cursor: pointer;

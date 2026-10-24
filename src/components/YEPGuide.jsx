@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Volume2, ChevronRight, Eye, Square } from 'lucide-react';
 import { useYEP } from '../context/YEPContext';
 import { MODES } from '../data/modes';
@@ -51,6 +51,16 @@ export default function YEPGuide({ prompt, step, title = 'One step at a time', e
   const [audioError, setAudioError] = useState('');
   const [showExample, setShowExample] = useState(false);
   const [speaking, setSpeaking] = useState(false);
+  const headingRef = useRef(null);
+  const previousStep = useRef(step);
+
+  useEffect(() => {
+    if (previousStep.current !== step) {
+      headingRef.current?.focus({ preventScroll: true });
+      headingRef.current?.scrollIntoView({ block: 'start', behavior: 'instant' });
+      previousStep.current = step;
+    }
+  }, [step]);
 
   useEffect(() => {
     setAudioError('');
@@ -91,7 +101,7 @@ export default function YEPGuide({ prompt, step, title = 'One step at a time', e
         <div><span>YOUR YEP GUIDE</span><strong>{program.tier}</strong><small>Step {step}</small></div>
       </div>
       <div className={styles.teaching}>
-        <h2>{title}</h2>
+        <h2 ref={headingRef} tabIndex={-1} style={{ scrollMarginTop: 160 }}>{title}</h2>
         <p className={styles.prompt} aria-live="polite">{teacher ? teacher.speech : prompt}</p>
         {teacher && <div className={styles.teacherQuestion}><strong>YOUR TURN</strong><p>{teacher.question}</p></div>}
         <div className={styles.actions}>

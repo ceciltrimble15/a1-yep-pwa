@@ -1,3 +1,4 @@
+import { useLayoutEffect } from 'react';
 import { YEPProvider, useYEP } from './context/YEPContext';
 import TrackSelector from './screens/TrackSelector';
 import Home from './screens/Home';
@@ -55,6 +56,10 @@ const SCREENS = {
 
 function Router() {
   const { screen, mode } = useYEP();
+  useLayoutEffect(() => {
+    // Each screen starts at its introduction, even after a long lesson or intake.
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [screen, mode]);
   const Screen = SCREENS[screen] || TrackSelector;
   return <Screen key={`${screen}:${mode}`} />;
 }

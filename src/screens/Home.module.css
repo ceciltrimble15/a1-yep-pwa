@@ -37,10 +37,11 @@
 .laneCard { min-width:0; display:flex; flex-direction:column; align-items:stretch; padding:0; overflow:hidden; border-radius:23px; text-align:left; border:2px solid rgba(255,255,255,.8); color:#fff; box-shadow:0 10px 26px rgba(7,39,84,.17); transition:transform .18s ease, box-shadow .18s ease; }
 .laneCard:hover { transform:translateY(-4px); box-shadow:0 18px 34px rgba(7,39,84,.23); }
 .laneCard:focus-visible,.welcomeAction:focus-visible { outline:4px solid #ffbc38; outline-offset:3px; }
-.laneCard[data-kind="daily"] { background:linear-gradient(155deg,#ec980a,#ffba25); }
+.laneCard[data-kind="daily"] { background:linear-gradient(155deg,#ec980a,#ffba25); color:#102b61; }
+.laneCard[data-kind="daily"] .laneBottom { color:#102b61; }
 .laneCard[data-kind="stem"] { background:linear-gradient(155deg,#156ee5,#174aba); }
 .laneCard[data-kind="mirror"] { background:linear-gradient(155deg,#8753db,#6639b9); }
-.laneCard[data-kind="finisher"] { background:linear-gradient(155deg,#179e69,#087544); }
+.laneCard[data-kind="finisher"] { background:linear-gradient(155deg,#087544,#09633e); }
 .laneTop { display:flex; align-items:center; justify-content:space-between; padding:17px 17px 0; gap:9px; }
 .laneTop strong { font-size:10px; font-weight:900; letter-spacing:.05em; }
 .laneTitle { font-size:clamp(22px,2vw,30px); font-weight:950; line-height:1.1; padding:14px 16px 0; }

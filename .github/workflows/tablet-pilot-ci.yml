@@ -7,9 +7,11 @@ on:
       - weekend-tablet-readiness-2026-09-25
       - codex/poc-tablet-finish-2026-10-02
       - codex/tablet-reentry-guide-repair-2026-10-06
+      - codex/yep-browser-qa-2026-10-24
   pull_request:
     branches:
       - main
+      - codex/yep-visual-dashboard-2026-10-10
       - codex/poc-tablet-finish-2026-10-02
       - pilot-v05-lane-visuals-2026-09-14
       - weekend-tablet-readiness-2026-09-25
@@ -17,6 +19,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        viewport: [desktop, phone, tablet-portrait, tablet-landscape]
+    env:
+      YEP_TEST_VIEWS: ${{ matrix.viewport }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -41,3 +49,20 @@ jobs:
 
       - name: Verify build output
         run: test -f dist/index.html
+
+      - name: Install Chromium for browser acceptance checks
+        run: npx playwright install --with-deps chromium
+
+      - name: Exercise desktop and emulated touch pathways
+        run: npm run test:browser
+
+      - name: Check audio controls, storage failure and cached offline reentry
+        if: matrix.viewport == 'desktop'
+        run: npm run test:browser:resilience
+
+      - name: Upload browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: yep-browser-evidence-${{ matrix.viewport }}
+          path: qa-output/

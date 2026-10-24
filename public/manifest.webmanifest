@@ -11,13 +11,13 @@
   "icons": [
     {
       "src": "/a1-suppliers-logo.png",
-      "sizes": "308x303",
+      "sizes": "500x500",
       "type": "image/png",
       "purpose": "any"
     },
     {
       "src": "/a1-suppliers-logo.png",
-      "sizes": "308x303",
+      "sizes": "500x500",
       "type": "image/png",
       "purpose": "maskable"
     }
