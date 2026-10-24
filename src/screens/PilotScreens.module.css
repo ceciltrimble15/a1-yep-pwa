@@ -4411,7 +4411,7 @@ button.card:hover {
 @media (max-width: 760px) {
   .foundationQuestHotspots button {
     max-width: 170px;
-    min-height: 40px;
+    min-height: 44px;
     padding: 6px 9px 6px 6px;
   }
   .foundationQuestHotspots button span {
