@@ -12,7 +12,7 @@ const server = process.env.YEP_TEST_URL ? null : await preview({ preview: { host
 const url = process.env.YEP_TEST_URL || 'http://127.0.0.1:5182';
 const browser = await chromium.launch({
   ...(process.env.CHROMIUM_EXECUTABLE_PATH ? { executablePath: process.env.CHROMIUM_EXECUTABLE_PATH } : {}),
-  args: ['--disable-dev-shm-usage', '--use-gl=angle', '--use-angle=swiftshader'],
+  args: process.env.CHROMIUM_EXECUTABLE_PATH ? ['--disable-dev-shm-usage', '--use-gl=angle', '--use-angle=swiftshader'] : [],
 });
 const results = [];
 const allViews = [

@@ -42,7 +42,7 @@ Each case exercised age selection, illustrated choices, Show me, guided step ent
 
 Additional checks cover screen audio play/pause/resume/replay/stop/rate, lesson/vocabulary stop controls, navigation cancellation, unavailable speech, blocked storage, choosing an action before Mirror, and warm-cache offline reload/navigation. **Speech control wiring used a deterministic API double; audible playback was not verified.** The real browser speech engine returned failure, and its fallback was observed.
 
-Local `npm run test:rev3`, `npm run test:tablet`, `npm run build` and `git diff --check` pass. Browser evidence files record their own scope. The first GitHub Actions matrix passed desktop and portrait; phone/landscape failed while capturing full-page screenshots, after fonts loaded, rather than at a lesson assertion. Capture now disables animation and allows 30 seconds; the updated matrix must be checked before declaring CI green. Do not hide a failed or pending CI run behind the local results.
+Local `npm run test:rev3`, `npm run test:tablet`, `npm run build` and `git diff --check` pass. Browser evidence files record their own scope. The first GitHub Actions matrix passed desktop and portrait; phone/landscape failed while capturing full-page screenshots, after fonts loaded, rather than at a lesson assertion. Capture now disables animation and allows 30 seconds. The next run passed phone but hit tablet tap timeouts under Chromium 151; the runner now uses Playwright’s default graphics configuration rather than Lambda-specific software graphics flags. The updated matrix must be checked before declaring CI green. Do not hide a failed or pending CI run behind the local results.
 
 ## What remains uncertain
 

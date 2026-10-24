@@ -7,7 +7,7 @@ const out = process.env.YEP_QA_OUTPUT || 'qa-output';
 await mkdir(out, { recursive: true });
 const server = process.env.YEP_TEST_URL ? null : await preview({ preview: { host: '127.0.0.1', port: 5183, strictPort: true } });
 const url = process.env.YEP_TEST_URL || 'http://127.0.0.1:5183';
-const browser = await chromium.launch({ ...(process.env.CHROMIUM_EXECUTABLE_PATH ? { executablePath: process.env.CHROMIUM_EXECUTABLE_PATH } : {}), args: ['--disable-dev-shm-usage', '--use-gl=angle', '--use-angle=swiftshader'] });
+const browser = await chromium.launch({ ...(process.env.CHROMIUM_EXECUTABLE_PATH ? { executablePath: process.env.CHROMIUM_EXECUTABLE_PATH } : {}), args: process.env.CHROMIUM_EXECUTABLE_PATH ? ['--disable-dev-shm-usage', '--use-gl=angle', '--use-angle=swiftshader'] : [] });
 const results = [];
 async function open(context) {
   const page = await context.newPage(); page.setDefaultTimeout(8000);
