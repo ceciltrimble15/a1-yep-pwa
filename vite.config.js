@@ -19,8 +19,8 @@ export default defineConfig({
         background_color: '#0F2460',
         theme_color: '#0F2460',
         icons: [
-          { src: '/a1-suppliers-logo.png', sizes: '308x303', type: 'image/png', purpose: 'any' },
-          { src: '/a1-suppliers-logo.png', sizes: '308x303', type: 'image/png', purpose: 'maskable' },
+          { src: '/a1-suppliers-logo.png', sizes: '500x500', type: 'image/png', purpose: 'any' },
+          { src: '/a1-suppliers-logo.png', sizes: '500x500', type: 'image/png', purpose: 'maskable' },
         ],
       },
     }),

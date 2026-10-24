@@ -35,6 +35,7 @@ async function check(page, condition, message) {
   assert.ok(await page.evaluate(condition), message);
 }
 async function layout(page) {
+  await page.locator('img').evaluateAll(images => Promise.all(images.map(image => image.decode())));
   await page.waitForFunction(() => [...document.images].every(i => i.complete));
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'no page horizontal overflow');
   assert.equal(await page.locator('img').evaluateAll(images => images.filter(i => !i.complete || !i.naturalWidth).length), 0, 'image assets loaded');
@@ -97,14 +98,14 @@ async function exercise(view, mode) {
     await check(page, () => scrollY === 0, 'home reentry resets scroll');
     assert.equal(await page.locator('[aria-label="The four YEP learning lanes"] > button').count(), 4);
     await layout(page);
-    if (mode === 'explorer') await page.screenshot({ path: `${out}/${view.name}-home.png`, fullPage: true });
+    if (mode === 'explorer') await page.screenshot({ path: `${out}/${view.name}-home.png`, fullPage: true, animations: 'disabled', timeout: 30000 });
     await tap(page.getByRole('button', { name: 'Daily Quest', exact: true }));
     assert.deepEqual((await session(page)).pilotProgress.dailyQuestChoiceProof, proof);
     // Close and reopen a tab on the same origin, retaining device-local storage.
     await page.close(); page = await context.newPage(); observe(page); page.setDefaultTimeout(12000);
     await page.goto(url, { waitUntil: 'domcontentloaded' });
     assert.deepEqual((await session(page)).pilotProgress.dailyQuestChoiceProof, proof, 'saved proof survives tab reentry');
-    if (mode === 'explorer') await page.screenshot({ path: `${out}/${view.name}-saved-quest.png`, fullPage: true });
+    if (mode === 'explorer') await page.screenshot({ path: `${out}/${view.name}-saved-quest.png`, fullPage: true, animations: 'disabled', timeout: 30000 });
     await tap(page.getByRole('button', { name: 'S.T.E.M.Sin', exact: true }).first());
     if (mode === 'explorer') await tap(page.getByRole('button', { name: 'Try Sorting Tray', exact: true }));
     else await tap(page.locator('[aria-label="Choose a tool to test"] button').first());

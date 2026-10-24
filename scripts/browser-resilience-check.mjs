@@ -20,6 +20,31 @@ async function open(context) {
   return page;
 }
 try {
+  // Measure inherited card copy against both ends of each rendered gradient.
+  const luminance = rgb => rgb.map(v => v / 255).map(v => v <= .04045 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4).reduce((sum, v, i) => sum + v * [.2126, .7152, .0722][i], 0);
+  const rgb = color => color.match(/[\d.]+/g).slice(0, 3).map(Number);
+  const ratios = [];
+  for (const [width, height] of [[1366, 900], [390, 844], [768, 1024], [1024, 768]]) {
+    const c = await browser.newContext({ viewport: { width, height } });
+    const p = await open(c);
+    await p.getByRole('button', { name: 'Program Home', exact: true }).click();
+    await p.locator('img').evaluateAll(images => Promise.all(images.map(image => image.decode())));
+    const cards = await p.locator('[aria-label="The four YEP learning lanes"] > button').evaluateAll(cards => cards.map(card => ({
+      kind: card.dataset.kind, gradient: getComputedStyle(card).backgroundImage,
+      copy: getComputedStyle(card.querySelector('[class*="laneTagline"]')).color,
+      action: getComputedStyle(card.querySelector('[class*="laneBottom"]')).color,
+    })));
+    for (const card of cards) for (const color of [card.copy, card.action]) for (const stop of card.gradient.match(/rgb\([^)]+\)/g)) {
+      const [low, high] = [luminance(rgb(color)), luminance(rgb(stop))].sort((a, b) => a - b);
+      const ratio = (high + .05) / (low + .05);
+      assert.ok(ratio >= 4.5, `${card.kind} card copy contrast ${ratio.toFixed(2)} below 4.5`);
+      ratios.push({ viewport: `${width}x${height}`, card: card.kind, ratio: Number(ratio.toFixed(2)) });
+    }
+    await p.screenshot({ path: `${out}/contrast-${width}-home.png`, fullPage: true, animations: 'disabled', timeout: 30000 });
+    await c.close();
+  }
+  results.push({ check: 'home card copy and actions contrast against gradient endpoints at four viewports', status: 'PASS', minimumRatio: Math.min(...ratios.map(r => r.ratio)), measurements: ratios });
+
   // Real browser speech API: record visible failure/active state, never claim audible output.
   let context = await browser.newContext(); let page = await open(context);
   await page.getByRole('button', { name: 'Listen To This Screen', exact: true }).click();
@@ -101,7 +126,7 @@ try {
   assert.equal(await page.locator('[aria-label="The four YEP learning lanes"] > button').count(), 4);
   results.push({ check: 'warm cached offline reload and home navigation', status: 'PASS', limitation: 'first visit requires a connection; physical offline/audio acceptance pending' });
   await context.close();
-  console.log(JSON.stringify(results, null, 2));
+  console.log(JSON.stringify(results.map(({ measurements, ...summary }) => summary), null, 2));
 } finally {
   await writeFile(`${out}/resilience-results.json`, JSON.stringify(results, null, 2));
   await browser.close(); server?.httpServer.close();
