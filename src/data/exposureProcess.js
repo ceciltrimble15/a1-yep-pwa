@@ -50,6 +50,99 @@ const COMMON = {
   ],
 };
 
+const MIRROR_LEARNING = {
+  explorer: {
+    title: 'Look back. Notice. Choose.',
+    speech: 'Your Mirror is not a grade. It helps you look back at what caught your attention and choose one safe thing to try next.',
+    question: 'What is one thing you noticed about yourself or the problem?',
+    transfer: 'Can you notice the same kind of need somewhere else with your facilitator?',
+  },
+  builder: {
+    title: 'Turn reflection into a better next move.',
+    speech: 'Use your Mirror to connect what you noticed, what you tried, and what you want to explore next. Reflection helps you improve the next version.',
+    question: 'What would you keep, change, or test next?',
+    transfer: 'Where else could the same problem-solving idea help?',
+  },
+  leader: {
+    title: 'Use evidence, not guesses.',
+    speech: 'Your Mirror helps you separate what actually happened from what you expected. That is how operators learn, adjust, and make stronger decisions.',
+    question: 'What observation should change your next decision?',
+    transfer: 'How would this lesson change your approach in a different project or customer problem?',
+  },
+  yaep: {
+    title: 'Convert experience into operating judgment.',
+    speech: 'Review what you observed, what remains uncertain, and what evidence you need next. Reflection should improve your next decision, not just describe the last one.',
+    question: 'What assumption changed, and what evidence do you need before the next move?',
+    transfer: 'How can you apply this lesson to another workflow, customer, or opportunity?',
+  },
+};
+
+const FINISHER_LEARNING = {
+  Focus: {
+    skill: 'Focus',
+    meaning: 'Choose what matters before you move.',
+    check: 'Can you clearly explain the need, goal, or decision you are working on?',
+  },
+  Identity: {
+    skill: 'Identity',
+    meaning: 'Know what you stand for and how you want to show up.',
+    check: 'Does your action match the kind of person or leader you want to become?',
+  },
+  Network: {
+    skill: 'Network',
+    meaning: 'Learn through trusted people, mentors, and relationships.',
+    check: 'Who can help you learn without taking over the work?',
+  },
+  Innovation: {
+    skill: 'Innovation',
+    meaning: 'Create, test, and improve a useful idea.',
+    check: 'What changed between your first idea and your better version?',
+  },
+  Strategy: {
+    skill: 'Strategy',
+    meaning: 'Choose a path and think ahead before using time or resources.',
+    check: 'Why is this next move better than the other options you considered?',
+  },
+  Hustle: {
+    skill: 'Hustle',
+    meaning: 'Bring consistent effort to the work that matters.',
+    check: 'What action can you repeat without confusing activity with progress?',
+  },
+  Execution: {
+    skill: 'Execution',
+    meaning: 'Turn the plan into a real, completed step.',
+    check: 'What did you actually complete, not just plan or discuss?',
+  },
+  Resilience: {
+    skill: 'Resilience',
+    meaning: 'Learn from setbacks and keep moving with a better approach.',
+    check: 'What will you change after something did not work as expected?',
+  },
+};
+
+const MISSION_STAGE_COPY = {
+  explorer: {
+    speech: 'Choose one safe mission. Do one step at a time with your facilitator. Mark a step only after you practiced it or really did it.',
+    question: 'What are you trying to learn by doing this mission?',
+    transfer: 'After you finish, name one other place you could use the same skill.',
+  },
+  builder: {
+    speech: 'Choose a mission that connects to what you noticed. Plan it, try it safely, then explain what happened and what you would improve.',
+    question: 'What would count as a real attempt for this mission?',
+    transfer: 'After you finish, identify one new situation where the same skill could help.',
+  },
+  leader: {
+    speech: 'Choose a mission that creates useful evidence. Separate planning from action, record what really happened, and use the result to choose your next move.',
+    question: 'What evidence will tell you whether your move was useful?',
+    transfer: 'After you finish, explain how the lesson changes your next project or business decision.',
+  },
+  yaep: {
+    speech: 'Choose an authorized mission with a clear objective, a proportionate test, and honest evidence. Completion means the step happened, not that the outcome was successful.',
+    question: 'What result, observation, or constraint will inform your next decision?',
+    transfer: 'After you finish, translate the lesson into a repeatable operating principle.',
+  },
+};
+
 export function getExposureMissions(mode) {
   return (COMMON[mode] || COMMON.builder).map((mission) => ({ ...mission, mode, requiresFacilitator: mode !== 'yaep' }));
 }
@@ -57,7 +150,39 @@ export function getExposureMissions(mode) {
 export function getReflectionSummary(mirrorResult) {
   if (mirrorResult?.kind !== 'exposure-reflection-v1') return null;
   return REFLECTION_PROMPTS.map((prompt) => ({
+    id: prompt.id,
     label: prompt.heading,
     answer: prompt.options[mirrorResult.answers?.[prompt.id]] || 'Not selected',
   }));
+}
+
+export function getReflectionLearning(mode, mirrorResult) {
+  const summary = getReflectionSummary(mirrorResult);
+  if (!summary) return null;
+  const copy = MIRROR_LEARNING[mode] || MIRROR_LEARNING.builder;
+  const answer = Object.fromEntries(summary.map((item) => [item.id, item.answer]));
+  return {
+    ...copy,
+    noticed: answer.noticed,
+    experienced: answer.experienced,
+    curious: answer.curious,
+    support: answer.support,
+    bridge: `You noticed: ${answer.noticed}. You explored: ${answer.experienced}. Next, you want to explore: ${answer.curious}.`,
+  };
+}
+
+export function getMissionLearning(mission, mode) {
+  if (!mission) return null;
+  const stage = MISSION_STAGE_COPY[mode] || MISSION_STAGE_COPY.builder;
+  const skill = FINISHER_LEARNING[mission.finisherLetter] || {
+    skill: mission.finisherLetter || mission.focus,
+    meaning: 'Practice one useful skill through a real or supervised action.',
+    check: 'What did you actually do, and what did you learn from it?',
+  };
+  return {
+    ...stage,
+    skill,
+    focus: mission.focus,
+    missionTitle: mission.title,
+  };
 }
