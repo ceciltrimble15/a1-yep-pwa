@@ -75,7 +75,8 @@ export default function FinisherMission() {
       <YEPGuide
         title="Learn it by doing it"
         prompt={learning.speech}
-        narration={allDone ? learning.skill.check : \`Next step: \${m.steps[next]}\`}
+        narration={allDone ? learning.skill.check : `Next step: ${m.steps[next]}`}
+        question={learning.question}
         example={learning.transfer}
         actionLabel={allDone ? 'Go to Reflection' : 'Show My Next Step'}
         onAction={() => allDone ? completeMission() : document.getElementById('exposure-mission-steps')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
