@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
-import { Volume2, ChevronRight, Eye, Square } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { ChevronRight, Eye, Headphones, MessageCircleQuestion, RotateCcw, Square, Volume2 } from 'lucide-react';
 import { useYEP } from '../context/YEPContext';
 import { MODES } from '../data/modes';
+import { buildGuideAudioClips, chooseGuideVoice, chunkSpeech, getAudioProfile } from '../lib/yepAudio';
 import PictureExample, { LearningPicture } from './LearningPicture';
 import styles from './YEPGuide.module.css';
 
@@ -44,15 +45,42 @@ function GuideAvatar() {
   );
 }
 
-export default function YEPGuide({ prompt, step, title = 'One step at a time', example, pictureKind, beforeOnly = false, narration = '', actionLabel, onAction, onTry, bright = false, teacher = null }) {
+export default function YEPGuide({
+  prompt,
+  step,
+  title = 'One step at a time',
+  example,
+  pictureKind,
+  beforeOnly = false,
+  narration = '',
+  actionLabel,
+  onAction,
+  onTry,
+  bright = false,
+  teacher = null,
+  question = '',
+}) {
   const { mode } = useYEP();
   const program = MODES[mode] || MODES.builder;
   const supported = typeof window !== 'undefined' && 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
   const [audioError, setAudioError] = useState('');
   const [showExample, setShowExample] = useState(false);
   const [speaking, setSpeaking] = useState(false);
+  const [activeClip, setActiveClip] = useState('');
+  const [lastClip, setLastClip] = useState('teach');
+  const [voice, setVoice] = useState(null);
   const headingRef = useRef(null);
   const previousStep = useRef(step);
+  const playbackToken = useRef(0);
+
+  const audioClips = useMemo(() => buildGuideAudioClips({
+    teacher,
+    prompt,
+    narration,
+    question,
+    example,
+    includeExample: showExample,
+  }), [teacher, prompt, narration, question, example, showExample]);
 
   useEffect(() => {
     if (previousStep.current !== step) {
@@ -63,11 +91,26 @@ export default function YEPGuide({ prompt, step, title = 'One step at a time', e
   }, [step]);
 
   useEffect(() => {
+    if (!supported) return undefined;
+    const loadVoice = () => setVoice(chooseGuideVoice(window.speechSynthesis.getVoices()));
+    loadVoice();
+    window.speechSynthesis.addEventListener?.('voiceschanged', loadVoice);
+    return () => window.speechSynthesis.removeEventListener?.('voiceschanged', loadVoice);
+  }, [supported]);
+
+  useEffect(() => {
     setAudioError('');
     setShowExample(false);
     setSpeaking(false);
-    return () => { if (supported) window.speechSynthesis.cancel(); };
-  }, [prompt, supported]);
+    setActiveClip('');
+    setLastClip('teach');
+    playbackToken.current += 1;
+    if (supported) window.speechSynthesis.cancel();
+    return () => {
+      playbackToken.current += 1;
+      if (supported) window.speechSynthesis.cancel();
+    };
+  }, [prompt, step, supported]);
 
   function pointToLesson() {
     if (!teacher?.focusId) return;
@@ -77,22 +120,68 @@ export default function YEPGuide({ prompt, step, title = 'One step at a time', e
     window.setTimeout(() => target?.classList.remove('yep-teacher-focus'), 2400);
   }
 
-  function hearGuide() {
-    if (!supported) return;
-    if (speaking) { window.speechSynthesis.cancel(); setSpeaking(false); return; }
-    setAudioError('');
-    window.speechSynthesis.cancel();
-    const explanation = teacher ? `${teacher.speech} ${teacher.question}` : `${prompt} ${narration} ${showExample && example ? `Here is one example. ${example} Your own idea can be different.` : ''}`;
-    const utterance = new window.SpeechSynthesisUtterance(explanation);
-    utterance.rate = mode === 'explorer' ? 0.85 : 0.95;
-    utterance.onend = () => setSpeaking(false);
+  function stopAudio() {
+    playbackToken.current += 1;
+    if (supported) window.speechSynthesis.cancel();
+    setSpeaking(false);
+    setActiveClip('');
+  }
+
+  function speakChunks(chunks, clipId, token, index = 0) {
+    if (!supported || token !== playbackToken.current || index >= chunks.length) {
+      if (token === playbackToken.current) {
+        setSpeaking(false);
+        setActiveClip('');
+      }
+      return;
+    }
+
+    const profile = getAudioProfile(mode);
+    const utterance = new window.SpeechSynthesisUtterance(chunks[index]);
+    if (voice) utterance.voice = voice;
+    utterance.lang = voice?.lang || 'en-US';
+    utterance.rate = profile.rate;
+    utterance.pitch = profile.pitch;
+    utterance.volume = 1;
+
+    utterance.onend = () => speakChunks(chunks, clipId, token, index + 1);
     utterance.onerror = (event) => {
+      if (token !== playbackToken.current) return;
       setSpeaking(false);
-      if (!['canceled', 'interrupted'].includes(event.error)) setAudioError('Audio could not play. Read the guide above and keep going.');
+      setActiveClip('');
+      if (!['canceled', 'interrupted'].includes(event.error)) {
+        setAudioError('Audio could not play on this device. Read the guide text and keep going.');
+      }
     };
-    setSpeaking(true);
+
     window.speechSynthesis.speak(utterance);
   }
+
+  function playClip(clipId) {
+    if (!supported) return;
+    if (speaking && activeClip === clipId) {
+      stopAudio();
+      return;
+    }
+
+    const clip = audioClips.find((item) => item.id === clipId) || audioClips[0];
+    if (!clip?.text) return;
+
+    playbackToken.current += 1;
+    const token = playbackToken.current;
+    window.speechSynthesis.cancel();
+    setAudioError('');
+    setSpeaking(true);
+    setActiveClip(clip.id);
+    setLastClip(clip.id);
+    speakChunks(chunkSpeech(clip.text), clip.id, token);
+  }
+
+  function replayLast() {
+    playClip(lastClip || 'teach');
+  }
+
+  const hasQuestion = audioClips.some((clip) => clip.id === 'question');
 
   return (
     <section className={`${styles.panel} ${bright ? styles.bright : ''}`} data-lane={mode} aria-label="YEP lesson guide">
@@ -103,15 +192,37 @@ export default function YEPGuide({ prompt, step, title = 'One step at a time', e
       <div className={styles.teaching}>
         <h2 ref={headingRef} tabIndex={-1} style={{ scrollMarginTop: 160 }}>{title}</h2>
         <p className={styles.prompt} aria-live="polite">{teacher ? teacher.speech : prompt}</p>
-        {teacher && <div className={styles.teacherQuestion}><strong>YOUR TURN</strong><p>{teacher.question}</p></div>}
+        {(teacher?.question || question) && <div className={styles.teacherQuestion}><strong>YOUR TURN</strong><p>{teacher?.question || question}</p></div>}
+
+        {supported && <div className={styles.actions} aria-label="YEP lesson audio controls">
+          <button type="button" className={styles.explain} onClick={() => playClip('teach')}>
+            {speaking && activeClip === 'teach' ? <Square size={22} aria-hidden="true" /> : <Headphones size={23} aria-hidden="true" />}
+            {speaking && activeClip === 'teach' ? 'Stop lesson' : 'Hear lesson'}
+          </button>
+          {hasQuestion && <button type="button" className={styles.explain} onClick={() => playClip('question')}>
+            {speaking && activeClip === 'question' ? <Square size={22} aria-hidden="true" /> : <MessageCircleQuestion size={23} aria-hidden="true" />}
+            {speaking && activeClip === 'question' ? 'Stop question' : 'Hear question'}
+          </button>}
+          <button type="button" className={styles.explain} onClick={replayLast} disabled={speaking}>
+            <RotateCcw size={22} aria-hidden="true" /> Replay
+          </button>
+        </div>}
+
         <div className={styles.actions}>
           {teacher && <button type="button" className={styles.explain} onClick={pointToLesson}><Eye size={23} aria-hidden="true" /> Show where to tap</button>}
           {example && <button type="button" className={styles.explain} aria-expanded={showExample} onClick={() => setShowExample(!showExample)}><Eye size={23} aria-hidden="true" />{showExample ? 'Hide example' : 'Show me'}</button>}
-          {supported && <button type="button" className={styles.explain} onClick={hearGuide}>{speaking ? <Square size={22} aria-hidden="true" /> : <Volume2 size={23} aria-hidden="true" />}{speaking ? 'Stop lesson audio' : teacher ? 'Hear my lesson' : 'Hear it'}</button>}
+          {example && showExample && supported && <button type="button" className={styles.explain} onClick={() => playClip('example')}>
+            {speaking && activeClip === 'example' ? <Square size={22} aria-hidden="true" /> : <Volume2 size={23} aria-hidden="true" />}
+            {speaking && activeClip === 'example' ? 'Stop example' : 'Hear example'}
+          </button>}
           {(onAction || onTry) && <button type="button" className={styles.try} onClick={onAction || onTry}>{actionLabel || 'Try it'}<ChevronRight size={24} aria-hidden="true" /></button>}
         </div>
+
+        {supported && <p className={styles.hint} role="status" aria-live="polite">
+          {speaking ? 'YEP Guide is speaking. Stop anytime, then try the activity.' : 'Audio is learner-controlled. Hear the lesson, hear the question, then try it.'}
+        </p>}
         {!supported && <p className={styles.hint}>Read-aloud is unavailable here. The guide text and examples still work.</p>}
-        {audioError && <p className={styles.hint} role="status">{audioError}</p>}
+        {audioError && <p className={styles.hint} role="alert">{audioError}</p>}
         {showExample && <div className={styles.example} aria-label="Guide example"><span>ONE EXAMPLE</span>{pictureKind && (beforeOnly ? <LearningPicture kind={pictureKind} label="Illustrated starting challenge, before any solution is tested" /> : <PictureExample kind={pictureKind} />)}<p>{example}</p><small>Use this to understand the step. Your own idea can be different.</small></div>}
       </div>
     </section>
