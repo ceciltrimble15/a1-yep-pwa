@@ -17,6 +17,7 @@ export default function MirrorResults() {
       <YEPGuide
         title="Your Mirror"
         prompt="Your next step is to explore what you noticed. Start a check-in before choosing a FINISHER action."
+        question="What caught your attention today?"
         actionLabel="Start My Check-In"
         onAction={() => navigate('mirrorIntro')}
       />
@@ -35,6 +36,7 @@ export default function MirrorResults() {
         title="Look back before you move forward"
         prompt={learning.speech}
         narration={learning.bridge}
+        question={learning.question}
         example={learning.transfer}
         actionLabel="Show My Mirror"
         onAction={() => document.getElementById('mirror-learning-cards')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
