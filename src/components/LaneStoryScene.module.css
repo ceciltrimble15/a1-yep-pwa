@@ -1,1 +1,33 @@
 .wrap{display:grid;gap:16px;margin:16px 0 26px;min-width:0;color:#102347}.scene{position:relative;overflow:hidden;border-radius:24px;border:2px solid #e4b64b;box-shadow:0 20px 45px rgba(0,0,0,.22);background:#092654}.art{display:block;width:100%;height:auto;aspect-ratio:2 / 1;object-fit:cover}.sceneHeading{position:absolute;top:14px;left:15px;right:15px;display:grid;justify-items:start;gap:5px;pointer-events:none;text-shadow:0 2px 8px rgba(0,0,0,.75)}.sceneHeading span{font-size:12px;color:#ffe086;font-weight:900;letter-spacing:.1em}.sceneHeading h2{font-size:clamp(21px,3.6vw,34px);line-height:1.06;margin:0;color:#fff;font-weight:950}.sceneHeading p{margin:0;color:#fff;max-width:45ch;font-weight:750;font-size:clamp(13px,1.8vw,18px)}.interact{background:linear-gradient(130deg,#f9fcff,#e7f0ff);border:2px solid #a5c8f1;padding:clamp(15px,2.5vw,24px);border-radius:22px;display:grid;gap:13px}.interactHeader span{color:#154a98;font-size:12px;font-weight:950;letter-spacing:.12em}.interactHeader strong{display:block;font-weight:950;font-size:clamp(21px,3vw,29px);margin:7px 0 2px}.interactHeader p{font-size:17px;margin:0;color:#244670}.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.step,.stepActive{border:2px solid #a9bfe0;border-radius:16px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:9px;color:#123761;background:#fff;cursor:pointer;font-weight:900;font-size:clamp(11px,1.6vw,15px);text-align:center}.stepActive{background:linear-gradient(130deg,#ffe38b,#ffce42);border-color:#b77b0d;color:#17284b;box-shadow:0 0 0 3px rgba(255,209,53,.18)}.step:focus-visible,.stepActive:focus-visible{outline:4px solid #2871d2;outline-offset:3px}.stepCircle{height:36px;width:36px;border:2px solid currentColor;border-radius:999px;display:grid;place-items:center}.stepLabel{line-height:1.15}.detail{display:flex;align-items:flex-start;gap:12px;border-radius:15px;background:#d4e8ff;padding:15px;color:#173b71;font-size:18px;font-weight:800;line-height:1.4}.detail svg{flex-shrink:0;margin-top:3px}.truth{font-size:13px;color:#3f5978;margin:0;line-height:1.35}@media(max-width:620px){.sceneHeading{top:9px;left:11px;gap:3px}.sceneHeading span{font-size:10px}.sceneHeading h2{font-size:17px}.sceneHeading p{display:none}.steps{grid-template-columns:repeat(2,minmax(0,1fr))}.step,.stepActive{min-height:69px;flex-direction:row;justify-content:flex-start;text-align:left}.stepCircle{height:30px;width:30px;flex-shrink:0}.detail{font-size:16px}}@media(prefers-reduced-motion:reduce){.step,.stepActive{transition:none}}
+
+/* Narrative animation is tied to the learner's selected stage, not decorative autoplay video. */
+.learnerMotion { animation: learnerBreathe 4s ease-in-out infinite; transform-box: fill-box; transform-origin: center bottom; }
+.stepCard { opacity: .7; transition: opacity .28s ease, filter .28s ease; }
+.activeStepCard { opacity: 1; stroke: #fff; stroke-width: 2px; filter: drop-shadow(0 0 9px rgba(255,242,172,.9)); animation: stageLight .55s ease-out both; }
+.missionMarker { opacity: .78; transition: opacity .28s ease; }
+.activeMissionMarker { opacity: 1; filter: drop-shadow(0 0 8px #ffe99a); animation: stageLight .55s ease-out both; }
+.stepPulse { pointer-events: none; transform-box: fill-box; transform-origin: center; animation: selectedPulse 2.1s ease-out infinite; }
+.missionTrail { animation: trailFlow 4.2s linear infinite; }
+.sceneCallout { position: absolute; right: 16px; bottom: 14px; padding: 10px 15px; background: rgba(4,22,53,.9); color: #fff; border: 1px solid #ffe087; border-radius: 14px; display: grid; gap: 4px; max-width: min(52%,320px); box-shadow: 0 8px 22px rgba(0,0,0,.25); animation: calloutEnter .3s ease-out; }
+.sceneCallout span { color: #ffe087; font-size: 11px; letter-spacing: .05em; font-weight: 850; }
+.sceneCallout strong { font-size: clamp(13px,1.7vw,20px); line-height: 1.2; }
+.stageControls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.stageControls > span { color: #244670; font-size: 14px; margin-right: auto; }
+.audioButton { border: 2px solid #24569b; border-radius: 12px; background: #fff; color: #153c79; font-weight: 850; min-height: 46px; padding: 9px 14px; cursor: pointer; }
+.audioButton:focus-visible { outline: 4px solid #b87b13; outline-offset: 2px; }
+.audioError { color: #8a1f1f; margin: 0; font-weight: 750; }
+@keyframes learnerBreathe { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes selectedPulse { 0% { opacity: .8; transform: scale(.86); } 70%,100% { opacity: 0; transform: scale(1.55); } }
+@keyframes trailFlow { to { stroke-dashoffset: -136; } }
+@keyframes stageLight { from { opacity: .55; } to { opacity: 1; } }
+@keyframes calloutEnter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 620px) {
+  .sceneCallout { right: 8px; bottom: 7px; padding: 7px 9px; border-radius: 9px; max-width: 57%; }
+  .sceneCallout span { font-size: 9px; }
+  .sceneCallout strong { font-size: 12px; }
+  .stageControls > span { flex-basis: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .learnerMotion,.activeStepCard,.activeMissionMarker,.stepPulse,.missionTrail,.sceneCallout { animation: none !important; }
+  .stepCard,.missionMarker { transition: none !important; }
+}
