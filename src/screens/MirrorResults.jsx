@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { ArrowRight, Eye, Lightbulb, RefreshCcw, Sparkles } from 'lucide-react';
 import { useYEP } from '../context/YEPContext';
 import { getReflectionLearning, getReflectionSummary } from '../data/exposureProcess';
 import Shell from '../components/Shell';
+import LaneStoryScene from '../components/LaneStoryScene';
 import YEPGuide from '../components/YEPGuide';
 import ui from '../styles/ui.module.css';
 
@@ -11,6 +13,7 @@ export default function MirrorResults() {
   const { mirrorResult, navigate, mode } = useYEP();
   const summary = getReflectionSummary(mirrorResult);
   const learning = getReflectionLearning(mode, mirrorResult);
+  const [mirrorStep, setMirrorStep] = useState(0);
 
   if (!summary || !learning) return (
     <Shell showAudio={false}>
@@ -32,6 +35,18 @@ export default function MirrorResults() {
         This is a reflection, not a grade or a label. Your answers show what caught your attention today so you can make a stronger next move.
       </p>
 
+      <LaneStoryScene
+        kind="mirror"
+        mode={mode}
+        active={mirrorStep}
+        onActiveChange={setMirrorStep}
+        details={[
+          learning.noticed,
+          learning.experienced,
+          learning.curious,
+          learning.support,
+        ]}
+      />
       <YEPGuide
         title="Look back before you move forward"
         prompt={learning.speech}

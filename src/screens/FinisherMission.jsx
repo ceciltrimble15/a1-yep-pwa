@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { ArrowRight, Check, CheckCircle2, Compass, Flag, Lightbulb, Target } from 'lucide-react';
 import { useYEP } from '../context/YEPContext';
 import { getExposureMissions, getMissionLearning } from '../data/exposureProcess';
 import Shell from '../components/Shell';
+import LaneStoryScene from '../components/LaneStoryScene';
 import YEPGuide from '../components/YEPGuide';
 import ui from '../styles/ui.module.css';
 
@@ -15,6 +17,7 @@ const PATH = [
 export default function FinisherMission() {
   const { mode, currentMission, selectMission, missionStepsDone, toggleMissionStep, completeMission, missionComplete, navigate } = useYEP();
   const choices = getExposureMissions(mode);
+  const [pathStep, setPathStep] = useState(0);
 
   if (!currentMission || currentMission.mode !== mode) return <Shell showAudio={false}>
     <section data-lane={mode} style={{ maxWidth: 940, margin: '0 auto', padding: '14px 0 40px' }}>
@@ -24,6 +27,8 @@ export default function FinisherMission() {
         FINISHER is where learning becomes a next move. Choose one mission, complete only the steps you actually practice or perform, then reflect on what the experience taught you.
       </p>
 
+      <LaneStoryScene kind="finisher" mode={mode} active={pathStep} onActiveChange={setPathStep}
+        details={['Choose a mission that matches your interests.', 'Work with the right facilitator or approved mentor.', 'Complete only the real or supervised steps you actually try.', 'Reflect on the experience and choose one improvement.']} />
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 10, margin: '22px 0', overflowX: 'auto' }}>
         {PATH.map(({ label, detail, icon: Icon }) => <div key={label} style={{ minWidth: 150, padding: 16, borderRadius: 18, border: '1px solid var(--line-strong)', background: 'var(--panel)' }}>
           <Icon size={24} aria-hidden="true" />
@@ -72,6 +77,8 @@ export default function FinisherMission() {
         <p style={{ margin: 0, fontSize: 17, lineHeight: 1.45 }}>{learning.skill.meaning}</p>
       </div>
 
+      <LaneStoryScene kind="finisher" mode={mode} active={pathStep} onActiveChange={setPathStep}
+        details={[m.objective, m.steps[0], m.steps[1], m.steps[2]]} />
       <YEPGuide
         title="Learn it by doing it"
         prompt={learning.speech}
