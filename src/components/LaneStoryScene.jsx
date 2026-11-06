@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { ArrowRight, Check, Compass, Eye, Flag, Lightbulb, MessageCircle, Target } from 'lucide-react';
 import styles from './LaneStoryScene.module.css';
 
@@ -27,7 +27,7 @@ function LearnerFigure({ mode, x = 92, y = 116, scale = 1 }) {
   const mature = mode === 'leader' || mode === 'yaep';
   const adult = mode === 'yaep';
   const glasses = mode === 'builder';
-  return <g transform={'translate(' + x + ' ' + y + ') scale(' + scale + ')'} aria-hidden="true">
+  return <g transform={'translate(' + x + ' ' + y + ') scale(' + scale + ')'} aria-hidden="true"><g className={styles.learnerMotion}>
     <ellipse cx="92" cy="299" rx="104" ry="19" fill="#0a234a" opacity=".25" />
     <path d="M30 300Q25 209 56 169L85 148H128L165 178Q184 228 179 300Z" fill={adult ? '#152c53' : '#154a97'} stroke="#082552" strokeWidth="5" />
     <path d="M67 174Q95 193 121 170" stroke={adult ? '#f2dcae' : '#ffda45'} strokeWidth="13" strokeLinecap="round" fill="none" />
@@ -54,11 +54,11 @@ function LearnerFigure({ mode, x = 92, y = 116, scale = 1 }) {
     {glasses && <g fill="none" stroke="#152e52" strokeWidth="3"><rect x="64" y="86" width="33" height="24" rx="9"/><rect x="112" y="86" width="33" height="24" rx="9"/><path d="M97 97h15"/></g>}
     <path d="M104 100l-3 18h10" fill="none" stroke="#623a29" strokeWidth="3" strokeLinecap="round"/>
     <path d={mature ? 'M81 132q25 13 48 -3' : 'M82 129q20 21 46 0'} fill="none" stroke="#492319" strokeWidth="4" strokeLinecap="round" />
-  </g>;
+  </g></g>;
 }
 
-function MirrorArt({ mode, id }) {
-  return <svg viewBox="0 0 920 460" className={styles.art} role="img"
+function MirrorArt({ mode, id, active }) {
+  return <svg viewBox="0 0 920 460" className={styles.art} data-active-stage={active} role="img"
     aria-label="Illustrated YEP learner reflecting at a work table, with four connected steps from noticing to the next move">
     <defs>
       <linearGradient id={id + 'sky'} x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#154b9d"/><stop offset=".58" stopColor="#2683c1"/><stop offset="1" stopColor="#e3b45b"/></linearGradient>
@@ -85,8 +85,9 @@ function MirrorArt({ mode, id }) {
     <g transform="translate(557 155)">
       <path d="M25 10h270q20 0 20 20v180q0 20 -20 20H25q-20 0 -20 -20V30q0 -20 20 -20Z" fill="#f4f8ff" stroke="#f8c54b" strokeWidth="8"/>
       <text x="160" y="47" textAnchor="middle" fontWeight="900" fontSize="22" fill="#16467f">LOOK BACK · MOVE AHEAD</text>
-      {['I NOTICED', 'I EXPLORED', 'I LEARNED', 'NEXT MOVE'].map((t,i)=><g key={t} transform={'translate(' + (28 + (i % 2) * 148) + ' ' + (68 + Math.floor(i/2)*65) + ')'}>
-        <rect width="126" height="53" rx="11" fill={['#f9d870','#a7d9ff','#c6b8ff','#a8edc2'][i]}/>
+      {['I NOTICED', 'I EXPLORED', 'I LEARNED', 'NEXT MOVE'].map((t,i)=><g key={t} data-scene-milestone={i} data-active={active===i} transform={'translate(' + (28 + (i % 2) * 148) + ' ' + (68 + Math.floor(i/2)*65) + ')'}>
+        <rect className={active===i ? styles.activeStepCard : styles.stepCard} width="126" height="53" rx="11" fill={['#f9d870','#a7d9ff','#c6b8ff','#a8edc2'][i]}/>
+        {active===i && <circle className={styles.stepPulse} cx="21" cy="26" r="21" fill="none" stroke="#fff" strokeWidth="3"/>}
         <circle cx="21" cy="26" r="13" fill="#174a80"/>
         <text x="21" y="31" textAnchor="middle" fontSize="14" fontWeight="900" fill="#fff">{i+1}</text>
         <text x="76" y="31" textAnchor="middle" fontSize="12" fontWeight="900" fill="#153c70">{t}</text>
@@ -95,8 +96,8 @@ function MirrorArt({ mode, id }) {
   </svg>;
 }
 
-function MissionArt({ mode, id }) {
-  return <svg viewBox="0 0 920 460" className={styles.art} role="img"
+function MissionArt({ mode, id, active }) {
+  return <svg viewBox="0 0 920 460" className={styles.art} data-active-stage={active} role="img"
     aria-label="Illustrated FINISHER journey through a city and up a mountain to a gold finish flag with four visible milestones">
     <defs>
       <linearGradient id={id + 'sky'} x1="0" y1="0" x2="1" y2="1"><stop stopColor="#152c73"/><stop offset=".6" stopColor="#5e73be"/><stop offset="1" stopColor="#efbd58"/></linearGradient>
@@ -110,14 +111,15 @@ function MissionArt({ mode, id }) {
     <path d="M463 122l22 23 13 -10 -40 -44 -37 38 24 -5Z M682 50l31 42-29-8-27 10Z" fill="#e0ebf7" opacity=".8" />
     <g fill="#1a416a" opacity=".8"><path d="M0 337h68v-73h45v73h41v-95h54v95h42v-66h58v66h45v124H0Z"/></g>
     <path d="M150 460Q315 393 397 345Q515 271 600 290Q706 306 685 244Q667 195 762 175Q809 159 733 101" fill="none" stroke="#f8c53c" strokeWidth="31" opacity=".37" filter={'url(#' + id + 'glow)'} />
-    <path d="M150 460Q315 393 397 345Q515 271 600 290Q706 306 685 244Q667 195 762 175Q809 159 733 101" fill="none" stroke="#f8d564" strokeWidth="13" strokeLinecap="round" strokeDasharray="2 1" />
+    <path d="M150 460Q315 393 397 345Q515 271 600 290Q706 306 685 244Q667 195 762 175Q809 159 733 101" fill="none" className={styles.missionTrail} stroke="#f8d564" strokeWidth="13" strokeLinecap="round" strokeDasharray="22 12" />
     <path d="M732 99V42" stroke="#fff4b8" strokeWidth="6" strokeLinecap="round"/>
     <path d="M734 44l65 13 -65 19Z" fill="#f4ba22" stroke="#fff8bd" strokeWidth="3"/>
     <g>
       {[
         [375,351,'1'],[575,289,'2'],[693,215,'3'],[742,119,'4']
-      ].map(([x,y,t])=><g key={t}>
-        <circle cx={x} cy={y} r="23" fill="#0d2d57" stroke="#ffe16f" strokeWidth="5"/>
+      ].map(([x,y,t],i)=><g key={t} data-scene-milestone={i} data-active={active===i}>
+        {active===i && <circle className={styles.stepPulse} cx={x} cy={y} r="34" fill="none" stroke="#fff2b4" strokeWidth="5"/>}
+        <circle className={active===i ? styles.activeMissionMarker : styles.missionMarker} cx={x} cy={y} r="23" fill="#0d2d57" stroke="#ffe16f" strokeWidth="5"/>
         <text x={x} y={y+8} textAnchor="middle" fontSize="21" fontWeight="900" fill="#fff">{t}</text>
       </g>)}
     </g>
@@ -128,17 +130,88 @@ function MissionArt({ mode, id }) {
 
 export default function LaneStoryScene({ kind = 'mirror', mode = 'builder', active = 0, onActiveChange, details = [] }) {
   const id = useId().replace(/:/g, '');
+  const utteranceRef = useRef(null);
+  const [sceneSpeaking, setSceneSpeaking] = useState(false);
+  const [sceneAudioError, setSceneAudioError] = useState('');
+  const supported = typeof window !== 'undefined' && !!window.speechSynthesis && typeof window.SpeechSynthesisUtterance === 'function';
   const stages = kind === 'mirror' ? MIRROR_STAGES : FINISHER_STAGES;
   const stage = stages[Math.max(0, Math.min(3, active))];
   const stageCopy = AGE_SCENES[mode] || AGE_SCENES.builder;
   const isMirror = kind === 'mirror';
-  return <section className={styles.wrap} data-lane={mode} aria-label={isMirror ? 'Illustrated Mirror Results learning journey' : 'Illustrated FINISHER mission path'}>
+
+  function stopStageAudio() {
+    const last = utteranceRef.current;
+    utteranceRef.current = null;
+    if (last && supported) {
+      last.onend = null;
+      last.onerror = null;
+      window.speechSynthesis.cancel();
+    }
+    setSceneSpeaking(false);
+  }
+
+  function playStageAudio() {
+    if (!supported) return;
+    stopStageAudio();
+    // Never autoplay. A learner explicitly asks to hear the selected stage.
+    window.speechSynthesis.cancel();
+    setSceneAudioError('');
+    const copy = [stage.label, stage.title, stage.cue, details[active]].filter(Boolean).join('. ');
+    const utterance = new window.SpeechSynthesisUtterance(copy);
+    utterance.lang = 'en-US';
+    utterance.rate = mode === 'explorer' ? 0.86 : mode === 'builder' ? 0.92 : 1;
+    utteranceRef.current = utterance;
+    utterance.onend = () => {
+      if (utteranceRef.current === utterance) {
+        utteranceRef.current = null;
+        setSceneSpeaking(false);
+      }
+    };
+    utterance.onerror = (event) => {
+      if (utteranceRef.current === utterance) {
+        utteranceRef.current = null;
+        setSceneSpeaking(false);
+        if (!['canceled', 'interrupted'].includes(event.error)) {
+          setSceneAudioError('Voice is unavailable on this device. The stage text is still here to read.');
+        }
+      }
+    };
+    try {
+      window.speechSynthesis.speak(utterance);
+      setSceneSpeaking(true);
+    } catch {
+      utteranceRef.current = null;
+      setSceneSpeaking(false);
+      setSceneAudioError('Voice is unavailable on this device. The stage text is still here to read.');
+    }
+  }
+
+  useEffect(() => {
+    if (utteranceRef.current) stopStageAudio();
+    setSceneAudioError('');
+  }, [active, kind, mode]);
+
+  useEffect(() => () => {
+    if (utteranceRef.current && supported) {
+      const last = utteranceRef.current;
+      utteranceRef.current = null;
+      last.onend = null;
+      last.onerror = null;
+      window.speechSynthesis.cancel();
+    }
+  }, [supported]);
+
+  return <section className={styles.wrap} data-lane={mode} data-active-step={active} aria-label={isMirror ? 'Illustrated Mirror Results learning journey' : 'Illustrated FINISHER mission path'}>
     <div className={styles.scene}>
-      {isMirror ? <MirrorArt mode={mode} id={id}/> : <MissionArt mode={mode} id={id}/>}
+      {isMirror ? <MirrorArt mode={mode} id={id} active={active}/> : <MissionArt mode={mode} id={id} active={active}/>}
       <div className={styles.sceneHeading}>
         <span>{stageCopy.label}</span>
         <h2>{isMirror ? 'MY MIRROR · REAL GROWTH' : 'MY FINISHER JOURNEY'}</h2>
         <p>{stageCopy.voice}</p>
+      </div>
+      <div key={kind + '-' + active} className={styles.sceneCallout} aria-live="polite">
+        <span>SCENE {active + 1} / 4 · {stage.label}</span>
+        <strong>{stage.title}</strong>
       </div>
     </div>
     <div className={styles.interact}>
@@ -160,6 +233,14 @@ export default function LaneStoryScene({ kind = 'mirror', mode = 'builder', acti
           </button>;
         })}
       </div>
+      <div className={styles.stageControls}>
+        <span>Explore one step at a time. Sound is optional.</span>
+        {supported && <>
+          <button type="button" className={styles.audioButton} onClick={sceneSpeaking ? stopStageAudio : playStageAudio}>{sceneSpeaking ? 'Stop step audio' : 'Hear this step'}</button>
+          <button type="button" className={styles.audioButton} onClick={playStageAudio}>Replay step</button>
+        </>}
+      </div>
+      {sceneAudioError && <p role="alert" className={styles.audioError}>{sceneAudioError}</p>}
       {details[active] && <div className={styles.detail} role="status">
         <MessageCircle size={19} aria-hidden="true"/><span>{details[active]}</span>
       </div>}
