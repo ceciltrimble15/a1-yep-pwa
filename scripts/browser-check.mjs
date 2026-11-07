@@ -49,6 +49,33 @@ async function start(page, mode, tap) {
   await tap(page.getByRole('button', { name: mode === 'explorer' ? 'Start My YEP Introduction' : 'Enter The Process', exact: true }));
   await check(page, () => scrollY === 0, 'new screen starts at top');
 }
+async function scene(page, kind, mode, tap, details) {
+  const region = page.getByRole('region', { name: kind === 'mirror' ? 'Illustrated Mirror Results learning journey' : 'Illustrated FINISHER mission path', exact: true });
+  assert.equal(await region.getAttribute('data-lane'), mode);
+  const buttons = region.getByRole('group', { name: 'Choose a step on the visual learning path' }).getByRole('button');
+  assert.equal(await buttons.count(), 4);
+  for (let index = 0; index < 4; index++) {
+    const button = buttons.nth(index);
+    await button.scrollIntoViewIfNeeded();
+    const box = await button.boundingBox();
+    assert.ok(box.width >= 44 && box.height >= 44, 'scene target at least 44x44 CSS pixels');
+    await tap(button);
+    await page.waitForFunction(({ kind, index }) => document.querySelector(`section[aria-label="${kind === 'mirror' ? 'Illustrated Mirror Results learning journey' : 'Illustrated FINISHER mission path'}"]`)?.dataset.activeStep === String(index), { kind, index });
+    assert.equal(await button.getAttribute('aria-pressed'), 'true');
+    assert.equal(await region.locator('button[aria-pressed="true"]').count(), 1);
+    assert.equal(await region.locator('svg[data-active-stage]').getAttribute('data-active-stage'), String(index));
+    assert.equal(await region.locator('[data-scene-milestone][data-active="true"]').getAttribute('data-scene-milestone'), String(index));
+    assert.equal((await region.getByRole('status').innerText()).trim(), details[index]);
+  }
+  // Native keyboard operation remains available alongside touch.
+  await buttons.first().focus();
+  await page.keyboard.press('Enter');
+  assert.equal(await buttons.first().getAttribute('aria-pressed'), 'true');
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Space');
+  assert.equal(await buttons.nth(1).getAttribute('aria-pressed'), 'true');
+  await layout(page);
+}
 async function exercise(view, mode) {
     const context = await browser.newContext({ viewport: { width: view.width, height: view.height }, hasTouch: view.touch, isMobile: view.touch });
     let page = await context.newPage();
@@ -127,20 +154,41 @@ async function exercise(view, mode) {
       await tap(page.getByRole('button', { name: REFLECTION_PROMPTS[i].options[0], exact: true }));
       await tap(page.getByRole('button', { name: i === REFLECTION_PROMPTS.length - 1 ? 'Save My Check-In' : 'Next Question', exact: true }));
     }
+    const mirror = (await session(page)).mirrorResult;
+    const mirrorDetails = REFLECTION_PROMPTS.map(p => p.options[0]);
+    await scene(page, 'mirror', mode, tap, mirrorDetails);
+    await page.screenshot({ path: `${out}/${view.name}-${mode}-mirror.png`, fullPage: true, animations: 'disabled' });
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    assert.deepEqual((await session(page)).mirrorResult, mirror, 'Mirror survives refresh');
+    await tap(page.getByRole('button', { name: 'Reflect Again', exact: true }));
+    await tap(page.getByRole('button', { name: 'View Saved Mirror Results', exact: true }));
+    assert.deepEqual((await session(page)).mirrorResult, mirror, 'saved-result recovery');
     assert.equal((await session(page)).currentMission, null, 'check-in does not assign a mission');
     await tap(page.getByRole('button', { name: 'Choose My FINISHER Action', exact: true }));
-    assert.equal(await page.getByRole('button', { name: 'Choose This Action', exact: true }).count(), 4);
-    await tap(page.getByRole('button', { name: 'Choose This Action', exact: true }).first());
-    assert.equal((await session(page)).currentMission.mode, mode);
-    assert.equal(await page.getByRole('button', { name: 'Finish My Practice Checklist', exact: true }).isEnabled(), false);
+    assert.equal(await page.getByRole('button', { name: 'Choose This Mission', exact: true }).count(), 4);
+    await tap(page.getByRole('button', { name: 'Choose This Mission', exact: true }).first());
+    const mission = (await session(page)).currentMission;
+    assert.equal(mission.mode, mode);
+    await scene(page, 'finisher', mode, tap, [mission.objective, ...mission.steps]);
+    await page.screenshot({ path: `${out}/${view.name}-${mode}-finisher.png`, fullPage: true, animations: 'disabled' });
+    await tap(page.locator('#exposure-mission-steps button').first());
+    await session(page);
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    assert.equal(await page.locator('#exposure-mission-steps button').first().getAttribute('aria-pressed'), 'true');
+    await tap(page.getByRole('button', { name: 'Program Home', exact: true }));
+    await tap(page.getByRole('button', { name: 'FINISHER Mission', exact: true }));
+    assert.equal((await session(page)).currentMission.id, mission.id, 'chosen mission survives home/lesson reopening');
+    // Undo the saved first step, then exercise the full checklist below.
+    await tap(page.locator('#exposure-mission-steps button').first());
+    assert.equal(await page.getByRole('button', { name: 'Finish My Mission', exact: true }).isEnabled(), false);
     for (const button of await page.locator('#exposure-mission-steps button').all()) await tap(button);
-    await tap(page.getByRole('button', { name: 'Finish My Practice Checklist', exact: true }));
+    await tap(page.getByRole('button', { name: 'Finish My Mission', exact: true }));
     assert.equal((await session(page)).missionComplete, true);
     assert.equal((await session(page)).reflectionSubmitted, false, 'checklist never invents a submitted reflection');
     await layout(page);
     assert.deepEqual(errors, [], 'no uncaught page errors');
     assert.deepEqual(writes, [], 'no remote submission requests');
-    results.push({ view: view.name, viewport: `${view.width}x${view.height}`, mode, touchEmulated: view.touch, status: 'PASS', checks: ['age pathway', 'illustrations', 'Show me', 'guided entry', 'draft refresh', 'choice-only save', 'home/lesson reentry', 'tab reopen', 'STEM prediction/reveal/save', 'Mirror check-in', 'age-appropriate chosen mission', 'checklist guard', 'no invented reflection', 'no remote writes', 'no horizontal overflow', 'no broken images', 'no uncaught page errors'] });
+    results.push({ view: view.name, viewport: `${view.width}x${view.height}`, mode, touchEmulated: view.touch, status: 'PASS', checks: ['age pathway', 'illustrations', 'Show me', 'guided entry', 'draft refresh', 'choice-only save', 'home/lesson reentry', 'tab reopen', 'STEM prediction/reveal/save', 'Mirror check-in', 'four Mirror and FINISHER scene stages', '44px scene targets', 'keyboard scene controls', 'SVG stage sync', 'saved-result recovery', 'mission partial refresh/reopen', 'age-appropriate chosen mission', 'checklist guard', 'no invented reflection', 'no remote writes', 'no horizontal overflow', 'no broken images', 'no uncaught page errors'] });
     console.log(`PASS ${view.name}/${mode}`);
     await context.close();
 }

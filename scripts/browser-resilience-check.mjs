@@ -57,7 +57,7 @@ try {
   await context.addInitScript(() => {
     window.SpeechSynthesisUtterance = class { constructor(text) { this.text = text; } };
     Object.defineProperty(window, 'speechSynthesis', { configurable: true, value: {
-      speaking: false, paused: false, calls: [], last: null,
+      getVoices() { return []; }, speaking: false, paused: false, calls: [], last: null,
       speak(utterance) { this.last = utterance; this.calls.push({ text: utterance.text, rate: utterance.rate }); this.speaking = true; utterance.onstart?.(); },
       cancel() { this.speaking = false; this.paused = false; this.last?.onerror?.({ error: 'canceled' }); },
       pause() { this.paused = true; }, resume() { this.paused = false; },
@@ -81,18 +81,58 @@ try {
   await page.getByRole('button', { name: 'Program Home', exact: true }).click();
   assert.equal(await page.evaluate(() => speechSynthesis.speaking), false, 'navigation stops screen audio');
   await page.getByRole('button', { name: 'Daily Quest', exact: true }).click();
-  await page.getByRole('button', { name: 'Hear it', exact: true }).click();
-  await page.getByRole('button', { name: 'Stop lesson audio', exact: true }).click();
+  await page.getByRole('button', { name: 'Hear lesson', exact: true }).click();
+  await page.getByRole('button', { name: 'Stop lesson', exact: true }).click();
   await page.getByRole('button', { name: /Hear the word/ }).click();
   await page.getByRole('button', { name: 'Stop vocabulary audio', exact: true }).click();
   results.push({ check: 'audio play/pause/resume/replay/stop/speed, lesson and vocabulary controls, error fallback, cancellation on navigation', status: 'PASS', method: 'browser with deterministic speech API double; not audible playback' });
+  await context.close();
+
+  // New scene controls use a speech API double only; no audible playback claim.
+  context = await browser.newContext({ viewport: { width: 768, height: 1024 }, hasTouch: true, reducedMotion: 'reduce' });
+  await context.addInitScript(() => {
+    window.SpeechSynthesisUtterance = class { constructor(text) { this.text = text; } };
+    Object.defineProperty(window, 'speechSynthesis', { configurable: true, value: {
+      getVoices() { return []; }, calls: [], last: null, speaking: false,
+      speak(u) { this.calls.push({ text: u.text, rate: u.rate }); this.last = u; this.speaking = true; },
+      cancel() { this.speaking = false; this.last?.onerror?.({ error: 'canceled' }); },
+    } });
+  });
+  page = await open(context);
+  await page.getByRole('button', { name: 'FINISHER Mission', exact: true }).tap();
+  const scene = page.getByRole('region', { name: 'Illustrated FINISHER mission path', exact: true });
+  assert.equal(await page.evaluate(() => speechSynthesis.calls.length), 0, 'no autoplay');
+  await scene.getByRole('button', { name: 'Hear this step', exact: true }).tap();
+  await scene.getByRole('button', { name: 'Stop step audio', exact: true }).waitFor();
+  assert.ok(await page.evaluate(() => speechSynthesis.last.text.includes('Choose a mission that matches your interests.')));
+  await scene.getByRole('button', { name: 'PLAN', exact: true }).tap();
+  assert.equal(await page.evaluate(() => speechSynthesis.speaking), false, 'stage change stops speech');
+  await scene.getByRole('button', { name: 'Replay step', exact: true }).tap();
+  assert.ok(await page.evaluate(() => speechSynthesis.last.text.includes('Work with the right facilitator')));
+  await scene.getByRole('button', { name: 'Stop step audio', exact: true }).tap();
+  await scene.getByRole('button', { name: 'Hear this step', exact: true }).tap();
+  await page.evaluate(() => { speechSynthesis.speaking = false; speechSynthesis.last.onerror({ error: 'synthesis-unavailable' }); });
+  await scene.getByRole('alert').filter({ hasText: 'stage text is still here' }).waitFor();
+  assert.ok((await scene.getByRole('status').innerText()).includes('Work with the right facilitator'));
+  await scene.getByRole('button', { name: 'Hear this step', exact: true }).tap();
+  await page.getByRole('button', { name: 'Program Home', exact: true }).tap();
+  assert.equal(await page.evaluate(() => speechSynthesis.speaking), false, 'scene unmount stops speech');
+  await page.getByRole('button', { name: 'FINISHER Mission', exact: true }).tap();
+  const animations = await scene.locator('svg *').evaluateAll(nodes => nodes.map(n => getComputedStyle(n).animationName));
+  assert.ok(animations.every(name => name === 'none'), 'reduced motion disables scene animations');
+  results.push({ check: 'scene no autoplay, tap play/stop/replay, stage cancellation, error text fallback, navigation cancellation, reduced motion', status: 'PASS', method: 'speech API double; audible playback NOT VERIFIED' });
   await context.close();
 
   context = await browser.newContext();
   await context.addInitScript(() => { Object.defineProperty(window, 'speechSynthesis', { value: undefined }); delete window.speechSynthesis; });
   page = await open(context);
   await page.getByRole('status').filter({ hasText: 'not available in this browser' }).waitFor();
-  results.push({ check: 'unsupported speech fallback', status: 'PASS' });
+  await page.getByRole('button', { name: 'FINISHER Mission', exact: true }).click();
+  const textScene = page.getByRole('region', { name: 'Illustrated FINISHER mission path', exact: true });
+  assert.equal(await textScene.getByRole('button', { name: 'Hear this step', exact: true }).count(), 0);
+  await textScene.getByRole('button', { name: 'LEARN', exact: true }).click();
+  assert.ok((await textScene.getByRole('status').innerText()).includes('Reflect on the experience'));
+  results.push({ check: 'unsupported speech fallback including interactive scene text', status: 'PASS' });
   await context.close();
 
   context = await browser.newContext();
@@ -104,7 +144,7 @@ try {
 
   context = await browser.newContext(); page = await open(context);
   await page.getByRole('button', { name: 'FINISHER Mission', exact: true }).click();
-  await page.getByRole('button', { name: 'Choose This Action', exact: true }).first().click();
+  await page.getByRole('button', { name: 'Choose This Mission', exact: true }).first().click();
   await page.locator('#exposure-mission-steps button').first().click();
   await page.waitForFunction(() => JSON.parse(localStorage.getItem('yep_session_v1')).missionStepsDone[0]);
   const chosenId = await page.evaluate(() => JSON.parse(localStorage.getItem('yep_session_v1')).currentMission.id);
