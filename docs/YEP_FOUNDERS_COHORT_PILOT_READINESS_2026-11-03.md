@@ -77,3 +77,7 @@ Do **not** call a learner a graduate, certify employment readiness, claim revenu
 ## CEO go/no-go
 
 **HOLD** any real-youth app onboarding until child privacy, authorized cohort intake, audio on both physical tablets, and facilitator procedures are proven. A visual technical POC and a Vercel success badge alone do not authorize a live youth pilot.
+
+## November 7 illustrated browser acceptance update
+
+[Current Mirror/FINISHER acceptance results](./YEP_ILLUSTRATED_BROWSER_ACCEPTANCE_2026-11-07.md): 16 Chromium flows and the audio/storage/offline resilience checks passed in GitHub Actions on tested commit `5a9c83a9be7a5e3261fede5e2a0c3a8e38c5be68`. These results cover the illustrated implementation rather than inheriting PR #11 results. Physical Tablet 01/02, actual audible playback, Safari/iPad and facilitated learner sign-off remain unverified. The operational gate statuses above are unchanged.
