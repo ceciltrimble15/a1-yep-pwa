@@ -140,9 +140,9 @@ export default function FoundationVisualIntro({ step, powerName, narration, opti
         </button>)}
       </div>}
       <div className={styles.audioRow}>
-        <button type="button" onClick={hear} disabled={!supported} className={styles.listen} aria-label={speaking ? 'Stop guide narration' : 'Hear it'}>
+        <button type="button" onClick={hear} disabled={!supported} className={styles.listen} aria-label={speaking ? 'Stop lesson' : 'Hear lesson'}>
           {speaking ? <PauseCircle size={22} aria-hidden="true"/> : <Headphones size={22} aria-hidden="true"/>}
-          {speaking ? 'Stop guide' : 'Hear it'}
+          {speaking ? 'Stop lesson' : 'Hear lesson'}
         </button>
         <div className={styles.audioHint} role="status">
           <Volume2 size={17} aria-hidden="true"/>
