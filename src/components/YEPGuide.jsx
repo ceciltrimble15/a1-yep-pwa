@@ -6,7 +6,7 @@ import { buildGuideAudioClips, chooseGuideVoice, chunkSpeech, getAudioProfile } 
 import PictureExample, { LearningPicture } from './LearningPicture';
 import styles from './YEPGuide.module.css';
 
-function GuideAvatar() {
+export function GuideAvatar() {
   return (
     <svg className={styles.guideAvatarArt} viewBox="0 0 160 160" role="img" aria-label="Friendly Black YEP guide">
       <defs>
