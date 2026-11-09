@@ -5,7 +5,7 @@ import { MODES } from '../data/modes';
 import { EXPOSURE_WORLDS, getDirectionGuide } from '../data/directionGuidance';
 import Shell from '../components/Shell';
 import VoiceCapture from '../components/VoiceCapture';
-import YEPGuide from '../components/YEPGuide';
+import FoundationVisualIntro from '../components/FoundationVisualIntro';
 import styles from './PilotScreens.module.css';
 import ui from '../styles/ui.module.css';
 import visuals from './FoundationChoiceVisuals.module.css';
@@ -102,11 +102,11 @@ function FoundationIntake({ directionProfile, saveDirectionProfile, setScreen, p
   return (
     <Shell showAudio={false}>
       <section className={styles.foundationIntake}>
-        <YEPGuide
-          title={complete ? `You are ready, ${explorerName}.` : step === -1 ? `Welcome, ${explorerName}.` : current?.title}
-          prompt={guidePrompt}
-          step={step === -1 ? 'WELCOME' : complete ? 'SAVED' : `${step + 1} OF 4`}
-          narration={current ? `You can choose: ${current.options.join('. ')}.` : ''}
+        <FoundationVisualIntro
+          step={step}
+          powerName={explorerName}
+          narration={guidePrompt}
+          options={current?.options || []}
         />
 
         <div className={styles.foundationIntakeProgress} aria-label="First Check-In progress">
