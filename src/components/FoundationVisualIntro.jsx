@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowRight, Headphones, Lightbulb, PauseCircle, PlayCircle, Sparkles, Volume2 } from 'lucide-react';
+import { Headphones, Lightbulb, PauseCircle, Sparkles, Volume2 } from 'lucide-react';
 import { GuideAvatar } from './YEPGuide';
 import styles from './FoundationVisualIntro.module.css';
 
@@ -119,7 +119,7 @@ export default function FoundationVisualIntro({ step, powerName, narration, opti
           <path d="M777 243l4 10 10 4-10 4-4 10-4-10-10-4 10-4Z"/>
         </g>
       </svg>
-      <div className={styles.figure} aria-hidden="true"><GuideAvatar /></div>
+      <div className={styles.figure} aria-hidden="true"><GuideAvatar speaking={speaking} /></div>
       <div className={styles.bubble} aria-live="polite">
         <span className={styles.kicker}>{isWelcome ? 'YOUR FIRST LOOK' : isDone ? 'FINISHED CHECK-IN' : 'YOUR FIRST CHECK-IN · ' + (step + 1) + ' / 4'}</span>
         <strong>{state.headline}</strong>
