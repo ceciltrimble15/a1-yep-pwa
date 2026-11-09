@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Compass, Lightbulb, Network, BadgeDollarSign, Cpu, Shuffle, ArrowLeft, ArrowRight, Target } from 'lucide-react';
 import { useYEP } from '../context/YEPContext';
 import { MODES } from '../data/modes';
@@ -83,7 +83,13 @@ function FoundationIntake({ directionProfile, saveDirectionProfile, setScreen, p
   const [step, setStep] = useState(
     firstIncomplete === -1 ? FOUNDATION_INTAKE.length : firstIncomplete === 0 ? -1 : firstIncomplete
   );
+  const nextHeadingRef = useRef(null);
   const complete = step >= FOUNDATION_INTAKE.length;
+  useEffect(() => {
+    if (step < 0) return;
+    nextHeadingRef.current?.focus({ preventScroll: true });
+    nextHeadingRef.current?.scrollIntoView({ block: 'start', behavior: 'instant' });
+  }, [step]);
   const current = step >= 0 && !complete ? FOUNDATION_INTAKE[step] : null;
   const explorerName = powerName || 'Explorer';
 
@@ -134,7 +140,7 @@ function FoundationIntake({ directionProfile, saveDirectionProfile, setScreen, p
         {!complete && current && (
           <div className={styles.foundationIntakeQuestion}>
             <span>{current.eyebrow}</span>
-            <h2>{current.title}</h2>
+            <h2 ref={nextHeadingRef} tabIndex={-1} style={{scrollMarginTop:120}}>{current.title}</h2>
             <p>{current.prompt}</p>
             <div className={`${styles.foundationIntakeChoices} ${visuals.choices}`} aria-label="First check-in choices">
               {current.options.map((option) => {
@@ -167,7 +173,7 @@ function FoundationIntake({ directionProfile, saveDirectionProfile, setScreen, p
         {complete && (
           <div className={styles.foundationIntakeReady}>
             <span>YOUR STARTING SNAPSHOT</span>
-            <h2>This is where we begin — not where you have to stay.</h2>
+            <h2 ref={nextHeadingRef} tabIndex={-1} style={{scrollMarginTop:120}}>This is where we begin — not where you have to stay.</h2>
             <div className={styles.foundationIntakeSnapshot}>
               <div><small>INTEREST</small><strong>{directionProfile?.interest || 'Still exploring'}</strong></div>
               <div><small>STRENGTH</small><strong>{directionProfile?.strength || 'Still exploring'}</strong></div>
