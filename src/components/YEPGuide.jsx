@@ -6,9 +6,9 @@ import { buildGuideAudioClips, chooseGuideVoice, chunkSpeech, getAudioProfile } 
 import PictureExample, { LearningPicture } from './LearningPicture';
 import styles from './YEPGuide.module.css';
 
-function GuideAvatar() {
+export function GuideAvatar({ speaking = false }) {
   return (
-    <svg className={styles.guideAvatarArt} viewBox="0 0 160 160" role="img" aria-label="Friendly Black YEP guide">
+    <svg data-speaking={speaking} className={styles.guideAvatarArt} viewBox="0 0 160 160" role="img" aria-label="Friendly Black YEP guide">
       <defs>
         <linearGradient id="guideBg" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="#2F7DF5" />
@@ -35,7 +35,7 @@ function GuideAvatar() {
       <ellipse cx="66" cy="72" rx="3.5" ry="4" fill="#111827" />
       <ellipse cx="95" cy="72" rx="3.5" ry="4" fill="#111827" />
       <path d="M80 73c-2 7-3 12-1 15 2 2 5 2 8 1" fill="none" stroke="#5B3324" strokeWidth="2.5" strokeLinecap="round" />
-      <path d="M65 94c9 8 21 8 30 0" fill="none" stroke="#4A241C" strokeWidth="3" strokeLinecap="round" />
+      <path className="yepGuideMouth" d="M65 94c9 8 21 8 30 0" fill="none" stroke="#4A241C" strokeWidth="3" strokeLinecap="round" />
       <path d="M71 96c6 3 12 3 18 0" fill="none" stroke="#F2D4C5" strokeWidth="2.2" strokeLinecap="round" />
       <circle cx="80" cy="139" r="12" fill="#D4A017" />
       <text x="80" y="145" textAnchor="middle" fontSize="17" fontWeight="900" fill="#0B1D3A">Y</text>

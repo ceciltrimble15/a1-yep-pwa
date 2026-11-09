@@ -1,11 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Compass, Lightbulb, Network, BadgeDollarSign, Cpu, Shuffle, ArrowLeft, ArrowRight, Target } from 'lucide-react';
 import { useYEP } from '../context/YEPContext';
 import { MODES } from '../data/modes';
 import { EXPOSURE_WORLDS, getDirectionGuide } from '../data/directionGuidance';
 import Shell from '../components/Shell';
 import VoiceCapture from '../components/VoiceCapture';
-import YEPGuide from '../components/YEPGuide';
+import FoundationVisualIntro from '../components/FoundationVisualIntro';
 import styles from './PilotScreens.module.css';
 import ui from '../styles/ui.module.css';
 import visuals from './FoundationChoiceVisuals.module.css';
@@ -83,7 +83,13 @@ function FoundationIntake({ directionProfile, saveDirectionProfile, setScreen, p
   const [step, setStep] = useState(
     firstIncomplete === -1 ? FOUNDATION_INTAKE.length : firstIncomplete === 0 ? -1 : firstIncomplete
   );
+  const nextHeadingRef = useRef(null);
   const complete = step >= FOUNDATION_INTAKE.length;
+  useEffect(() => {
+    if (step < 0) return;
+    nextHeadingRef.current?.focus({ preventScroll: true });
+    nextHeadingRef.current?.scrollIntoView({ block: 'start', behavior: 'instant' });
+  }, [step]);
   const current = step >= 0 && !complete ? FOUNDATION_INTAKE[step] : null;
   const explorerName = powerName || 'Explorer';
 
@@ -102,11 +108,11 @@ function FoundationIntake({ directionProfile, saveDirectionProfile, setScreen, p
   return (
     <Shell showAudio={false}>
       <section className={styles.foundationIntake}>
-        <YEPGuide
-          title={complete ? `You are ready, ${explorerName}.` : step === -1 ? `Welcome, ${explorerName}.` : current?.title}
-          prompt={guidePrompt}
-          step={step === -1 ? 'WELCOME' : complete ? 'SAVED' : `${step + 1} OF 4`}
-          narration={current ? `You can choose: ${current.options.join('. ')}.` : ''}
+        <FoundationVisualIntro
+          step={step}
+          powerName={explorerName}
+          narration={guidePrompt}
+          options={current?.options || []}
         />
 
         <div className={styles.foundationIntakeProgress} aria-label="First Check-In progress">
@@ -134,7 +140,7 @@ function FoundationIntake({ directionProfile, saveDirectionProfile, setScreen, p
         {!complete && current && (
           <div className={styles.foundationIntakeQuestion}>
             <span>{current.eyebrow}</span>
-            <h2>{current.title}</h2>
+            <h2 ref={nextHeadingRef} tabIndex={-1} style={{scrollMarginTop:120}}>{current.title}</h2>
             <p>{current.prompt}</p>
             <div className={`${styles.foundationIntakeChoices} ${visuals.choices}`} aria-label="First check-in choices">
               {current.options.map((option) => {
@@ -167,7 +173,7 @@ function FoundationIntake({ directionProfile, saveDirectionProfile, setScreen, p
         {complete && (
           <div className={styles.foundationIntakeReady}>
             <span>YOUR STARTING SNAPSHOT</span>
-            <h2>This is where we begin — not where you have to stay.</h2>
+            <h2 ref={nextHeadingRef} tabIndex={-1} style={{scrollMarginTop:120}}>This is where we begin — not where you have to stay.</h2>
             <div className={styles.foundationIntakeSnapshot}>
               <div><small>INTEREST</small><strong>{directionProfile?.interest || 'Still exploring'}</strong></div>
               <div><small>STRENGTH</small><strong>{directionProfile?.strength || 'Still exploring'}</strong></div>
