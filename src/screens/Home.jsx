@@ -6,6 +6,7 @@ import { hasLegacyFoundationQuest, LEGACY_FOUNDATION_QUEST } from '../data/found
 import Shell from '../components/Shell';
 import YEPBrandMark from '../components/YEPBrandMark';
 import YEPGuide from '../components/YEPGuide';
+import FoundationVisualIntro from '../components/FoundationVisualIntro';
 import { LearningPicture } from '../components/LearningPicture';
 import styles from './Home.module.css';
 
@@ -121,7 +122,14 @@ export default function Home() {
 
         <div className={styles.guideSection}>
           <div className={styles.guideLabel}><Volume2 size={20} aria-hidden="true"/><strong>YOUR YEP GUIDE</strong><span>Here when you need help.</span></div>
-          <YEPGuide bright step={next.step} title={next.title} prompt={next.prompt} example={next.example} actionLabel={next.action} onAction={() => navigate(next.screen)} />
+          {needsFirstCheckIn ? (
+            <>
+              <FoundationVisualIntro step={-1} powerName={powerName || 'Explorer'} narration={next.prompt} />
+              <button type="button" className={styles.welcomeAction} onClick={() => navigate('myDirection')}>Continue My First Check-In <ArrowRight size={20} aria-hidden="true" /></button>
+            </>
+          ) : (
+            <YEPGuide bright step={next.step} title={next.title} prompt={next.prompt} example={next.example} actionLabel={next.action} onAction={() => navigate(next.screen)} />
+          )}
         </div>
 
         <p className={styles.saved}>Your practice work is saved on this tablet. This is a demonstration, not a shared student record.</p>
