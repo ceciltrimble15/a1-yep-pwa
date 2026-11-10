@@ -90,6 +90,24 @@ async function exercise(view, mode) {
     await start(page, mode, tap);
     await layout(page);
     if (mode === 'explorer') {
+      // The illustrated first lesson must communicate an actionable learning step,
+      // rather than just render decorative animation or an inaccessible label.
+      const intro = page.getByRole('region', { name: 'Interactive illustrated YEP first check-in' });
+      const expected = [
+        ['SEE', 'Look around. What do you notice?'],
+        ['THINK', 'What catches your attention?'],
+        ['TRY', 'Pick something you want to explore.'],
+        ['GROW', 'Your first answer is just the beginning.'],
+      ];
+      for (const [index, [name, detail]] of expected.entries()) {
+        const stageButton = intro.getByRole('button', { name: `Step ${index + 1} of 4: ${name}` });
+        await tap(stageButton);
+        assert.equal(await stageButton.getAttribute('aria-pressed'), 'true');
+        const rect = await stageButton.boundingBox();
+        assert.ok(rect.width >= 44 && rect.height >= 44, 'Foundation stage touch target meets minimum size');
+        assert.ok((await intro.getByRole('status').first().innerText()).includes(detail), 'visible illustrated step matches the selected lesson');
+      }
+      assert.equal(await intro.getByRole('button', { name: 'Hear lesson', exact: true }).count(), 1, 'learner controls narration');
       await tap(page.getByRole('button', { name: 'Start My First Check-In', exact: true }));
       for (const option of ['Building things', 'I keep trying', 'Trying it', 'Help somebody']) {
         await tap(page.getByRole('button', { name: new RegExp(option) }));
