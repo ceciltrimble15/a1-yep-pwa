@@ -32,6 +32,7 @@ export default function FoundationVisualIntro({ step, powerName, narration, opti
     kind: 'welcome',
   } : isDone ? FINISHED : QUESTION_SCENES[step] || QUESTION_SCENES[0];
   const name = powerName || 'Explorer';
+  const activeStep = PREVIEW_STEPS[preview];
 
   function stop() {
     const previous = speechRef.current;
@@ -135,10 +136,13 @@ export default function FoundationVisualIntro({ step, powerName, narration, opti
       </div>
       {isWelcome && <div className={styles.steps} role="group" aria-label="Explore how the learning process works">
         {PREVIEW_STEPS.map((item, index) => <button key={item.name} type="button" className={index === preview ? styles.stepActive : styles.step}
-          aria-pressed={index === preview} onClick={() => setPreview(index)}>
+          aria-pressed={index === preview} aria-label={`Step ${index + 1} of ${PREVIEW_STEPS.length}: ${item.name}`} onClick={() => setPreview(index)}>
           <span>{item.icon}</span><strong>{item.name}</strong>
         </button>)}
       </div>}
+      {isWelcome && <p className={styles.stepProgress} role="status" aria-live="polite">
+        Step {preview + 1} of {PREVIEW_STEPS.length}: {activeStep.name}. {activeStep.detail}
+      </p>}
       <div className={styles.audioRow}>
         <button type="button" onClick={hear} disabled={!supported} className={styles.listen} aria-label={speaking ? 'Stop lesson' : 'Hear lesson'}>
           {speaking ? <PauseCircle size={22} aria-hidden="true"/> : <Headphones size={22} aria-hidden="true"/>}
@@ -146,7 +150,7 @@ export default function FoundationVisualIntro({ step, powerName, narration, opti
         </button>
         <div className={styles.audioHint} role="status">
           <Volume2 size={17} aria-hidden="true"/>
-          {audioError || (!supported ? 'Audio unavailable; use the visual steps.' : speaking ? 'Guide speaking. Tap Stop to pause.' : 'Voice plays only when you choose.')}
+          {audioError || (!supported ? 'Audio unavailable; use the visual steps.' : speaking ? 'Guide speaking. Tap Stop to end playback.' : 'Voice plays only when you choose.')}
         </div>
       </div>
     </div>
