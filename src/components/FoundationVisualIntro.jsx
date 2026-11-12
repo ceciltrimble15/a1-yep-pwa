@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Headphones, Lightbulb, PauseCircle, Sparkles, Volume2 } from 'lucide-react';
+import { Headphones, Lightbulb, Square, Sparkles, Volume2 } from 'lucide-react';
 import { GuideAvatar } from './YEPGuide';
 import styles from './FoundationVisualIntro.module.css';
 
@@ -21,6 +21,7 @@ const FINISHED = { headline: 'Your next adventure is ready', cue: 'Use what you 
 export default function FoundationVisualIntro({ step, powerName, narration, options = [] }) {
   const [preview, setPreview] = useState(0);
   const [speaking, setSpeaking] = useState(false);
+  const [audioPending, setAudioPending] = useState(false);
   const [audioError, setAudioError] = useState('');
   const speechRef = useRef(null);
   const supported = typeof window !== 'undefined' && !!window.speechSynthesis && typeof window.SpeechSynthesisUtterance === 'function';
@@ -32,6 +33,8 @@ export default function FoundationVisualIntro({ step, powerName, narration, opti
     kind: 'welcome',
   } : isDone ? FINISHED : QUESTION_SCENES[step] || QUESTION_SCENES[0];
   const name = powerName || 'Explorer';
+  const activeStep = PREVIEW_STEPS[preview];
+  const audioActive = audioPending || speaking;
 
   function stop() {
     const previous = speechRef.current;
@@ -42,11 +45,12 @@ export default function FoundationVisualIntro({ step, powerName, narration, opti
       window.speechSynthesis.cancel();
     }
     setSpeaking(false);
+    setAudioPending(false);
   }
 
   function hear() {
     if (!supported) return;
-    if (speaking) {
+    if (audioActive) {
       stop();
       return;
     }
@@ -61,19 +65,22 @@ export default function FoundationVisualIntro({ step, powerName, narration, opti
     utterance.rate = .88;
     utterance.pitch = 1;
     speechRef.current = utterance;
-    utterance.onend = () => { if (speechRef.current === utterance) { speechRef.current = null; setSpeaking(false); } };
+    utterance.onstart = () => { if (speechRef.current === utterance) { setAudioPending(false); setSpeaking(true); } };
+    utterance.onend = () => { if (speechRef.current === utterance) { speechRef.current = null; setSpeaking(false); setAudioPending(false); } };
     utterance.onerror = event => {
       if (speechRef.current !== utterance) return;
       speechRef.current = null;
       setSpeaking(false);
+      setAudioPending(false);
       if (!['canceled', 'interrupted'].includes(event.error)) setAudioError('This device cannot play the guide right now. You can still follow the visual steps.');
     };
     try {
+      setAudioPending(true);
       window.speechSynthesis.speak(utterance);
-      setSpeaking(true);
     } catch {
       speechRef.current = null;
       setSpeaking(false);
+      setAudioPending(false);
       setAudioError('This device cannot play the guide right now. You can still follow the visual steps.');
     }
   }
@@ -135,18 +142,21 @@ export default function FoundationVisualIntro({ step, powerName, narration, opti
       </div>
       {isWelcome && <div className={styles.steps} role="group" aria-label="Explore how the learning process works">
         {PREVIEW_STEPS.map((item, index) => <button key={item.name} type="button" className={index === preview ? styles.stepActive : styles.step}
-          aria-pressed={index === preview} onClick={() => setPreview(index)}>
+          aria-pressed={index === preview} aria-label={`Step ${index + 1} of ${PREVIEW_STEPS.length}: ${item.name}`} onClick={() => setPreview(index)}>
           <span>{item.icon}</span><strong>{item.name}</strong>
         </button>)}
       </div>}
+      {isWelcome && <p className={styles.stepProgress} role="status" aria-live="polite">
+        Step {preview + 1} of {PREVIEW_STEPS.length}: {activeStep.name}. {activeStep.detail}
+      </p>}
       <div className={styles.audioRow}>
-        <button type="button" onClick={hear} disabled={!supported} className={styles.listen} aria-label={speaking ? 'Stop lesson' : 'Hear lesson'}>
-          {speaking ? <PauseCircle size={22} aria-hidden="true"/> : <Headphones size={22} aria-hidden="true"/>}
-          {speaking ? 'Stop lesson' : 'Hear lesson'}
+        <button type="button" onClick={hear} disabled={!supported} className={styles.listen} aria-label={audioActive ? 'Stop lesson' : 'Hear lesson'}>
+          {audioActive ? <Square size={22} aria-hidden="true"/> : <Headphones size={22} aria-hidden="true"/>}
+          {audioActive ? 'Stop lesson' : 'Hear lesson'}
         </button>
         <div className={styles.audioHint} role="status">
           <Volume2 size={17} aria-hidden="true"/>
-          {audioError || (!supported ? 'Audio unavailable; use the visual steps.' : speaking ? 'Guide speaking. Tap Stop to pause.' : 'Voice plays only when you choose.')}
+          {audioError || (!supported ? 'Audio unavailable; use the visual steps.' : speaking ? 'Guide speaking. Tap Stop to end playback.' : audioPending ? 'Preparing audio. Tap Stop to cancel.' : 'Voice plays only when you choose.')}
         </div>
       </div>
     </div>
