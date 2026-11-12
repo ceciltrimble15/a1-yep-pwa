@@ -138,7 +138,7 @@ try {
   page.setDefaultTimeout(8000);
   await page.goto(url, { waitUntil: 'domcontentloaded' });
   await page.getByRole('checkbox').check();
-  await page.getByRole('button', { name: /01\\s*AGES\\s*7-10/ }).tap();
+  await page.getByRole('button', { name: /01\s*AGES\s*7-10/ }).tap();
   await page.locator('#powerName').fill('Sample Explorer');
   await page.getByRole('button', { name: 'Start My YEP Introduction', exact: true }).tap();
   const foundation = page.getByRole('region', { name: 'Interactive illustrated YEP first check-in' });
