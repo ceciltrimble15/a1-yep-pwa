@@ -11,12 +11,12 @@ const PREVIEW_STEPS = [
 ];
 
 const QUESTION_SCENES = [
-  { headline: 'What interests you?', cue: 'There are lots of doors to explore.', kind: 'interest' },
-  { headline: 'What is your strength?', cue: 'Everybody brings something useful.', kind: 'strength' },
-  { headline: 'How do you learn?', cue: 'Your way of learning matters.', kind: 'learning' },
-  { headline: 'What will you try first?', cue: 'Small steps turn into big discoveries.', kind: 'goal' },
+  { headline: 'What do you like?', cue: 'Pick something you enjoy doing.', kind: 'interest' },
+  { headline: 'What are you good at?', cue: 'Pick something you do well, or want to get better at.', kind: 'strength' },
+  { headline: 'How do you like to learn?', cue: 'Do you like to look, listen, or try it yourself?', kind: 'learning' },
+  { headline: 'What will you try first?', cue: 'Pick one thing you want to try. You can change your mind later.', kind: 'goal' },
 ];
-const FINISHED = { headline: 'Your next adventure is ready', cue: 'Use what you discovered to take your first Quest.', kind: 'done' };
+const FINISHED = { headline: 'You are ready for your first Quest', cue: 'You made your choices. Now let us try something new!', kind: 'done' };
 
 export default function FoundationVisualIntro({ step, powerName, narration, options = [] }) {
   const [preview, setPreview] = useState(0);
@@ -66,10 +66,13 @@ export default function FoundationVisualIntro({ step, powerName, narration, opti
     }
     window.speechSynthesis.cancel();
     setAudioError('');
+    // Keep Foundation narration to one idea and one action at a time.
+    // The visual options stay on screen; the Guide does not read a long list of choices.
     const text = isWelcome
-      ? 'Welcome to YEP, ' + name + '. ' + PREVIEW_STEPS[preview].headline + '. ' + PREVIEW_STEPS[preview].detail +
-        ' Tap the numbered steps to explore. Then start your first check-in.'
-      : narration + (options.length ? ' You can choose: ' + options.join('. ') + '.' : '');
+      ? 'Hi, ' + name + '! ' + PREVIEW_STEPS[preview].detail + ' Tap another number to see what comes next.'
+      : isDone
+        ? 'You did it! You can try your first Quest now.'
+        : state.headline + ' ' + state.cue + ' Tap the picture that fits you. There is no wrong answer.';
     const utterance = new window.SpeechSynthesisUtterance(text);
     utterance.lang = 'en-US';
     utterance.rate = .88;
