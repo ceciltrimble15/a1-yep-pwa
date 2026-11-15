@@ -74,13 +74,14 @@ export default function YEPGuide({
   const playbackToken = useRef(0);
 
   const audioClips = useMemo(() => buildGuideAudioClips({
+    mode,
     teacher,
     prompt,
     narration,
     question,
     example,
     includeExample: showExample,
-  }), [teacher, prompt, narration, question, example, showExample]);
+  }), [mode, teacher, prompt, narration, question, example, showExample]);
 
   useEffect(() => {
     if (previousStep.current !== step) {
