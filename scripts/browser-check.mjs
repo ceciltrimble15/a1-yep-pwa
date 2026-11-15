@@ -103,6 +103,11 @@ async function exercise(view, mode) {
         const stageButton = intro.getByRole('button', { name: `Step ${index + 1} of 4: ${name}` });
         await tap(stageButton);
         assert.equal(await stageButton.getAttribute('aria-pressed'), 'true');
+        const teachingCard = intro.locator('[data-lesson-stage]');
+        assert.equal(await teachingCard.getAttribute('data-lesson-stage'), name, 'teaching card follows selected stage');
+        assert.ok((await teachingCard.innerText()).includes(['See a messy table?', 'Maybe a box could hold', 'Try putting the things', 'Did the box help?'][index]), 'each stage has a concrete visual teaching example');
+        assert.ok((await teachingCard.innerText()).includes(['Point to one thing', 'Pick one idea', 'See what happens', 'Tell what you learned'][index]), 'each stage tells learner what to do next');
+        assert.equal(await intro.getByRole('progressbar', { name: 'Visual teaching steps' }).getAttribute('aria-valuenow'), String(index + 1));
         const rect = await stageButton.boundingBox();
         assert.ok(rect.width >= 44 && rect.height >= 44, 'Foundation stage touch target meets minimum size');
         assert.ok((await intro.getByRole('status').first().innerText()).includes(detail), 'visible illustrated step matches the selected lesson');
