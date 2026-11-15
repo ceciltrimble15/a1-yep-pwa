@@ -24,6 +24,14 @@ export default function FoundationVisualIntro({ step, powerName, narration, opti
   const [audioPending, setAudioPending] = useState(false);
   const [audioError, setAudioError] = useState('');
   const speechRef = useRef(null);
+  const speechStartTimer = useRef(null);
+
+  function clearSpeechStartTimer() {
+    if (speechStartTimer.current !== null) {
+      clearTimeout(speechStartTimer.current);
+      speechStartTimer.current = null;
+    }
+  }
   const supported = typeof window !== 'undefined' && !!window.speechSynthesis && typeof window.SpeechSynthesisUtterance === 'function';
   const isWelcome = step < 0;
   const isDone = step >= 4;
@@ -37,9 +45,11 @@ export default function FoundationVisualIntro({ step, powerName, narration, opti
   const audioActive = audioPending || speaking;
 
   function stop() {
+    clearSpeechStartTimer();
     const previous = speechRef.current;
     speechRef.current = null;
     if (previous && supported) {
+      previous.onstart = null;
       previous.onend = null;
       previous.onerror = null;
       window.speechSynthesis.cancel();
@@ -65,10 +75,11 @@ export default function FoundationVisualIntro({ step, powerName, narration, opti
     utterance.rate = .88;
     utterance.pitch = 1;
     speechRef.current = utterance;
-    utterance.onstart = () => { if (speechRef.current === utterance) { setAudioPending(false); setSpeaking(true); } };
-    utterance.onend = () => { if (speechRef.current === utterance) { speechRef.current = null; setSpeaking(false); setAudioPending(false); } };
+    utterance.onstart = () => { if (speechRef.current === utterance) { clearSpeechStartTimer(); setAudioPending(false); setSpeaking(true); } };
+    utterance.onend = () => { if (speechRef.current === utterance) { clearSpeechStartTimer(); speechRef.current = null; setSpeaking(false); setAudioPending(false); } };
     utterance.onerror = event => {
       if (speechRef.current !== utterance) return;
+      clearSpeechStartTimer();
       speechRef.current = null;
       setSpeaking(false);
       setAudioPending(false);
@@ -77,7 +88,16 @@ export default function FoundationVisualIntro({ step, powerName, narration, opti
     try {
       setAudioPending(true);
       window.speechSynthesis.speak(utterance);
+      // Some device engines neither start nor raise an error. Never leave the learner trapped in a loading state.
+      if (speechRef.current === utterance && speechStartTimer.current === null) {
+        speechStartTimer.current = setTimeout(() => {
+          if (speechRef.current !== utterance) return;
+          stop();
+          setAudioError('Audio did not start on this device. Read the lesson or try again.');
+        }, 5000);
+      }
     } catch {
+      clearSpeechStartTimer();
       speechRef.current = null;
       setSpeaking(false);
       setAudioPending(false);
@@ -92,9 +112,11 @@ export default function FoundationVisualIntro({ step, powerName, narration, opti
   }, [step, preview]);
 
   useEffect(() => () => {
+    clearSpeechStartTimer();
     if (speechRef.current && supported) {
       const utterance = speechRef.current;
       speechRef.current = null;
+      utterance.onstart = null;
       utterance.onend = null;
       utterance.onerror = null;
       window.speechSynthesis.cancel();
