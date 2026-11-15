@@ -155,7 +155,13 @@ try {
   await page.evaluate(() => speechSynthesis.last.onerror?.({ error: 'synthesis-unavailable' }));
   await foundation.getByRole('status').last().filter({ hasText: 'This device cannot play the guide' }).waitFor();
   assert.equal(await foundation.getAttribute('data-speaking'), 'false', 'speech error returns to readable visual fallback');
-  results.push({ check: 'Foundation pending/start/cancel/error visual and speech synchronization', status: 'PASS', method: 'deterministic speech events only; audible playback NOT VERIFIED' });
+  // When a device accepts the speak request but never invokes onstart/onerror,
+  // leave pending state automatically and offer readable recovery.
+  await foundation.getByRole('button', { name: 'Hear lesson', exact: true }).tap();
+  await foundation.getByRole('status').last().filter({ hasText: 'Audio did not start on this device' }).waitFor({ timeout: 7500 });
+  assert.equal(await foundation.getAttribute('data-speaking'), 'false', 'silent engine cannot animate guide speech');
+  assert.equal(await foundation.getByRole('button', { name: 'Hear lesson', exact: true }).isEnabled(), true);
+    results.push({ check: 'Foundation pending/start/cancel/error/stalled-engine recovery visual and speech synchronization', status: 'PASS', method: 'deterministic speech events only; audible playback NOT VERIFIED' });
   await context.close();
 
   context = await browser.newContext();
