@@ -2,3 +2,16 @@
 .figure svg[data-speaking='true'] .yepGuideMouth{transform-box:fill-box;transform-origin:center;animation:guideMouthMove .38s ease-in-out infinite alternate}@keyframes guideMouthMove{to{transform:scaleY(2.15) translateY(1px)}}@media(prefers-reduced-motion:reduce){.figure svg[data-speaking='true'] .yepGuideMouth{animation:none}}
 
 .stepProgress{margin:0;padding:11px 14px;border-radius:12px;border:1px solid rgba(255,225,138,.55);background:rgba(255,225,138,.12);color:#fff2c7;font-size:15px;line-height:1.5;font-weight:650}
+
+/* Teaching aid: one illustrated idea, real-world example and clear learner action. */
+.learningCard{display:grid;grid-template-columns:66px minmax(0,1fr);gap:15px;align-items:center;padding:16px;border:2px solid #f5d77d;border-radius:18px;background:#fff8e8;color:#142b4a;box-shadow:0 6px 0 rgba(3,18,43,.22)}
+.learningIcon{display:grid;place-items:center;width:64px;height:64px;border-radius:18px;color:#fff;background:#1858a3}
+.learningCopy{min-width:0;display:grid;gap:5px}
+.learningLabel{font-size:12px;font-weight:900;letter-spacing:.065em;color:#184a81}
+.learningCopy strong{font-size:clamp(19px,2.5vw,24px);line-height:1.2}
+.learningCopy p{font-size:16px;line-height:1.45;margin:0;color:#263e5d}
+.learningAction{display:block;font-size:15px;font-weight:800;color:#154c38;border-left:4px solid #228260;padding-left:9px;margin-top:4px}
+.progressTrack{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;height:9px}
+.progressTrack span{background:#47648e;border-radius:100px}
+.progressTrack span[data-complete='true']{background:#f8d569}
+@media(max-width:520px){.learningCard{grid-template-columns:52px minmax(0,1fr);padding:11px;gap:10px}.learningIcon{width:50px;height:50px;border-radius:13px}.learningCopy strong{font-size:19px}.learningCopy p{font-size:15px}.learningAction{font-size:14px}}
