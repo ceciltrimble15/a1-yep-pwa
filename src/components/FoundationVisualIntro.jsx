@@ -75,7 +75,8 @@ export default function FoundationVisualIntro({ step, powerName, narration, opti
     utterance.rate = .88;
     utterance.pitch = 1;
     speechRef.current = utterance;
-    utterance.onstart = () => { if (speechRef.current === utterance) { clearSpeechStartTimer(); setAudioPending(false); setSpeaking(true); } };
+    let started = false;
+    utterance.onstart = () => { if (speechRef.current === utterance) { started = true; clearSpeechStartTimer(); setAudioPending(false); setSpeaking(true); } };
     utterance.onend = () => { if (speechRef.current === utterance) { clearSpeechStartTimer(); speechRef.current = null; setSpeaking(false); setAudioPending(false); } };
     utterance.onerror = event => {
       if (speechRef.current !== utterance) return;
@@ -89,7 +90,7 @@ export default function FoundationVisualIntro({ step, powerName, narration, opti
       setAudioPending(true);
       window.speechSynthesis.speak(utterance);
       // Some device engines neither start nor raise an error. Never leave the learner trapped in a loading state.
-      if (speechRef.current === utterance && speechStartTimer.current === null) {
+      if (speechRef.current === utterance && !started && speechStartTimer.current === null) {
         speechStartTimer.current = setTimeout(() => {
           if (speechRef.current !== utterance) return;
           stop();
