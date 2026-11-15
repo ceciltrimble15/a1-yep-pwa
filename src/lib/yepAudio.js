@@ -57,16 +57,25 @@ export function chunkSpeech(text, maxChars = 185) {
   return chunks;
 }
 
-export function buildGuideAudioClips({ teacher, prompt, narration, question, example, includeExample }) {
+// Audio is a teaching script, not a dump of everything printed on screen.
+// Each pathway keeps its own level; do not silently make adult lessons childish.
+export function buildGuideAudioClips({ teacher, prompt, narration, question, example, includeExample, mode = 'builder' }) {
   const teachText = teacher?.speech || prompt || '';
   const questionText = teacher?.question || question || '';
   const clips = [];
 
   if (teachText) {
+    // A separate authored narrator line may be needed, but reading both a
+    // teacher script and a nearly identical screen narration creates long,
+    // repetitive audio for younger learners.
+    const extra = narration && narration.trim() !== teachText.trim() ? narration.trim() : '';
+    const lessonText = mode === 'explorer'
+      ? teachText
+      : extra ? teachText + ' ' + extra : teachText;
     clips.push({
       id: 'teach',
       label: 'Lesson',
-      text: narration ? teachText + ' ' + narration : teachText,
+      text: lessonText,
     });
   }
   if (questionText) {
