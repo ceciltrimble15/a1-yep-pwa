@@ -1,18 +1,21 @@
-# Full YEP App: Black American History and Living History Quests
+# Full YEP App: Black American Entrepreneurship, Ownership and Infrastructure History Quests
 
 **Scope:** Permanent full-app curriculum feature. **NOT** the current YEP proof-of-concept (POC) UI, PR #13, PR #14, or PR #16. No routes or production behavior changed in this branch.
 
+## Non-negotiable editorial boundary
+No sports-celebrity timelines, entertainment profiles, or music/art history as standalone content in this lane. We are teaching how Black Americans built enterprises, secured financing, acquired assets, patented inventions, organized labor and communities, created infrastructure and adapted to modern industries. If an arts or sports company is ever used, the focus must be documented ownership, contracts, financing or business operations, not fame. Avoid teaching that entrepreneurship is the only worthy path: skilled careers and collective institutions matter too.
+
 ## Product thesis
-Black American history belongs in the YEP learning system all year, not only in February. Tell documented U.S. history from a Black American-centered perspective while giving young people the tools to verify claims, recognize multiple voices, understand historical injustice, learn about Black achievement, and apply lessons through disciplined action. Include women and men in the people studied even if program enrollment is boys-focused.
+Black American history belongs in the YEP learning system year-round, but this lane has a deliberately specific lens: entrepreneurs, inventors, skilled workers, engineers, land and property ownership, banking, supply chains, institutions and infrastructure. Examine slavery, discrimination, Reconstruction and civil rights as essential context for who could own, build, work, borrow and participate economically. Teach documented contributions by both Black women and men, even if the youth cohort is boys-focused. Sports and entertainment celebrity history are outside this curriculum's main scope.
 
 **Founder voice:** direct, plainspoken, high-expectation, and future-facing. Sample: "We are not doing history just to memorize names. We're learning who built, who organized, who was kept out, what they did about it, and what you can build next. Bring receipts. Ask questions. Finish the quest." This is proposed copy for founder approval, not a quote or historical source.
 
-**Guardrails:** No fabricated quotes, fake archival imagery, exaggerated firsts, made-up numbers, or confusing interpretation with source evidence. Study oppression without reducing the full history to victimhood. Do not sanitize violence or use sensational imagery with children. Represent Black women, organizers, inventors, artists, owners, laborers, scholars, and ordinary families faithfully. Modern subjects should be dated and updated, not depicted as historical certainty without sources.
+**Guardrails:** No fabricated quotes, fake archival imagery, exaggerated firsts, made-up numbers, or confusing interpretation with source evidence. Study oppression without reducing the full history to victimhood. Do not sanitize violence or use sensational imagery with children. Represent Black women, inventors, business owners, tradespeople, farmers, manufacturers, organizers, scholars and ordinary families faithfully. Modern subjects should be dated and updated, not depicted as historical certainty without sources.
 
 ## Placement in full application
 Home > Explore Quests > **History + Heritage** (permanent category).
-- Sub-lanes: Roots & Resistance, Freedom & Reconstruction, Cincinnati/Ohio, Civil Rights & Community Organizing, Inventors & Infrastructure, Business & Ownership, Music/Art/Media, Modern Black History & AI, Living History.
-- Modes: Listen & Reflect, Timeline Builder, Source Detective, Business Lab, Map the Block, Inventor Challenge, Oral History, Debate with Evidence, Compare Then/Now, Build for the Future.
+- Sub-lanes: Economic Roots and Resistance, Freedom and Property Rights, Cincinnati/Ohio Business History, Black Banks and Finance, Inventors and Patents, Electrical/Construction Infrastructure, Agriculture and Land, Logistics and Manufacturing, Modern Black Enterprise and AI, Living Local Business History.
+- Modes: Listen & Reflect, Business Timeline, Patent Detective, Ledger and Budget Lab, Map the Infrastructure, Inventor Challenge, Oral Business History, Ownership Evidence Review, Compare Then/Now, Build for the Future.
 - Launch as elective or assigned by a facilitator. Quests are never paywalled for youth.
 - Age bands 7–10, 11–13, 14–17, 18–24 share a topic ID but have separate reading length, content notes, methods and evidence requirements.
 - Integrate with **FINISHER**, **F.L.A.G.**, Real Life Quests, A.Ai, facilitator review, progress and rewards. Do not create a second XP economy or a second youth identity store.
@@ -42,7 +45,7 @@ Each quest should store: id, slug, era, dateRange, region, subjectPeople, track,
 - All modern events need refresh policy (e.g. 90-day editorial review for developing subjects), and source-backed updates.
 - Keep source text and founder commentary in separate labeled fields. A.Ai may discuss the source; it must never invent a citation.
 - Avatar/voice recording requires approved rights and a clear human vs. generated label where necessary.
-- The catalog file is a **seed**, not yet an approved published lesson; each of 18 seed entries is marked editorial-review-required.
+- The catalog file is a **seed**, not yet an approved published lesson; each of 18 seed entries is marked editorial-review-required. Every activity must connect to economic agency, ownership, business operations or infrastructure; otherwise it belongs in a different curriculum lane.
 
 ## Safety and privacy
 - No identifying youth interviews, faces, geolocation, medical data or voice recording uploaded by default.
