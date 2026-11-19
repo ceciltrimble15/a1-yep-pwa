@@ -110,7 +110,7 @@ export const BLACK_HISTORY_QUESTS = [
     "id": "bh-006",
     "title": "The Receipts Matter",
     "era": "civil-rights",
-    "track": "media-literacy",
+    "track": "business-research",
     "story": "Civil rights history includes organizers, families, local workers and people who carried risk without becoming household names.",
     "quest": {
       "mode": "source-check",
@@ -203,19 +203,19 @@ export const BLACK_HISTORY_QUESTS = [
   },
   {
     "id": "bh-011",
-    "title": "Culture Became a Business",
-    "era": "culture",
-    "track": "creative",
-    "story": "Hip-hop grew in the Bronx in the 1970s from community creativity and became a powerful cultural and economic force.",
+    "title": "From Invention to Ownership",
+    "era": "innovation",
+    "track": "business",
+    "story": "Black American inventors faced technical and financial challenges in protecting and commercializing ideas. Study verified inventions and distinguish the inventor, patent owner, producer and seller.",
     "quest": {
-      "mode": "original-creative",
-      "instruction": "Design an original creative brand, outline rights, costs and respectful credit.",
+      "mode": "patent-business-lab",
+      "instruction": "Choose a documented Black inventor, review the original patent record and sketch how the invention could become a practical business with costs and customers.",
       "proof": "Learner-created artifact, reflection, or supervised demonstration",
       "needsAdult": false,
       "requiresExternalUpload": false
     },
     "sourceUrls": [
-      "https://nmaahc.si.edu/explore/stories/hip-hop-bronx"
+      "https://invention.si.edu/sites/default/files/Lemelson-Center-Black-Inventors-Innovators-Report-updated-2021-10.pdf"
     ],
     "reviewStatus": "editorial-review-required",
     "minAge": 7
@@ -241,13 +241,13 @@ export const BLACK_HISTORY_QUESTS = [
   },
   {
     "id": "bh-013",
-    "title": "Who Owns the Story?",
+    "title": "Who Owns the Business Records?",
     "era": "modern",
     "track": "media-literacy",
-    "story": "Today's social platforms spread stories quickly, but popularity does not make a claim true.",
+    "story": "Business history requires evidence: registration, products, property, financing and customers. A great business story still needs records to support it.",
     "quest": {
       "mode": "source-check",
-      "instruction": "Investigate an archival image, note its creator and context, then explain what remains unknown.",
+      "instruction": "Compare an archived business document with a secondary account; identify what can and cannot be proved about ownership and success.",
       "proof": "Learner-created artifact, reflection, or supervised demonstration",
       "needsAdult": false,
       "requiresExternalUpload": false
