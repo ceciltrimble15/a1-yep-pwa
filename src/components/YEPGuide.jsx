@@ -66,6 +66,7 @@ export default function YEPGuide({
   const [audioError, setAudioError] = useState('');
   const [showExample, setShowExample] = useState(false);
   const [speaking, setSpeaking] = useState(false);
+  const [learningPhase, setLearningPhase] = useState('watch');
   const [activeClip, setActiveClip] = useState('');
   const [lastClip, setLastClip] = useState('teach');
   const [voice, setVoice] = useState(null);
@@ -102,6 +103,7 @@ export default function YEPGuide({
   useEffect(() => {
     setAudioError('');
     setShowExample(false);
+    setLearningPhase('watch');
     setSpeaking(false);
     setActiveClip('');
     setLastClip('teach');
@@ -145,6 +147,11 @@ export default function YEPGuide({
     utterance.pitch = profile.pitch;
     utterance.volume = 1;
 
+    utterance.onstart = () => {
+      if (token !== playbackToken.current) return;
+      setSpeaking(true);
+      setActiveClip(clipId);
+    };
     utterance.onend = () => speakChunks(chunks, clipId, token, index + 1);
     utterance.onerror = (event) => {
       if (token !== playbackToken.current) return;
@@ -172,10 +179,16 @@ export default function YEPGuide({
     const token = playbackToken.current;
     window.speechSynthesis.cancel();
     setAudioError('');
-    setSpeaking(true);
+    setSpeaking(false);
     setActiveClip(clip.id);
     setLastClip(clip.id);
-    speakChunks(chunkSpeech(clip.text), clip.id, token);
+    try {
+      speakChunks(chunkSpeech(clip.text), clip.id, token);
+    } catch {
+      setSpeaking(false);
+      setActiveClip('');
+      setAudioError('Audio could not start on this device. The lesson remains available to watch and read.');
+    }
   }
 
   function replayLast() {
@@ -187,11 +200,28 @@ export default function YEPGuide({
   return (
     <section className={`${styles.panel} ${bright ? styles.bright : ''}`} data-lane={mode} aria-label="YEP lesson guide">
       <div className={styles.identity}>
-        <GuideAvatar />
+        <GuideAvatar speaking={speaking} />
         <div><span>YOUR YEP GUIDE</span><strong>{program.tier}</strong><small>Step {step}</small></div>
       </div>
       <div className={styles.teaching}>
         <h2 ref={headingRef} tabIndex={-1} style={{ scrollMarginTop: 160 }}>{title}</h2>
+        <div className={styles.learningSwitcher} role="group" aria-label="Choose how to learn this lesson">
+          <button type="button" aria-pressed={learningPhase === 'watch'} onClick={() => { stopAudio(); setLearningPhase('watch'); }}><Eye size={20} aria-hidden="true" /> WATCH</button>
+          <button type="button" aria-pressed={learningPhase === 'listen'} onClick={() => { setLearningPhase('listen'); playClip('teach'); }}><Headphones size={20} aria-hidden="true" /> LISTEN</button>
+          <button type="button" aria-pressed={learningPhase === 'try'} onClick={() => { stopAudio(); setLearningPhase('try'); }}><ChevronRight size={20} aria-hidden="true" /> TRY</button>
+        </div>
+        <div className={styles.learningStage} data-learning-phase={learningPhase}>
+          <div className={styles.learningStageArt}>
+            {learningPhase === 'watch' && <LearningPicture kind={pictureKind || 'workflow'} label="Illustrated lesson: explore the problem before making a choice" />}
+            {learningPhase === 'listen' && <GuideAvatar speaking={speaking} />}
+            {learningPhase === 'try' && <LearningPicture kind={pictureKind || 'reach'} changed label="Illustration showing a possible next step to try" />}
+          </div>
+          <div className={styles.learningStageCopy} role="status" aria-live="polite">
+            <strong>{learningPhase === 'watch' ? '1 · SEE WHAT IS HAPPENING' : learningPhase === 'listen' ? '2 · HEAR THE GUIDE' : '3 · MAKE YOUR MOVE'}</strong>
+            <p>{learningPhase === 'watch' ? (example || 'Look closely at the scene. What problem do you notice, and who could you help?') : learningPhase === 'listen' ? (speaking ? 'The Guide is reading this lesson. Look at the scene and listen for the one action you can take.' : 'Tap LISTEN to hear the Guide. If your device cannot speak, the words are still here.') : (teacher?.question || question || 'Now apply what you learned. Make a choice, explain why, and try the real activity below.')}</p>
+            {learningPhase === 'try' && (onAction || onTry) && <button type="button" className={styles.stageTry} onClick={onAction || onTry}>{actionLabel || 'Try the activity'} <ChevronRight size={19} aria-hidden="true" /></button>}
+          </div>
+        </div>
         <p className={styles.prompt} aria-live="polite">{teacher ? teacher.speech : prompt}</p>
         {(teacher?.question || question) && <div className={styles.teacherQuestion}><strong>YOUR TURN</strong><p>{teacher?.question || question}</p></div>}
 
