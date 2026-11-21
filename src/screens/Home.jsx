@@ -7,6 +7,7 @@ import Shell from '../components/Shell';
 import YEPBrandMark from '../components/YEPBrandMark';
 import YEPGuide from '../components/YEPGuide';
 import FoundationVisualIntro from '../components/FoundationVisualIntro';
+import FutureWorlds from '../components/FutureWorlds';
 import { LearningPicture } from '../components/LearningPicture';
 import styles from './Home.module.css';
 
@@ -105,6 +106,8 @@ export default function Home() {
           <span><Sparkles size={18} aria-hidden="true"/> Same Process. Different Stage of Life.</span>
           <span>{finished} of 4 learning lanes have saved work</span>
         </div>
+
+        <FutureWorlds navigate={navigate} />
 
         <div className={styles.sectionIntro}><div><span>WHERE WILL YOU GO?</span><h2>Choose what you want to explore.</h2></div><p>See it. Hear it. Try it. Reflect. Finish.</p></div>
 
