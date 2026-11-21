@@ -90,3 +90,11 @@
 .panel[data-lane="explorer"] .learningSwitcher button[aria-pressed="true"]{color:#fff}
 @media(max-width:780px){.learningStage{grid-template-columns:1fr}.learningStageArt{min-height:160px}.learningStageCopy{padding:5px}.learningSwitcher button{font-size:13px;gap:5px}}
 @media(max-width:390px){.learningSwitcher button{font-size:11px;padding:8px 3px}.learningSwitcher button svg{width:17px}}
+
+/* The guide moves only when speech synthesis reports that audio actually started. */
+.guideMouth{transform-box:fill-box;transform-origin:center}
+.guideAvatarArt[data-speaking="true"] .guideMouth{animation:yepGuideSpeak .24s ease-in-out infinite alternate}
+.guideAvatarArt[data-speaking="true"]{animation:yepGuideLive .95s ease-in-out infinite alternate}
+@keyframes yepGuideSpeak{from{transform:scaleY(.65)}to{transform:scaleY(1.8)}}
+@keyframes yepGuideLive{from{transform:translateY(0)}to{transform:translateY(-3px)}}
+@media(prefers-reduced-motion:reduce){.guideAvatarArt[data-speaking="true"],.guideAvatarArt[data-speaking="true"] .guideMouth{animation:none}}
