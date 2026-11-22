@@ -3,7 +3,7 @@
  * Every entry requires historical and age-band review before publication.
  * Voice is a working founder-style draft, not a claimed verbatim recording.
  */
-export const BLACK_HISTORY_CATALOG_VERSION = '0.1-editorial';
+export const BLACK_HISTORY_CATALOG_VERSION = '0.2-editorial';
 export const BLACK_HISTORY_AGE_BANDS = [
   { id: '7-10', min: 7, max: 10, reading: 'short narration + illustrated choices', evidence: 'drawing, voice or one-sentence answer' },
   { id: '11-13', min: 11, max: 13, reading: 'short source excerpt + visual comparison', evidence: 'comparison, explanation or guided project' },
@@ -11,6 +11,26 @@ export const BLACK_HISTORY_AGE_BANDS = [
   { id: '18-24', min: 18, max: 24, reading: 'primary sources + economic and systems context', evidence: 'research memo, practical build plan or field project' }
 ];
 export const BLACK_HISTORY_QUESTS = [
+  {
+    "id": "bh-000",
+    "title": "James Forten: From Apprentice to Business Owner",
+    "era": "early-republic",
+    "track": "business",
+    "story": "James Forten learned the sailmaking trade, became a foreman, and took over Robert Bridges's Philadelphia sail loft in 1798. He built a successful company employing Black and white workers and used his influence to support abolition. He was an early Black American entrepreneur, not the first Black business owner.",
+    "quest": {
+      "mode": "business-systems",
+      "instruction": "Map the path from apprentice to owner. Identify the customers, supplies, workers, skills, and risks of a sailmaking company. Draw how you would improve a business while honoring worker safety and history.",
+      "proof": "One simple business operations map and a source-checked explanation of the owner's decisions",
+      "needsAdult": false,
+      "requiresExternalUpload": false
+    },
+    "sourceUrls": [
+      "https://www.amrevmuseum.org/black-founders-big-idea-4-james-forten-and-entrepreneurs-of-african-descent",
+      "https://www.amrevmuseum.org/frequently-asked-questions-james-forten"
+    ],
+    "reviewStatus": "editorial-review-required",
+    "minAge": 7
+  },
   {
     "id": "bh-001",
     "title": "The History They Didn't Hand You",
