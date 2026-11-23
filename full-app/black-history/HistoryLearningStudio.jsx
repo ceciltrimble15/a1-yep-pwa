@@ -29,7 +29,7 @@ function TeachingScene({ type, speaking }) {
     </>}
     <g transform="translate(20 25)"><circle cx="65" cy="56" r="40" fill="#905C3C"/><path d="M26 60q-5-55 40-55 46 0 40 55-18-20-40-20-20 0-40 20Z" fill="#101522"/><path d="M17 245q4-130 48-130 49 0 55 130Z" fill="#E3B958"/><circle cx="52" cy="56" r="3" fill="#192233"/><circle cx="80" cy="56" r="3" fill="#192233"/><path d="M51 79q14 10 28 0" fill="none" stroke="#4B2B23" strokeWidth="4" className={speaking?styles.talking:''}/>
       <rect x="80" y="154" width="38" height="37" rx="6" fill="#fff" stroke="#D4A017" strokeWidth="2"/>
-      <image href="https://www.a1suppliers.org/assets/a1-suppliers-logo-C2ExXQti.webp"
+      <image href="https://www.a1suppliers.org/a1-suppliers-logo.png"
         x="82" y="156" width="34" height="33" preserveAspectRatio="xMidYMid meet" />
     </g>
   </svg>;
