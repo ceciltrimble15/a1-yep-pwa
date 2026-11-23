@@ -10,3 +10,11 @@
 .reflect label{display:block;font-size:19px;font-weight:800}.reflect textarea{display:block;width:100%;min-height:100px;margin:13px 0;padding:12px;border:2px solid #b3cbe4;border-radius:12px;font:inherit}.reflect p{color:#4d6484}.reflect strong{color:#195486}
 button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:4px solid #efb842;outline-offset:3px}
 @media(max-width:720px){.lessonPicker{grid-template-columns:1fr}.context p{font-size:17px}.age{flex-wrap:wrap}}
+
+.modeSelector{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:5px}
+.modeSelector button{min-height:60px;border:2px solid #aac6e8;background:#fff;color:#173f77;font-weight:950;font-size:17px;border-radius:14px}
+.modeSelector button[aria-pressed=true]{color:#fff;background:#154c9d;border-color:#154c9d;box-shadow:0 6px 15px #0d35652b}
+.nextMove{min-height:62px;background:#e7b64d;color:#132f59;font-weight:950;font-size:18px;border:0;border-radius:16px}
+.receipts summary{cursor:pointer;color:#124d99;font-weight:950;font-size:15px;letter-spacing:.04em}
+.receipts summary:focus-visible{outline:3px solid #efb842}
+@media(max-width:480px){.modeSelector button{font-size:13px;padding:9px 3px}}
