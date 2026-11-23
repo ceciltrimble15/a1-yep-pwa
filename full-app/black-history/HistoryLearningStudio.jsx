@@ -27,7 +27,11 @@ function TeachingScene({ type, speaking }) {
       <rect x="337" y="31" width="44" height="82" rx="9" fill="#1D2B47" stroke="#B7CCE5" strokeWidth="4"/>
       <circle cx="359" cy="48" r="10" fill="#EC855F"/><circle cx="359" cy="73" r="10" fill="#EACB60"/><circle cx="359" cy="98" r="10" fill="#67D5A1"/>
     </>}
-    <g transform="translate(20 25)"><circle cx="65" cy="56" r="40" fill="#905C3C"/><path d="M26 60q-5-55 40-55 46 0 40 55-18-20-40-20-20 0-40 20Z" fill="#101522"/><path d="M17 245q4-130 48-130 49 0 55 130Z" fill="#E3B958"/><circle cx="52" cy="56" r="3" fill="#192233"/><circle cx="80" cy="56" r="3" fill="#192233"/><path d="M51 79q14 10 28 0" fill="none" stroke="#4B2B23" strokeWidth="4" className={speaking?styles.talking:''}/></g>
+    <g transform="translate(20 25)"><circle cx="65" cy="56" r="40" fill="#905C3C"/><path d="M26 60q-5-55 40-55 46 0 40 55-18-20-40-20-20 0-40 20Z" fill="#101522"/><path d="M17 245q4-130 48-130 49 0 55 130Z" fill="#E3B958"/><circle cx="52" cy="56" r="3" fill="#192233"/><circle cx="80" cy="56" r="3" fill="#192233"/><path d="M51 79q14 10 28 0" fill="none" stroke="#4B2B23" strokeWidth="4" className={speaking?styles.talking:''}/>
+      <rect x="80" y="154" width="38" height="37" rx="6" fill="#fff" stroke="#D4A017" strokeWidth="2"/>
+      <image href="https://www.a1suppliers.org/assets/a1-suppliers-logo-C2ExXQti.webp"
+        x="82" y="156" width="34" height="33" preserveAspectRatio="xMidYMid meet" />
+    </g>
   </svg>;
 }
 export default function HistoryLearningStudio() {
