@@ -24,5 +24,7 @@ jobs:
         run: |
           npm ci
           npm run build
+          test -f dist/index.html
+          test -f dist/history.html
       - name: Compile standalone history teaching screen without changing POC routes
         run: node -e "require('esbuild').buildSync({entryPoints:['full-app/black-history/HistoryLearningStudio.jsx'],bundle:true,write:false,loader:{'.jsx':'jsx'},platform:'browser',format:'esm'});"
