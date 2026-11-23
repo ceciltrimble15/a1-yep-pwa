@@ -37,6 +37,10 @@ export function GuideAvatar({ speaking = false }) {
       <path d="M80 73c-2 7-3 12-1 15 2 2 5 2 8 1" fill="none" stroke="#5B3324" strokeWidth="2.5" strokeLinecap="round" />
       <path className={styles.guideMouth} d="M65 94c9 8 21 8 30 0" fill="none" stroke="#4A241C" strokeWidth="3" strokeLinecap="round" />
       <path d="M71 96c6 3 12 3 18 0" fill="none" stroke="#F2D4C5" strokeWidth="2.2" strokeLinecap="round" />
+      {/* Exact public A/1 Suppliers artwork, not a generated replacement mark. */}
+      <rect x="99" y="114" width="36" height="36" rx="6" fill="#FFFFFF" stroke="#D4A017" strokeWidth="2" />
+      <image href="https://www.a1suppliers.org/assets/a1-suppliers-logo-C2ExXQti.webp"
+        x="101" y="116" width="32" height="32" preserveAspectRatio="xMidYMid meet" />
       <circle cx="80" cy="139" r="12" fill="#D4A017" />
       <text x="80" y="145" textAnchor="middle" fontSize="17" fontWeight="900" fill="#0B1D3A">Y</text>
       <path d="M117 78c8 4 12 11 12 20" fill="none" stroke="#D4A017" strokeWidth="4" strokeLinecap="round" />
