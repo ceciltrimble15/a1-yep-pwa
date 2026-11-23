@@ -98,3 +98,16 @@
 @keyframes yepGuideSpeak{from{transform:scaleY(.65)}to{transform:scaleY(1.8)}}
 @keyframes yepGuideLive{from{transform:translateY(0)}to{transform:translateY(-3px)}}
 @media(prefers-reduced-motion:reduce){.guideAvatarArt[data-speaking="true"],.guideAvatarArt[data-speaking="true"] .guideMouth{animation:none}}
+
+
+/* The hands communicate teaching intent rather than loop aimlessly. */
+.guideLeftArm,.guideRightArm{transform-box:fill-box;transform-origin:50% 90%;transition:transform .3s ease}
+.guideAvatarArt[data-gesture="explain"] .guideLeftArm{animation:yepGuideExplain 1.4s ease-in-out infinite alternate}
+.guideAvatarArt[data-gesture="point"] .guideRightArm{transform:translate(-4px,-8px) rotate(-12deg)}
+.guideAvatarArt[data-gesture="point"] .guideLeftArm{transform:rotate(-5deg)}
+@keyframes yepGuideExplain{from{transform:rotate(-5deg) translateY(1px)}to{transform:rotate(9deg) translateY(-4px)}}
+.coachHint{display:flex;flex-direction:column;gap:5px;margin:14px 0 16px;padding:13px 16px;border-left:5px solid #e3ad2f;border-radius:12px;background:#fff6d9;color:#17345f}
+.coachHint strong{font-size:12px;letter-spacing:.1em;font-weight:900}
+.coachHint p{font-size:clamp(16px,2vw,20px);font-weight:700;line-height:1.4;margin:0}
+.panel[data-lane="explorer"] .coachHint{color:#17345f}
+@media(prefers-reduced-motion:reduce){.guideLeftArm,.guideRightArm{animation:none!important;transition:none!important}}
