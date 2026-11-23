@@ -34,6 +34,7 @@ export default function HistoryLearningStudio() {
   const [lessonId, setLessonId] = useState(VERIFIED_HISTORY_LESSONS[0].id);
   const [ageBand, setAgeBand] = useState('11-13');
   const [sceneIndex, setSceneIndex] = useState(0);
+  const [learningMode, setLearningMode] = useState('watch');
   const [answer,setAnswer] = useState('');
   const [reflection,setReflection] = useState('');
   const [speaking,setSpeaking] = useState(false);
@@ -50,8 +51,8 @@ export default function HistoryLearningStudio() {
     setSpeaking(false);
   }
   useEffect(()=>()=>{const old=audioRef.current;audioRef.current=null;if(old){old.onstart=null;old.onend=null;old.onerror=null;}if(typeof window!=='undefined'&&window.speechSynthesis)window.speechSynthesis.cancel();},[]);
-  function selectLesson(id){ stop();setLessonId(id);setSceneIndex(0);setAnswer('');setReflection('');setMessage('');}
-  function nextScene(i){stop();setSceneIndex(i);setMessage('');}
+  function selectLesson(id){ stop();setLessonId(id);setSceneIndex(0);setLearningMode('watch');setAnswer('');setReflection('');setMessage('');}
+  function nextScene(i){stop();setSceneIndex(i);setLearningMode('watch');setMessage('');}
   function narrate(){ if(!supported){setMessage('Audio is not supported on this device. Read the lesson text instead.');return;}
     stop();setMessage('Preparing voice...');
     try {const speech=new window.SpeechSynthesisUtterance(scene.narration);speech.lang='en-US';speech.rate=.9;audioRef.current=speech;
@@ -69,12 +70,14 @@ export default function HistoryLearningStudio() {
     <label className={styles.age}>Learning age pathway <select value={ageBand} onChange={e=>setAgeBand(e.target.value)}>{Object.keys(HISTORY_AGE_REQUIREMENTS).map(x=><option key={x} value={x}>{x} years</option>)}</select></label>
     <div className={styles.lesson}>
       <div className={styles.context}><span>{lesson.name} · {lesson.years}</span><h3>{lesson.title}</h3><p>{lesson.hook}</p></div>
-      <div className={styles.picture}><TeachingScene type={scene.scene} speaking={speaking}/></div>
-      <nav className={styles.steps} aria-label="Lesson scene navigation">{lesson.scenes.map((item,i)=><button key={item.title} aria-current={i===sceneIndex?'step':undefined} onClick={()=>nextScene(i)}>{i+1}. {item.title}</button>)}</nav>
-      <div className={styles.narration} aria-live="polite"><strong>{scene.title}</strong><p>{scene.narration}</p><em>{scene.question}</em><div className={styles.audio}><button type="button" onClick={speaking?stop:narrate}>{speaking?'Stop guide':'Listen to guide'}</button><span role="status">{message}</span></div></div>
-      <div className={styles.receipts}><h4>Check the receipts</h4><ul>{lesson.factChecks.map(f=><li key={f.claim}>{f.claim} <small>{f.citation}</small></li>)}</ul>{lesson.sources.map(f=><a key={f.url} href={f.url} target="_blank" rel="noopener noreferrer">{f.label}</a>)}</div>
-      <fieldset className={styles.challenge}><legend><strong>YOUR TURN:</strong> {lesson.challenge.question}</legend>{lesson.challenge.choices.map(choice=><label key={choice.id} data-picked={answer===choice.id}><input type="radio" name={lesson.id} value={choice.id} checked={answer===choice.id} onChange={()=>setAnswer(choice.id)} />{choice.label}</label>)}{result&&<p role="status" className={styles.feedback}>{result.feedback}</p>}</fieldset>
-      <div className={styles.reflect}><label htmlFor="history-reflection">{lesson.reflection}</label><textarea id="history-reflection" value={reflection} onChange={e=>setReflection(e.target.value)} maxLength={600} placeholder="Write or explain your idea..." /><p>{HISTORY_AGE_REQUIREMENTS[ageBand].directions}</p><strong>{result?.correct&&reflection.trim().length>=12?'Learning evidence ready for facilitator review. No XP awarded.':'Choose a supported business decision and explain your thinking to complete this practice.'}</strong></div>
+      <div className={styles.modeSelector} role="group" aria-label="Choose learning mode"><button type="button" aria-pressed={learningMode==='watch'} onClick={()=>{stop();setLearningMode('watch')}}>WATCH IT</button><button type="button" aria-pressed={learningMode==='listen'} onClick={()=>{stop();setLearningMode('listen');setMessage('Tap Listen to guide to hear the scene.')}}>LISTEN</button><button type="button" aria-pressed={learningMode==='try'} onClick={()=>{stop();setLearningMode('try')}}>TRY IT</button></div>
+      {learningMode!=='try'&&<div className={styles.picture}><TeachingScene type={scene.scene} speaking={speaking}/></div>}
+      {learningMode!=='try'&&<nav className={styles.steps} aria-label="Lesson scene navigation">{lesson.scenes.map((item,i)=><button key={item.title} aria-current={i===sceneIndex?'step':undefined} onClick={()=>nextScene(i)}>{i+1}. {item.title}</button>)}</nav>}
+      {learningMode!=='try'&&<div className={styles.narration} aria-live="polite"><strong>{scene.title}</strong><p>{scene.narration}</p><em>{scene.question}</em><div className={styles.audio}><button type="button" onClick={speaking?stop:narrate}>{speaking?'Stop guide':'Listen to guide'}</button><span role="status">{message}</span></div></div>}
+      <details className={styles.receipts}><summary>VIEW VERIFIED HISTORY & SOURCES</summary><h4>Check the receipts</h4><ul>{lesson.factChecks.map(f=><li key={f.claim}>{f.claim} <small>{f.citation}</small></li>)}</ul>{lesson.sources.map(f=><a key={f.url} href={f.url} target="_blank" rel="noopener noreferrer">{f.label}</a>)}</details>
+      {learningMode==='try'&&<fieldset className={styles.challenge}><legend><strong>YOUR TURN:</strong> {lesson.challenge.question}</legend>{lesson.challenge.choices.map(choice=><label key={choice.id} data-picked={answer===choice.id}><input type="radio" name={lesson.id} value={choice.id} checked={answer===choice.id} onChange={()=>setAnswer(choice.id)} />{choice.label}</label>)}{result&&<p role="status" className={styles.feedback}>{result.feedback}</p>}</fieldset>}
+      {learningMode==='try'&&<div className={styles.reflect}><label htmlFor="history-reflection">{lesson.reflection}</label><textarea id="history-reflection" value={reflection} onChange={e=>setReflection(e.target.value)} maxLength={600} placeholder="Write or explain your idea..." /><p>{HISTORY_AGE_REQUIREMENTS[ageBand].directions}</p><strong>{result?.correct&&reflection.trim().length>=12?'Learning evidence ready for facilitator review. No XP awarded.':'Choose a supported business decision and explain your thinking to complete this practice.'}</strong></div>}
+      {learningMode!=='try'&&<button className={styles.nextMove} type="button" onClick={()=>{stop();setLearningMode('try')}}>Ready to solve the business challenge? TRY IT →</button>}
     </div>
   </section>;
 }
