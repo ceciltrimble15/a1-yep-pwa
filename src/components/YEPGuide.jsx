@@ -39,7 +39,7 @@ export function GuideAvatar({ speaking = false }) {
       <path d="M71 96c6 3 12 3 18 0" fill="none" stroke="#F2D4C5" strokeWidth="2.2" strokeLinecap="round" />
       {/* Exact public A/1 Suppliers artwork, not a generated replacement mark. */}
       <rect x="99" y="114" width="36" height="36" rx="6" fill="#FFFFFF" stroke="#D4A017" strokeWidth="2" />
-      <image href="https://www.a1suppliers.org/assets/a1-suppliers-logo-C2ExXQti.webp"
+      <image href="https://www.a1suppliers.org/a1-suppliers-logo.png"
         x="101" y="116" width="32" height="32" preserveAspectRatio="xMidYMid meet" />
       <circle cx="80" cy="139" r="12" fill="#D4A017" />
       <text x="80" y="145" textAnchor="middle" fontSize="17" fontWeight="900" fill="#0B1D3A">Y</text>
