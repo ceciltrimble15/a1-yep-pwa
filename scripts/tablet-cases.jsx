@@ -247,6 +247,10 @@ for (const mode of modes) {
   assert.equal(api.pilotProgress.dailyQuestChoiceProof.action, revisedLabel);
   mount(DemoAdminReview);
   assert.ok(JSON.stringify(view.toJSON()).includes('No written explanation was provided.'));
+  if (mode === 'explorer') {
+    assert.ok(JSON.stringify(view.toJSON()).includes('Foundation Guide Coaching'), 'facilitator sees guided learning evidence');
+    assert.ok(JSON.stringify(view.toJSON()).includes('not independent mastery'), 'guided practice is never certified as mastery');
+  }
   mount(StemSinQuest);
   if (mode === 'explorer') click('Try Sorting Tray');
   else {
