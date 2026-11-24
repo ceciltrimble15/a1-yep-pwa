@@ -179,21 +179,21 @@ export default function FoundationDailyQuest() {
   const [idea, setIdea] = useState(draft?.tryChoice ?? proof?.action ?? '');
   const [text, setText] = useState(draft?.text ?? pilotProgress.dailyQuestText);
   const complete = pilotProgress.dailyQuestComplete;
-  const [step, setStep] = useState(complete ? 7 : Math.min(draft?.guideStep || 1, 6));
-  const [coachChoice, setCoachChoice] = useState(draft?.coachChoice ?? null);
-  const [coachAttempts, setCoachAttempts] = useState(draft?.coachAttempts ?? 0);
-  const [coachPassed, setCoachPassed] = useState(!!draft?.coachPassed);
+  const [step, setStep] = useState(draft?.guideStep ? Math.min(draft.guideStep, 6) : complete ? 7 : 1);
+  const [coachChoice, setCoachChoice] = useState(draft?.coachChoice ?? pilotProgress.dailyQuestCoachedResponse?.lastChoice ?? null);
+  const [coachAttempts, setCoachAttempts] = useState(draft?.coachAttempts ?? pilotProgress.dailyQuestCoachedResponse?.attempts ?? 0);
+  const [coachPassed, setCoachPassed] = useState(draft?.coachPassed ?? !!pilotProgress.dailyQuestCoachedResponse?.reviewed);
   const [coachFeedback, setCoachFeedback] = useState(draft?.coachFeedback || '');
-  const [growthChoice, setGrowthChoice] = useState(draft?.growthChoice ?? null);
-  const [growthAttempts, setGrowthAttempts] = useState(draft?.growthAttempts ?? 0);
-  const [growthPassed, setGrowthPassed] = useState(!!draft?.growthPassed);
+  const [growthChoice, setGrowthChoice] = useState(draft?.growthChoice ?? pilotProgress.dailyQuestGrowthProof?.lastChoice ?? null);
+  const [growthAttempts, setGrowthAttempts] = useState(draft?.growthAttempts ?? pilotProgress.dailyQuestGrowthProof?.attempts ?? 0);
+  const [growthPassed, setGrowthPassed] = useState(draft?.growthPassed ?? !!pilotProgress.dailyQuestGrowthProof?.transferPassed);
   const [growthFeedback, setGrowthFeedback] = useState(draft?.growthFeedback || '');
   const [growthReflection, setGrowthReflection] = useState(draft?.growthReflection || pilotProgress.dailyQuestGrowthProof?.reflection || '');
   const reflectionReview = reviewGrowthReflection(growthReflection);
   const selected = FOUNDATION_SCENARIO.items[selectedProblem] || null;
   const ideas = selected ? FOUNDATION_QUEST_IDEAS[selectedProblem] : [];
   const canSave = !!(selected && who && idea && coachPassed && growthPassed && reflectionReview.provided);
-  const hasChanges = text !== pilotProgress.dailyQuestText || selected?.label !== proof?.problem || who !== (proof?.who || '') || idea !== (proof?.action || '');
+  const hasChanges = text !== pilotProgress.dailyQuestText || selected?.label !== proof?.problem || who !== (proof?.who || '') || idea !== (proof?.action || '') || growthReflection !== (pilotProgress.dailyQuestGrowthProof?.reflection || '');
 
   useEffect(() => {
     if (!complete || hasChanges) saveLessonDraft('dailyQuest', { questId: FOUNDATION_QUEST_ID, text, selectedProblem, who, tryChoice: idea, guideStep: step, coachChoice, coachAttempts, coachPassed, coachFeedback, growthChoice, growthAttempts, growthPassed, growthFeedback, growthReflection });
