@@ -180,7 +180,7 @@ export function DemoAdminReview() {
             : pilotProgress.dailyQuestDraft?.coachAttempts
               ? `Practice attempts so far: ${pilotProgress.dailyQuestDraft.coachAttempts}. ${pilotProgress.dailyQuestDraft.coachPassed ? 'Guided reasoning complete; save the activity to record it.' : 'The learner is working through hints.'}`
               : 'No guided reasoning checkpoint is saved yet.'}
-        />
+        />}
         <ProofCard label="S.T.E.M.Sin Proof" status={proofStatus(pilotProgress, 'stemSin')} text={proofDescription(pilotProgress, 'stemSin')} />
         <ProofCard label="Boss Challenge Proof" status={pilotProgress.bossComplete ? 'Complete' : 'Open'} text={pilotProgress.bossText} />
         <ProofCard label="Mentor Question Proof" status={pilotProgress.mentorQuestion ? 'Saved' : 'Open'} text={pilotProgress.mentorQuestion} />
