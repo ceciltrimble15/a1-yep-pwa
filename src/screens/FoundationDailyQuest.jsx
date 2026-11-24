@@ -239,7 +239,11 @@ export default function FoundationDailyQuest() {
           {['SEE', 'PEOPLE', 'IDEA', 'COACH', 'FINISH'].map((label, index) => <span key={label} data-state={step > index + 1 ? 'done' : step === index + 1 ? 'active' : 'next'}><b>{index + 1}</b>{label}</span>)}
         </div>
       </header>
-      <YEPGuide teacher={foundationTeacherStep('dailyQuest', step)} title={step === 6 ? 'Your response is saved' : ['See the lunch line', 'Think about people', 'Choose a move', 'Try your thinking', 'Review your response'][step - 1]}
+      <YEPGuide teacher={step === 4 && coachFeedback ? {
+        ...foundationTeacherStep('dailyQuest', step),
+        speech: coachFeedback,
+        question: coachPassed ? 'Review your practice response, then continue.' : 'Try another choice. What can we compare before and after?'
+      } : foundationTeacherStep('dailyQuest', step)} title={step === 6 ? 'Your response is saved' : ['See the lunch line', 'Think about people', 'Choose a move', 'Try your thinking', 'Review your response'][step - 1]}
         prompt={prompts[step]} step={step === 6 ? 'SAVED' : `${step} OF 5`} narration={narration}
         example={selected ? `One possible move is: ${ideas[0]}. Discuss it with a facilitator and ask permission before a real test. You can choose a different idea.` : FOUNDATION_QUEST.example}
         pictureKind={selectedProblem === 2 ? 'help' : 'waiting'}
