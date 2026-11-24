@@ -4,6 +4,7 @@ import { useYEP } from '../context/YEPContext';
 import { FOUNDATION_QUEST, FOUNDATION_QUEST_ID, FOUNDATION_SCENARIO, FOUNDATION_PEOPLE, FOUNDATION_QUEST_IDEAS } from '../data/foundationQuest';
 import { proofDescription } from '../data/proofEvidence';
 import { LUNCH_LINE_COACH, coachLunchLine } from '../data/foundationResponseCoach';
+import { FOUNDATION_GROW, assessGrowthChoice, reviewGrowthReflection } from '../data/foundationGrowth';
 import Shell from '../components/Shell';
 import YEPGuide from '../components/YEPGuide';
 import { foundationTeacherStep } from '../data/foundationTeacher';
@@ -178,22 +179,29 @@ export default function FoundationDailyQuest() {
   const [idea, setIdea] = useState(draft?.tryChoice ?? proof?.action ?? '');
   const [text, setText] = useState(draft?.text ?? pilotProgress.dailyQuestText);
   const complete = pilotProgress.dailyQuestComplete;
-  const [step, setStep] = useState(complete ? 6 : Math.min(draft?.guideStep || 1, 5));
+  const [step, setStep] = useState(complete ? 7 : Math.min(draft?.guideStep || 1, 6));
   const [coachChoice, setCoachChoice] = useState(draft?.coachChoice ?? null);
   const [coachAttempts, setCoachAttempts] = useState(draft?.coachAttempts ?? 0);
   const [coachPassed, setCoachPassed] = useState(!!draft?.coachPassed);
   const [coachFeedback, setCoachFeedback] = useState(draft?.coachFeedback || '');
+  const [growthChoice, setGrowthChoice] = useState(draft?.growthChoice ?? null);
+  const [growthAttempts, setGrowthAttempts] = useState(draft?.growthAttempts ?? 0);
+  const [growthPassed, setGrowthPassed] = useState(!!draft?.growthPassed);
+  const [growthFeedback, setGrowthFeedback] = useState(draft?.growthFeedback || '');
+  const [growthReflection, setGrowthReflection] = useState(draft?.growthReflection || pilotProgress.dailyQuestGrowthProof?.reflection || '');
+  const reflectionReview = reviewGrowthReflection(growthReflection);
   const selected = FOUNDATION_SCENARIO.items[selectedProblem] || null;
   const ideas = selected ? FOUNDATION_QUEST_IDEAS[selectedProblem] : [];
-  const canSave = !!(selected && who && idea && coachPassed);
+  const canSave = !!(selected && who && idea && coachPassed && growthPassed && reflectionReview.provided);
   const hasChanges = text !== pilotProgress.dailyQuestText || selected?.label !== proof?.problem || who !== (proof?.who || '') || idea !== (proof?.action || '');
 
   useEffect(() => {
-    if (!complete || hasChanges) saveLessonDraft('dailyQuest', { questId: FOUNDATION_QUEST_ID, text, selectedProblem, who, tryChoice: idea, guideStep: step, coachChoice, coachAttempts, coachPassed, coachFeedback });
+    if (!complete || hasChanges) saveLessonDraft('dailyQuest', { questId: FOUNDATION_QUEST_ID, text, selectedProblem, who, tryChoice: idea, guideStep: step, coachChoice, coachAttempts, coachPassed, coachFeedback, growthChoice, growthAttempts, growthPassed, growthFeedback, growthReflection });
     else if (pilotProgress.dailyQuestDraft) saveLessonDraft('dailyQuest', null);
-  }, [text, selectedProblem, who, idea, step, complete, hasChanges, coachChoice, coachAttempts, coachPassed, coachFeedback]);
+  }, [text, selectedProblem, who, idea, step, complete, hasChanges, coachChoice, coachAttempts, coachPassed, coachFeedback, growthChoice, growthAttempts, growthPassed, growthFeedback, growthReflection]);
 
-  function resetCoach() { setCoachChoice(null); setCoachAttempts(0); setCoachPassed(false); setCoachFeedback(''); }
+  function resetCoach() { setCoachChoice(null); setCoachAttempts(0); setCoachPassed(false); setCoachFeedback(''); resetGrowth(); }
+  function resetGrowth() { setGrowthChoice(null); setGrowthAttempts(0); setGrowthPassed(false); setGrowthFeedback(''); setGrowthReflection(''); }
   function chooseProblem(index) { setSelectedProblem(index); setWho(''); setIdea(''); resetCoach(); setStep(2); }
   function chooseWho(value) { setWho(value); resetCoach(); setStep(3); }
   function chooseIdea(value) { setIdea(value); resetCoach(); setStep(4); }
@@ -208,12 +216,23 @@ export default function FoundationDailyQuest() {
     setCoachPassed(feedback.passed);
     setCoachFeedback(feedback.message);
   }
+  function respondToGrowth(index) {
+    if (growthPassed) return;
+    const nextAttempts = growthAttempts + 1;
+    const feedback = assessGrowthChoice(index, nextAttempts);
+    if (!feedback) return;
+    setGrowthChoice(index);
+    setGrowthAttempts(nextAttempts);
+    setGrowthPassed(feedback.passed);
+    setGrowthFeedback(feedback.feedback);
+  }
   function save() {
     if (!canSave) return;
+    const growthProof = { kind: 'foundation-growth-transfer-v1', scenario: 'art-supplies', attempts: growthAttempts, lastChoice: growthChoice, transferPassed: growthPassed, reflection: growthReflection.trim(), reflectionStatus: 'awaiting-facilitator-review', mastery: 'not-verified' };
     if (completeDailyQuest(text, { problem: selected.label, who, action: idea }, FOUNDATION_QUEST_ID, {
       kind: 'foundation-guided-response-v1', scenario: selectedProblem, attempts: coachAttempts,
       lastChoice: coachChoice, reviewed: true, status: 'practice-response-only'
-    })) { setText(text.trim()); setStep(6); }
+    }, growthProof)) { setText(text.trim()); setStep(7); }
   }
 
   const prompts = {
@@ -221,14 +240,16 @@ export default function FoundationDailyQuest() {
     2: `You noticed: ${selected?.label || 'a problem'}. Who feels this problem?`,
     3: 'Choose one move you would try. You can write your own idea instead. There is more than one useful answer.',
     4: 'Let us test your thinking. Choose how to find out whether your idea would help. If it needs work, I will give you a hint.',
-    5: 'Review your choices and your practice response. This is your plan, not proof that your idea worked in real life.',
-    6: 'Your practice response is saved on this tablet. Show it to a facilitator, then explore a test in S.T.E.M.Sin.',
+    5: 'Now take your thinking somewhere new. Look at the art-table problem, then choose a safe test.',
+    6: 'Explain what you learned in your own words. Then review your plan and save the practice.',
+    7: 'Your practice and reflection are saved on this tablet. A facilitator can review your thinking before you try a real-world skill.',
   };
   const narration = step === 1 ? FOUNDATION_SCENARIO.items.map((item, i) => `Picture ${i + 1}: ${item.label}. ${item.detail}`).join(' ')
     : step === 2 ? `Choose: ${FOUNDATION_PEOPLE.join('. ')}.`
       : step === 3 ? `You can try: ${ideas.join('. ')}. Your own words are optional.`
         : step === 4 ? (LUNCH_LINE_COACH[selectedProblem]?.question || 'Choose how to test your idea.')
-      : step === 5 ? `Problem: ${selected?.label || ''}. People: ${who}. Move to try: ${idea}. ${text ? `Your own words: ${text}` : 'No written answer was provided.'}`
+      : step === 5 ? FOUNDATION_GROW.scenario
+      : step === 6 ? FOUNDATION_GROW.reflectionPrompt
         : proofDescription(pilotProgress, 'dailyQuest');
 
   return <Shell showAudio={false}>
@@ -236,19 +257,22 @@ export default function FoundationDailyQuest() {
       <header className={styles.foundationQuestHeader}>
         <div><span>YOUR FIRST DAILY QUEST</span><h1>{FOUNDATION_QUEST.title}</h1><p>See it. Notice it. Choose a move. Finish.</p></div>
         <div className={styles.foundationQuestMiniFlow} aria-label="First Daily Quest progress">
-          {['SEE', 'PEOPLE', 'IDEA', 'COACH', 'FINISH'].map((label, index) => <span key={label} data-state={step > index + 1 ? 'done' : step === index + 1 ? 'active' : 'next'}><b>{index + 1}</b>{label}</span>)}
+          {['SEE', 'THINK', 'TRY', 'GROW', 'REFLECT', 'FINISH'].map((label, index) => <span key={label} data-state={step > index + 1 ? 'done' : step === index + 1 ? 'active' : 'next'}><b>{index + 1}</b>{label}</span>)}
         </div>
       </header>
-      <YEPGuide teacher={step === 4 && coachFeedback ? {
+      <YEPGuide teacher={step === 5 && growthFeedback ? {
+        ...foundationTeacherStep('dailyQuest', step), speech: growthFeedback,
+        question: growthPassed ? 'Explain what you learned next.' : 'Try again. How could you safely check the result?'
+      } : step === 4 && coachFeedback ? {
         ...foundationTeacherStep('dailyQuest', step),
         speech: coachFeedback,
         question: coachPassed ? 'Review your practice response, then continue.' : 'Try another choice. What can we compare before and after?'
-      } : foundationTeacherStep('dailyQuest', step)} title={step === 6 ? 'Your response is saved' : ['See the lunch line', 'Think about people', 'Choose a move', 'Try your thinking', 'Review your response'][step - 1]}
-        prompt={prompts[step]} step={step === 6 ? 'SAVED' : `${step} OF 5`} narration={narration}
+      } : foundationTeacherStep('dailyQuest', step)} title={step === 7 ? 'Your growth practice is saved' : ['See the lunch line', 'Think about people', 'Choose a move', 'Try your thinking', 'Grow in a new situation', 'Reflect and review'][step - 1]}
+        prompt={prompts[step]} step={step === 7 ? 'SAVED' : `${step} OF 6`} narration={narration}
         example={selected ? `One possible move is: ${ideas[0]}. Discuss it with a facilitator and ask permission before a real test. You can choose a different idea.` : FOUNDATION_QUEST.example}
         pictureKind={selectedProblem === 2 ? 'help' : 'waiting'}
-        actionLabel={step === 6 ? 'Go To S.T.E.M.Sin' : undefined}
-        onAction={step === 6 ? () => navigate('stemSin') : undefined} />
+        actionLabel={step === 7 ? 'Go To S.T.E.M.Sin' : undefined}
+        onAction={step === 7 ? () => navigate('stemSin') : undefined} />
 
       {step === 1 && <div id="foundation-lunch-scene"><FoundationQuestScene selectedIndex={selectedProblem} onSelect={chooseProblem} /></div>}
       {step === 2 && <section id="foundation-people" className={styles.foundationQuestChoiceStage}>
@@ -279,10 +303,35 @@ export default function FoundationDailyQuest() {
           <p>{coachFeedback}</p>
           <small>{coachPassed ? 'This demonstrates a practice response, not real-world mastery.' : 'Try another option. You can ask a facilitator for help.'}</small>
         </div>}
-        {coachPassed && <button type="button" className={styles.foundationQuestFinish} onClick={() => setStep(5)}>Review My Plan <ChevronRight size={20} /></button>}
+        {coachPassed && <button type="button" className={styles.foundationQuestFinish} onClick={() => setStep(5)}>Grow My Thinking <ChevronRight size={20} /></button>}
       </section>}
-      {step === 5 && <section id="foundation-review" className={styles.foundationQuestReview}>
-        <span>YOUR CHOICES</span><h2>Problem → People → Idea</h2>
+      {step === 5 && <section id="foundation-grow" className={styles.foundationQuestChoiceStage} aria-label="Growth learning checkpoint">
+        <span>GROW · NEW SITUATION</span><h2>{FOUNDATION_GROW.title}</h2>
+        <p>{FOUNDATION_GROW.scenario}</p>
+        <h3>{FOUNDATION_GROW.question}</h3>
+        <div className={styles.foundationQuestBigChoices} aria-label="Choose your growth answer">
+          {FOUNDATION_GROW.choices.map((choice, index) => <button type="button" key={choice}
+            aria-pressed={growthChoice === index} disabled={growthPassed} onClick={() => respondToGrowth(index)}>
+            <Lightbulb size={24}/><strong>{choice}</strong><ChevronRight size={19}/>
+          </button>)}
+        </div>
+        {growthFeedback && <div role="status" aria-live="polite" className={styles.foundationCoachFeedback} data-result={growthPassed ? 'ready' : 'retry'}>
+          <strong>{growthPassed ? 'YOU APPLIED YOUR LEARNING' : 'LET US THINK AGAIN'}</strong>
+          <p>{growthFeedback}</p>
+          <small>{growthPassed ? 'This is a guided transfer exercise, not proof of independent mastery.' : 'Try another idea or ask a facilitator for support.'}</small>
+        </div>}
+        {growthPassed && <button type="button" className={styles.foundationQuestFinish} onClick={() => setStep(6)}>Reflect on My Growth <ChevronRight size={20}/></button>}
+      </section>}
+      {step === 6 && <section id="foundation-review" className={styles.foundationQuestReview}>
+        <span>GROW · REFLECT AND REVIEW</span><h2>What changed in your thinking?</h2>
+        <p>{FOUNDATION_GROW.reflectionPrompt}</p>
+        <label htmlFor="foundation-growth-reflection">My learning reflection</label>
+        <textarea id="foundation-growth-reflection" className={styles.dailyQuestTextarea} value={growthReflection}
+          onChange={(event) => setGrowthReflection(event.target.value)}
+          placeholder="I learned to check my idea by…"/>
+        <p role="status" aria-live="polite">{reflectionReview.feedback}</p>
+        <p>Your own words will be saved for facilitator review, not automatically graded by AI.</p>
+        <h3>Review your first problem and your plan</h3>
         <div className={styles.foundationQuestReviewGrid}>
           <div><small>I NOTICED</small><strong>{selected?.label}</strong></div>
           <div><small>IT AFFECTS</small><strong>{who}</strong></div>
@@ -292,19 +341,20 @@ export default function FoundationDailyQuest() {
         <textarea id="daily-quest-answer" className={styles.dailyQuestTextarea} value={text} onChange={(event) => setText(event.target.value)} placeholder="Add your own words if you want." />
         <VoiceCapture prompt={FOUNDATION_QUEST.prompt} currentValue={text} onConfirm={setText} />
         <p>{text.trim() ? 'Your words, choices, and guided practice response will be saved.' : 'Your selected choices and guided practice response will be saved. No mastery claim is created.'}</p>
-        <p>Guided reasoning attempts: {coachAttempts}. A facilitator must verify any actual practical skill.</p>
+        <p>Guided reasoning attempts: {coachAttempts}. New-situation attempts: {growthAttempts}. A facilitator must verify any actual practical skill.</p>
         <button type="button" className={styles.foundationQuestFinish} disabled={!canSave || (idea === 'Own written idea' && !text.trim())} onClick={save}>{complete ? 'Update My Proof' : 'Finish My First Quest'}<CheckCircle2 size={20} /></button>
       </section>}
-      {step === 6 && <section id="foundation-complete" className={styles.foundationQuestComplete}>
+      {step === 7 && <section id="foundation-complete" className={styles.foundationQuestComplete}>
         <CheckCircle2 size={42} /><span>RESPONSE SAVED</span><h2>You chose a move to try.</h2><p>{proofDescription(pilotProgress, 'dailyQuest')}</p>
-        <p>A selected idea is a starting point, not evidence that it works. Discuss who it could help and what you would test next.</p>
-        <button type="button" className={ui.btnGhost} onClick={() => setStep(5)}>Review My Response</button>
+        <p>GROW reflection: {pilotProgress.dailyQuestGrowthProof?.reflection || 'No reflection recorded'}</p>
+        <p>Learning practice saved for facilitator review. A selected idea and a guided correct answer are not independent mastery.</p>
+        <button type="button" className={ui.btnGhost} onClick={() => setStep(6)}>Review My Response</button>
       </section>}
-      {step > 1 && step < 6 && <div className={styles.actions}>
+      {step > 1 && step < 7 && <div className={styles.actions}>
         <button type="button" className={ui.btnGhost} onClick={() => setStep(step - 1)}>Back One Step</button>
         <button type="button" className={ui.btnGhost} onClick={() => setStep(1)}>Choose Another Problem</button>
       </div>}
-      <p className={styles.draftNote}>{step === 6 ? 'Saved on this tablet. Facilitator verification remains separate.' : 'Your selections, coaching attempts, and draft are kept on this tablet as you go.'}</p>
+      <p className={styles.draftNote}>{step === 7 ? 'Saved on this tablet. Facilitator verification remains separate.' : 'Your selections, coaching attempts, and draft are kept on this tablet as you go.'}</p>
       <footer className={styles.foundationQuestSupport}><BookOpenCheck size={18} /><span><strong>App:</strong> see + choose + experience. <strong>Workbook:</strong> think + write + discuss with support.</span></footer>
     </section>
   </Shell>;
