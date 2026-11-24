@@ -7,6 +7,7 @@ import FinisherFocus from '../src/screens/FinisherFocus';
 import MyDirection from '../src/screens/MyDirection';
 import { FOUNDATION_QUEST, FOUNDATION_QUEST_ID } from '../src/data/foundationQuest';
 import { LUNCH_LINE_COACH, coachLunchLine } from '../src/data/foundationResponseCoach';
+import { FOUNDATION_GROW, assessGrowthChoice, reviewGrowthReflection } from '../src/data/foundationGrowth';
 import { DailyQuest, WeeklyModule, StemSinQuest, BossChallenge, MentorSpotlight } from '../src/screens/PilotScreens';
 import Reflection from '../src/screens/Reflection';
 import { getExposureMissions } from '../src/data/exposureProcess';
@@ -48,6 +49,18 @@ for (let problem = 0; problem < LUNCH_LINE_COACH.length; problem++) {
 }
 assert.equal(coachLunchLine(-1, 0), null);
 assert.equal(coachLunchLine(0, 99), null);
+assert.equal(FOUNDATION_GROW.choices.length, 3);
+for (let i = 0; i < FOUNDATION_GROW.choices.length; i++) {
+  const result = assessGrowthChoice(i);
+  assert.equal(result.passed, i === FOUNDATION_GROW.correctIndex);
+  assert.ok(result.feedback);
+}
+assert.notEqual(assessGrowthChoice(0,1).feedback, assessGrowthChoice(0,2).feedback, 'incomplete transfer offers a deeper clue');
+assert.equal(assessGrowthChoice(50), null);
+assert.equal(reviewGrowthReflection('ok').provided, false, 'one word is not a reflection');
+assert.equal(reviewGrowthReflection('I would ask permission, then compare what changed.').status, 'awaiting-facilitator-review');
+assert.ok(!JSON.stringify(reviewGrowthReflection('I would ask permission, then compare what changed.')).includes('mastered'));
+
 
 saved = { mode: 'explorer' };
 assert.equal(getProgramContent('explorer').dailyQuest.id, FOUNDATION_QUEST_ID);
