@@ -298,7 +298,7 @@ export default function FoundationDailyQuest() {
       {step === 6 && <section id="foundation-complete" className={styles.foundationQuestComplete}>
         <CheckCircle2 size={42} /><span>RESPONSE SAVED</span><h2>You chose a move to try.</h2><p>{proofDescription(pilotProgress, 'dailyQuest')}</p>
         <p>A selected idea is a starting point, not evidence that it works. Discuss who it could help and what you would test next.</p>
-        <button type="button" className={ui.btnGhost} onClick={() => setStep(4)}>Review My Response</button>
+        <button type="button" className={ui.btnGhost} onClick={() => setStep(5)}>Review My Response</button>
       </section>}
       {step > 1 && step < 6 && <div className={styles.actions}>
         <button type="button" className={ui.btnGhost} onClick={() => setStep(step - 1)}>Back One Step</button>
