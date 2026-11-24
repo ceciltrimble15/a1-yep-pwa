@@ -7,6 +7,7 @@ import Home from '../src/screens/Home';
 import MyDirection from '../src/screens/MyDirection';
 import TrackSelector from '../src/screens/TrackSelector';
 import { FOUNDATION_QUEST_ID, FOUNDATION_QUEST } from '../src/data/foundationQuest';
+import { LUNCH_LINE_COACH } from '../src/data/foundationResponseCoach';
 import VoiceCapture from '../src/components/VoiceCapture';
 import YEPGuide from '../src/components/YEPGuide';
 import PictureExample from '../src/components/LearningPicture';
@@ -37,6 +38,19 @@ function mount(Component, seed) {
 const text = (node) => typeof node === 'string' ? node : (node?.children || []).map(text).join('');
 const buttons = (label) => view.root.findAllByType('button').filter((node) => typeof label === 'string' ? (text(node).trim() === label || node.props['aria-label'] === label) : label.test(text(node)));
 function click(label, index = 0) { const button = buttons(label)[index]; assert.ok(button, `button ${label}`); assert.ok(!button.props.disabled, `enabled ${label}`); act(() => button.props.onClick()); }
+function finishFoundationCoach() {
+  const selectedProblem = api.pilotProgress.dailyQuestDraft?.selectedProblem;
+  assert.ok(Number.isInteger(selectedProblem), 'Foundation test selected a scenario');
+  const coach = LUNCH_LINE_COACH[selectedProblem];
+  // A deliberately weak answer must trigger a hint without granting completion.
+  const weakIndex = coach.correctIndex === 0 ? 1 : 0;
+  click(coach.choices[weakIndex]);
+  assert.equal(api.pilotProgress.dailyQuestDraft.coachPassed, false, 'a weak choice does not pass');
+  assert.equal(api.pilotProgress.dailyQuestComplete, false, 'a hint does not create completed evidence');
+  click(coach.choices[coach.correctIndex]);
+  assert.equal(api.pilotProgress.dailyQuestDraft.coachPassed, true, 'guided answer unlocks review');
+  click('Review My Plan');
+}
 function enter(id, value) { const field = view.root.findByProps({ id }); act(() => field.props.onChange({ target: { value } })); }
 const modes = ['explorer', 'builder', 'leader', 'yaep'];
 const mission = getExposureMissions('builder')[3];
@@ -215,18 +229,19 @@ for (const mode of modes) {
   click(mode === 'explorer' ? 'Both students and workers' : 'Both');
   const actions = view.root.findByProps({ 'aria-label': 'Choose a change to try' }).findAllByType('button');
   act(() => actions[0].props.onClick());
-  if (mode === 'explorer') click('Finish My First Quest');
+  if (mode === 'explorer') { finishFoundationCoach(); click('Finish My First Quest'); }
   else { click('Review My Choices'); click('Finish & Save'); }
   assert.equal(api.pilotProgress.dailyQuestText, '');
   assert.equal(api.pilotProgress.dailyQuestEvidenceType, 'choices');
   assert.ok(api.pilotProgress.dailyQuestChoiceProof.problem);
   assert.equal(api.reflectionSubmitted, false);
   mount(DailyQuest);
-  if (mode === 'explorer') { click('Review My Response'); click('Back One Step'); }
+  if (mode === 'explorer') { click('Review My Response'); click('Back One Step'); click('Back One Step'); }
   assert.equal(view.root.findByProps({ id: 'daily-quest-answer' }).props.value, '');
   const revised = view.root.findByProps({ 'aria-label': 'Choose a change to try' }).findAllByType('button')[1];
   const revisedLabel = text(revised).trim();
   act(() => revised.props.onClick());
+  if (mode === 'explorer') finishFoundationCoach();
   click('Update My Proof');
   assert.equal(api.pilotProgress.dailyQuestChoiceProof.action, revisedLabel);
   mount(DemoAdminReview);
@@ -332,6 +347,7 @@ enter('daily-quest-answer', 'I would try a picture menu while we wait.');
 mount(DailyQuest);
 assert.equal(view.root.findByProps({ id: 'daily-quest-answer' }).props.value, 'I would try a picture menu while we wait.');
 click('Review My Own Idea');
+finishFoundationCoach();
 click('Finish My First Quest');
 assert.equal(api.pilotProgress.dailyQuestQuestId, FOUNDATION_QUEST_ID);
 assert.equal(api.pilotProgress.dailyQuestEvidenceType, 'words_and_choices');
