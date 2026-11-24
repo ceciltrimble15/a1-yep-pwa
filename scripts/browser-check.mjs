@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { LUNCH_LINE_COACH } from '../src/data/foundationResponseCoach.js';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { chromium } from 'playwright';
 import { preview } from 'vite';
@@ -131,7 +132,19 @@ async function exercise(view, mode) {
     assert.deepEqual((await session(page)).pilotProgress.dailyQuestDraft, draft, 'unfinished problem survives refresh');
     await tap(page.getByRole('button', { name: mode === 'explorer' ? 'Both students and workers' : 'Both', exact: true }));
     await tap(page.locator('[aria-label="Choose a change to try"] button').first());
-    if (mode === 'explorer') await tap(page.getByRole('button', { name: 'Finish My First Quest', exact: true }));
+    if (mode === 'explorer') {
+      const coach = LUNCH_LINE_COACH[0];
+      const weakIndex = coach.correctIndex === 0 ? 1 : 0;
+      await tap(page.getByRole('button', { name: coach.choices[weakIndex], exact: true }));
+      assert.equal((await session(page)).pilotProgress.dailyQuestDraft.coachPassed, false, 'incorrect reasoning cannot complete quest');
+      assert.ok((await page.getByRole('status').filter({ hasText: 'HERE IS A CLUE' }).count()) > 0, 'specific hint becomes visible');
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      assert.equal((await session(page)).pilotProgress.dailyQuestDraft.coachAttempts, 1, 'coaching attempts survive reload');
+      await tap(page.getByRole('button', { name: coach.choices[coach.correctIndex], exact: true }));
+      await tap(page.getByRole('button', { name: 'Review My Plan', exact: true }));
+      await tap(page.getByRole('button', { name: 'Finish My First Quest', exact: true }));
+      assert.equal((await session(page)).pilotProgress.dailyQuestCoachedResponse.attempts, 2, 'reviewed coaching attempts are saved as practice');
+    }
     else {
       await tap(page.getByRole('button', { name: 'Review My Choices', exact: true }));
       await tap(page.getByRole('button', { name: 'Finish & Save', exact: true }));
