@@ -28,16 +28,22 @@ export const FOUNDATION_TEACHER = {
       focusLabel: 'Point to the coaching choices',
     },
     5: {
-      speech: "You gave a practice answer and reviewed your plan. Remember: a useful idea still needs a safe real-world test.",
-      question: "Does this plan match what you meant? Review your choices and save your practice.",
-      focusId: 'foundation-review',
-      focusLabel: 'Point to your plan',
+      speech: "You helped think about the lunch line. Now let us see whether the same idea works at a busy art table.",
+      question: "How could you test one small change and find out whether it helped?",
+      focusId: 'foundation-grow',
+      focusLabel: 'Point to the new-situation choices',
     },
     6: {
-      speech: "Your practice is saved on this device. A facilitator will check actual skill evidence. Next, move from noticing to safely testing an idea.",
+      speech: "A good learner explains the reason behind a choice. Tell me what you learned and what you would check next.",
+      question: "How would you know whether your idea helped? Write your own thoughts.",
+      focusId: 'foundation-review',
+      focusLabel: 'Point to the growth reflection',
+    },
+    7: {
+      speech: "Your growth practice is saved. A facilitator can review your reflection. Next, safely test a new idea in S.T.E.M.Sin.",
       question: "Ready for S.T.E.M.Sin? Tap Continue.",
       focusId: 'foundation-complete',
-      focusLabel: 'Point to your saved work',
+      focusLabel: 'Point to your saved growth practice',
     },
   },
   stemSin: {
