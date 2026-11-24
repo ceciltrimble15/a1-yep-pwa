@@ -181,6 +181,15 @@ export function DemoAdminReview() {
               ? `Practice attempts so far: ${pilotProgress.dailyQuestDraft.coachAttempts}. ${pilotProgress.dailyQuestDraft.coachPassed ? 'Guided reasoning complete; save the activity to record it.' : 'The learner is working through hints.'}`
               : 'No guided reasoning checkpoint is saved yet.'}
         />}
+        {mode === 'explorer' && <ProofCard
+          label="GROW · Transfer and Reflection"
+          status={pilotProgress.dailyQuestGrowthProof?.transferPassed ? 'New-situation practice saved' : pilotProgress.dailyQuestDraft?.growthAttempts ? 'GROW in progress' : 'Not yet attempted'}
+          text={pilotProgress.dailyQuestGrowthProof?.transferPassed
+            ? `Transfer attempts: ${pilotProgress.dailyQuestGrowthProof.attempts}. Reflection: ${pilotProgress.dailyQuestGrowthProof.reflection}. Facilitator review required; independent mastery not verified.`
+            : pilotProgress.dailyQuestDraft?.growthAttempts
+              ? `New-situation attempts: ${pilotProgress.dailyQuestDraft.growthAttempts}. ${pilotProgress.dailyQuestDraft.growthPassed ? 'Waiting for reflection and saving.' : 'The learner needs more guided practice.'}`
+              : 'The learner has not completed a new-situation transfer or a growth reflection.'}
+        />}
         <ProofCard label="S.T.E.M.Sin Proof" status={proofStatus(pilotProgress, 'stemSin')} text={proofDescription(pilotProgress, 'stemSin')} />
         <ProofCard label="Boss Challenge Proof" status={pilotProgress.bossComplete ? 'Complete' : 'Open'} text={pilotProgress.bossText} />
         <ProofCard label="Mentor Question Proof" status={pilotProgress.mentorQuestion ? 'Saved' : 'Open'} text={pilotProgress.mentorQuestion} />
