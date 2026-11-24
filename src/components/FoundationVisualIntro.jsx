@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import { Headphones, Lightbulb, Square, Sparkles, Volume2 } from 'lucide-react';
+import { Eye, Brain, Hand, TrendingUp, Headphones, Lightbulb, Square, Sparkles, Volume2 } from 'lucide-react';
 import { GuideAvatar } from './YEPGuide';
 import styles from './FoundationVisualIntro.module.css';
 
 const PREVIEW_STEPS = [
-  { name: 'SEE', headline: 'Notice the world', detail: 'Look around. What do you notice?', icon: '01' },
-  { name: 'THINK', headline: 'Choose what matters', detail: 'What catches your attention?', icon: '02' },
-  { name: 'TRY', headline: 'Make a small move', detail: 'Pick something you want to explore.', icon: '03' },
-  { name: 'GROW', headline: 'Keep learning', detail: 'Your first answer is just the beginning.', icon: '04' },
+  { name: 'SEE', headline: 'Notice the world', detail: 'Look around. What do you notice?', icon: '01', lesson: 'Spot a problem', example: 'See a messy table? Notice what is out of place.', action: 'Point to one thing you would fix.', visual: Eye },
+  { name: 'THINK', headline: 'Choose what matters', detail: 'What catches your attention?', icon: '02', lesson: 'Think of an idea', example: 'Maybe a box could hold the things on the table.', action: 'Pick one idea that might help.', visual: Brain },
+  { name: 'TRY', headline: 'Make a small move', detail: 'Pick something you want to explore.', icon: '03', lesson: 'Give it a try', example: 'Try putting the things in a box with an adult.', action: 'See what happens when you try.', visual: Hand },
+  { name: 'GROW', headline: 'Keep learning', detail: 'Your first answer is just the beginning.', icon: '04', lesson: 'Learn and try again', example: 'Did the box help? What could work better next time?', action: 'Tell what you learned.', visual: TrendingUp },
 ];
 
 const QUESTION_SCENES = [
@@ -172,9 +172,21 @@ export default function FoundationVisualIntro({ step, powerName, narration, opti
           <span>{item.icon}</span><strong>{item.name}</strong>
         </button>)}
       </div>}
+      {isWelcome && <div className={styles.learningCard} data-lesson-stage={activeStep.name}>
+        <div className={styles.learningIcon} aria-hidden="true"><activeStep.visual size={32}/></div>
+        <div className={styles.learningCopy}>
+          <span className={styles.learningLabel}>STEP {preview + 1} OF 4 · {activeStep.name}</span>
+          <strong>{activeStep.lesson}</strong>
+          <p>{activeStep.example}</p>
+          <span className={styles.learningAction}>{activeStep.action}</span>
+        </div>
+      </div>}
       {isWelcome && <p className={styles.stepProgress} role="status" aria-live="polite">
         Step {preview + 1} of {PREVIEW_STEPS.length}: {activeStep.name}. {activeStep.detail}
       </p>}
+      {isWelcome && <div className={styles.progressTrack} role="progressbar" aria-label="Visual teaching steps" aria-valuemin={1} aria-valuemax={4} aria-valuenow={preview + 1}>
+        {PREVIEW_STEPS.map((item, index) => <span key={item.name} data-complete={index <= preview} />)}
+      </div>}
       <div className={styles.audioRow}>
         <button type="button" onClick={hear} disabled={!supported} className={styles.listen} aria-label={audioActive ? 'Stop lesson' : 'Hear lesson'}>
           {audioActive ? <Square size={22} aria-hidden="true"/> : <Headphones size={22} aria-hidden="true"/>}

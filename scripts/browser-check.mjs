@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import { LUNCH_LINE_COACH } from '../src/data/foundationResponseCoach.js';
+import { FOUNDATION_GROW } from '../src/data/foundationGrowth.js';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { chromium } from 'playwright';
 import { preview } from 'vite';
@@ -103,6 +105,11 @@ async function exercise(view, mode) {
         const stageButton = intro.getByRole('button', { name: `Step ${index + 1} of 4: ${name}` });
         await tap(stageButton);
         assert.equal(await stageButton.getAttribute('aria-pressed'), 'true');
+        const teachingCard = intro.locator('[data-lesson-stage]');
+        assert.equal(await teachingCard.getAttribute('data-lesson-stage'), name, 'teaching card follows selected stage');
+        assert.ok((await teachingCard.innerText()).includes(['See a messy table?', 'Maybe a box could hold', 'Try putting the things', 'Did the box help?'][index]), 'each stage has a concrete visual teaching example');
+        assert.ok((await teachingCard.innerText()).includes(['Point to one thing', 'Pick one idea', 'See what happens', 'Tell what you learned'][index]), 'each stage tells learner what to do next');
+        assert.equal(await intro.getByRole('progressbar', { name: 'Visual teaching steps' }).getAttribute('aria-valuenow'), String(index + 1));
         const rect = await stageButton.boundingBox();
         assert.ok(rect.width >= 44 && rect.height >= 44, 'Foundation stage touch target meets minimum size');
         assert.ok((await intro.getByRole('status').first().innerText()).includes(detail), 'visible illustrated step matches the selected lesson');
@@ -126,7 +133,34 @@ async function exercise(view, mode) {
     assert.deepEqual((await session(page)).pilotProgress.dailyQuestDraft, draft, 'unfinished problem survives refresh');
     await tap(page.getByRole('button', { name: mode === 'explorer' ? 'Both students and workers' : 'Both', exact: true }));
     await tap(page.locator('[aria-label="Choose a change to try"] button').first());
-    if (mode === 'explorer') await tap(page.getByRole('button', { name: 'Finish My First Quest', exact: true }));
+    if (mode === 'explorer') {
+      const coach = LUNCH_LINE_COACH[0];
+      const weakIndex = coach.correctIndex === 0 ? 1 : 0;
+      await tap(page.getByRole('button', { name: coach.choices[weakIndex], exact: true }));
+      assert.equal((await session(page)).pilotProgress.dailyQuestDraft.coachPassed, false, 'incorrect reasoning cannot complete quest');
+      assert.ok((await page.getByRole('status').filter({ hasText: 'HERE IS A CLUE' }).count()) > 0, 'specific hint becomes visible');
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      assert.equal((await session(page)).pilotProgress.dailyQuestDraft.coachAttempts, 1, 'coaching attempts survive reload');
+      await tap(page.getByRole('button', { name: coach.choices[coach.correctIndex], exact: true }));
+      await tap(page.getByRole('button', { name: 'Grow My Thinking', exact: true }));
+      const weakGrowth = FOUNDATION_GROW.correctIndex === 0 ? 1 : 0;
+      await tap(page.getByRole('button', { name: FOUNDATION_GROW.choices[weakGrowth], exact: true }));
+      assert.equal((await session(page)).pilotProgress.dailyQuestDraft.growthPassed, false, 'weak transfer is not successful');
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      assert.equal((await session(page)).pilotProgress.dailyQuestDraft.growthAttempts, 1, 'growth attempt survives reload');
+      await tap(page.getByRole('button', { name: FOUNDATION_GROW.choices[FOUNDATION_GROW.correctIndex], exact: true }));
+      await tap(page.getByRole('button', { name: 'Reflect on My Growth', exact: true }));
+      await page.locator('#foundation-growth-reflection').fill('I can ask for permission, try a small change, and compare what happened.');
+      assert.equal(await page.getByRole('button', { name: 'Finish My First Quest', exact: true }).isEnabled(), true);
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      assert.ok((await page.locator('#foundation-growth-reflection').inputValue()).includes('compare what happened'), 'reflection survives reload');
+      await tap(page.getByRole('button', { name: 'Finish My First Quest', exact: true }));
+      const growthSaved = (await session(page)).pilotProgress;
+      assert.equal(growthSaved.dailyQuestCoachedResponse.attempts, 2, 'reviewed coaching attempts saved as practice');
+      assert.equal(growthSaved.dailyQuestGrowthProof.transferPassed, true, 'new scenario saved');
+      assert.equal(growthSaved.dailyQuestGrowthProof.reflectionStatus, 'awaiting-facilitator-review');
+      assert.equal(growthSaved.dailyQuestGrowthProof.mastery, 'not-verified');
+    }
     else {
       await tap(page.getByRole('button', { name: 'Review My Choices', exact: true }));
       await tap(page.getByRole('button', { name: 'Finish & Save', exact: true }));

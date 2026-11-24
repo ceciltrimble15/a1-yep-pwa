@@ -6,9 +6,9 @@ import { buildGuideAudioClips, chooseGuideVoice, chunkSpeech, getAudioProfile } 
 import PictureExample, { LearningPicture } from './LearningPicture';
 import styles from './YEPGuide.module.css';
 
-export function GuideAvatar({ speaking = false }) {
+export function GuideAvatar({ speaking = false, gesture = 'open' }) {
   return (
-    <svg data-speaking={speaking} className={styles.guideAvatarArt} viewBox="0 0 160 160" role="img" aria-label="Friendly Black YEP guide">
+    <svg data-speaking={speaking} data-gesture={gesture} className={styles.guideAvatarArt} viewBox="0 0 160 160" role="img" aria-label={speaking ? "YEP teaching guide speaking and gesturing" : "YEP teaching guide ready to help"}>
       <defs>
         <linearGradient id="guideBg" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="#2F7DF5" />
@@ -35,8 +35,24 @@ export function GuideAvatar({ speaking = false }) {
       <ellipse cx="66" cy="72" rx="3.5" ry="4" fill="#111827" />
       <ellipse cx="95" cy="72" rx="3.5" ry="4" fill="#111827" />
       <path d="M80 73c-2 7-3 12-1 15 2 2 5 2 8 1" fill="none" stroke="#5B3324" strokeWidth="2.5" strokeLinecap="round" />
-      <path className="yepGuideMouth" d="M65 94c9 8 21 8 30 0" fill="none" stroke="#4A241C" strokeWidth="3" strokeLinecap="round" />
+      <path className={styles.guideMouth} d="M65 94c9 8 21 8 30 0" fill="none" stroke="#4A241C" strokeWidth="3" strokeLinecap="round" />
       <path d="M71 96c6 3 12 3 18 0" fill="none" stroke="#F2D4C5" strokeWidth="2.2" strokeLinecap="round" />
+      {/* Exact public A/1 Suppliers artwork, not a generated replacement mark. */}
+      <rect x="99" y="114" width="36" height="36" rx="6" fill="#FFFFFF" stroke="#D4A017" strokeWidth="2" />
+      <image href="https://www.a1suppliers.org/a1-suppliers-logo.png"
+        x="101" y="116" width="32" height="32" preserveAspectRatio="xMidYMid meet" />
+      {/* Visible left-hand teaching gesture, framed inside the avatar. */}
+      <g className={styles.guideLeftArm}>
+        <path d="M43 118 Q24 113 15 99" fill="none" stroke="#15366F" strokeWidth="16" strokeLinecap="round" />
+        <ellipse cx="14" cy="96" rx="10" ry="12" fill="#8B593C" />
+        <path d="M12 89L8 75" stroke="#8B593C" strokeWidth="8" strokeLinecap="round" />
+      </g>
+      {/* Right hand points toward the next action when learner selects TRY. */}
+      <g className={styles.guideRightArm}>
+        <path d="M119 123 Q139 117 145 98" fill="none" stroke="#15366F" strokeWidth="16" strokeLinecap="round" />
+        <ellipse cx="146" cy="95" rx="10" ry="12" fill="#8B593C" />
+        <path d="M148 89L153 74" stroke="#8B593C" strokeWidth="8" strokeLinecap="round" />
+      </g>
       <circle cx="80" cy="139" r="12" fill="#D4A017" />
       <text x="80" y="145" textAnchor="middle" fontSize="17" fontWeight="900" fill="#0B1D3A">Y</text>
       <path d="M117 78c8 4 12 11 12 20" fill="none" stroke="#D4A017" strokeWidth="4" strokeLinecap="round" />
@@ -66,6 +82,8 @@ export default function YEPGuide({
   const [audioError, setAudioError] = useState('');
   const [showExample, setShowExample] = useState(false);
   const [speaking, setSpeaking] = useState(false);
+  const [learningPhase, setLearningPhase] = useState('watch');
+  const [teachingHint, setTeachingHint] = useState('Look at the illustration. What problem needs solving?');
   const [activeClip, setActiveClip] = useState('');
   const [lastClip, setLastClip] = useState('teach');
   const [voice, setVoice] = useState(null);
@@ -102,6 +120,8 @@ export default function YEPGuide({
   useEffect(() => {
     setAudioError('');
     setShowExample(false);
+    setLearningPhase('watch');
+    setTeachingHint('Look at the illustration. What problem needs solving?');
     setSpeaking(false);
     setActiveClip('');
     setLastClip('teach');
@@ -145,6 +165,11 @@ export default function YEPGuide({
     utterance.pitch = profile.pitch;
     utterance.volume = 1;
 
+    utterance.onstart = () => {
+      if (token !== playbackToken.current) return;
+      setSpeaking(true);
+      setActiveClip(clipId);
+    };
     utterance.onend = () => speakChunks(chunks, clipId, token, index + 1);
     utterance.onerror = (event) => {
       if (token !== playbackToken.current) return;
@@ -172,10 +197,16 @@ export default function YEPGuide({
     const token = playbackToken.current;
     window.speechSynthesis.cancel();
     setAudioError('');
-    setSpeaking(true);
+    setSpeaking(false);
     setActiveClip(clip.id);
     setLastClip(clip.id);
-    speakChunks(chunkSpeech(clip.text), clip.id, token);
+    try {
+      speakChunks(chunkSpeech(clip.text), clip.id, token);
+    } catch {
+      setSpeaking(false);
+      setActiveClip('');
+      setAudioError('Audio could not start on this device. The lesson remains available to watch and read.');
+    }
   }
 
   function replayLast() {
@@ -183,15 +214,50 @@ export default function YEPGuide({
   }
 
   const hasQuestion = audioClips.some((clip) => clip.id === 'question');
+  const avatarGesture = learningPhase === 'try' ? 'point' : speaking ? 'explain' : 'open';
+  function selectLearningPhase(nextPhase) {
+    stopAudio();
+    setLearningPhase(nextPhase);
+    if (nextPhase === 'watch') {
+      setTeachingHint('Look at the illustration. What do you notice before making a decision?');
+      return;
+    }
+    if (nextPhase === 'listen') {
+      setTeachingHint('Listen for the problem, the reason it matters, and the first useful step.');
+      if (supported) playClip('teach');
+      return;
+    }
+    setTeachingHint(teacher?.question || question || 'Choose what you would do, then explain why your decision makes sense.');
+  }
 
   return (
     <section className={`${styles.panel} ${bright ? styles.bright : ''}`} data-lane={mode} aria-label="YEP lesson guide">
       <div className={styles.identity}>
-        <GuideAvatar />
+        <GuideAvatar speaking={speaking} gesture={avatarGesture} />
         <div><span>YOUR YEP GUIDE</span><strong>{program.tier}</strong><small>Step {step}</small></div>
       </div>
       <div className={styles.teaching}>
         <h2 ref={headingRef} tabIndex={-1} style={{ scrollMarginTop: 160 }}>{title}</h2>
+        <div className={styles.learningSwitcher} role="group" aria-label="Choose how to learn this lesson">
+          <button type="button" aria-pressed={learningPhase === 'watch'} onClick={() => selectLearningPhase('watch')}><Eye size={20} aria-hidden="true" /> WATCH</button>
+          <button type="button" aria-pressed={learningPhase === 'listen'} onClick={() => selectLearningPhase('listen')}><Headphones size={20} aria-hidden="true" /> LISTEN</button>
+          <button type="button" aria-pressed={learningPhase === 'try'} onClick={() => selectLearningPhase('try')}><ChevronRight size={20} aria-hidden="true" /> TRY</button>
+        </div>
+        <div className={styles.learningStage} data-learning-phase={learningPhase}>
+          <div className={styles.learningStageArt}>
+            {learningPhase === 'watch' && <LearningPicture kind={pictureKind || 'workflow'} label="Illustrated lesson: explore the problem before making a choice" />}
+            {learningPhase === 'listen' && <GuideAvatar speaking={speaking} gesture={avatarGesture} />}
+            {learningPhase === 'try' && <LearningPicture kind={pictureKind || 'reach'} changed label="Illustration showing a possible next step to try" />}
+          </div>
+          <div className={styles.learningStageCopy} role="status" aria-live="polite">
+            <strong>{learningPhase === 'watch' ? '1 · SEE WHAT IS HAPPENING' : learningPhase === 'listen' ? '2 · HEAR THE GUIDE' : '3 · MAKE YOUR MOVE'}</strong>
+            <p>{learningPhase === 'watch' ? (example || 'Look closely at the scene. What problem do you notice, and who could you help?') : learningPhase === 'listen' ? (speaking ? 'The Guide is reading this lesson. Look at the scene and listen for the one action you can take.' : 'Tap LISTEN to hear the Guide. If your device cannot speak, the words are still here.') : (teacher?.question || question || 'Now apply what you learned. Make a choice, explain why, and try the real activity below.')}</p>
+            {learningPhase === 'try' && (onAction || onTry) && <button type="button" className={styles.stageTry} onClick={onAction || onTry}>{actionLabel || 'Try the activity'} <ChevronRight size={19} aria-hidden="true" /></button>}
+          </div>
+        </div>
+        <div className={styles.coachHint} role="status" aria-live="polite">
+          <strong>GUIDE'S NEXT MOVE</strong><p>{teachingHint}</p>
+        </div>
         <p className={styles.prompt} aria-live="polite">{teacher ? teacher.speech : prompt}</p>
         {(teacher?.question || question) && <div className={styles.teacherQuestion}><strong>YOUR TURN</strong><p>{teacher?.question || question}</p></div>}
 

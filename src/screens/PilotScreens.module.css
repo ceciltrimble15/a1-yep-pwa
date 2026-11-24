@@ -4526,3 +4526,11 @@ button.card:hover {
   .stemLabToolExplorer,.stemLabBeforeCue { grid-template-columns: minmax(0,1fr); }
   .stemLabToolExplorerControls button { flex: 1; }
 }
+
+/* One extra coaching checkpoint in the existing Foundation lesson. */
+.foundationCoachFeedback { margin-top: 18px; padding: 18px; border: 2px solid #d5aa43; border-radius: 18px; background: #172f57; color: #fff; }
+.foundationCoachFeedback[data-result="ready"] { border-color: #78cfae; }
+.foundationCoachFeedback strong { display: block; color: #ffde89; font-size: 14px; letter-spacing: .06em; }
+.foundationCoachFeedback p { margin: 9px 0 5px; color: #fff; font-size: 19px; line-height: 1.45; }
+.foundationCoachFeedback small { display: block; color: #d8e4f3; font-size: 15px; line-height: 1.4; }
+.foundationQuestBigChoices button:disabled { cursor: default; opacity: .8; }

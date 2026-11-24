@@ -7,6 +7,8 @@ import Home from '../src/screens/Home';
 import MyDirection from '../src/screens/MyDirection';
 import TrackSelector from '../src/screens/TrackSelector';
 import { FOUNDATION_QUEST_ID, FOUNDATION_QUEST } from '../src/data/foundationQuest';
+import { LUNCH_LINE_COACH } from '../src/data/foundationResponseCoach';
+import { FOUNDATION_GROW, assessGrowthChoice, reviewGrowthReflection } from '../src/data/foundationGrowth';
 import VoiceCapture from '../src/components/VoiceCapture';
 import YEPGuide from '../src/components/YEPGuide';
 import PictureExample from '../src/components/LearningPicture';
@@ -37,6 +39,30 @@ function mount(Component, seed) {
 const text = (node) => typeof node === 'string' ? node : (node?.children || []).map(text).join('');
 const buttons = (label) => view.root.findAllByType('button').filter((node) => typeof label === 'string' ? (text(node).trim() === label || node.props['aria-label'] === label) : label.test(text(node)));
 function click(label, index = 0) { const button = buttons(label)[index]; assert.ok(button, `button ${label}`); assert.ok(!button.props.disabled, `enabled ${label}`); act(() => button.props.onClick()); }
+function finishFoundationCoach() {
+  const selectedProblem = api.pilotProgress.dailyQuestDraft?.selectedProblem;
+  assert.ok(Number.isInteger(selectedProblem), 'Foundation test selected a scenario');
+  const coach = LUNCH_LINE_COACH[selectedProblem];
+  // A deliberately weak answer must trigger a hint without granting completion.
+  const weakIndex = coach.correctIndex === 0 ? 1 : 0;
+  const completedBeforeHint = api.pilotProgress.dailyQuestComplete;
+  click(coach.choices[weakIndex]);
+  assert.equal(api.pilotProgress.dailyQuestDraft.coachPassed, false, 'a weak choice does not pass');
+  assert.equal(api.pilotProgress.dailyQuestComplete, completedBeforeHint, 'a hint cannot change existing saved completion');
+  click(coach.choices[coach.correctIndex]);
+  assert.equal(api.pilotProgress.dailyQuestDraft.coachPassed, true, 'guided answer unlocks review');
+  click('Grow My Thinking');
+}
+function finishFoundationGrowth() {
+  const wrong = FOUNDATION_GROW.correctIndex === 0 ? 1 : 0;
+  click(FOUNDATION_GROW.choices[wrong]);
+  assert.equal(api.pilotProgress.dailyQuestDraft.growthPassed, false, 'wrong transfer response stays unverified');
+  click(FOUNDATION_GROW.choices[FOUNDATION_GROW.correctIndex]);
+  assert.equal(api.pilotProgress.dailyQuestDraft.growthPassed, true, 'transfer checkpoint can be completed');
+  click('Reflect on My Growth');
+  enter('foundation-growth-reflection', 'I would ask for help, try a small change, and check what worked.');
+  assert.equal(api.pilotProgress.dailyQuestDraft.growthReflection.includes('ask for help'), true);
+}
 function enter(id, value) { const field = view.root.findByProps({ id }); act(() => field.props.onChange({ target: { value } })); }
 const modes = ['explorer', 'builder', 'leader', 'yaep'];
 const mission = getExposureMissions('builder')[3];
@@ -215,22 +241,29 @@ for (const mode of modes) {
   click(mode === 'explorer' ? 'Both students and workers' : 'Both');
   const actions = view.root.findByProps({ 'aria-label': 'Choose a change to try' }).findAllByType('button');
   act(() => actions[0].props.onClick());
-  if (mode === 'explorer') click('Finish My First Quest');
+  if (mode === 'explorer') { finishFoundationCoach(); finishFoundationGrowth(); click('Finish My First Quest'); }
   else { click('Review My Choices'); click('Finish & Save'); }
   assert.equal(api.pilotProgress.dailyQuestText, '');
   assert.equal(api.pilotProgress.dailyQuestEvidenceType, 'choices');
   assert.ok(api.pilotProgress.dailyQuestChoiceProof.problem);
   assert.equal(api.reflectionSubmitted, false);
   mount(DailyQuest);
-  if (mode === 'explorer') { click('Review My Response'); click('Back One Step'); }
+  if (mode === 'explorer') { click('Review My Response'); click('Back One Step'); click('Back One Step'); click('Back One Step'); }
   assert.equal(view.root.findByProps({ id: 'daily-quest-answer' }).props.value, '');
   const revised = view.root.findByProps({ 'aria-label': 'Choose a change to try' }).findAllByType('button')[1];
   const revisedLabel = text(revised).trim();
   act(() => revised.props.onClick());
+  if (mode === 'explorer') { finishFoundationCoach(); finishFoundationGrowth(); }
   click('Update My Proof');
   assert.equal(api.pilotProgress.dailyQuestChoiceProof.action, revisedLabel);
   mount(DemoAdminReview);
   assert.ok(JSON.stringify(view.toJSON()).includes('No written explanation was provided.'));
+  if (mode === 'explorer') {
+    assert.ok(JSON.stringify(view.toJSON()).includes('Foundation Guide Coaching'), 'facilitator sees guided learning evidence');
+    assert.ok(JSON.stringify(view.toJSON()).includes('not independent mastery'), 'guided practice is never certified as mastery');
+    assert.ok(JSON.stringify(view.toJSON()).includes('GROW'), 'facilitator sees the GROW checkpoint');
+    assert.ok(JSON.stringify(view.toJSON()).includes('independent mastery not verified'), 'growth is not inflated into mastery');
+  }
   mount(StemSinQuest);
   if (mode === 'explorer') click('Try Sorting Tray');
   else {
@@ -332,6 +365,8 @@ enter('daily-quest-answer', 'I would try a picture menu while we wait.');
 mount(DailyQuest);
 assert.equal(view.root.findByProps({ id: 'daily-quest-answer' }).props.value, 'I would try a picture menu while we wait.');
 click('Review My Own Idea');
+finishFoundationCoach();
+finishFoundationGrowth();
 click('Finish My First Quest');
 assert.equal(api.pilotProgress.dailyQuestQuestId, FOUNDATION_QUEST_ID);
 assert.equal(api.pilotProgress.dailyQuestEvidenceType, 'words_and_choices');

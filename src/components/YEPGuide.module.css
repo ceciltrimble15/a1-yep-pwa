@@ -70,3 +70,44 @@
 .teacherQuestion p { margin:7px 0 0; font-size:clamp(18px,2vw,23px); line-height:1.35; font-weight:850; }
 .panel[data-lane='explorer'] .teacherQuestion { color:#17395f; background:#ffefba; }
 :global(.yep-teacher-focus) { outline:5px solid #f1b536 !important; outline-offset:5px; border-radius:14px; }
+
+
+/* Interactive teaching loop: the learner chooses Watch, Listen or Try. */
+.learningSwitcher{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:20px 0 0}
+.learningSwitcher button{display:flex;align-items:center;justify-content:center;gap:8px;min-height:58px;padding:10px 12px;border:2px solid #a2bde0;border-radius:14px;background:#fff;color:#153b70;font-size:15px;font-weight:950;letter-spacing:.06em}
+.learningSwitcher button[aria-pressed="true"]{background:#174fa5;border-color:#174fa5;color:#fff;box-shadow:0 6px 16px rgba(8,44,117,.22)}
+.learningSwitcher button:focus-visible,.stageTry:focus-visible{outline:4px solid #f0b437;outline-offset:3px}
+.learningStage{display:grid;grid-template-columns:minmax(180px,.9fr) minmax(0,1.1fr);gap:18px;align-items:stretch;margin-top:12px;padding:14px;border-radius:20px;background:#e9f2ff;border:2px solid #c4d9f6}
+.learningStageArt{display:grid;place-items:center;min-height:165px;border-radius:15px;background:linear-gradient(135deg,#173d7c,#0a2048);overflow:hidden}
+.learningStageArt svg:not([data-speaking]){width:100%;height:auto;max-height:220px}
+.learningStageArt svg[data-speaking]{width:min(165px,70%);height:auto}
+.learningStageCopy{display:flex;flex-direction:column;justify-content:center;padding:7px 5px;color:#1a3760}
+.learningStageCopy strong{font-size:12px;letter-spacing:.12em;color:#15539d;font-weight:950}
+.learningStageCopy p{margin:12px 0 0;color:#263e5f;font-size:clamp(16px,1.9vw,20px);line-height:1.45;font-weight:650}
+.stageTry{display:inline-flex;align-items:center;justify-content:center;gap:9px;align-self:flex-start;margin-top:18px;min-height:50px;padding:11px 15px;border-radius:12px;background:#174fa5;color:#fff;font-size:15px;font-weight:850}
+.panel[data-lane="explorer"] .learningStage{background:#e9f2ff;border-color:#7da8e1}
+.panel[data-lane="explorer"] .learningStageCopy p{color:#263e5f}
+.panel[data-lane="explorer"] .learningSwitcher button[aria-pressed="true"]{color:#fff}
+@media(max-width:780px){.learningStage{grid-template-columns:1fr}.learningStageArt{min-height:160px}.learningStageCopy{padding:5px}.learningSwitcher button{font-size:13px;gap:5px}}
+@media(max-width:390px){.learningSwitcher button{font-size:11px;padding:8px 3px}.learningSwitcher button svg{width:17px}}
+
+/* The guide moves only when speech synthesis reports that audio actually started. */
+.guideMouth{transform-box:fill-box;transform-origin:center}
+.guideAvatarArt[data-speaking="true"] .guideMouth{animation:yepGuideSpeak .24s ease-in-out infinite alternate}
+.guideAvatarArt[data-speaking="true"]{animation:yepGuideLive .95s ease-in-out infinite alternate}
+@keyframes yepGuideSpeak{from{transform:scaleY(.65)}to{transform:scaleY(1.8)}}
+@keyframes yepGuideLive{from{transform:translateY(0)}to{transform:translateY(-3px)}}
+@media(prefers-reduced-motion:reduce){.guideAvatarArt[data-speaking="true"],.guideAvatarArt[data-speaking="true"] .guideMouth{animation:none}}
+
+
+/* The hands communicate teaching intent rather than loop aimlessly. */
+.guideLeftArm,.guideRightArm{transform-box:fill-box;transform-origin:50% 90%;transition:transform .3s ease}
+.guideAvatarArt[data-gesture="explain"] .guideLeftArm{animation:yepGuideExplain 1.4s ease-in-out infinite alternate}
+.guideAvatarArt[data-gesture="point"] .guideRightArm{transform:translate(-4px,-8px) rotate(-12deg)}
+.guideAvatarArt[data-gesture="point"] .guideLeftArm{transform:rotate(-5deg)}
+@keyframes yepGuideExplain{from{transform:rotate(-5deg) translateY(1px)}to{transform:rotate(9deg) translateY(-4px)}}
+.coachHint{display:flex;flex-direction:column;gap:5px;margin:14px 0 16px;padding:13px 16px;border-left:5px solid #e3ad2f;border-radius:12px;background:#fff6d9;color:#17345f}
+.coachHint strong{font-size:12px;letter-spacing:.1em;font-weight:900}
+.coachHint p{font-size:clamp(16px,2vw,20px);font-weight:700;line-height:1.4;margin:0}
+.panel[data-lane="explorer"] .coachHint{color:#17345f}
+@media(prefers-reduced-motion:reduce){.guideLeftArm,.guideRightArm{animation:none!important;transition:none!important}}
