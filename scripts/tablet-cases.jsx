@@ -44,9 +44,10 @@ function finishFoundationCoach() {
   const coach = LUNCH_LINE_COACH[selectedProblem];
   // A deliberately weak answer must trigger a hint without granting completion.
   const weakIndex = coach.correctIndex === 0 ? 1 : 0;
+  const completedBeforeHint = api.pilotProgress.dailyQuestComplete;
   click(coach.choices[weakIndex]);
   assert.equal(api.pilotProgress.dailyQuestDraft.coachPassed, false, 'a weak choice does not pass');
-  assert.equal(api.pilotProgress.dailyQuestComplete, false, 'a hint does not create completed evidence');
+  assert.equal(api.pilotProgress.dailyQuestComplete, completedBeforeHint, 'a hint cannot change existing saved completion');
   click(coach.choices[coach.correctIndex]);
   assert.equal(api.pilotProgress.dailyQuestDraft.coachPassed, true, 'guided answer unlocks review');
   click('Review My Plan');
