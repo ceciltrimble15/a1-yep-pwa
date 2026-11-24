@@ -6,6 +6,7 @@ import { YEPProvider } from '../src/context/YEPContext';
 import FinisherFocus from '../src/screens/FinisherFocus';
 import MyDirection from '../src/screens/MyDirection';
 import { FOUNDATION_QUEST, FOUNDATION_QUEST_ID } from '../src/data/foundationQuest';
+import { LUNCH_LINE_COACH, coachLunchLine } from '../src/data/foundationResponseCoach';
 import { DailyQuest, WeeklyModule, StemSinQuest, BossChallenge, MentorSpotlight } from '../src/screens/PilotScreens';
 import Reflection from '../src/screens/Reflection';
 import { getExposureMissions } from '../src/data/exposureProcess';
@@ -30,6 +31,24 @@ for (const mode of modes) {
   }
   assert.ok(render(StemSinQuest).includes(STEM_SIN_LABEL));
 }
+// Every illustrated Foundation problem must have a retry and coaching path.
+assert.equal(LUNCH_LINE_COACH.length, 3);
+for (let problem = 0; problem < LUNCH_LINE_COACH.length; problem++) {
+  const scenario = LUNCH_LINE_COACH[problem];
+  assert.equal(scenario.choices.length, 3);
+  for (let choice = 0; choice < scenario.choices.length; choice++) {
+    const result = coachLunchLine(problem, choice, 1);
+    assert.ok(result.message && result.next);
+    assert.equal(result.passed, choice === scenario.correctIndex);
+    if (!result.passed) {
+      const second = coachLunchLine(problem, choice, 2);
+      assert.notEqual(result.message, second.message, 'additional try gives a more specific hint');
+    }
+  }
+}
+assert.equal(coachLunchLine(-1, 0), null);
+assert.equal(coachLunchLine(0, 99), null);
+
 saved = { mode: 'explorer' };
 assert.equal(getProgramContent('explorer').dailyQuest.id, FOUNDATION_QUEST_ID);
 assert.equal(getProgramContent('explorer').dailyQuest.title, 'A Better Lunch Line');
