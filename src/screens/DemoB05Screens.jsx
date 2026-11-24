@@ -172,6 +172,15 @@ export function DemoAdminReview() {
 
       <div className={styles.stack}>
         <ProofCard label="Daily Quest Proof" status={proofStatus(pilotProgress, 'dailyQuest')} text={proofDescription(pilotProgress, 'dailyQuest')} />
+        {mode === 'explorer' && <ProofCard
+          label="Foundation Guide Coaching"
+          status={pilotProgress.dailyQuestCoachedResponse?.reviewed ? 'Guided practice reviewed' : pilotProgress.dailyQuestDraft?.coachAttempts ? 'Guided practice in progress' : 'Not attempted'}
+          text={pilotProgress.dailyQuestCoachedResponse?.reviewed
+            ? `Practice responses: ${pilotProgress.dailyQuestCoachedResponse.attempts}. The learner revised an answer with the teaching guide. This is not independent mastery and requires facilitator verification for practical skills.`
+            : pilotProgress.dailyQuestDraft?.coachAttempts
+              ? `Practice attempts so far: ${pilotProgress.dailyQuestDraft.coachAttempts}. ${pilotProgress.dailyQuestDraft.coachPassed ? 'Guided reasoning complete; save the activity to record it.' : 'The learner is working through hints.'}`
+              : 'No guided reasoning checkpoint is saved yet.'}
+        />
         <ProofCard label="S.T.E.M.Sin Proof" status={proofStatus(pilotProgress, 'stemSin')} text={proofDescription(pilotProgress, 'stemSin')} />
         <ProofCard label="Boss Challenge Proof" status={pilotProgress.bossComplete ? 'Complete' : 'Open'} text={pilotProgress.bossText} />
         <ProofCard label="Mentor Question Proof" status={pilotProgress.mentorQuestion ? 'Saved' : 'Open'} text={pilotProgress.mentorQuestion} />
