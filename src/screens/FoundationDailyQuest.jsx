@@ -3,6 +3,7 @@ import { Clock3, UsersRound, Eye, Lightbulb, ChevronRight, CheckCircle2, BookOpe
 import { useYEP } from '../context/YEPContext';
 import { FOUNDATION_QUEST, FOUNDATION_QUEST_ID, FOUNDATION_SCENARIO, FOUNDATION_PEOPLE, FOUNDATION_QUEST_IDEAS } from '../data/foundationQuest';
 import { proofDescription } from '../data/proofEvidence';
+import { LUNCH_LINE_COACH, coachLunchLine } from '../data/foundationResponseCoach';
 import Shell from '../components/Shell';
 import YEPGuide from '../components/YEPGuide';
 import { foundationTeacherStep } from '../data/foundationTeacher';
@@ -177,53 +178,73 @@ export default function FoundationDailyQuest() {
   const [idea, setIdea] = useState(draft?.tryChoice ?? proof?.action ?? '');
   const [text, setText] = useState(draft?.text ?? pilotProgress.dailyQuestText);
   const complete = pilotProgress.dailyQuestComplete;
-  const [step, setStep] = useState(draft?.guideStep || (complete ? 5 : 1));
+  const [step, setStep] = useState(complete ? 6 : Math.min(draft?.guideStep || 1, 5));
+  const [coachChoice, setCoachChoice] = useState(draft?.coachChoice ?? null);
+  const [coachAttempts, setCoachAttempts] = useState(draft?.coachAttempts ?? 0);
+  const [coachPassed, setCoachPassed] = useState(!!draft?.coachPassed);
+  const [coachFeedback, setCoachFeedback] = useState(draft?.coachFeedback || '');
   const selected = FOUNDATION_SCENARIO.items[selectedProblem] || null;
   const ideas = selected ? FOUNDATION_QUEST_IDEAS[selectedProblem] : [];
-  const canSave = !!(selected && who && idea);
+  const canSave = !!(selected && who && idea && coachPassed);
   const hasChanges = text !== pilotProgress.dailyQuestText || selected?.label !== proof?.problem || who !== (proof?.who || '') || idea !== (proof?.action || '');
 
   useEffect(() => {
-    if (!complete || hasChanges) saveLessonDraft('dailyQuest', { questId: FOUNDATION_QUEST_ID, text, selectedProblem, who, tryChoice: idea, guideStep: step });
+    if (!complete || hasChanges) saveLessonDraft('dailyQuest', { questId: FOUNDATION_QUEST_ID, text, selectedProblem, who, tryChoice: idea, guideStep: step, coachChoice, coachAttempts, coachPassed, coachFeedback });
     else if (pilotProgress.dailyQuestDraft) saveLessonDraft('dailyQuest', null);
-  }, [text, selectedProblem, who, idea, step, complete, hasChanges]);
+  }, [text, selectedProblem, who, idea, step, complete, hasChanges, coachChoice, coachAttempts, coachPassed, coachFeedback]);
 
-  function chooseProblem(index) { setSelectedProblem(index); setWho(''); setIdea(''); setStep(2); }
-  function chooseWho(value) { setWho(value); setStep(3); }
-  function chooseIdea(value) { setIdea(value); setStep(4); }
-  function useOwnIdea() { if (text.trim()) { setIdea('Own written idea'); setStep(4); } }
+  function resetCoach() { setCoachChoice(null); setCoachAttempts(0); setCoachPassed(false); setCoachFeedback(''); }
+  function chooseProblem(index) { setSelectedProblem(index); setWho(''); setIdea(''); resetCoach(); setStep(2); }
+  function chooseWho(value) { setWho(value); resetCoach(); setStep(3); }
+  function chooseIdea(value) { setIdea(value); resetCoach(); setStep(4); }
+  function useOwnIdea() { if (text.trim()) { setIdea('Own written idea'); resetCoach(); setStep(4); } }
+  function respondToCoach(choiceIndex) {
+    if (coachPassed) return;
+    const nextAttempts = coachAttempts + 1;
+    const feedback = coachLunchLine(selectedProblem, choiceIndex, nextAttempts);
+    if (!feedback) return;
+    setCoachChoice(choiceIndex);
+    setCoachAttempts(nextAttempts);
+    setCoachPassed(feedback.passed);
+    setCoachFeedback(feedback.message);
+  }
   function save() {
     if (!canSave) return;
-    if (completeDailyQuest(text, { problem: selected.label, who, action: idea }, FOUNDATION_QUEST_ID)) { setText(text.trim()); setStep(5); }
+    if (completeDailyQuest(text, { problem: selected.label, who, action: idea }, FOUNDATION_QUEST_ID, {
+      kind: 'foundation-guided-response-v1', scenario: selectedProblem, attempts: coachAttempts,
+      lastChoice: coachChoice, reviewed: true, status: 'practice-response-only'
+    })) { setText(text.trim()); setStep(6); }
   }
 
   const prompts = {
     1: 'Look at the lunch line. Tap one thing that catches your attention. A useful idea starts with noticing a real need.',
     2: `You noticed: ${selected?.label || 'a problem'}. Who feels this problem?`,
     3: 'Choose one move you would try. You can write your own idea instead. There is more than one useful answer.',
-    4: 'Review what you chose: a problem, the people affected, and a move to try. You do not need to know whether it works yet; that needs a real test.',
-    5: 'Your response is saved on this tablet. Show it to a nearby peer or facilitator, then use S.T.E.M.Sin to explore how to test an idea.',
+    4: 'Let us test your thinking. Choose how to find out whether your idea would help. If it needs work, I will give you a hint.',
+    5: 'Review your choices and your practice response. This is your plan, not proof that your idea worked in real life.',
+    6: 'Your practice response is saved on this tablet. Show it to a facilitator, then explore a test in S.T.E.M.Sin.',
   };
   const narration = step === 1 ? FOUNDATION_SCENARIO.items.map((item, i) => `Picture ${i + 1}: ${item.label}. ${item.detail}`).join(' ')
     : step === 2 ? `Choose: ${FOUNDATION_PEOPLE.join('. ')}.`
       : step === 3 ? `You can try: ${ideas.join('. ')}. Your own words are optional.`
-        : step === 4 ? `Problem: ${selected?.label || ''}. People: ${who}. Move to try: ${idea}. ${text ? `Your own words: ${text}` : 'No written answer was provided.'}`
-          : proofDescription(pilotProgress, 'dailyQuest');
+        : step === 4 ? (LUNCH_LINE_COACH[selectedProblem]?.question || 'Choose how to test your idea.')
+      : step === 5 ? `Problem: ${selected?.label || ''}. People: ${who}. Move to try: ${idea}. ${text ? `Your own words: ${text}` : 'No written answer was provided.'}`
+        : proofDescription(pilotProgress, 'dailyQuest');
 
   return <Shell showAudio={false}>
     <section className={styles.foundationQuestStage}>
       <header className={styles.foundationQuestHeader}>
         <div><span>YOUR FIRST DAILY QUEST</span><h1>{FOUNDATION_QUEST.title}</h1><p>See it. Notice it. Choose a move. Finish.</p></div>
         <div className={styles.foundationQuestMiniFlow} aria-label="First Daily Quest progress">
-          {['SEE', 'PEOPLE', 'IDEA', 'FINISH'].map((label, index) => <span key={label} data-state={step > index + 1 ? 'done' : step === index + 1 ? 'active' : 'next'}><b>{index + 1}</b>{label}</span>)}
+          {['SEE', 'PEOPLE', 'IDEA', 'COACH', 'FINISH'].map((label, index) => <span key={label} data-state={step > index + 1 ? 'done' : step === index + 1 ? 'active' : 'next'}><b>{index + 1}</b>{label}</span>)}
         </div>
       </header>
-      <YEPGuide teacher={foundationTeacherStep('dailyQuest', step)} title={step === 5 ? 'Your response is saved' : ['See the lunch line', 'Think about people', 'Choose a move', 'Review your response'][step - 1]}
-        prompt={prompts[step]} step={step === 5 ? 'SAVED' : `${step} OF 4`} narration={narration}
+      <YEPGuide teacher={foundationTeacherStep('dailyQuest', step)} title={step === 6 ? 'Your response is saved' : ['See the lunch line', 'Think about people', 'Choose a move', 'Try your thinking', 'Review your response'][step - 1]}
+        prompt={prompts[step]} step={step === 6 ? 'SAVED' : `${step} OF 5`} narration={narration}
         example={selected ? `One possible move is: ${ideas[0]}. Discuss it with a facilitator and ask permission before a real test. You can choose a different idea.` : FOUNDATION_QUEST.example}
         pictureKind={selectedProblem === 2 ? 'help' : 'waiting'}
-        actionLabel={step === 5 ? 'Go To S.T.E.M.Sin' : undefined}
-        onAction={step === 5 ? () => navigate('stemSin') : undefined} />
+        actionLabel={step === 6 ? 'Go To S.T.E.M.Sin' : undefined}
+        onAction={step === 6 ? () => navigate('stemSin') : undefined} />
 
       {step === 1 && <div id="foundation-lunch-scene"><FoundationQuestScene selectedIndex={selectedProblem} onSelect={chooseProblem} /></div>}
       {step === 2 && <section id="foundation-people" className={styles.foundationQuestChoiceStage}>
@@ -238,7 +259,25 @@ export default function FoundationDailyQuest() {
         <VoiceCapture prompt={FOUNDATION_QUEST.prompt} currentValue={text} onConfirm={setText} />
         <button type="button" className={ui.btnGhost} disabled={!text.trim()} onClick={useOwnIdea}>Review My Own Idea</button>
       </section>}
-      {step === 4 && <section id="foundation-review" className={styles.foundationQuestReview}>
+      {step === 4 && <section id="foundation-coach" className={styles.foundationQuestChoiceStage} aria-label="Responsive teaching checkpoint">
+        <span>TRY YOUR THINKING</span><h2>{LUNCH_LINE_COACH[selectedProblem]?.question}</h2>
+        <p>Choose an answer. Your guide will explain or give you a clue to help you try again.</p>
+        <div className={styles.foundationQuestBigChoices} aria-label="Choose how to test your idea">
+          {(LUNCH_LINE_COACH[selectedProblem]?.choices || []).map((choice, index) => (
+            <button type="button" key={choice} aria-pressed={coachChoice === index}
+              disabled={coachPassed} onClick={() => respondToCoach(index)}>
+              <Lightbulb size={24} /><strong>{choice}</strong><ChevronRight size={19} />
+            </button>
+          ))}
+        </div>
+        {coachFeedback && <div role="status" aria-live="polite" className={styles.foundationCoachFeedback} data-result={coachPassed ? 'ready' : 'retry'}>
+          <strong>{coachPassed ? 'YOU REASONED THROUGH IT' : 'HERE IS A CLUE'}</strong>
+          <p>{coachFeedback}</p>
+          <small>{coachPassed ? 'This demonstrates a practice response, not real-world mastery.' : 'Try another option. You can ask a facilitator for help.'}</small>
+        </div>}
+        {coachPassed && <button type="button" className={styles.foundationQuestFinish} onClick={() => setStep(5)}>Review My Plan <ChevronRight size={20} /></button>}
+      </section>}
+      {step === 5 && <section id="foundation-review" className={styles.foundationQuestReview}>
         <span>YOUR CHOICES</span><h2>Problem → People → Idea</h2>
         <div className={styles.foundationQuestReviewGrid}>
           <div><small>I NOTICED</small><strong>{selected?.label}</strong></div>
@@ -248,19 +287,20 @@ export default function FoundationDailyQuest() {
         <label htmlFor="daily-quest-answer">Your own words, optional</label>
         <textarea id="daily-quest-answer" className={styles.dailyQuestTextarea} value={text} onChange={(event) => setText(event.target.value)} placeholder="Add your own words if you want." />
         <VoiceCapture prompt={FOUNDATION_QUEST.prompt} currentValue={text} onConfirm={setText} />
-        <p>{text.trim() ? 'Your own words and selected choices will be saved.' : 'Only your selected choices will be saved. No written explanation or mastery claim is created.'}</p>
+        <p>{text.trim() ? 'Your words, choices, and guided practice response will be saved.' : 'Your selected choices and guided practice response will be saved. No mastery claim is created.'}</p>
+        <p>Guided reasoning attempts: {coachAttempts}. A facilitator must verify any actual practical skill.</p>
         <button type="button" className={styles.foundationQuestFinish} disabled={!canSave || (idea === 'Own written idea' && !text.trim())} onClick={save}>{complete ? 'Update My Proof' : 'Finish My First Quest'}<CheckCircle2 size={20} /></button>
       </section>}
-      {step === 5 && <section id="foundation-complete" className={styles.foundationQuestComplete}>
+      {step === 6 && <section id="foundation-complete" className={styles.foundationQuestComplete}>
         <CheckCircle2 size={42} /><span>RESPONSE SAVED</span><h2>You chose a move to try.</h2><p>{proofDescription(pilotProgress, 'dailyQuest')}</p>
         <p>A selected idea is a starting point, not evidence that it works. Discuss who it could help and what you would test next.</p>
         <button type="button" className={ui.btnGhost} onClick={() => setStep(4)}>Review My Response</button>
       </section>}
-      {step > 1 && step < 5 && <div className={styles.actions}>
+      {step > 1 && step < 6 && <div className={styles.actions}>
         <button type="button" className={ui.btnGhost} onClick={() => setStep(step - 1)}>Back One Step</button>
         <button type="button" className={ui.btnGhost} onClick={() => setStep(1)}>Choose Another Problem</button>
       </div>}
-      <p className={styles.draftNote}>{step === 5 ? 'Saved on this tablet.' : 'Your selections and draft are kept on this tablet as you go.'}</p>
+      <p className={styles.draftNote}>{step === 6 ? 'Saved on this tablet. Facilitator verification remains separate.' : 'Your selections, coaching attempts, and draft are kept on this tablet as you go.'}</p>
       <footer className={styles.foundationQuestSupport}><BookOpenCheck size={18} /><span><strong>App:</strong> see + choose + experience. <strong>Workbook:</strong> think + write + discuss with support.</span></footer>
     </section>
   </Shell>;
