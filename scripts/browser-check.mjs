@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { LUNCH_LINE_COACH } from '../src/data/foundationResponseCoach.js';
+import { FOUNDATION_GROW } from '../src/data/foundationGrowth.js';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { chromium } from 'playwright';
 import { preview } from 'vite';
@@ -141,9 +142,24 @@ async function exercise(view, mode) {
       await page.reload({ waitUntil: 'domcontentloaded' });
       assert.equal((await session(page)).pilotProgress.dailyQuestDraft.coachAttempts, 1, 'coaching attempts survive reload');
       await tap(page.getByRole('button', { name: coach.choices[coach.correctIndex], exact: true }));
-      await tap(page.getByRole('button', { name: 'Review My Plan', exact: true }));
+      await tap(page.getByRole('button', { name: 'Grow My Thinking', exact: true }));
+      const weakGrowth = FOUNDATION_GROW.correctIndex === 0 ? 1 : 0;
+      await tap(page.getByRole('button', { name: FOUNDATION_GROW.choices[weakGrowth], exact: true }));
+      assert.equal((await session(page)).pilotProgress.dailyQuestDraft.growthPassed, false, 'weak transfer is not successful');
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      assert.equal((await session(page)).pilotProgress.dailyQuestDraft.growthAttempts, 1, 'growth attempt survives reload');
+      await tap(page.getByRole('button', { name: FOUNDATION_GROW.choices[FOUNDATION_GROW.correctIndex], exact: true }));
+      await tap(page.getByRole('button', { name: 'Reflect on My Growth', exact: true }));
+      await page.locator('#foundation-growth-reflection').fill('I can ask for permission, try a small change, and compare what happened.');
+      assert.equal(await page.getByRole('button', { name: 'Finish My First Quest', exact: true }).isEnabled(), true);
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      assert.ok((await page.locator('#foundation-growth-reflection').inputValue()).includes('compare what happened'), 'reflection survives reload');
       await tap(page.getByRole('button', { name: 'Finish My First Quest', exact: true }));
-      assert.equal((await session(page)).pilotProgress.dailyQuestCoachedResponse.attempts, 2, 'reviewed coaching attempts are saved as practice');
+      const growthSaved = (await session(page)).pilotProgress;
+      assert.equal(growthSaved.dailyQuestCoachedResponse.attempts, 2, 'reviewed coaching attempts saved as practice');
+      assert.equal(growthSaved.dailyQuestGrowthProof.transferPassed, true, 'new scenario saved');
+      assert.equal(growthSaved.dailyQuestGrowthProof.reflectionStatus, 'awaiting-facilitator-review');
+      assert.equal(growthSaved.dailyQuestGrowthProof.mastery, 'not-verified');
     }
     else {
       await tap(page.getByRole('button', { name: 'Review My Choices', exact: true }));
