@@ -1,0 +1,30 @@
+name: Full-app historical teaching module checks
+on:
+  pull_request:
+    paths:
+      - 'full-app/black-history/**'
+      - '.github/workflows/history-module-checks.yml'
+  push:
+    branches:
+      - 'feature/full-app-black-history-quest-catalog-2026-11'
+permissions:
+  contents: read
+jobs:
+  history-content:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Check verified lesson facts and safe teaching structure
+        run: node --test full-app/black-history/verifiedLessons.test.js full-app/black-history/internetAgeLessons.test.js
+      - name: Check JSX and CSS bundle compilation
+        run: |
+          npm ci
+          npm run build
+          test -f dist/index.html
+          test -f dist/history.html
+      - name: Compile standalone history teaching screen without changing POC routes
+        run: node -e "require('esbuild').buildSync({entryPoints:['full-app/black-history/HistoryLearningStudio.jsx'],bundle:true,write:false,loader:{'.jsx':'jsx'},platform:'browser',format:'esm'});"

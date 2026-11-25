@@ -1,8 +1,10 @@
+import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
+  build: { rollupOptions: { input: { app: resolve(process.cwd(), 'index.html'), history: resolve(process.cwd(), 'history.html') } } },
   plugins: [
     react(),
     VitePWA({
