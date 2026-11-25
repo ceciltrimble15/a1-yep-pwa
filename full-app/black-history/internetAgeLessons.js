@@ -38,7 +38,7 @@ export const INTERNET_AGE_LESSONS = [
       {
         "title": "Solve the customer's problem",
         "scene": "ledger",
-        "narration": "Technical work succeeds when it solves a real need. Learn the requirement, test compatibility and document the result. Do not claim Dean invented the internet.",
+        "narration": "Technical work succeeds when it solves a real need. Learn the requirement, test compatibility and document the result. His documented work concerns computer hardware and systems, not the original creation of the internet.",
         "question": "What would a customer need to know before buying this system?"
       }
     ],
