@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: '20'
       - name: Check verified lesson facts and safe teaching structure
-        run: node --test full-app/black-history/verifiedLessons.test.js
+        run: node --test full-app/black-history/verifiedLessons.test.js full-app/black-history/internetAgeLessons.test.js
       - name: Check JSX and CSS bundle compilation
         run: |
           npm ci
