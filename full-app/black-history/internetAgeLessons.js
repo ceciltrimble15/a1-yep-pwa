@@ -15,7 +15,7 @@ export const INTERNET_AGE_LESSONS = [
     "factChecks": [
       {
         "claim": "Mark Dean and Dennis Moeller developed a microcomputer system with bus control for peripheral devices.",
-        "citation": "National Inventors Hall of Fame, Mark Dean"
+        "citation": "IBM History and National Inventors Hall of Fame, Mark Dean"
       },
       {
         "claim": "Dean served as chief engineer for IBM personal-computer work and holds three of IBM's original nine PC patents.",
