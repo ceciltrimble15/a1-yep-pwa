@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { VERIFIED_HISTORY_LESSONS, reviewHistoryAnswer, HISTORY_AGE_REQUIREMENTS } from './verifiedLessons';
+import { VERIFIED_HISTORY_LESSONS, HISTORY_AGE_REQUIREMENTS } from './verifiedLessons';
+import { INTERNET_AGE_LESSONS } from './internetAgeLessons';
+const ALL_HISTORY_LESSONS = [...VERIFIED_HISTORY_LESSONS, ...INTERNET_AGE_LESSONS];
 import styles from './HistoryLearningStudio.module.css';
 
 /* Future full-app teaching component. Intentionally not mounted into current POC router. */
@@ -35,7 +37,7 @@ function TeachingScene({ type, speaking }) {
   </svg>;
 }
 export default function HistoryLearningStudio() {
-  const [lessonId, setLessonId] = useState(VERIFIED_HISTORY_LESSONS[0].id);
+  const [lessonId, setLessonId] = useState(ALL_HISTORY_LESSONS[0].id);
   const [ageBand, setAgeBand] = useState('11-13');
   const [sceneIndex, setSceneIndex] = useState(0);
   const [learningMode, setLearningMode] = useState('watch');
@@ -44,9 +46,9 @@ export default function HistoryLearningStudio() {
   const [speaking,setSpeaking] = useState(false);
   const [message,setMessage] = useState('');
   const audioRef=useRef(null);
-  const lesson=VERIFIED_HISTORY_LESSONS.find(l=>l.id===lessonId);
+  const lesson=ALL_HISTORY_LESSONS.find(l=>l.id===lessonId);
   const scene=lesson.scenes[sceneIndex];
-  const result=answer?reviewHistoryAnswer(lesson.id,answer):null;
+  const result=answer?lesson.challenge.choices.find(choice=>choice.id===answer):null;
   const supported=typeof window!=='undefined'&&!!window.speechSynthesis&&!!window.SpeechSynthesisUtterance;
   function stop() {
     const old=audioRef.current; audioRef.current=null;
@@ -69,7 +71,7 @@ export default function HistoryLearningStudio() {
   return <section className={styles.studio} aria-label="Verified Black business history learning studio">
     <div className={styles.heading}><small>YEP · BUSINESS HISTORY · FULL APP DEVELOPMENT</small><h2>Builders. Owners. Problem Solvers.</h2><p>Learn how Black American men built enterprises, then solve a business problem yourself. This activity is a development example and does not award FINISHER points yet.</p></div>
     <div className={styles.lessonPicker} aria-label="Select a verified entrepreneur">
-      {VERIFIED_HISTORY_LESSONS.map(item=><button type="button" key={item.id} aria-pressed={item.id===lessonId} onClick={()=>selectLesson(item.id)}><b>{item.name}</b><small>{item.category}</small></button>)}
+      {ALL_HISTORY_LESSONS.map(item=><button type="button" key={item.id} aria-pressed={item.id===lessonId} onClick={()=>selectLesson(item.id)}><b>{item.name}</b><small>{item.category}</small></button>)}
     </div>
     <label className={styles.age}>Learning age pathway <select value={ageBand} onChange={e=>setAgeBand(e.target.value)}>{Object.keys(HISTORY_AGE_REQUIREMENTS).map(x=><option key={x} value={x}>{x} years</option>)}</select></label>
     <div className={styles.lesson}>
