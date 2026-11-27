@@ -276,6 +276,7 @@ async function exercise(view, mode) {
       await tap(page.getByRole('button', { name: 'Submit Reflection', exact: true }));
       assert.deepEqual(await session(page), earned, 'replaying a finished mission preserves every saved field');
       await tap(page.getByRole('button', { name: 'Program Home', exact: true }));
+      await tap(page.getByText('Facilitator tools · this tablet only', { exact: true }));
       await tap(page.getByRole('button', { name: /Admin Review/ }));
       assert.ok((await page.locator('main').innerText()).includes(words));
       assert.ok((await page.locator('main').innerText()).includes(mirrorDetails[2]));
