@@ -157,6 +157,7 @@ export default function LaneStoryScene({ kind = 'mirror', mode = 'builder', acti
     window.speechSynthesis.cancel();
     setSceneAudioError('');
     const copy = [stage.label, stage.title, stage.cue, details[active]].filter(Boolean).join('. ');
+    document.dispatchEvent?.(new Event('yep-stop-narration'));
     const utterance = new window.SpeechSynthesisUtterance(copy);
     utterance.lang = 'en-US';
     utterance.rate = mode === 'explorer' ? 0.86 : mode === 'builder' ? 0.92 : 1;

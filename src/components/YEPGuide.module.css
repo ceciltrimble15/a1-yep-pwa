@@ -91,15 +91,8 @@
 @media(max-width:780px){.learningStage{grid-template-columns:1fr}.learningStageArt{min-height:160px}.learningStageCopy{padding:5px}.learningSwitcher button{font-size:13px;gap:5px}}
 @media(max-width:390px){.learningSwitcher button{font-size:11px;padding:8px 3px}.learningSwitcher button svg{width:17px}}
 
-/* The guide moves only when speech synthesis reports that audio actually started. */
-.guideMouth{transform-box:fill-box;transform-origin:center}
-.guideAvatarArt[data-speaking="true"] .guideMouth{animation:yepGuideSpeak .24s ease-in-out infinite alternate}
-.guideAvatarArt[data-speaking="true"]{animation:yepGuideLive .95s ease-in-out infinite alternate}
-@keyframes yepGuideSpeak{from{transform:scaleY(.65)}to{transform:scaleY(1.8)}}
-@keyframes yepGuideLive{from{transform:translateY(0)}to{transform:translateY(-3px)}}
-@media(prefers-reduced-motion:reduce){.guideAvatarArt[data-speaking="true"],.guideAvatarArt[data-speaking="true"] .guideMouth{animation:none}}
-
-
+.guideAvatarArt[data-speaking="true"] { outline: 3px solid #f5c94a; outline-offset: 2px; border-radius: 50%; }
+.teaching h2 { scroll-margin-top: 100px; }
 /* The hands communicate teaching intent rather than loop aimlessly. */
 .guideLeftArm,.guideRightArm{transform-box:fill-box;transform-origin:50% 90%;transition:transform .3s ease}
 .guideAvatarArt[data-gesture="explain"] .guideLeftArm{animation:yepGuideExplain 1.4s ease-in-out infinite alternate}
@@ -111,3 +104,6 @@
 .coachHint p{font-size:clamp(16px,2vw,20px);font-weight:700;line-height:1.4;margin:0}
 .panel[data-lane="explorer"] .coachHint{color:#17345f}
 @media(prefers-reduced-motion:reduce){.guideLeftArm,.guideRightArm{animation:none!important;transition:none!important}}
+.panel:has(.identity > strong) { gap: 16px; }
+.panel:has(.identity > strong) .actions { gap: 8px; margin-top: 14px; }
+.panel:has(.identity > strong) .actions button { min-height: 46px; padding: 8px 12px; font-size: 16px; }

@@ -89,6 +89,13 @@ async function exercise(view, mode) {
     };
     observe(page);
     const tap = locator => view.touch ? locator.tap() : locator.click();
+    async function captureCoach(name) {
+      if (mode !== 'explorer' || view.name !== 'tablet-portrait') return;
+      const guide = page.getByRole('region', { name: 'YEP lesson guide' });
+      await guide.scrollIntoViewIfNeeded();
+      await guide.evaluate(node => node.scrollIntoView({ block: 'start', behavior: 'instant' }));
+      await page.screenshot({ path: `${out}/foundation-${name}.png`, animations: 'disabled' });
+    }
     await start(page, mode, tap);
     await layout(page);
     if (mode === 'explorer') {
@@ -122,6 +129,18 @@ async function exercise(view, mode) {
       }
       await tap(page.getByRole('button', { name: 'Start My First Daily Quest', exact: true }));
     } else await tap(page.getByRole('button', { name: 'Daily Quest', exact: true }));
+    if (mode === 'explorer') {
+      const guide = page.getByRole('region', { name: 'YEP lesson guide' });
+      await captureCoach('daily-quest');
+      await tap(guide.getByRole('button', { name: 'Hear lesson', exact: true }));
+      await guide.locator('[data-speaking="true"]').waitFor();
+      await guide.locator('[data-mouth="open"]').waitFor();
+      await tap(guide.getByRole('button', { name: 'Stop lesson', exact: true }));
+      assert.equal(await guide.locator('[data-mouth]').getAttribute('data-mouth'), 'closed');
+      await tap(guide.getByRole('button', { name: 'Replay', exact: true }));
+      await guide.locator('[data-speaking="true"]').waitFor();
+      await tap(guide.getByRole('button', { name: 'Stop lesson', exact: true }));
+    }
     await tap(page.getByRole('button', { name: 'Show me', exact: true }));
     assert.equal(await page.locator('[aria-label="Guide example"]').count(), 1);
     await tap(page.getByRole('button', { name: 'Hide example', exact: true }));
@@ -131,6 +150,12 @@ async function exercise(view, mode) {
     const draft = (await session(page)).pilotProgress.dailyQuestDraft;
     await page.reload({ waitUntil: 'domcontentloaded' });
     assert.deepEqual((await session(page)).pilotProgress.dailyQuestDraft, draft, 'unfinished problem survives refresh');
+    if (mode === 'explorer') {
+      await tap(page.getByRole('button', { name: 'Program Home', exact: true }));
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      await tap(page.getByRole('button', { name: 'Daily Quest', exact: true }));
+      assert.deepEqual((await session(page)).pilotProgress.dailyQuestDraft, draft);
+    }
     await tap(page.getByRole('button', { name: mode === 'explorer' ? 'Both students and workers' : 'Both', exact: true }));
     await tap(page.locator('[aria-label="Choose a change to try"] button').first());
     if (mode === 'explorer') {
@@ -186,6 +211,7 @@ async function exercise(view, mode) {
     assert.deepEqual((await session(page)).pilotProgress.dailyQuestChoiceProof, proof, 'saved proof survives tab reentry');
     if (mode === 'explorer') await page.screenshot({ path: `${out}/${view.name}-saved-quest.png`, fullPage: true, animations: 'disabled', timeout: 30000 });
     await tap(page.getByRole('button', { name: 'S.T.E.M.Sin', exact: true }).first());
+    await captureCoach('stem');
     if (mode === 'explorer') await tap(page.getByRole('button', { name: 'Try Sorting Tray', exact: true }));
     else await tap(page.locator('[aria-label="Choose a tool to test"] button').first());
     await tap(page.locator('#stem-prediction button').first());
@@ -202,6 +228,7 @@ async function exercise(view, mode) {
     await layout(page);
     await tap(page.getByRole('button', { name: 'Mirror Results', exact: true }));
     await tap(page.getByRole('button', { name: mode === 'explorer' ? 'Start My Mirror' : mode === 'yaep' ? 'Begin Assessment' : 'Take The Mirror', exact: true }));
+    await captureCoach('mirror');
     for (let i = 0; i < REFLECTION_PROMPTS.length; i++) {
       await tap(page.getByRole('button', { name: REFLECTION_PROMPTS[i].options[0], exact: true }));
       await tap(page.getByRole('button', { name: i === REFLECTION_PROMPTS.length - 1 ? 'Save My Check-In' : 'Next Question', exact: true }));
@@ -219,6 +246,7 @@ async function exercise(view, mode) {
     await tap(page.getByRole('button', { name: 'Choose My FINISHER Action', exact: true }));
     assert.equal(await page.getByRole('button', { name: 'Choose This Mission', exact: true }).count(), 4);
     await tap(page.getByRole('button', { name: 'Choose This Mission', exact: true }).first());
+    await captureCoach('finisher');
     const mission = (await session(page)).currentMission;
     assert.equal(mission.mode, mode);
     await scene(page, 'finisher', mode, tap, [mission.objective, ...mission.steps]);
@@ -237,6 +265,26 @@ async function exercise(view, mode) {
     await tap(page.getByRole('button', { name: 'Finish My Mission', exact: true }));
     assert.equal((await session(page)).missionComplete, true);
     assert.equal((await session(page)).reflectionSubmitted, false, 'checklist never invents a submitted reflection');
+    if (mode === 'explorer') {
+      const words = 'I can show my idea and ask how to test it.';
+      await page.getByRole('textbox').fill(words);
+      await tap(page.getByRole('button', { name: 'Submit Reflection', exact: true }));
+      const earned = await session(page);
+      await tap(page.getByRole('button', { name: 'FINISHER Mission', exact: true }));
+      await tap(page.getByRole('button', { name: 'Continue to Reflection', exact: true }));
+      assert.equal(await page.getByRole('textbox').inputValue(), words);
+      await tap(page.getByRole('button', { name: 'Submit Reflection', exact: true }));
+      assert.deepEqual(await session(page), earned, 'replaying a finished mission preserves every saved field');
+      await tap(page.getByRole('button', { name: 'Program Home', exact: true }));
+      await tap(page.getByRole('button', { name: /Admin Review/ }));
+      assert.ok((await page.locator('main').innerText()).includes(words));
+      assert.ok((await page.locator('main').innerText()).includes(mirrorDetails[2]));
+      await tap(page.getByRole('button', { name: 'Daily Quest', exact: true }));
+      await tap(page.getByRole('button', { name: 'Review My Response', exact: true }));
+      assert.equal(await page.locator('#foundation-growth-reflection').inputValue(), earned.pilotProgress.dailyQuestGrowthProof.reflection);
+      await tap(page.getByRole('button', { name: 'Update My Proof', exact: true }));
+      assert.deepEqual((await session(page)).pilotProgress, earned.pilotProgress);
+    }
     await layout(page);
     assert.deepEqual(errors, [], 'no uncaught page errors');
     assert.deepEqual(writes, [], 'no remote submission requests');

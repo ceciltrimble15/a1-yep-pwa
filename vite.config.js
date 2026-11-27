@@ -1,13 +1,17 @@
+import { existsSync } from 'node:fs';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
+  define: {
+    __CECIL_PORTRAIT__: JSON.stringify(existsSync('public/coach/cecil-trimble-approved.webp') ? '/coach/cecil-trimble-approved.webp' : null),
+  },
   plugins: [
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['a1-suppliers-logo.png'],
+      includeAssets: ['a1-suppliers-logo.png', 'coach/*.mp3', 'coach/*.webp'],
       manifest: {
         name: 'A/1 Suppliers — YEP / Y.A.E.P. · The Process',
         short_name: 'YEP Process',

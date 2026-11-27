@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
 import { useYEP } from '../context/YEPContext';
 import { REFLECTION_PROMPTS } from '../data/exposureProcess';
+import YEPGuide from '../components/YEPGuide';
 import Shell from '../components/Shell';
 import ui from '../styles/ui.module.css';
 
@@ -22,12 +23,13 @@ export default function MirrorAssessment() {
     setStep(nextStep);
     saveMirrorDraft({ answers, step: nextStep });
   }
-  return <Shell>
+  return <Shell showAudio={mode !== 'explorer'}>
     <section data-lane={mode} style={{maxWidth:740, margin:'0 auto',padding:'12px 0 42px'}}>
       <p style={{fontWeight:800,letterSpacing:'.1em',color:'var(--electric)'}}>MIRROR · TODAY'S CHECK-IN</p>
       <h1 style={{fontSize:'clamp(30px,5vw,46px)',lineHeight:1.1,margin:'14px 0'}}>Your experience. Your voice.</h1>
       <p style={{fontSize:19,lineHeight:1.5,marginBottom:24}}>No labels. No grades. There is no one right answer. Your interests can change.</p>
-      <div style={{borderRadius:20,border:'1px solid var(--line-strong)',background:'var(--panel)',padding:'clamp(16px,4vw,28px)'}}>
+      {mode === 'explorer' && <YEPGuide title="My Mirror" step={step} teacher={{ speech: prompt.heading, focusId: 'mirror-answers', focusLabel: 'See my choices' }} />}
+      <div id="mirror-answers" style={{borderRadius:20,border:'1px solid var(--line-strong)',background:'var(--panel)',padding:'clamp(16px,4vw,28px)'}}>
         <p style={{fontWeight:800,marginBottom:14}}>QUESTION {step+1} OF {REFLECTION_PROMPTS.length}</p>
         <h2 style={{fontSize:'clamp(23px,4vw,34px)',lineHeight:1.25,marginBottom:22}}>{prompt.heading}</h2>
         <div style={{display:'grid',gap:12}}>

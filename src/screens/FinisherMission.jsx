@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ArrowRight, Check, CheckCircle2, Compass, Flag, Lightbulb, Target } from 'lucide-react';
 import { useYEP } from '../context/YEPContext';
-import { getExposureMissions, getMissionLearning } from '../data/exposureProcess';
+import { getReflectionLearning, getExposureMissions, getMissionLearning } from '../data/exposureProcess';
 import Shell from '../components/Shell';
 import LaneStoryScene from '../components/LaneStoryScene';
 import YEPGuide from '../components/YEPGuide';
@@ -15,7 +15,8 @@ const PATH = [
 ];
 
 export default function FinisherMission() {
-  const { mode, currentMission, selectMission, missionStepsDone, toggleMissionStep, completeMission, missionComplete, navigate } = useYEP();
+  const { mode, mirrorResult, currentMission, selectMission, missionStepsDone, toggleMissionStep, completeMission, missionComplete, navigate } = useYEP();
+  const mirror = getReflectionLearning(mode, mirrorResult);
   const choices = getExposureMissions(mode);
   const [pathStep, setPathStep] = useState(0);
 
@@ -27,6 +28,10 @@ export default function FinisherMission() {
         FINISHER is where learning becomes a next move. Choose one mission, complete only the steps you actually practice or perform, then reflect on what the experience taught you.
       </p>
 
+      {mode === 'explorer' && <>
+        {mirror && <p>In your Mirror, you chose to explore <strong>{mirror.curious}</strong>.</p>}
+        <YEPGuide title="My FINISHER mission" teacher={{ speech: 'Pick one thing you can finish today.', focusId: 'mission-choices', focusLabel: 'See the missions' }} />
+      </>}
       <LaneStoryScene kind="finisher" mode={mode} active={pathStep} onActiveChange={setPathStep}
         details={['Choose a mission that matches your interests.', 'Work with the right facilitator or approved mentor.', 'Complete only the real or supervised steps you actually try.', 'Reflect on the experience and choose one improvement.']} />
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 10, margin: '22px 0', overflowX: 'auto' }}>
@@ -37,7 +42,7 @@ export default function FinisherMission() {
         </div>)}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,310px),1fr))', gap: 14 }}>
+      <div id="mission-choices" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,310px),1fr))', gap: 14 }}>
         {choices.map((option) => {
           const learning = getMissionLearning(option, mode);
           return <article key={option.id} style={{ background: 'var(--panel)', border: '1px solid var(--line-strong)', borderRadius: 22, padding: 22, display: 'flex', flexDirection: 'column', gap: 11 }}>
@@ -80,6 +85,7 @@ export default function FinisherMission() {
       <LaneStoryScene kind="finisher" mode={mode} active={pathStep} onActiveChange={setPathStep}
         details={[m.objective, m.steps[0], m.steps[1], m.steps[2]]} />
       <YEPGuide
+        teacher={mode === 'explorer' ? { speech: allDone ? 'Your steps are marked. Tell what you learned.' : 'Mark a step after you practice it with your facilitator.', focusId: 'exposure-mission-steps' } : null}
         title="Learn it by doing it"
         prompt={learning.speech}
         narration={allDone ? learning.skill.check : `Next step: ${m.steps[next]}`}

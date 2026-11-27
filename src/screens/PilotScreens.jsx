@@ -320,7 +320,6 @@ function StandardDailyQuest({ legacyFoundation = false }) {
         </div>
 
         <YEPGuide
-          teacher={mode === 'explorer' ? foundationTeacherStep('stemSin', guideStep) : null}
           prompt={guidePrompt}
           title={complete ? 'Your idea is saved' : ['Look at the scene', 'Who needs help?', 'Try your idea', 'Read it back'][guideStep - 1]}
           example={selected ? `You noticed: ${selected.label}. ${selected.detail} Try one small change, then look again to see what happens. Your idea can be different from the pictured example.` : getProgramContent(mode).example}
@@ -594,6 +593,7 @@ export function StemSinQuest() {
         <ScreenHead eyebrow={`${MODES[mode]?.program || 'YEP'} · S.T.E.M.Sin`} title={stemSin.challengeTitle} sub={stemSin.title} />
 
         <YEPGuide
+          teacher={mode === 'explorer' ? foundationTeacherStep('stemSin', guideStep) : null}
           prompt={guidePrompt}
           title={complete ? 'Your practice is saved' : ['Choose one tool', 'Make a prediction', 'Try the practice test', 'Notice what changed', 'Explain it your way'][guideStep - 1]}
           pictureKind={demoRan && tool ? LAB_PICTURES[mode][selectedTool] : guideStep === 1 ? LAB_PICTURES[mode][mode === 'explorer' ? previewToolIndex : 0] : tool ? LAB_PICTURES[mode][selectedTool] : undefined}
