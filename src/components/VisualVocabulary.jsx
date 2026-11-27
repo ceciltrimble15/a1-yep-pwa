@@ -35,6 +35,7 @@ export default function VisualVocabulary({ mode, screen }) {
     }
     window.speechSynthesis.cancel();
     setAudioError('');
+    document.dispatchEvent?.(new Event('yep-stop-narration'));
     const utterance = new window.SpeechSynthesisUtterance(
       `${card.word}. It means: ${card.meaning} ${card.beat} For example: ${card.example}`
     );

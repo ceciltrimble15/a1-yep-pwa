@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { Sparkles, Lightbulb, Target, BriefcaseBusiness, Eye, PenLine, CheckCircle2, Flag, BookOpenCheck, FlaskConical, ScanFace, PackageOpen, Trash2, UsersRound, Clock3, Smartphone, MessageCircle, Store, Wrench, Volume2, ChevronRight } from 'lucide-react';
 import { getProgramContent } from '../data/pilotContent';
 import { hasLegacyFoundationQuest, LEGACY_FOUNDATION_QUEST } from '../data/foundationQuest';
@@ -232,7 +232,7 @@ function StandardDailyQuest({ legacyFoundation = false }) {
   const complete = pilotProgress.dailyQuestComplete;
   const program = MODES[mode] || MODES.builder;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!complete || text !== pilotProgress.dailyQuestText || tryChoice !== (pilotProgress.dailyQuestChoiceProof?.action || '')) saveLessonDraft('dailyQuest', { text, selectedProblem, who, tryChoice, guideStep });
     else if (pilotProgress.dailyQuestDraft) saveLessonDraft('dailyQuest', null);
   }, [text, selectedProblem, who, tryChoice, guideStep, complete, pilotProgress.dailyQuestText, pilotProgress.dailyQuestChoiceProof?.action]);
@@ -320,7 +320,6 @@ function StandardDailyQuest({ legacyFoundation = false }) {
         </div>
 
         <YEPGuide
-          teacher={mode === 'explorer' ? foundationTeacherStep('stemSin', guideStep) : null}
           prompt={guidePrompt}
           title={complete ? 'Your idea is saved' : ['Look at the scene', 'Who needs help?', 'Try your idea', 'Read it back'][guideStep - 1]}
           example={selected ? `You noticed: ${selected.label}. ${selected.detail} Try one small change, then look again to see what happens. Your idea can be different from the pictured example.` : getProgramContent(mode).example}
@@ -525,7 +524,7 @@ export function StemSinQuest() {
   const [previewToolIndex, setPreviewToolIndex] = useState(Math.max(0, draft?.selectedTool ?? savedToolIndex));
   const complete = pilotProgress.stemSinComplete;
   const tool = selectedTool === null ? null : lab.tools[selectedTool];
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!complete || text !== pilotProgress.stemSinText || nextTest !== (pilotProgress.stemSinChoiceProof?.nextTest || '')) saveLessonDraft('stemSin', { text, selectedTool, prediction, nextTest, demoRan, guideStep });
     else if (pilotProgress.stemSinDraft) saveLessonDraft('stemSin', null);
   }, [text, selectedTool, prediction, nextTest, demoRan, guideStep, complete, pilotProgress.stemSinText, pilotProgress.stemSinChoiceProof?.nextTest]);
@@ -594,6 +593,7 @@ export function StemSinQuest() {
         <ScreenHead eyebrow={`${MODES[mode]?.program || 'YEP'} · S.T.E.M.Sin`} title={stemSin.challengeTitle} sub={stemSin.title} />
 
         <YEPGuide
+          teacher={mode === 'explorer' ? foundationTeacherStep('stemSin', guideStep) : null}
           prompt={guidePrompt}
           title={complete ? 'Your practice is saved' : ['Choose one tool', 'Make a prediction', 'Try the practice test', 'Notice what changed', 'Explain it your way'][guideStep - 1]}
           pictureKind={demoRan && tool ? LAB_PICTURES[mode][selectedTool] : guideStep === 1 ? LAB_PICTURES[mode][mode === 'explorer' ? previewToolIndex : 0] : tool ? LAB_PICTURES[mode][selectedTool] : undefined}

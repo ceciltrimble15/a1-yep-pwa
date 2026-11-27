@@ -1,5 +1,6 @@
 import { useYEP } from '../context/YEPContext';
 import { getProgramContent } from '../data/pilotContent';
+import { getReflectionSummary } from '../data/exposureProcess';
 import { MODES } from '../data/modes';
 import { proofDescription, proofStatus } from '../data/proofEvidence';
 import Shell from '../components/Shell';
@@ -138,6 +139,7 @@ export function DemoAdminReview() {
     currentMission,
     missionComplete,
     reflectionSubmitted,
+    reflection,
     finisherLetter,
     mirrorResult,
     directionProfile,
@@ -147,6 +149,8 @@ export function DemoAdminReview() {
   const program = MODES[mode] || MODES.builder;
   const { weeklyModule } = getProgramContent(mode);
   const weeklyComplete = pilotProgress.weeklyCompleted.length >= weeklyModule.activities.length;
+
+  const mirrorAnswers = getReflectionSummary(mirrorResult);
 
   return (
     <Shell>
@@ -162,12 +166,14 @@ export function DemoAdminReview() {
         <StatusCard label="My Direction" value={directionProfile?.interest || 'Not explored yet'} />
         <StatusCard label="Direction Reason" value={directionProfile?.why || 'Not recorded yet'} />
         <StatusCard label="Week 1" value={weeklyComplete ? 'Complete' : `${pilotProgress.weeklyCompleted.length}/${weeklyModule.activities.length} complete`} />
+        {mirrorAnswers ? mirrorAnswers.map(({ id, label, answer }) => <StatusCard key={id} label={label} value={answer} />) : <>
         <StatusCard label="Mirror Anchor" value={mirrorResult?.Anchor || 'Not completed'} />
         <StatusCard label="Growth Edge" value={mirrorResult?.Edge || 'Not completed'} />
         <StatusCard label="Learning Style" value={mirrorResult?.Style || 'Not completed'} />
+        </>}
         <StatusCard label="Assigned FINISHER Direction" value={currentMission?.finisherLetter || finisherLetter || 'Not assigned'} />
         <StatusCard label="FINISHER Mission" value={currentMission ? `${missionComplete ? 'Complete' : 'Assigned'} — ${currentMission.title}` : 'Not assigned'} />
-        <StatusCard label="Reflection" value={reflectionSubmitted ? 'Submitted' : 'Open'} />
+        <StatusCard label="Reflection" value={reflectionSubmitted ? reflection : 'Open'} />
       </div>
 
       <div className={styles.stack}>
@@ -176,7 +182,7 @@ export function DemoAdminReview() {
           label="Foundation Guide Coaching"
           status={pilotProgress.dailyQuestCoachedResponse?.reviewed ? 'Guided practice reviewed' : pilotProgress.dailyQuestDraft?.coachAttempts ? 'Guided practice in progress' : 'Not attempted'}
           text={pilotProgress.dailyQuestCoachedResponse?.reviewed
-            ? `Practice responses: ${pilotProgress.dailyQuestCoachedResponse.attempts}. The learner revised an answer with the teaching guide. This is not independent mastery and requires facilitator verification for practical skills.`
+            ? `Practice responses: ${pilotProgress.dailyQuestCoachedResponse.attempts}. ${pilotProgress.dailyQuestCoachedResponse.attempts > 1 ? 'The learner revised an answer with the teaching guide.' : 'The learner selected a response on the first attempt.'} This is not independent mastery and requires facilitator verification for practical skills.`
             : pilotProgress.dailyQuestDraft?.coachAttempts
               ? `Practice attempts so far: ${pilotProgress.dailyQuestDraft.coachAttempts}. ${pilotProgress.dailyQuestDraft.coachPassed ? 'Guided reasoning complete; save the activity to record it.' : 'The learner is working through hints.'}`
               : 'No guided reasoning checkpoint is saved yet.'}

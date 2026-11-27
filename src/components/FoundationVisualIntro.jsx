@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Eye, Brain, Hand, TrendingUp, Headphones, Lightbulb, Square, Sparkles, Volume2 } from 'lucide-react';
+import { LearningPicture } from './LearningPicture';
+import useCoachClip from './useCoachClip';
 import { GuideAvatar } from './YEPGuide';
 import styles from './FoundationVisualIntro.module.css';
 
@@ -40,8 +42,9 @@ export default function FoundationVisualIntro({ step, powerName, narration, opti
     cue: PREVIEW_STEPS[preview].detail,
     kind: 'welcome',
   } : isDone ? FINISHED : QUESTION_SCENES[step] || QUESTION_SCENES[0];
-  const name = powerName || 'Explorer';
   const activeStep = PREVIEW_STEPS[preview];
+  const line = isWelcome ? activeStep.example + ' ' + activeStep.action : state.headline + (isDone ? '. ' : ' ') + state.cue;
+  const offline = useCoachClip(line);
   const audioActive = audioPending || speaking;
 
   function stop() {
@@ -68,11 +71,8 @@ export default function FoundationVisualIntro({ step, powerName, narration, opti
     setAudioError('');
     // Keep Foundation narration to one idea and one action at a time.
     // The visual options stay on screen; the Guide does not read a long list of choices.
-    const text = isWelcome
-      ? 'Hi, ' + name + '! ' + PREVIEW_STEPS[preview].detail + ' Tap another number to see what comes next.'
-      : isDone
-        ? 'You did it! You can try your first Quest now.'
-        : state.headline + ' ' + state.cue + ' Tap the picture that fits you. There is no wrong answer.';
+    const text = line;
+    offline.stop();
     const utterance = new window.SpeechSynthesisUtterance(text);
     utterance.lang = 'en-US';
     utterance.rate = .88;
@@ -127,7 +127,7 @@ export default function FoundationVisualIntro({ step, powerName, narration, opti
     }
   }, [supported]);
 
-  return <section className={styles.wrap} data-speaking={speaking} data-scene={state.kind} aria-label="Interactive illustrated YEP first check-in">
+  return <section className={styles.wrap} data-speaking={speaking || offline.speaking} data-scene={state.kind} aria-label="Interactive illustrated YEP first check-in">
     <div className={styles.stage}>
       <svg className={styles.city} viewBox="0 0 860 420" preserveAspectRatio="xMidYMid slice"
         role="img" aria-label="Illustrated city with community buildings, idea lights and a path toward the future">
@@ -152,7 +152,7 @@ export default function FoundationVisualIntro({ step, powerName, narration, opti
           <path d="M777 243l4 10 10 4-10 4-4 10-4-10-10-4 10-4Z"/>
         </g>
       </svg>
-      <div className={styles.figure} aria-hidden="true"><GuideAvatar speaking={speaking} /></div>
+      <div className={styles.figure} aria-hidden="true"><GuideAvatar foundation speaking={speaking || offline.speaking} /></div>
       <div className={styles.bubble} aria-live="polite">
         <span className={styles.kicker}>{isWelcome ? 'YOUR FIRST LOOK' : isDone ? 'FINISHED CHECK-IN' : 'YOUR FIRST CHECK-IN · ' + (step + 1) + ' / 4'}</span>
         <strong>{state.headline}</strong>
@@ -173,7 +173,7 @@ export default function FoundationVisualIntro({ step, powerName, narration, opti
         </button>)}
       </div>}
       {isWelcome && <div className={styles.learningCard} data-lesson-stage={activeStep.name}>
-        <div className={styles.learningIcon} aria-hidden="true"><activeStep.visual size={32}/></div>
+        <div className={styles.learningIcon} aria-hidden="true"><LearningPicture kind="supplies" changed={preview > 0} label={activeStep.example} /></div>
         <div className={styles.learningCopy}>
           <span className={styles.learningLabel}>STEP {preview + 1} OF 4 · {activeStep.name}</span>
           <strong>{activeStep.lesson}</strong>
@@ -188,13 +188,19 @@ export default function FoundationVisualIntro({ step, powerName, narration, opti
         {PREVIEW_STEPS.map((item, index) => <span key={item.name} data-complete={index <= preview} />)}
       </div>}
       <div className={styles.audioRow}>
-        <button type="button" onClick={hear} disabled={!supported} className={styles.listen} aria-label={audioActive ? 'Stop lesson' : 'Hear lesson'}>
-          {audioActive ? <Square size={22} aria-hidden="true"/> : <Headphones size={22} aria-hidden="true"/>}
-          {audioActive ? 'Stop lesson' : 'Hear lesson'}
+        <button type="button" className={styles.listen} onClick={() => {
+          stop();
+          setAudioError('');
+          if (offline.active) offline.stop(); else offline.play();
+        }}>{offline.active ? <Square size={22} aria-hidden="true"/> : <Headphones size={22} aria-hidden="true"/>}
+          {offline.active ? 'Stop lesson' : 'Hear lesson'}
         </button>
+        {supported && <button type="button" onClick={hear} className={styles.listen}>
+          {audioActive ? 'Stop device voice' : 'Hear device voice'}
+        </button>}
         <div className={styles.audioHint} role="status">
           <Volume2 size={17} aria-hidden="true"/>
-          {audioError || (!supported ? 'Audio unavailable; use the visual steps.' : speaking ? 'Guide speaking. Tap Stop to end playback.' : audioPending ? 'Preparing audio. Tap Stop to cancel.' : 'Voice plays only when you choose.')}
+          {offline.error || (offline.active ? 'Playing offline voice.' : audioError) || (!supported ? 'Choose Hear lesson to listen to the offline voice.' : speaking ? 'Guide speaking. Tap Stop to end playback.' : audioPending ? 'Preparing audio. Tap Stop to cancel.' : 'Voice plays only when you choose.')}
         </div>
       </div>
     </div>

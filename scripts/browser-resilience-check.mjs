@@ -142,25 +142,25 @@ try {
   await page.locator('#powerName').fill('Sample Explorer');
   await page.getByRole('button', { name: 'Start My YEP Introduction', exact: true }).tap();
   const foundation = page.getByRole('region', { name: 'Interactive illustrated YEP first check-in' });
-  await foundation.getByRole('button', { name: 'Hear lesson', exact: true }).tap();
-  await foundation.getByRole('button', { name: 'Stop lesson', exact: true }).waitFor();
+  await foundation.getByRole('button', { name: 'Hear device voice', exact: true }).tap();
+  await foundation.getByRole('button', { name: 'Stop device voice', exact: true }).waitFor();
   assert.equal(await foundation.getAttribute('data-speaking'), 'false', 'avatar must not pretend to speak while audio is pending');
   assert.ok((await foundation.getByRole('status').last().innerText()).includes('Preparing audio'));
   await page.evaluate(() => speechSynthesis.last.onstart?.());
   await page.waitForFunction(() => document.querySelector('[aria-label="Interactive illustrated YEP first check-in"]')?.dataset.speaking === 'true');
   await foundation.getByRole('button', { name: 'Step 2 of 4: THINK' }).tap();
-  await foundation.getByRole('button', { name: 'Hear lesson', exact: true }).waitFor();
+  await foundation.getByRole('button', { name: 'Hear device voice', exact: true }).waitFor();
   assert.equal(await foundation.getAttribute('data-speaking'), 'false', 'changing the lesson stops speaking animation');
-  await foundation.getByRole('button', { name: 'Hear lesson', exact: true }).tap();
+  await foundation.getByRole('button', { name: 'Hear device voice', exact: true }).tap();
   await page.evaluate(() => speechSynthesis.last.onerror?.({ error: 'synthesis-unavailable' }));
   await foundation.getByRole('status').last().filter({ hasText: 'This device cannot play the guide' }).waitFor();
   assert.equal(await foundation.getAttribute('data-speaking'), 'false', 'speech error returns to readable visual fallback');
   // When a device accepts the speak request but never invokes onstart/onerror,
   // leave pending state automatically and offer readable recovery.
-  await foundation.getByRole('button', { name: 'Hear lesson', exact: true }).tap();
+  await foundation.getByRole('button', { name: 'Hear device voice', exact: true }).tap();
   await foundation.getByRole('status').last().filter({ hasText: 'Audio did not start on this device' }).waitFor({ timeout: 7500 });
   assert.equal(await foundation.getAttribute('data-speaking'), 'false', 'silent engine cannot animate guide speech');
-  assert.equal(await foundation.getByRole('button', { name: 'Hear lesson', exact: true }).isEnabled(), true);
+  assert.equal(await foundation.getByRole('button', { name: 'Hear device voice', exact: true }).isEnabled(), true);
     results.push({ check: 'Foundation pending/start/cancel/error/stalled-engine recovery visual and speech synchronization', status: 'PASS', method: 'deterministic speech events only; audible playback NOT VERIFIED' });
   await context.close();
 

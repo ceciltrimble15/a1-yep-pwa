@@ -4,11 +4,15 @@ import { useYEP } from '../context/YEPContext';
 import { MODES } from '../data/modes';
 import { buildGuideAudioClips, chooseGuideVoice, chunkSpeech, getAudioProfile } from '../lib/yepAudio';
 import PictureExample, { LearningPicture } from './LearningPicture';
+import useCoachClip from './useCoachClip';
 import styles from './YEPGuide.module.css';
 
-export function GuideAvatar({ speaking = false, gesture = 'open' }) {
+export function GuideAvatar({ speaking = false, gesture = 'open', mouth = 'closed', foundation = false }) {
+  if (foundation && typeof __CECIL_PORTRAIT__ !== 'undefined' && __CECIL_PORTRAIT__) {
+    return <img className={styles.guideAvatarArt} data-speaking={speaking} src={__CECIL_PORTRAIT__} alt="Quest Buddy" />;
+  }
   return (
-    <svg data-speaking={speaking} data-gesture={gesture} className={styles.guideAvatarArt} viewBox="0 0 160 160" role="img" aria-label={speaking ? "YEP teaching guide speaking and gesturing" : "YEP teaching guide ready to help"}>
+    <svg data-speaking={speaking} data-mouth={mouth} data-gesture={gesture} className={styles.guideAvatarArt} viewBox="0 0 160 160" role="img" aria-label={speaking ? "YEP teaching guide speaking and gesturing" : "YEP teaching guide ready to help"}>
       <defs>
         <linearGradient id="guideBg" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="#2F7DF5" />
@@ -32,14 +36,16 @@ export function GuideAvatar({ speaking = false, gesture = 'open' }) {
       <path d="M50 52c5-18 18-29 31-29 14 0 26 9 32 27-8-6-19-9-32-9-12 0-23 4-31 11Z" fill="#111318" opacity=".9" />
       <path d="M58 67c4-3 9-4 14-2" fill="none" stroke="#2B1710" strokeWidth="3.5" strokeLinecap="round" />
       <path d="M88 65c5-2 10-1 14 2" fill="none" stroke="#2B1710" strokeWidth="3.5" strokeLinecap="round" />
-      <ellipse cx="66" cy="72" rx="3.5" ry="4" fill="#111827" />
-      <ellipse cx="95" cy="72" rx="3.5" ry="4" fill="#111827" />
+      <ellipse cx={gesture === 'activity' ? 68 : 66} cy={gesture === 'activity' ? 74 : 72} rx="3.5" ry="4" fill="#111827" />
+      <ellipse cx={gesture === 'activity' ? 97 : 95} cy={gesture === 'activity' ? 74 : 72} rx="3.5" ry="4" fill="#111827" />
       <path d="M80 73c-2 7-3 12-1 15 2 2 5 2 8 1" fill="none" stroke="#5B3324" strokeWidth="2.5" strokeLinecap="round" />
-      <path className={styles.guideMouth} d="M65 94c9 8 21 8 30 0" fill="none" stroke="#4A241C" strokeWidth="3" strokeLinecap="round" />
+      {mouth === 'closed' ? <>
+      <path d="M65 94c9 8 21 8 30 0" fill="none" stroke="#4A241C" strokeWidth="3" strokeLinecap="round" />
       <path d="M71 96c6 3 12 3 18 0" fill="none" stroke="#F2D4C5" strokeWidth="2.2" strokeLinecap="round" />
+      </> : <ellipse cx="80" cy="96" rx={mouth === 'round' ? 5 : 9} ry={mouth === 'small' ? 2 : 5} fill="#52291f" />}
       {/* Exact public A/1 Suppliers artwork, not a generated replacement mark. */}
       <rect x="99" y="114" width="36" height="36" rx="6" fill="#FFFFFF" stroke="#D4A017" strokeWidth="2" />
-      <image href="https://www.a1suppliers.org/a1-suppliers-logo.png"
+      <image href="/a1-suppliers-logo.png"
         x="101" y="116" width="32" height="32" preserveAspectRatio="xMidYMid meet" />
       {/* Visible left-hand teaching gesture, framed inside the avatar. */}
       <g className={styles.guideLeftArm}>
@@ -48,11 +54,15 @@ export function GuideAvatar({ speaking = false, gesture = 'open' }) {
         <path d="M12 89L8 75" stroke="#8B593C" strokeWidth="8" strokeLinecap="round" />
       </g>
       {/* Right hand points toward the next action when learner selects TRY. */}
-      <g className={styles.guideRightArm}>
+      {gesture === 'activity' ? <g>
+        <path d="M117 119 Q128 121 140 130" fill="none" stroke="#15366F" strokeWidth="15" strokeLinecap="round" />
+        <ellipse cx="142" cy="131" rx="8" ry="7" fill="#8B593C" />
+        <path d="M145 134l8 8" stroke="#8B593C" strokeWidth="6" strokeLinecap="round" />
+      </g> : <g className={styles.guideRightArm}>
         <path d="M119 123 Q139 117 145 98" fill="none" stroke="#15366F" strokeWidth="16" strokeLinecap="round" />
         <ellipse cx="146" cy="95" rx="10" ry="12" fill="#8B593C" />
         <path d="M148 89L153 74" stroke="#8B593C" strokeWidth="8" strokeLinecap="round" />
-      </g>
+      </g>}
       <circle cx="80" cy="139" r="12" fill="#D4A017" />
       <text x="80" y="145" textAnchor="middle" fontSize="17" fontWeight="900" fill="#0B1D3A">Y</text>
       <path d="M117 78c8 4 12 11 12 20" fill="none" stroke="#D4A017" strokeWidth="4" strokeLinecap="round" />
@@ -61,7 +71,58 @@ export function GuideAvatar({ speaking = false, gesture = 'open' }) {
   );
 }
 
-export default function YEPGuide({
+function FoundationGuide({ teacher, title, step, example, pictureKind, beforeOnly, actionLabel, onAction }) {
+  const line = teacher.speech;
+  const audio = useCoachClip(line);
+  const [showExample, setShowExample] = useState(false);
+  const heading = useRef(null);
+  const previous = useRef(step);
+  useEffect(() => {
+    setShowExample(false);
+    if (previous.current !== step) {
+      heading.current?.focus({ preventScroll: true });
+      heading.current?.scrollIntoView({ block: 'start', behavior: 'instant' });
+      previous.current = step;
+    }
+  }, [step]);
+  function point() {
+    const target = document.getElementById(teacher.focusId);
+    if (!target) return;
+    target.scrollIntoView({ block: 'center', behavior: 'instant' });
+    target.querySelector('button:not(:disabled), textarea')?.focus({ preventScroll: true });
+    target.classList.add('yep-teacher-focus');
+    window.setTimeout(() => target.classList.remove('yep-teacher-focus'), 1800);
+  }
+  return <section className={styles.panel} data-lane="explorer" aria-label="YEP lesson guide">
+    <div className={styles.identity}>
+      <GuideAvatar foundation speaking={audio.speaking} mouth={audio.mouth} gesture={teacher.focusId ? 'activity' : 'open'} />
+      <strong>Quest Buddy</strong>
+    </div>
+    <div className={styles.teaching}>
+      <h2 ref={heading} tabIndex={-1}>{title}</h2>
+      <p className={styles.prompt}>{line}</p>
+      <div className={styles.actions}>
+        {audio.clip && <><button type="button" className={styles.explain} onClick={audio.active ? audio.stop : audio.play}>
+          {audio.active ? <Square size={19} /> : <Headphones size={19} />}{audio.active ? 'Stop lesson' : 'Hear lesson'}
+        </button><button className={styles.explain} type="button" onClick={audio.play}><RotateCcw size={18} /> Replay</button></>}
+        {example && <button type="button" className={styles.explain} aria-expanded={showExample} onClick={() => setShowExample(!showExample)}>{showExample ? 'Hide example' : 'Show me'}</button>}
+        {actionLabel && onAction ? <button type="button" className={styles.try} onClick={onAction}>{actionLabel}<ChevronRight size={18}/></button>
+          : teacher.focusId && <button type="button" className={styles.try} onClick={point}>{teacher.focusLabel || 'Show where to tap'}<ChevronRight size={18}/></button>}
+      </div>
+      {audio.error && <p role="status">{audio.error}</p>}
+      {showExample && <div className={styles.example} aria-label="Guide example"><span>ONE EXAMPLE</span>
+        {pictureKind && (beforeOnly ? <LearningPicture kind={pictureKind} label="Illustrated starting challenge" /> : <PictureExample kind={pictureKind} />)}
+        <p>{example}</p><small>Your own idea can be different.</small>
+      </div>}
+    </div>
+  </section>;
+}
+
+export default function YEPGuide(props) {
+  return props.teacher ? <FoundationGuide {...props} /> : <GeneralGuide {...props} />;
+}
+
+function GeneralGuide({
   prompt,
   step,
   title = 'One step at a time',

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { Clock3, UsersRound, Eye, Lightbulb, ChevronRight, CheckCircle2, BookOpenCheck } from 'lucide-react';
 import { useYEP } from '../context/YEPContext';
 import { FOUNDATION_QUEST, FOUNDATION_QUEST_ID, FOUNDATION_SCENARIO, FOUNDATION_PEOPLE, FOUNDATION_QUEST_IDEAS } from '../data/foundationQuest';
@@ -195,7 +195,7 @@ export default function FoundationDailyQuest() {
   const canSave = !!(selected && who && idea && coachPassed && growthPassed && reflectionReview.provided);
   const hasChanges = text !== pilotProgress.dailyQuestText || selected?.label !== proof?.problem || who !== (proof?.who || '') || idea !== (proof?.action || '') || growthReflection !== (pilotProgress.dailyQuestGrowthProof?.reflection || '');
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!complete || hasChanges) saveLessonDraft('dailyQuest', { questId: FOUNDATION_QUEST_ID, text, selectedProblem, who, tryChoice: idea, guideStep: step, coachChoice, coachAttempts, coachPassed, coachFeedback, growthChoice, growthAttempts, growthPassed, growthFeedback, growthReflection });
     else if (pilotProgress.dailyQuestDraft) saveLessonDraft('dailyQuest', null);
   }, [text, selectedProblem, who, idea, step, complete, hasChanges, coachChoice, coachAttempts, coachPassed, coachFeedback, growthChoice, growthAttempts, growthPassed, growthFeedback, growthReflection]);
@@ -257,7 +257,7 @@ export default function FoundationDailyQuest() {
       <header className={styles.foundationQuestHeader}>
         <div><span>YOUR FIRST DAILY QUEST</span><h1>{FOUNDATION_QUEST.title}</h1><p>See it. Notice it. Choose a move. Finish.</p></div>
         <div className={styles.foundationQuestMiniFlow} aria-label="First Daily Quest progress">
-          {['SEE', 'THINK', 'TRY', 'GROW', 'REFLECT', 'FINISH'].map((label, index) => <span key={label} data-state={step > index + 1 ? 'done' : step === index + 1 ? 'active' : 'next'}><b>{index + 1}</b>{label}</span>)}
+          {['SEE', 'THINK', 'PLAN', 'TRY', 'GROW', 'REFLECT'].map((label, index) => <span key={label} data-state={step > index + 1 ? 'done' : step === index + 1 ? 'active' : 'next'}><b>{index + 1}</b>{label}</span>)}
         </div>
       </header>
       <YEPGuide teacher={step === 5 && growthFeedback ? {

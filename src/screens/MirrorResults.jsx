@@ -48,6 +48,7 @@ export default function MirrorResults() {
         ]}
       />
       <YEPGuide
+        teacher={mode === 'explorer' ? { speech: 'Look at your answers. What would you like to try next?', focusId: 'mirror-learning-cards' } : null}
         title="Look back before you move forward"
         prompt={learning.speech}
         narration={learning.bridge}
