@@ -102,7 +102,7 @@ export default function Shell({ children, showBar = true, showAudio = true, show
           {showBar && <div data-audio-skip="true"><GlobalBar /></div>}
           {showAudio && <AudioGuide targetRef={audioTargetRef} />}
           <main ref={audioTargetRef} className={styles.content}>
-            {mode === 'explorer' && ['dailyQuest', 'stemSin', 'mirror', 'mission', 'results'].includes(screen)
+            {mode === 'explorer' && ['dailyQuest', 'stemSin', 'mirrorIntro', 'mission'].includes(screen)
               ? <details><summary style={{ minHeight: 44, padding: 12 }}>Explore the lesson word</summary><VisualVocabulary mode={mode} screen={screen} /></details>
               : <VisualVocabulary mode={mode} screen={screen} />}
             {children}
