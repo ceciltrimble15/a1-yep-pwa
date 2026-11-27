@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useContext, useLayoutEffect, useMemo, useState } from 'react';
 import { REFLECTION_PROMPTS, getExposureMissions } from '../data/exposureProcess';
 import { demoYouth as baseDemoYouth } from '../data/demoYouth';
 import { DEFAULT_MODE, isValidMode } from '../data/modes';
@@ -69,7 +69,7 @@ export function YEPProvider({ children }) {
     setLaneProgress((all) => ({ ...all, [mode]: update(all[mode] || EMPTY_PILOT_PROGRESS) }));
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         screen, track, youthName, powerName, directionProfile, exposureLog, mirrorScores, mirrorResult, currentMission,

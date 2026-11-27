@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { Sparkles, Lightbulb, Target, BriefcaseBusiness, Eye, PenLine, CheckCircle2, Flag, BookOpenCheck, FlaskConical, ScanFace, PackageOpen, Trash2, UsersRound, Clock3, Smartphone, MessageCircle, Store, Wrench, Volume2, ChevronRight } from 'lucide-react';
 import { getProgramContent } from '../data/pilotContent';
 import { hasLegacyFoundationQuest, LEGACY_FOUNDATION_QUEST } from '../data/foundationQuest';
@@ -232,7 +232,7 @@ function StandardDailyQuest({ legacyFoundation = false }) {
   const complete = pilotProgress.dailyQuestComplete;
   const program = MODES[mode] || MODES.builder;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!complete || text !== pilotProgress.dailyQuestText || tryChoice !== (pilotProgress.dailyQuestChoiceProof?.action || '')) saveLessonDraft('dailyQuest', { text, selectedProblem, who, tryChoice, guideStep });
     else if (pilotProgress.dailyQuestDraft) saveLessonDraft('dailyQuest', null);
   }, [text, selectedProblem, who, tryChoice, guideStep, complete, pilotProgress.dailyQuestText, pilotProgress.dailyQuestChoiceProof?.action]);
@@ -524,7 +524,7 @@ export function StemSinQuest() {
   const [previewToolIndex, setPreviewToolIndex] = useState(Math.max(0, draft?.selectedTool ?? savedToolIndex));
   const complete = pilotProgress.stemSinComplete;
   const tool = selectedTool === null ? null : lab.tools[selectedTool];
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!complete || text !== pilotProgress.stemSinText || nextTest !== (pilotProgress.stemSinChoiceProof?.nextTest || '')) saveLessonDraft('stemSin', { text, selectedTool, prediction, nextTest, demoRan, guideStep });
     else if (pilotProgress.stemSinDraft) saveLessonDraft('stemSin', null);
   }, [text, selectedTool, prediction, nextTest, demoRan, guideStep, complete, pilotProgress.stemSinText, pilotProgress.stemSinChoiceProof?.nextTest]);

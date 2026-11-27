@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { Clock3, UsersRound, Eye, Lightbulb, ChevronRight, CheckCircle2, BookOpenCheck } from 'lucide-react';
 import { useYEP } from '../context/YEPContext';
 import { FOUNDATION_QUEST, FOUNDATION_QUEST_ID, FOUNDATION_SCENARIO, FOUNDATION_PEOPLE, FOUNDATION_QUEST_IDEAS } from '../data/foundationQuest';
@@ -195,7 +195,7 @@ export default function FoundationDailyQuest() {
   const canSave = !!(selected && who && idea && coachPassed && growthPassed && reflectionReview.provided);
   const hasChanges = text !== pilotProgress.dailyQuestText || selected?.label !== proof?.problem || who !== (proof?.who || '') || idea !== (proof?.action || '') || growthReflection !== (pilotProgress.dailyQuestGrowthProof?.reflection || '');
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!complete || hasChanges) saveLessonDraft('dailyQuest', { questId: FOUNDATION_QUEST_ID, text, selectedProblem, who, tryChoice: idea, guideStep: step, coachChoice, coachAttempts, coachPassed, coachFeedback, growthChoice, growthAttempts, growthPassed, growthFeedback, growthReflection });
     else if (pilotProgress.dailyQuestDraft) saveLessonDraft('dailyQuest', null);
   }, [text, selectedProblem, who, idea, step, complete, hasChanges, coachChoice, coachAttempts, coachPassed, coachFeedback, growthChoice, growthAttempts, growthPassed, growthFeedback, growthReflection]);

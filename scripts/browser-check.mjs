@@ -96,6 +96,7 @@ async function exercise(view, mode) {
       await guide.evaluate(node => node.scrollIntoView({ block: 'start', behavior: 'instant' }));
       await page.screenshot({ path: `${out}/foundation-${name}.png`, animations: 'disabled' });
     }
+    console.log(`Testing ${view.name}/${mode}`);
     await start(page, mode, tap);
     await layout(page);
     if (mode === 'explorer') {
@@ -137,7 +138,10 @@ async function exercise(view, mode) {
       await captureCoach('daily-quest');
       await tap(guide.getByRole('button', { name: 'Hear lesson', exact: true }));
       await guide.locator('[data-speaking="true"]').waitFor();
-      await guide.locator('[data-mouth="open"]').waitFor();
+      await page.waitForFunction(() => {
+        const avatar = document.querySelector('[aria-label="YEP lesson guide"] [data-mouth]');
+        return avatar && avatar.dataset.mouth !== 'closed';
+      }, null, { polling: 'raf' });
       await tap(guide.getByRole('button', { name: 'Stop lesson', exact: true }));
       assert.equal(await guide.locator('[data-mouth]').getAttribute('data-mouth'), 'closed');
       await tap(guide.getByRole('button', { name: 'Replay', exact: true }));
@@ -181,6 +185,9 @@ async function exercise(view, mode) {
       await page.locator('#foundation-growth-reflection').fill('I can ask for permission, try a small change, and compare what happened.');
       assert.equal(await page.getByRole('button', { name: 'Finish My First Quest', exact: true }).isEnabled(), true);
       await page.reload({ waitUntil: 'domcontentloaded' });
+      const restored = await session(page);
+      assert.equal(restored.screen, 'dailyQuest', 'reopened screen after saving the reflection draft');
+      assert.equal(restored.pilotProgress.dailyQuestDraft?.guideStep, 6, 'reopened reflection step');
       assert.ok((await page.locator('#foundation-growth-reflection').inputValue()).includes('compare what happened'), 'reflection survives reload');
       await tap(page.getByRole('button', { name: 'Finish My First Quest', exact: true }));
       const growthSaved = (await session(page)).pilotProgress;
