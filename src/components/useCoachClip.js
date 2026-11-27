@@ -64,8 +64,12 @@ export default function useCoachClip(line) {
     }
     function updateMouth() {
       if (current.current !== audio || audio.paused || audio.ended) return;
-      const pose = lunchLineMouth.findLast(([start]) => start <= audio.currentTime);
-      setMouth(pose?.[1] || 'closed');
+      let pose = 'closed';
+      for (const [start, shape] of lunchLineMouth) {
+        if (start > audio.currentTime) break;
+        pose = shape;
+      }
+      setMouth(pose);
       frame.current = requestAnimationFrame(updateMouth);
     }
     audio.onplaying = () => {

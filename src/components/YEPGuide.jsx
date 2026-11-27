@@ -36,8 +36,8 @@ export function GuideAvatar({ speaking = false, gesture = 'open', mouth = 'close
       <path d="M50 52c5-18 18-29 31-29 14 0 26 9 32 27-8-6-19-9-32-9-12 0-23 4-31 11Z" fill="#111318" opacity=".9" />
       <path d="M58 67c4-3 9-4 14-2" fill="none" stroke="#2B1710" strokeWidth="3.5" strokeLinecap="round" />
       <path d="M88 65c5-2 10-1 14 2" fill="none" stroke="#2B1710" strokeWidth="3.5" strokeLinecap="round" />
-      <ellipse cx="66" cy="72" rx="3.5" ry="4" fill="#111827" />
-      <ellipse cx="95" cy="72" rx="3.5" ry="4" fill="#111827" />
+      <ellipse cx={gesture === 'activity' ? 68 : 66} cy={gesture === 'activity' ? 74 : 72} rx="3.5" ry="4" fill="#111827" />
+      <ellipse cx={gesture === 'activity' ? 97 : 95} cy={gesture === 'activity' ? 74 : 72} rx="3.5" ry="4" fill="#111827" />
       <path d="M80 73c-2 7-3 12-1 15 2 2 5 2 8 1" fill="none" stroke="#5B3324" strokeWidth="2.5" strokeLinecap="round" />
       {mouth === 'closed' ? <>
       <path d="M65 94c9 8 21 8 30 0" fill="none" stroke="#4A241C" strokeWidth="3" strokeLinecap="round" />
@@ -54,11 +54,15 @@ export function GuideAvatar({ speaking = false, gesture = 'open', mouth = 'close
         <path d="M12 89L8 75" stroke="#8B593C" strokeWidth="8" strokeLinecap="round" />
       </g>
       {/* Right hand points toward the next action when learner selects TRY. */}
-      <g className={styles.guideRightArm}>
+      {gesture === 'activity' ? <g>
+        <path d="M117 119 Q128 121 140 130" fill="none" stroke="#15366F" strokeWidth="15" strokeLinecap="round" />
+        <ellipse cx="142" cy="131" rx="8" ry="7" fill="#8B593C" />
+        <path d="M145 134l8 8" stroke="#8B593C" strokeWidth="6" strokeLinecap="round" />
+      </g> : <g className={styles.guideRightArm}>
         <path d="M119 123 Q139 117 145 98" fill="none" stroke="#15366F" strokeWidth="16" strokeLinecap="round" />
         <ellipse cx="146" cy="95" rx="10" ry="12" fill="#8B593C" />
         <path d="M148 89L153 74" stroke="#8B593C" strokeWidth="8" strokeLinecap="round" />
-      </g>
+      </g>}
       <circle cx="80" cy="139" r="12" fill="#D4A017" />
       <text x="80" y="145" textAnchor="middle" fontSize="17" fontWeight="900" fill="#0B1D3A">Y</text>
       <path d="M117 78c8 4 12 11 12 20" fill="none" stroke="#D4A017" strokeWidth="4" strokeLinecap="round" />
@@ -91,7 +95,7 @@ function FoundationGuide({ teacher, title, step, example, pictureKind, beforeOnl
   }
   return <section className={styles.panel} data-lane="explorer" aria-label="YEP lesson guide">
     <div className={styles.identity}>
-      <GuideAvatar foundation speaking={audio.speaking} mouth={audio.mouth} gesture={teacher.focusId ? 'point' : 'open'} />
+      <GuideAvatar foundation speaking={audio.speaking} mouth={audio.mouth} gesture={teacher.focusId ? 'activity' : 'open'} />
       <strong>Quest Buddy</strong>
     </div>
     <div className={styles.teaching}>

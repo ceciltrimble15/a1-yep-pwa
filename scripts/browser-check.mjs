@@ -122,6 +122,9 @@ async function exercise(view, mode) {
         assert.ok((await intro.getByRole('status').first().innerText()).includes(detail), 'visible illustrated step matches the selected lesson');
       }
       assert.equal(await intro.getByRole('button', { name: 'Hear lesson', exact: true }).count(), 1, 'learner controls narration');
+      await tap(intro.getByRole('button', { name: 'Hear lesson', exact: true }));
+      await page.waitForFunction(() => document.querySelector('[aria-label="Interactive illustrated YEP first check-in"]').dataset.speaking === 'true');
+      await tap(intro.getByRole('button', { name: 'Stop lesson', exact: true }));
       await tap(page.getByRole('button', { name: 'Start My First Check-In', exact: true }));
       for (const option of ['Building things', 'I keep trying', 'Trying it', 'Help somebody']) {
         await tap(page.getByRole('button', { name: new RegExp(option) }));

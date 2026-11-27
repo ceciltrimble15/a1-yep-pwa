@@ -257,7 +257,7 @@ export default function FoundationDailyQuest() {
       <header className={styles.foundationQuestHeader}>
         <div><span>YOUR FIRST DAILY QUEST</span><h1>{FOUNDATION_QUEST.title}</h1><p>See it. Notice it. Choose a move. Finish.</p></div>
         <div className={styles.foundationQuestMiniFlow} aria-label="First Daily Quest progress">
-          {['SEE', 'THINK', 'TRY', 'GROW', 'REFLECT', 'FINISH'].map((label, index) => <span key={label} data-state={step > index + 1 ? 'done' : step === index + 1 ? 'active' : 'next'}><b>{index + 1}</b>{label}</span>)}
+          {['SEE', 'THINK', 'PLAN', 'TRY', 'GROW', 'REFLECT'].map((label, index) => <span key={label} data-state={step > index + 1 ? 'done' : step === index + 1 ? 'active' : 'next'}><b>{index + 1}</b>{label}</span>)}
         </div>
       </header>
       <YEPGuide teacher={step === 5 && growthFeedback ? {

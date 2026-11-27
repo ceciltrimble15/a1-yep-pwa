@@ -338,7 +338,7 @@ assert.equal(api.screen, 'myDirection');
 mount(MyDirection);
 click('Start My First Check-In');
 spoken = '';
-click('Hear lesson');
+click('Hear device voice');
 assert.ok(spoken.includes('What do you like?') && spoken.includes('Pick something you enjoy doing.'), 'Foundation guide speaks one age-appropriate question');
 assert.ok(!spoken.includes('Building things') && !spoken.includes('Solving problems'), 'Foundation guide does not read the full choice list');
 click(/Building things/);

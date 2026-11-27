@@ -188,17 +188,19 @@ export default function FoundationVisualIntro({ step, powerName, narration, opti
         {PREVIEW_STEPS.map((item, index) => <span key={item.name} data-complete={index <= preview} />)}
       </div>}
       <div className={styles.audioRow}>
-        <button type="button" onClick={hear} disabled={!supported} className={styles.listen} aria-label={audioActive ? 'Stop lesson' : 'Hear lesson'}>
-          {audioActive ? <Square size={22} aria-hidden="true"/> : <Headphones size={22} aria-hidden="true"/>}
-          {audioActive ? 'Stop lesson' : 'Hear lesson'}
-        </button>
-        {offline.clip && <button type="button" className={styles.listen} onClick={() => {
+        <button type="button" className={styles.listen} onClick={() => {
           stop();
+          setAudioError('');
           if (offline.active) offline.stop(); else offline.play();
-        }}>{offline.active ? 'Stop offline voice' : 'Play offline voice'}</button>}
+        }}>{offline.active ? <Square size={22} aria-hidden="true"/> : <Headphones size={22} aria-hidden="true"/>}
+          {offline.active ? 'Stop lesson' : 'Hear lesson'}
+        </button>
+        {supported && <button type="button" onClick={hear} className={styles.listen}>
+          {audioActive ? 'Stop device voice' : 'Hear device voice'}
+        </button>}
         <div className={styles.audioHint} role="status">
           <Volume2 size={17} aria-hidden="true"/>
-          {offline.error || (offline.active ? 'Playing offline voice.' : audioError) || (!supported ? 'Audio unavailable; use the visual steps.' : speaking ? 'Guide speaking. Tap Stop to end playback.' : audioPending ? 'Preparing audio. Tap Stop to cancel.' : 'Voice plays only when you choose.')}
+          {offline.error || (offline.active ? 'Playing offline voice.' : audioError) || (!supported ? 'Choose Hear lesson to listen to the offline voice.' : speaking ? 'Guide speaking. Tap Stop to end playback.' : audioPending ? 'Preparing audio. Tap Stop to cancel.' : 'Voice plays only when you choose.')}
         </div>
       </div>
     </div>
